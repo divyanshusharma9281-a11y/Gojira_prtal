@@ -3,224 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gojira BL Operations Portal</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>BharatLoan | Operations SOP Portal v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .step-line::before {
-            content: '';
-            position: absolute;
-            left: 20px;
-            top: 40px;
-            bottom: 0;
-            width: 2px;
-            background: #e2e8f0;
-        }
-        .step-line:last-child::before { display: none; }
-        .animate-in { animation: fadeIn 0.4s ease-out; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .sidebar-item.active { background: #2563eb; color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .status-badge { padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex">
 
-    <script type="text/babel">
-        const { useState } = React;
-
-        const Icons = {
-            User: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
-            Building: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
-            FileText: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
-            Check: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>,
-            ArrowRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        };
-
-        const App = () => {
-            const [activeSection, setActiveSection] = useState('journey');
-
-            const menuItems = [
-                { id: 'journey', label: '1. Customer Journey', icon: <Icons.User /> },
-                { id: 'process', label: '2. Departmental Process', icon: <Icons.Building /> },
-                { id: 'status', label: '3. Status Guidelines', icon: <Icons.FileText /> }
-            ];
-
-            return (
-                <div className="flex min-h-screen">
-                    {/* Sidebar */}
-                    <nav className="w-72 bg-slate-900 text-slate-300 flex flex-col fixed h-full">
-                        <div className="p-8 border-b border-slate-800">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-orange-600 p-2 rounded-lg text-white font-bold italic">G</div>
-                                <h1 className="text-xl font-extrabold text-white tracking-tight">GOJIRA <span className="text-orange-500 font-normal">BL</span></h1>
-                            </div>
-                            <p className="text-[10px] mt-2 text-slate-500 font-bold uppercase tracking-widest">Operation Standard v3.0</p>
-                        </div>
-                        <div className="flex-1 py-6 px-4 space-y-2">
-                            {menuItems.map(item => (
-                                <button 
-                                    key={item.id}
-                                    onClick={() => setActiveSection(item.id)}
-                                    className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl font-semibold transition-all duration-200 ${activeSection === item.id ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30' : 'hover:bg-slate-800 hover:text-slate-100'}`}
-                                >
-                                    {item.icon}
-                                    {item.label}
-                                </button>
-                            ))}
-                        </div>
-                    </nav>
-
-                    {/* Content Area */}
-                    <main className="flex-1 ml-72 p-12">
-                        <div className="max-w-4xl mx-auto">
-                            
-                            {/* SECTION: CUSTOMER JOURNEY */}
-                            {activeSection === 'journey' && (
-                                <div className="animate-in space-y-8">
-                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                                        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">The Customer Journey</h2>
-                                        <p className="text-slate-500">Step-by-step experience of the borrower from app install to money in bank.</p>
-                                    </div>
-
-                                    <div className="space-y-0">
-                                        {[
-                                            { step: "01", title: "App Install & OTP", desc: "User registers with mobile number and provides basic permissions (SMS, Location, Contacts)." },
-                                            { step: "02", title: "KYC Submission", desc: "Customer uploads Aadhaar and PAN. Real-time OCR extracts details for the profile." },
-                                            { step: "03", title: "Employment Profile", desc: "User inputs company name, monthly income, and office email address." },
-                                            { step: "04", title: "Verification Wait", desc: "Application moves to 'UNDER REVIEW' while the backend team validates details." },
-                                            { step: "05", title: "Agreement (E-Sign)", desc: "Upon approval, customer signs the Sanction Letter via Aadhaar-linked OTP." },
-                                            { step: "06", title: "Disbursal", desc: "Funds are transferred. Customer receives notification and sees 'DISBURSED' status." }
-                                        ].map((item, idx) => (
-                                            <div key={idx} className="relative pl-14 pb-8 step-line group">
-                                                <div className="absolute left-0 top-0 w-10 h-10 bg-white border-2 border-orange-200 rounded-full flex items-center justify-center font-bold text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-all">
-                                                    {item.step}
-                                                </div>
-                                                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm group-hover:border-orange-200 transition-all">
-                                                    <h4 className="text-lg font-bold text-slate-800">{item.title}</h4>
-                                                    <p className="text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* SECTION: DEPARTMENT PROCESS */}
-                            {activeSection === 'process' && (
-                                <div className="animate-in space-y-8">
-                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                                        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Departmental Processes</h2>
-                                        <p className="text-slate-500">How our internal teams handle the application at various touchpoints.</p>
-                                    </div>
-
-                                    <div className="grid gap-6">
-                                        <div className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
-                                            <div className="bg-orange-50 p-6 border-b border-orange-100 flex items-center gap-4">
-                                                <div className="bg-orange-600 p-2 rounded-lg text-white"><Icons.User /></div>
-                                                <h3 className="text-xl font-bold text-orange-900">Customer Care (L1 Support)</h3>
-                                            </div>
-                                            <div className="p-8 space-y-4">
-                                                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl">
-                                                    <div className="text-orange-600 mt-1"><Icons.Check /></div>
-                                                    <p className="text-slate-700"><strong>Inbound Assistance:</strong> Help users stuck on KYC or E-sign pages. Check current status via PAN/Mobile search in Admin Portal.</p>
-                                                </div>
-                                                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl">
-                                                    <div className="text-orange-600 mt-1"><Icons.Check /></div>
-                                                    <p className="text-slate-700"><strong>Lead Calling:</strong> Outbound calls to users who registered but didn't complete KYC to push them to Step 2.</p>
-                                                </div>
-                                                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl">
-                                                    <div className="text-orange-600 mt-1"><Icons.Check /></div>
-                                                    <p className="text-slate-700"><strong>Grievance Handling:</strong> Solving payment issues or technical glitches by checking the "Logs" section in CRM.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
-                                            <div className="bg-blue-50 p-6 border-b border-blue-100 flex items-center gap-4">
-                                                <div className="bg-blue-600 p-2 rounded-lg text-white"><Icons.Building /></div>
-                                                <h3 className="text-xl font-bold text-blue-900">Verification & Credit Team</h3>
-                                            </div>
-                                            <div className="p-8 space-y-4">
-                                                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl">
-                                                    <div className="text-blue-600 mt-1"><Icons.Check /></div>
-                                                    <p className="text-slate-700"><strong>Document Audit:</strong> Visual check of Aadhaar/PAN images. Matching selfie with document photos.</p>
-                                                </div>
-                                                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl">
-                                                    <div className="text-blue-600 mt-1"><Icons.Check /></div>
-                                                    <p className="text-slate-700"><strong>Verification Calls:</strong> Calling HR/Company to verify employment or validating through company email domain.</p>
-                                                </div>
-                                                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl">
-                                                    <div className="text-blue-600 mt-1"><Icons.Check /></div>
-                                                    <p className="text-slate-700"><strong>Credit Scoring:</strong> Running internal algorithms based on SMS data and Bureau reports to approve/reject.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* SECTION: STATUS GUIDELINES */}
-                            {activeSection === 'status' && (
-                                <div className="animate-in space-y-8">
-                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                                        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Portal Status Protocols</h2>
-                                        <p className="text-slate-500">Correct interpretation and responses for CRM statuses.</p>
-                                    </div>
-
-                                    <div className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-left">
-                                                <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-bold tracking-wider">
-                                                    <tr>
-                                                        <th className="px-8 py-5">Status Name</th>
-                                                        <th className="px-8 py-5">System Meaning</th>
-                                                        <th className="px-8 py-5">Action for Agent</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-slate-100">
-                                                    <tr>
-                                                        <td className="px-8 py-6 font-bold text-blue-600">INITIATED</td>
-                                                        <td className="px-8 py-6 text-slate-500 italic">Registration Done, KYC Missing</td>
-                                                        <td className="px-8 py-6 text-slate-700 font-medium italic underline underline-offset-4 decoration-slate-200">Call customer to complete KYC</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="px-8 py-6 font-bold text-orange-500">UNDER-REVIEW</td>
-                                                        <td className="px-8 py-6 text-slate-500 italic">Verification in Progress</td>
-                                                        <td className="px-8 py-6 text-slate-700">Ask user to wait 12-24 hours.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="px-8 py-6 font-bold text-purple-600">SANCTIONED</td>
-                                                        <td className="px-8 py-6 text-slate-500 italic">Offer Ready for Sign</td>
-                                                        <td className="px-8 py-6 text-slate-700 font-medium">Push for E-Sign Completion</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="px-8 py-6 font-bold text-green-600">DISBURSED</td>
-                                                        <td className="px-8 py-6 text-slate-500 italic">Funds successfully sent</td>
-                                                        <td className="px-8 py-6 text-slate-700">Provide UTR number if requested</td>
-                                                    </tr>
-                                                    <tr className="bg-red-50/30">
-                                                        <td className="px-8 py-6 font-bold text-red-600">REJECTED</td>
-                                                        <td className="px-8 py-6 text-slate-500 italic">Failed Credit Criteria</td>
-                                                        <td className="px-8 py-6 text-slate-700">Close ticket, reapply in 90 days.</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                        </div>
-                    </main>
+    <!-- Sidebar Navigation -->
+    <aside class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-200 z-30 flex flex-col">
+        <div class="p-8 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg">B</div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight">BharatLoan</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Internal Portal</p>
                 </div>
-            );
-        };
+            </div>
+        </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
+            <button onclick="switchTab('journey')" id="btn-journey" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition-all">
+                <i class="fa-solid fa-route w-5"></i>
+                <span class="text-sm">Customer Journey</span>
+            </button>
+            <button onclick="switchTab('procedures')" id="btn-procedures" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                <i class="fa-solid fa-briefcase w-5"></i>
+                <span class="text-sm">Operational Procedures</span>
+            </button>
+            <button onclick="switchTab('escalation')" id="btn-escalation" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                <i class="fa-solid fa-envelope-circle-check w-5"></i>
+                <span class="text-sm">Email Escalation</span>
+            </button>
+            <button onclick="switchTab('repayment')" id="btn-repayment" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                <i class="fa-solid fa-hand-holding-dollar w-5"></i>
+                <span class="text-sm">Repayment & Refund</span>
+            </button>
+            <button onclick="switchTab('audit')" id="btn-audit" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                <i class="fa-solid fa-clipboard-check w-5"></i>
+                <span class="text-sm">Eligibility Audit</span>
+            </button>
+        </nav>
+
+        <div class="p-6">
+            <div class="bg-slate-900 p-5 rounded-2xl text-white text-[11px]">
+                <p class="text-blue-400 font-bold uppercase mb-1">Compliance Alert</p>
+                <p class="opacity-70 leading-relaxed italic">All PII data must be handled per DPDP guidelines. Do not share logs externally.</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-72 p-12">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Tab 1: Journey -->
+            <section id="journey" class="tab-content active">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-extrabold">Section 3: Customer Journey</h2>
+                    <p class="text-slate-500 mt-2">Standard application flow from install to disbursal.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-blue-600 font-bold text-lg mb-2">01. Registration</div>
+                        <p class="text-xs text-slate-500 leading-relaxed">App installation and OTP validation via registered mobile number.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-blue-600 font-bold text-lg mb-2">02. eKYC</div>
+                        <p class="text-xs text-slate-500 leading-relaxed">Aadhaar verification via DigiLocker and selfie-matching.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-blue-600 font-bold text-lg mb-2">03. Disbursal</div>
+                        <p class="text-xs text-slate-500 leading-relaxed">Acceptance of Sanction Letter followed by E-Sign and ICICI API funding.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Procedures -->
+            <section id="procedures" class="tab-content">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-extrabold">Section 7: Operational Procedures</h2>
+                    <p class="text-slate-500 mt-2">Departmental roles and CRM handling.</p>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                        <div class="bg-slate-800 text-white px-6 py-3 font-bold text-sm">Customer Care (L1)</div>
+                        <div class="p-6 grid md:grid-cols-2 gap-6">
+                            <div class="p-4 bg-slate-50 rounded-xl">
+                                <h5 class="font-bold text-xs text-blue-600 uppercase mb-2">Lead Conversion</h5>
+                                <p class="text-xs text-slate-600">Filter 'Initiated' cases in CRM. Call customers failing document upload.</p>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-xl">
+                                <h5 class="font-bold text-xs text-blue-600 uppercase mb-2">Status Script</h5>
+                                <p class="text-xs text-slate-600">"Under Review: Please wait 24-48 hours for manual audit."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Escalation -->
+            <section id="escalation" class="tab-content">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-extrabold">Section 9: Email Escalation Flow</h2>
+                    <p class="text-slate-500 mt-2">support@bharatloanfintech.com protocols.</p>
+                </div>
+                <div class="bg-red-50 border border-red-200 rounded-3xl p-8 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h4 class="text-red-900 font-extrabold text-xl mb-6">CRITICAL: Forwarding Protocol</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 bg-white p-4 rounded-xl border border-red-100">
+                                <div class="bg-red-600 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs shrink-0">!</div>
+                                <p class="text-sm font-semibold text-red-700">You MUST copy the "Application Logs" from the admin portal before forwarding any email to Collections or Settlement.</p>
+                            </div>
+                            <ul class="text-sm text-slate-600 space-y-2 ml-10 list-disc">
+                                <li>Search customer via PAN/Mobile.</li>
+                                <li>Navigate to "Log History".</li>
+                                <li>Paste logs directly into the escalation email.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 4: Repayment -->
+            <section id="repayment" class="tab-content">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-extrabold">Section 10: Repayment & Refund</h2>
+                    <p class="text-slate-500 mt-2">Service Level Agreements (SLA) for financial operations.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-clock text-blue-600"></i> Repayment TAT
+                        </h4>
+                        <p class="text-xs text-slate-500">Reflection time: <strong>24 Hours</strong>. If delayed, request UTR screenshot for manual accounts team check.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-transfer text-green-600"></i> Refund TAT
+                        </h4>
+                        <p class="text-xs text-slate-500">Reflection time: <strong>5-7 Working Days</strong>. Case must be logged in the "Refund Sheet".</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 5: Audit -->
+            <section id="audit" class="tab-content">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-extrabold">Eligibility Audit Checklist</h2>
+                    <p class="text-slate-500 mt-2">Mandatory criteria for application approval.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-200 uppercase text-[10px] font-bold text-slate-400 tracking-widest">
+                            <tr>
+                                <th class="px-6 py-4">Parameter</th>
+                                <th class="px-6 py-4">SOP Requirement</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-6 py-4 font-semibold text-slate-700">Employment</td>
+                                <td class="px-6 py-4">Strictly Salaried Only</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-semibold text-slate-700">Net Salary</td>
+                                <td class="px-6 py-4">₹25,000 Minimum</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-semibold text-slate-700">Age</td>
+                                <td class="px-6 py-4">25 - 55 Years</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-semibold text-slate-700 text-red-600">Negative Check</td>
+                                <td class="px-6 py-4 text-red-600 italic">REJECT if existing loan with Partner</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            document.querySelectorAll('.sidebar-item').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('text-slate-500');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-500');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
