@@ -90,7 +90,6 @@
                 </div>
                 <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-500">
                     <span class="text-slate-900">Training Home</span>
-                    <button onclick="navigateTo('view-journey')" class="hover:text-blue-600 transition-colors">Customer Journey</button>
                     <a href="#" class="hover:text-blue-600 transition-colors">Support</a>
                 </div>
             </div>
@@ -123,16 +122,6 @@
                     <h2 class="text-xl font-bold mb-2">Brand SOPs</h2>
                     <p class="text-slate-500 text-xs mb-4">Specific guidelines for each entity.</p>
                     <span class="text-indigo-600 font-bold text-[10px] tracking-widest uppercase mt-auto">View Brands <i class="fa-solid fa-arrow-right ml-1"></i></span>
-                </div>
-
-                <!-- Journey Tracker Card -->
-                <div onclick="navigateTo('view-journey')" class="glass-card hover-lift p-8 rounded-[2rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border border-slate-100">
-                    <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-route text-2xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold mb-2">Customer Journey</h2>
-                    <p class="text-slate-500 text-xs mb-4">End-to-End Visual SOP flow.</p>
-                    <span class="text-emerald-600 font-bold text-[10px] tracking-widest uppercase mt-auto">View Journey <i class="fa-solid fa-arrow-right ml-1"></i></span>
                 </div>
 
                 <!-- Updates Card -->
@@ -416,78 +405,6 @@
         </div>
     </div>
 
-    <!-- SECTION 4: CUSTOMER JOURNEY TRACKER -->
-    <div id="view-journey" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <span class="font-bold text-slate-800 text-sm">Interactive SOP Flow</span>
-            <div class="w-10"></div>
-        </header>
-
-        <div class="max-w-5xl mx-auto px-6 py-12">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-black text-slate-900 mb-2">Customer Success Journey</h2>
-                <p class="text-slate-500">Click on each step to view the specific operational workflow.</p>
-            </div>
-
-            <div class="bg-slate-50 rounded-[3rem] border border-slate-100 p-8 shadow-sm">
-                <!-- Visual Timeline -->
-                <div class="relative flex justify-between mb-12">
-                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
-                    
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(1)">
-                        <div id="circle-1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white">1</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Register</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(2)">
-                        <div id="circle-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">2</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">KYC</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(3)">
-                        <div id="circle-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">3</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Finance</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(4)">
-                        <div id="circle-4" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">4</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Select</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(5)">
-                        <div id="circle-5" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">5</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Sign</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(6)">
-                        <div id="circle-6" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">6</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Verify</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(7)">
-                        <div id="circle-7" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">7</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Disbursal</span>
-                    </div>
-                </div>
-
-                <!-- Detail Content -->
-                <div id="step-content" class="bg-white border border-slate-100 rounded-3xl p-8 step-transition shadow-sm">
-                    <h3 id="step-title" class="text-2xl font-black text-slate-900 mb-6">1. Customer Registration</h3>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Customer Activity</h4>
-                            <p id="customer-action" class="text-slate-600 leading-relaxed font-medium">Customer logs into the portal and verifies their mobile number via OTP.</p>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Backend SOP</h4>
-                            <ul id="backend-process" class="space-y-3">
-                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> SMS Gateway trigger</li>
-                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> IP/Location log capture</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- SECTION 5: UPDATES -->
     <div id="view-updates" class="app-view bg-white">
         <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
@@ -527,9 +444,7 @@
         function toggleFaq(btn) {
             const item = btn.parentElement;
             const isActive = item.classList.contains('active');
-            // Close all other items
             document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-            // Toggle current item
             if (!isActive) item.classList.add('active');
         }
 
