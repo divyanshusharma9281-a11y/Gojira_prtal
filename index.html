@@ -458,60 +458,44 @@
             });
         }
 
-        <!-- BharatLoan Customer Journey Section -->
-<div class="bharatloan-journey">
+        const journeyData = {
+            1: {
+                title: "1. Registration",
+                action: "Customer logs into the portal and verifies their mobile number via OTP.",
+                process: ["System triggers automated OTP", "Validates user identity and session", "Captures initial lead metadata"]
+            },
+            2: {
+                title: "2. KYC Submission",
+                action: "Uploads National ID and takes a live selfie for biometric verification.",
+                process: ["Automated OCR verification", "Liveness check performed to prevent fraud", "Aadhaar/PAN cross-check"]
+            },
+            3: {
+                title: "3. Financial Verification",
+                action: "Connects bank account via Account Aggregator for digital statement analysis.",
+                process: ["Flow analysis for 6 months", "Debt-to-Income calculation", "Risk scoring trigger"]
+            },
+            4: {
+                title: "4. Loan Selection",
+                action: "Chooses specific amount and tenure within the approved limit.",
+                process: ["EMI generation based on tenure", "Interest rate assignment", "Fee disclosure generation"]
+            },
+            5: {
+                title: "5. Digital Signing",
+                action: "Reviews the contract and signs via e-sign OTP service.",
+                process: ["Legal agreement timestamping", "Document storage in secure vault", "Compliance audit trail logged"]
+            },
+            6: {
+                title: "6. Operational Verification",
+                action: "Waiting phase for final manual/automated sanity checks.",
+                process: ["Fraud engine final sweep", "Data consistency check", "Credit team final approval"]
+            },
+            7: {
+                title: "7. Disbursal",
+                action: "Receives SMS/Mail confirmation as funds are wired to the bank.",
+                process: ["IMPS/NEFT payment trigger", "Transaction ID update in CRM", "Repayment schedule activation"]
+            }
+        };
 
-  <h2>Customer Journey – BharatLoan</h2>
-
-  <div class="journey-step">
-    <span class="step-number">1</span>
-    <div class="step-content">
-      <h3>Visit BharatLoan</h3>
-      <p>Customer visits the BharatLoan section to explore loan options.</p>
-    </div>
-  </div>
-
-  <div class="journey-step">
-    <span class="step-number">2</span>
-    <div class="step-content">
-      <h3>Check Eligibility</h3>
-      <p>Customer checks eligibility based on income, age, and credit profile.</p>
-    </div>
-  </div>
-
-  <div class="journey-step">
-    <span class="step-number">3</span>
-    <div class="step-content">
-      <h3>Fill Application</h3>
-      <p>Customer fills basic details like name, mobile number, and loan amount.</p>
-    </div>
-  </div>
-
-  <div class="journey-step">
-    <span class="step-number">4</span>
-    <div class="step-content">
-      <h3>Upload Documents</h3>
-      <p>Required documents such as Aadhaar, PAN, and bank statements are uploaded.</p>
-    </div>
-  </div>
-
-  <div class="journey-step">
-    <span class="step-number">5</span>
-    <div class="step-content">
-      <h3>Loan Approval</h3>
-      <p>Application is reviewed and approved after verification.</p>
-    </div>
-  </div>
-
-  <div class="journey-step">
-    <span class="step-number">6</span>
-    <div class="step-content">
-      <h3>Amount Disbursed</h3>
-      <p>Approved loan amount is credited to the customer’s bank account.</p>
-    </div>
-  </div>
-
-</div>
         function showStep(stepId) {
             const data = journeyData[stepId];
             document.getElementById('step-title').innerText = data.title;
