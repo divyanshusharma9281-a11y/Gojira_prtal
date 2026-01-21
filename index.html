@@ -41,8 +41,9 @@
 <!-- TOP NAV -->
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold">₹</div>
+    <!-- Clickable Logo/Brand Name -->
+    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
+      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition-colors">₹</div>
       <span class="font-extrabold text-xl">
         Gojira <span class="text-blue-600">TP</span>
       </span>
@@ -105,13 +106,6 @@
     </p>
 
     <div class="space-y-4">
-
-      <!-- FAQs 1–10 -->
-      <!-- (UNCHANGED – SAME AS DISCUSSED) -->
-
-      <!-- FAQ items exactly as previously finalized -->
-      <!-- START -->
-      <!-- FAQ 1 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
           1. My loan is approved but not disbursed. Why?
@@ -224,13 +218,11 @@
           <p>It securely shares financial data with lenders after consent.</p>
         </div>
       </div>
-      <!-- END -->
-
     </div>
   </div>
 </div>
 
-<!-- BRAND ENTITIES (RESTORED – NO CHANGES) -->
+<!-- BRAND ENTITIES -->
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
@@ -241,7 +233,6 @@
     <h1 class="text-3xl font-extrabold text-center mb-12">Entity Guidelines</h1>
 
     <div class="grid md:grid-cols-4 gap-8">
-
       <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl text-center cursor-pointer hover-lift bg-blue-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-lg">BharatLoan</h3>
@@ -265,7 +256,6 @@
         <h3 class="font-bold text-lg">RupeeOnTime</h3>
         <p class="text-xs uppercase opacity-80">Flexi-Repay</p>
       </div>
-
     </div>
   </div>
 </div>
@@ -276,6 +266,12 @@
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
     <span class="mx-auto font-bold">System Updates</span>
   </header>
+  <div class="max-w-4xl mx-auto px-6 py-14">
+      <h2 class="text-2xl font-bold mb-6">Recent Policy Changes</h2>
+      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <p class="text-slate-600 dark:text-slate-400">All updates and system logs will be published here.</p>
+      </div>
+  </div>
 </div>
 
 <script>
@@ -307,10 +303,10 @@ function toggleTheme(){
   }
 }
 
-if(localStorage.getItem('theme') === 'dark'){
-  document.documentElement.classList.add('dark');
-  document.getElementById('theme-icon').innerText = '☀️';
-  document.getElementById('theme-text').innerText = 'Light';
+// Persist theme on load
+window.onload = () => {
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme === 'dark') toggleTheme();
 }
 </script>
 
