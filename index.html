@@ -10,20 +10,22 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         
-        /* Smooth transitions */
         .page-view { display: none; animation: fadeIn 0.3s ease-out; }
         .page-view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Card Styles */
         .action-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid #e2e8f0; }
         .action-card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         
-        .faq-item { border-left: 4px solid #e2e8f0; transition: all 0.2s ease; }
-        .faq-item:hover { border-left-color: #2563eb; background-color: #f8fafc; }
+        /* Accordion Styles */
+        .faq-question { cursor: pointer; transition: all 0.2s; }
+        .faq-question:hover { background-color: #f1f5f9; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .faq-item.open .faq-answer { max-height: 500px; padding-bottom: 1.5rem; }
+        .faq-item.open .chevron { transform: rotate(180deg); }
+        .chevron { transition: transform 0.3s; }
 
-        /* Sidebar State */
-        .nav-item.active { background: #2563eb; color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
+        .nav-item.active { background: #2563eb; color: white; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">
@@ -32,56 +34,66 @@
     <div id="view-home" class="page-view active min-h-screen flex flex-col items-center justify-center p-6">
         <div class="max-w-6xl w-full">
             <header class="text-center mb-16">
+                <div class="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-bold mb-4 uppercase tracking-wider">Internal Training Only</div>
                 <h1 class="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Agent Training Portal</h1>
-                <p class="text-slate-500 font-medium text-lg">Select a section to begin your session</p>
+                <p class="text-slate-500 font-medium text-lg">Access brand SOPs or general training FAQs</p>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 
-                <!-- SECTION: ENTITIES -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                            <i class="fa-solid fa-layer-group"></i>
+                <!-- ENTITIES TAB -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-layer-group text-xl"></i>
                         </div>
-                        <h2 class="text-2xl font-bold">Brand Entities</h2>
+                        <div>
+                            <h2 class="text-2xl font-extrabold">Brand Entities</h2>
+                            <p class="text-slate-400 text-sm font-medium">Specific Operational Procedures</p>
+                        </div>
                     </div>
+                    
                     <div class="grid grid-cols-2 gap-4">
-                        <div onclick="openEntity('BharatLoan', 'B', 'bg-blue-600')" class="action-card bg-white p-6 rounded-2xl flex flex-col items-center">
-                            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold mb-3 shadow-md">B</div>
+                        <div onclick="openEntity('BharatLoan', 'B', 'bg-blue-600')" class="action-card bg-slate-50 p-6 rounded-2xl flex flex-col items-center">
+                            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold mb-3">B</div>
                             <span class="font-bold text-slate-700">BharatLoan</span>
                         </div>
-                        <div onclick="openEntity('Rupee112', 'R', 'bg-emerald-600')" class="action-card bg-white p-6 rounded-2xl flex flex-col items-center">
-                            <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold mb-3 shadow-md">R</div>
+                        <div onclick="openEntity('Rupee112', 'R', 'bg-emerald-600')" class="action-card bg-slate-50 p-6 rounded-2xl flex flex-col items-center">
+                            <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold mb-3">R</div>
                             <span class="font-bold text-slate-700">Rupee112</span>
                         </div>
-                        <div onclick="openEntity('Loan112', 'L', 'bg-indigo-600')" class="action-card bg-white p-6 rounded-2xl flex flex-col items-center">
-                            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold mb-3 shadow-md">L</div>
+                        <div onclick="openEntity('Loan112', 'L', 'bg-indigo-600')" class="action-card bg-slate-50 p-6 rounded-2xl flex flex-col items-center">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold mb-3">L</div>
                             <span class="font-bold text-slate-700">Loan112</span>
                         </div>
-                        <div onclick="openEntity('Rupeeontime', 'T', 'bg-orange-500')" class="action-card bg-white p-6 rounded-2xl flex flex-col items-center">
-                            <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold mb-3 shadow-md">T</div>
+                        <div onclick="openEntity('Rupeeontime', 'T', 'bg-orange-500')" class="action-card bg-slate-50 p-6 rounded-2xl flex flex-col items-center">
+                            <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold mb-3">T</div>
                             <span class="font-bold text-slate-700">Rupeeontime</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECTION: KNOWLEDGE BASE / FAQs -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center">
-                            <i class="fa-solid fa-book-open"></i>
+                <!-- FAQ TAB ENTRY -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6 flex flex-col justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-purple-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-book-open text-xl"></i>
                         </div>
-                        <h2 class="text-2xl font-bold">Knowledge Base</h2>
+                        <div>
+                            <h2 class="text-2xl font-extrabold">Knowledge Base</h2>
+                            <p class="text-slate-400 text-sm font-medium">Compliance & General FAQs</p>
+                        </div>
                     </div>
-                    
-                    <div onclick="showPage('view-faq')" class="action-card bg-white p-10 rounded-2xl h-full flex flex-col items-center justify-center text-center group">
-                        <div class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white text-3xl mb-6 shadow-xl group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-question"></i>
+
+                    <div onclick="showPage('view-faq')" class="action-card bg-purple-50 p-10 rounded-2xl flex flex-col items-center justify-center text-center border-dashed border-purple-200 group h-full">
+                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-purple-600 text-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-list-check"></i>
                         </div>
-                        <h3 class="text-xl font-extrabold text-slate-800 mb-2">Training FAQs</h3>
-                        <p class="text-slate-500 text-sm">General concepts, NBFC rules, Account Aggregator, and Compliance training.</p>
-                        <div class="mt-6 px-6 py-2 bg-purple-50 text-purple-700 rounded-full text-xs font-bold uppercase tracking-wider">Open Knowledge Base</div>
+                        <h3 class="text-xl font-bold text-slate-800">Training FAQ Module</h3>
+                        <p class="text-slate-500 text-sm max-w-xs mt-2">Enter to view all common queries, NBFC details, and Account Aggregator procedures.</p>
+                        <div class="mt-6 flex items-center gap-2 text-purple-700 font-bold">
+                            Enter Module <i class="fa-solid fa-arrow-right"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -89,69 +101,102 @@
         </div>
     </div>
 
-    <!-- 2. FAQ INTERFACE -->
+    <!-- 2. FAQ INTERFACE (QUESTION LIST) -->
     <div id="view-faq" class="page-view min-h-screen bg-white">
-        <nav class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-100 z-10 p-4">
-            <div class="max-w-5xl mx-auto flex items-center justify-between">
-                <button onclick="showPage('view-home')" class="flex items-center gap-2 text-slate-600 hover:text-blue-600 font-bold transition-colors">
-                    <i class="fa-solid fa-arrow-left"></i> Back to Home
+        <nav class="sticky top-0 bg-white border-b border-slate-100 z-10 px-6 py-4">
+            <div class="max-w-4xl mx-auto flex items-center justify-between">
+                <button onclick="showPage('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-colors">
+                    <i class="fa-solid fa-house"></i> Home
                 </button>
-                <h2 class="text-xl font-extrabold">General Training FAQs</h2>
-                <div class="w-10"></div>
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-slate-900">Training FAQs</h2>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Compliance Knowledge Base</p>
+                </div>
+                <div class="w-12"></div>
             </div>
         </nav>
 
-        <div class="max-w-4xl mx-auto p-8 py-12">
-            <div class="space-y-8">
-                <div class="faq-item bg-slate-50 p-6 rounded-xl">
-                    <h4 class="font-bold text-lg mb-3">What is an NBFC?</h4>
-                    <p class="text-slate-600 leading-relaxed">Financial institution providing loans/insurance but not engaging in agriculture or industrial operations. Registered under Companies Act 1956; cannot accept public deposits.</p>
-                </div>
-
-                <div class="faq-item bg-slate-50 p-6 rounded-xl">
-                    <h4 class="font-bold text-lg mb-3">Bank vs NBFC?</h4>
-                    <ul class="space-y-2 text-slate-600">
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-dot mt-1.5 text-[8px] text-blue-500"></i> NBFCs cannot accept demand deposits.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-dot mt-1.5 text-[8px] text-blue-500"></i> Cannot issue cheques drawn on themselves.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-dot mt-1.5 text-[8px] text-blue-500"></i> DICGC insurance not available to NBFC depositors.</li>
-                    </ul>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="faq-item bg-slate-50 p-6 rounded-xl">
-                        <h4 class="font-bold mb-2">What is a Personal Loan?</h4>
-                        <p class="text-slate-600 text-sm">Unsecured loan for personal expenses. No collateral required; based on creditworthiness.</p>
+        <div class="max-w-3xl mx-auto p-6 py-12">
+            <div class="space-y-4">
+                <!-- FAQ ITEM 1 -->
+                <div class="faq-item border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div onclick="toggleFaq(this)" class="faq-question p-6 flex items-center justify-between bg-white font-bold text-slate-800">
+                        <span>What is an NBFC?</span>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
                     </div>
-                    <div class="faq-item bg-slate-50 p-6 rounded-xl">
-                        <h4 class="font-bold mb-2">Early Repayment?</h4>
-                        <p class="text-slate-600 text-sm">Yes, you can repay prior to the due date to avoid accruing additional daily interest.</p>
+                    <div class="faq-answer px-6 bg-white text-slate-600 leading-relaxed">
+                        Financial institution providing loans/insurance but not engaging in agriculture or industrial operations. Registered under Companies Act 1956; cannot accept public deposits.
                     </div>
                 </div>
 
-                <div class="bg-blue-600 rounded-3xl p-10 text-white shadow-2xl relative overflow-hidden">
-                    <div class="relative z-10">
-                        <h4 class="text-2xl font-bold mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-shield-halved"></i> Account Aggregator
-                        </h4>
-                        <p class="text-blue-100 mb-6 italic">"Safe RBI-approved way where you allow us to check bank details online for processing."</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-medium">
-                            <div class="bg-blue-500/30 p-4 rounded-xl backdrop-blur-sm">• No money deduction</div>
-                            <div class="bg-blue-500/30 p-4 rounded-xl backdrop-blur-sm">• Full customer control</div>
-                            <div class="bg-blue-500/30 p-4 rounded-xl backdrop-blur-sm">• Stop permission anytime</div>
+                <!-- FAQ ITEM 2 -->
+                <div class="faq-item border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div onclick="toggleFaq(this)" class="faq-question p-6 flex items-center justify-between bg-white font-bold text-slate-800">
+                        <span>What is the difference between a Bank and an NBFC?</span>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-white text-slate-600 space-y-3">
+                        <p>• NBFCs cannot accept demand deposits.</p>
+                        <p>• NBFCs cannot issue cheques drawn on themselves.</p>
+                        <p>• Deposit insurance facility of DICGC is not available to depositors of NBFCs.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ ITEM 3 -->
+                <div class="faq-item border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div onclick="toggleFaq(this)" class="faq-question p-6 flex items-center justify-between bg-white font-bold text-slate-800">
+                        <span>What is a Personal Loan?</span>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-white text-slate-600">
+                        An unsecured loan provided by a lender for personal expenses (medical, wedding, travel). It does not require collateral and is granted based on the borrower's creditworthiness.
+                    </div>
+                </div>
+
+                <!-- FAQ ITEM 4 -->
+                <div class="faq-item border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div onclick="toggleFaq(this)" class="faq-question p-6 flex items-center justify-between bg-white font-bold text-slate-800">
+                        <span>What is Account Aggregator (AA)?</span>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-white">
+                        <div class="bg-blue-50 p-4 rounded-xl text-blue-800 text-sm mb-4">
+                            <strong>Script:</strong> "It is an RBI-approved safe way where you allow us to check your bank details online. This makes loan processing faster."
                         </div>
+                        <ul class="text-slate-600 space-y-2 text-sm">
+                            <li>• No money will be deducted from your account.</li>
+                            <li>• Fully controlled by you; you can stop access anytime.</li>
+                            <li>• Safe and encrypted data transfer.</li>
+                        </ul>
                     </div>
-                    <i class="fa-solid fa-building-columns absolute -bottom-10 -right-10 text-9xl text-blue-700 opacity-30"></i>
                 </div>
+
+                <!-- FAQ ITEM 5 -->
+                <div class="faq-item border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div onclick="toggleFaq(this)" class="faq-question p-6 flex items-center justify-between bg-white font-bold text-slate-800">
+                        <span>Can I repay early?</span>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-white text-slate-600 leading-relaxed">
+                        Yes, you can repay prior to the due date. This helps in maintaining a healthy credit score and avoids the accumulation of additional daily interest.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button onclick="showPage('view-home')" class="px-8 py-3 bg-slate-900 text-white rounded-full font-bold shadow-xl hover:bg-blue-600 transition-all flex items-center gap-2 mx-auto">
+                    <i class="fa-solid fa-house"></i> Back to Main Menu
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- 3. ENTITY SOP PORTAL (Internal) -->
+    <!-- 3. ENTITY SOP PORTAL -->
     <div id="view-portal" class="page-view min-h-screen flex">
         <aside class="w-72 bg-white border-r border-slate-200 flex flex-col shadow-xl">
             <div class="p-8 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div id="entity-logo" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg">B</div>
+                    <div id="entity-logo" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic">B</div>
                     <h1 id="entity-name" class="text-xl font-extrabold tracking-tight">BharatLoan</h1>
                 </div>
             </div>
@@ -172,11 +217,10 @@
 
         <main class="flex-1 p-12 overflow-y-auto">
             <div id="portal-content" class="max-w-4xl mx-auto">
-                <!-- Content injected here -->
-                <div id="tab-journey" class="sop-tab active">
+                <div id="tab-journey" class="sop-tab">
                     <h2 class="text-3xl font-extrabold mb-8">Application Lifecycle</h2>
                     <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-slate-600">Standard operating procedures for the entity's application lifecycle.</p>
+                        <p class="text-slate-600">Please select an entity to view specific journey details.</p>
                     </div>
                 </div>
                 <div id="tab-audit" class="sop-tab hidden">
@@ -194,6 +238,18 @@
             document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             window.scrollTo(0, 0);
+        }
+
+        function toggleFaq(el) {
+            const item = el.parentElement;
+            const isOpen = item.classList.contains('open');
+            
+            // Close all first (optional, for accordion behavior)
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            
+            if (!isOpen) {
+                item.classList.add('open');
+            }
         }
 
         function openEntity(name, initial, colorClass) {
@@ -215,7 +271,9 @@
                 n.classList.add('text-slate-500');
             });
             
-            document.getElementById('btn-' + tabId).classList.add('active');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
+            activeBtn.classList.remove('text-slate-500');
         }
     </script>
 </body>
