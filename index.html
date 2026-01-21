@@ -106,6 +106,7 @@
     </p>
 
     <div class="space-y-4">
+      <!-- FAQ items unchanged -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
           1. My loan is approved but not disbursed. Why?
@@ -225,7 +226,7 @@
 <!-- BRAND ENTITIES -->
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
     <span class="mx-auto font-bold">Brand Entities</span>
   </header>
 
@@ -263,13 +264,17 @@
 <!-- UPDATES -->
 <div id="view-updates" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
     <span class="mx-auto font-bold">System Updates</span>
   </header>
   <div class="max-w-4xl mx-auto px-6 py-14">
-      <h2 class="text-2xl font-bold mb-6">Recent Policy Changes</h2>
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <p class="text-slate-600 dark:text-slate-400">All updates and system logs will be published here.</p>
+      <h2 class="text-3xl font-extrabold mb-8">Recent Policy Changes</h2>
+      
+      <!-- New Addon Message -->
+      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">✨</div>
+          <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
+          <p class="text-slate-600 dark:text-slate-400">There are no new updates currently. Check back later for the latest changes and policy logs.</p>
       </div>
   </div>
 </div>
