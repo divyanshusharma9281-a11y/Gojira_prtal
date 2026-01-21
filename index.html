@@ -69,7 +69,9 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Custom Scrollbar */
+        /* Journey Tracker Styles */
+        .step-transition { transition: all 0.3s ease; }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -89,7 +91,7 @@
                 </div>
                 <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-500">
                     <span class="text-slate-900">Training Home</span>
-                    <button onclick="navigateTo('view-calculator')" class="hover:text-blue-600 transition-colors">EMI Calculator</button>
+                    <button onclick="navigateTo('view-journey')" class="hover:text-blue-600 transition-colors">Customer Journey</button>
                     <a href="#" class="hover:text-blue-600 transition-colors">Support</a>
                 </div>
             </div>
@@ -98,7 +100,7 @@
         <main class="max-w-7xl mx-auto px-6 py-12 md:py-20">
             <div class="text-center mb-16">
                 <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
-                    Internal <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Training Portal</span>
+                    Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Training Portal</span>
                 </h1>
                 <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.</p>
             </div>
@@ -124,14 +126,14 @@
                     <span class="text-indigo-600 font-bold text-[10px] tracking-widest uppercase mt-auto">View Brands <i class="fa-solid fa-arrow-right ml-1"></i></span>
                 </div>
 
-                <!-- Calculator Card (New Addon) -->
-                <div onclick="navigateTo('view-calculator')" class="glass-card hover-lift p-8 rounded-[2rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border border-slate-100">
+                <!-- NEW ADDON: Journey Tracker Card -->
+                <div onclick="navigateTo('view-journey')" class="glass-card hover-lift p-8 rounded-[2rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border border-slate-100">
                     <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-calculator text-2xl"></i>
+                        <i class="fa-solid fa-route text-2xl"></i>
                     </div>
-                    <h2 class="text-xl font-bold mb-2">EMI Calculator</h2>
-                    <p class="text-slate-500 text-xs mb-4">Calculate repayments instantly.</p>
-                    <span class="text-emerald-600 font-bold text-[10px] tracking-widest uppercase mt-auto">Calculate <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                    <h2 class="text-xl font-bold mb-2">Customer Journey</h2>
+                    <p class="text-slate-500 text-xs mb-4">End-to-End Visual SOP flow.</p>
+                    <span class="text-emerald-600 font-bold text-[10px] tracking-widest uppercase mt-auto">View Journey <i class="fa-solid fa-arrow-right ml-1"></i></span>
                 </div>
 
                 <!-- Updates Card -->
@@ -169,7 +171,6 @@
             </div>
 
             <div id="faqContainer" class="space-y-2">
-                <!-- FAQ Items are same as previous but with search classes -->
                 <div class="faq-item searchable">
                     <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
                         <span class="text-lg font-bold text-slate-800">1. What is a Non-Banking Financial Company (NBFC)?</span>
@@ -226,27 +227,22 @@
 
         <div class="max-w-6xl mx-auto px-6 py-12">
             <h1 class="text-3xl font-extrabold text-slate-900 mb-10 text-center tracking-tight">Entity Guidelines</h1>
-            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- BharatLoan -->
                 <div onclick="openSop('BharatLoan', 'bg-blue-600')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
                     <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-blue-100">B</div>
                     <h3 class="font-bold text-lg">BharatLoan</h3>
                     <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Premium Segment</p>
                 </div>
-                <!-- Rupee112 -->
                 <div onclick="openSop('Rupee112', 'bg-emerald-600')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
                     <div class="w-16 h-16 bg-emerald-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-emerald-100">R</div>
                     <h3 class="font-bold text-lg">Rupee112</h3>
                     <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Instant Approval</p>
                 </div>
-                <!-- Loan112 -->
                 <div onclick="openSop('Loan112', 'bg-indigo-600')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
                     <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-indigo-100">L</div>
                     <h3 class="font-bold text-lg">Loan112</h3>
                     <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Short-term</p>
                 </div>
-                <!-- Rupeeontime -->
                 <div onclick="openSop('Rupeeontime', 'bg-orange-500')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
                     <div class="w-16 h-16 bg-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-orange-100">T</div>
                     <h3 class="font-bold text-lg">Rupeeontime</h3>
@@ -256,49 +252,71 @@
         </div>
     </div>
 
-    <!-- SECTION 4: ADDON - EMI CALCULATOR -->
-    <div id="view-calculator" class="app-view bg-white">
+    <!-- SECTION 4: ADDON - CUSTOMER JOURNEY TRACKER -->
+    <div id="view-journey" class="app-view bg-white">
         <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
             <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
                 <i class="fa-solid fa-arrow-left"></i> Home
             </button>
-            <span class="font-bold text-slate-800 text-sm">Agent Tool: EMI Calculator</span>
+            <span class="font-bold text-slate-800 text-sm">Interactive SOP Flow</span>
             <div class="w-10"></div>
         </header>
 
-        <div class="max-w-2xl mx-auto px-6 py-12">
-            <div class="bg-slate-900 text-white p-10 rounded-[3rem] shadow-2xl">
-                <h2 class="text-2xl font-black mb-8 flex items-center gap-3">
-                    <i class="fa-solid fa-calculator text-blue-400"></i> Loan Estimator
-                </h2>
-                
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Principal Amount (₹)</label>
-                        <input type="number" id="calcAmount" value="10000" class="w-full bg-slate-800 border-none rounded-2xl p-4 text-white focus:ring-2 focus:ring-blue-500 outline-none font-bold text-xl">
+        <div class="max-w-5xl mx-auto px-6 py-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black text-slate-900 mb-2">Customer Success Journey</h2>
+                <p class="text-slate-500">Click on each step to view the specific operational workflow.</p>
+            </div>
+
+            <div class="bg-slate-50 rounded-[3rem] border border-slate-100 p-8 shadow-sm">
+                <!-- Visual Timeline -->
+                <div class="relative flex justify-between mb-12">
+                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
+                    
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(1)">
+                        <div id="circle-1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white">1</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Register</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Tenure (Days)</label>
-                            <input type="number" id="calcDays" value="15" class="w-full bg-slate-800 border-none rounded-2xl p-4 text-white focus:ring-2 focus:ring-blue-500 outline-none font-bold text-xl">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Daily Int. (%)</label>
-                            <input type="number" step="0.01" id="calcRate" value="0.10" class="w-full bg-slate-800 border-none rounded-2xl p-4 text-white focus:ring-2 focus:ring-blue-500 outline-none font-bold text-xl">
-                        </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(2)">
+                        <div id="circle-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">2</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">KYC</span>
                     </div>
-                    <button onclick="calculateRepayment()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-white transition-all shadow-lg shadow-blue-900/40">Calculate Final Repayment</button>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(3)">
+                        <div id="circle-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">3</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Finance</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(4)">
+                        <div id="circle-4" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">4</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Select</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(5)">
+                        <div id="circle-5" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">5</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Sign</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(6)">
+                        <div id="circle-6" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">6</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Verify</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(7)">
+                        <div id="circle-7" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">7</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Disbursal</span>
+                    </div>
                 </div>
 
-                <div id="calcResult" class="mt-10 pt-10 border-t border-slate-800 hidden">
-                    <div class="flex justify-between items-end">
+                <!-- Detail Content -->
+                <div id="step-content" class="bg-white border border-slate-100 rounded-3xl p-8 step-transition shadow-sm">
+                    <h3 id="step-title" class="text-2xl font-black text-slate-900 mb-6">1. Customer Registration</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
                         <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold tracking-widest">Total Repayment Amount</p>
-                            <h3 id="resTotal" class="text-4xl font-black text-emerald-400 mt-1">₹0.00</h3>
+                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Customer Activity</h4>
+                            <p id="customer-action" class="text-slate-600 leading-relaxed font-medium">Customer logs into the portal and verifies their mobile number via OTP.</p>
                         </div>
-                        <div class="text-right">
-                            <p class="text-xs text-slate-400 uppercase font-bold tracking-widest">Total Interest</p>
-                            <p id="resInterest" class="text-xl font-bold text-white mt-1">₹0.00</p>
+                        <div>
+                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Backend SOP</h4>
+                            <ul id="backend-process" class="space-y-3">
+                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> SMS Gateway trigger</li>
+                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> IP/Location log capture</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -306,7 +324,7 @@
         </div>
     </div>
 
-    <!-- SECTION 5: SOP DETAILS (Dynamic Content) -->
+    <!-- SECTION 5: SOP DETAILS -->
     <div id="view-sop-details" class="app-view bg-white">
         <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
             <button onclick="navigateTo('view-entities')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
@@ -320,11 +338,8 @@
                 <i class="fa-solid fa-house"></i>
             </button>
         </header>
-
         <div class="max-w-4xl mx-auto px-6 py-12">
-            <div id="sopContent" class="space-y-6">
-                <!-- Content generated via JS -->
-            </div>
+            <div id="sopContent" class="space-y-6"></div>
         </div>
     </div>
 
@@ -344,19 +359,17 @@
             </div>
             <h1 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">System Status: Active</h1>
             <p class="text-slate-600 max-w-lg mb-8 leading-relaxed">The portal is currently up-to-date. No new policy changes reported for today.</p>
-            
             <div class="w-full max-w-md p-6 bg-slate-50 rounded-3xl border border-slate-100 text-left">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Version 2.1.0</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Version 2.2.0</span>
                 </div>
-                <p class="text-sm text-slate-400 italic">Added: EMI Calculator Addon, Search Filter, and Dynamic SOP Content Engine.</p>
+                <p class="text-sm text-slate-400 italic">Added: Interactive Customer Journey SOP and Visual Workflow Addon.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Navigation Engine
         function navigateTo(viewId) {
             document.querySelectorAll('.app-view').forEach(view => {
                 view.classList.remove('active');
@@ -366,7 +379,6 @@
             window.scrollTo(0, 0);
         }
 
-        // FAQ Toggle Logic
         function toggleFaq(btn) {
             const item = btn.parentElement;
             const isActive = item.classList.contains('active');
@@ -374,7 +386,6 @@
             if (!isActive) item.classList.add('active');
         }
 
-        // Search Knowledge Base
         function searchKb() {
             const query = document.getElementById('kbSearch').value.toLowerCase();
             const items = document.querySelectorAll('.searchable');
@@ -384,54 +395,74 @@
             });
         }
 
-        // EMI Calculator Logic
-        function calculateRepayment() {
-            const amount = parseFloat(document.getElementById('calcAmount').value);
-            const days = parseFloat(document.getElementById('calcDays').value);
-            const rate = parseFloat(document.getElementById('calcRate').value) / 100;
+        const journeyData = {
+            1: {
+                title: "1. Registration",
+                action: "Customer logs into the portal and verifies their mobile number via OTP.",
+                process: ["System triggers automated OTP", "Validates user identity and session", "Captures initial lead metadata"]
+            },
+            2: {
+                title: "2. KYC Submission",
+                action: "Uploads National ID and takes a live selfie for biometric verification.",
+                process: ["Automated OCR verification", "Liveness check performed to prevent fraud", "Aadhaar/PAN cross-check"]
+            },
+            3: {
+                title: "3. Financial Verification",
+                action: "Connects bank account via Account Aggregator for digital statement analysis.",
+                process: ["Flow analysis for 6 months", "Debt-to-Income calculation", "Risk scoring trigger"]
+            },
+            4: {
+                title: "4. Loan Selection",
+                action: "Chooses specific amount and tenure within the approved limit.",
+                process: ["EMI generation based on tenure", "Interest rate assignment", "Fee disclosure generation"]
+            },
+            5: {
+                title: "5. Digital Signing",
+                action: "Reviews the contract and signs via e-sign OTP service.",
+                process: ["Legal agreement timestamping", "Document storage in secure vault", "Compliance audit trail logged"]
+            },
+            6: {
+                title: "6. Operational Verification",
+                action: "Waiting phase for final manual/automated sanity checks.",
+                process: ["Fraud engine final sweep", "Data consistency check", "Credit team final approval"]
+            },
+            7: {
+                title: "7. Disbursal",
+                action: "Receives SMS/Mail confirmation as funds are wired to the bank.",
+                process: ["IMPS/NEFT payment trigger", "Transaction ID update in CRM", "Repayment schedule activation"]
+            }
+        };
 
-            if(isNaN(amount) || isNaN(days) || isNaN(rate)) return;
+        function showStep(stepId) {
+            const data = journeyData[stepId];
+            document.getElementById('step-title').innerText = data.title;
+            document.getElementById('customer-action').innerText = data.action;
+            const list = document.getElementById('backend-process');
+            list.innerHTML = '';
+            data.process.forEach(p => {
+                list.innerHTML += `<li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> ${p}</li>`;
+            });
 
-            const interest = amount * rate * days;
-            const total = amount + interest;
-
-            document.getElementById('resTotal').innerText = "₹" + total.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('resInterest').innerText = "₹" + interest.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('calcResult').classList.remove('hidden');
+            for (let i = 1; i <= 7; i++) {
+                const circle = document.getElementById(`circle-${i}`);
+                if (i < stepId) {
+                    circle.className = "w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white transition-all";
+                    circle.innerHTML = '<i class="fa-solid fa-check"></i>';
+                } else if (i == stepId) {
+                    circle.className = "w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white transition-all scale-110";
+                    circle.innerHTML = i;
+                } else {
+                    circle.className = "w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white transition-all";
+                    circle.innerHTML = i;
+                }
+            }
         }
 
-        // SOP Dynamic Content Engine
         const sopData = {
-            'BharatLoan': {
-                tagline: "Premium Salaried Segment",
-                steps: [
-                    { title: "Target Audiance", desc: "Corporate employees with salary > 25k. Mandatory official email ID verification." },
-                    { title: "Verification", desc: "Physical address verification for loans above 50k." },
-                    { title: "Collections", desc: "Soft reminders start 2 days before the due date." }
-                ]
-            },
-            'Rupee112': {
-                tagline: "Ultra-Fast Micro Loans",
-                steps: [
-                    { title: "Approval Time", desc: "Must be processed within 15 minutes of document submission." },
-                    { title: "Tenure Policy", desc: "Maximum tenure allowed is 30 days for first-time borrowers." },
-                    { title: "Interest", desc: "Daily interest model applies. No flat rates." }
-                ]
-            },
-            'Loan112': {
-                tagline: "Short Term Liquidity",
-                steps: [
-                    { title: "Min Amount", desc: "Starting from ₹3,000 for emergency needs." },
-                    { title: "Account Aggregator", desc: "AA is mandatory for this brand. No PDF uploads accepted." }
-                ]
-            },
-            'Rupeeontime': {
-                tagline: "Flexible Repayment Brand",
-                steps: [
-                    { title: "Part-Payment", desc: "Customers can pay interest only to extend for another 7 days." },
-                    { title: "Disbursement", desc: "IMPS only. Ensure bank name matches PAN exactly." }
-                ]
-            }
+            'BharatLoan': { tagline: "Premium Salaried", steps: [{ title: "Target", desc: "Salary > 25k. Official email mandatory." }, { title: "Verification", desc: "Physical check for > 50k." }] },
+            'Rupee112': { tagline: "Micro Loans", steps: [{ title: "Speed", desc: "15-min processing goal." }, { title: "Limit", desc: "Max 30 days for new users." }] },
+            'Loan112': { tagline: "Short Term", steps: [{ title: "Entry", desc: "Starting from ₹3,000." }, { title: "Method", desc: "AA is mandatory." }] },
+            'Rupeeontime': { tagline: "Flexible", steps: [{ title: "Extension", desc: "Pay interest only to extend." }, { title: "Banking", desc: "IMPS name must match PAN." }] }
         };
 
         function openSop(name, colorClass) {
@@ -439,31 +470,12 @@
             const icon = document.getElementById('active-entity-icon');
             icon.innerText = name.charAt(0);
             icon.className = `w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs ${colorClass}`;
-            
-            // Build Content
             const data = sopData[name];
-            let html = `
-                <div class="mb-10">
-                    <span class="px-4 py-1 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-widest">${data.tagline}</span>
-                    <h2 class="text-4xl font-black text-slate-900 mt-4">Brand Operational SOP</h2>
-                </div>
-                <div class="space-y-4">
-            `;
-
+            let html = `<div class="mb-10"><span class="px-4 py-1 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-widest">${data.tagline}</span><h2 class="text-4xl font-black text-slate-900 mt-4">Brand SOP</h2></div><div class="space-y-4">`;
             data.steps.forEach((step, index) => {
-                html += `
-                    <div class="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 flex gap-6 items-start">
-                        <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-600 font-bold flex-shrink-0">${index + 1}</div>
-                        <div>
-                            <h4 class="text-lg font-bold text-slate-800">${step.title}</h4>
-                            <p class="text-slate-500 mt-2 leading-relaxed">${step.desc}</p>
-                        </div>
-                    </div>
-                `;
+                html += `<div class="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 flex gap-6 items-start"><div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-600 font-bold flex-shrink-0">${index + 1}</div><div><h4 class="text-lg font-bold text-slate-800">${step.title}</h4><p class="text-slate-500 mt-2">${step.desc}</p></div></div>`;
             });
-
-            html += `</div>`;
-            document.getElementById('sopContent').innerHTML = html;
+            document.getElementById('sopContent').innerHTML = html + `</div>`;
             navigateTo('view-sop-details');
         }
     </script>
