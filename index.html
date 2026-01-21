@@ -10,37 +10,69 @@
     body { font-family: 'Inter', sans-serif; }
     .app-view { display:none; min-height:100vh; }
     .app-view.active { display:block; }
-    .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 18px 25px -5px rgba(0,0,0,.1); }
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 30px -10px rgba(0,0,0,.15);
+    }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
 
+<!-- TOP NAV -->
+<nav class="h-16 bg-white flex items-center px-6 border-b sticky top-0 z-50">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 bg-slate-900 rounded flex items-center justify-center text-white shadow">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-10v2m0 8v2m8-6a8 8 0 11-16 0 8 8 0 0116 0z" />
+      </svg>
+    </div>
+    <span class="font-extrabold text-xl tracking-tight">
+      Gojira <span class="text-blue-600">TP</span>
+    </span>
+  </div>
+</nav>
+
 <!-- HOME -->
 <div id="view-home" class="app-view active">
   <main class="max-w-7xl mx-auto px-6 py-20 text-center">
     <h1 class="text-5xl font-extrabold mb-6">
-      Welcome to <span class="text-blue-600">Training Portal</span>
+      Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Training Portal</span>
     </h1>
-    <p class="text-slate-500 max-w-2xl mx-auto mb-16">
+    <p class="text-slate-500 max-w-2xl mx-auto mb-20">
       Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
     </p>
 
-    <div class="grid md:grid-cols-3 gap-6">
-      <div onclick="navigateTo('view-kb')" class="bg-white p-8 rounded-3xl cursor-pointer hover-lift">
-        <h2 class="font-bold text-xl">Knowledge Base</h2>
-        <p class="text-xs text-slate-500 mt-2">Crucial FAQs and operational guidelines.</p>
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- Knowledge Base -->
+      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl font-extrabold">
+          📘
+        </div>
+        <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
+        <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
       </div>
 
-      <div onclick="navigateTo('view-entities')" class="bg-white p-8 rounded-3xl cursor-pointer hover-lift">
-        <h2 class="font-bold text-xl">Brand Entities</h2>
-        <p class="text-xs text-slate-500 mt-2">Specific guidelines for each entity.</p>
+      <!-- Brand Entities -->
+      <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl font-extrabold">
+          🏦
+        </div>
+        <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
+        <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
       </div>
 
-      <div onclick="navigateTo('view-updates')" class="bg-white p-8 rounded-3xl cursor-pointer hover-lift">
-        <h2 class="font-bold text-xl">New Updates</h2>
-        <p class="text-xs text-slate-500 mt-2">Latest system & policy logs.</p>
+      <!-- Updates -->
+      <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl font-extrabold">
+          📢
+        </div>
+        <h2 class="text-2xl font-bold mb-2">New Updates</h2>
+        <p class="text-sm opacity-90">Latest system & policy logs.</p>
       </div>
+
     </div>
   </main>
 </div>
@@ -52,36 +84,32 @@
     <span class="mx-auto font-bold">Brand Entities</span>
   </header>
 
-  <div class="max-w-6xl mx-auto px-6 py-12">
-    <h1 class="text-3xl font-extrabold text-center mb-10">Entity Guidelines</h1>
+  <div class="max-w-6xl mx-auto px-6 py-14">
+    <h1 class="text-3xl font-extrabold text-center mb-12">Entity Guidelines</h1>
 
-    <div class="grid md:grid-cols-4 gap-6">
+    <div class="grid md:grid-cols-4 gap-8">
 
-      <!-- BharatLoan -->
       <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl text-center cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">B</div>
-        <h3 class="font-bold">BharatLoan</h3>
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
+        <h3 class="font-bold text-lg">BharatLoan</h3>
         <p class="text-xs uppercase opacity-80">Premium Segment</p>
       </div>
 
-      <!-- Rupee112 -->
       <div class="p-8 rounded-3xl text-center hover-lift bg-emerald-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">R</div>
-        <h3 class="font-bold">Rupee112</h3>
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
+        <h3 class="font-bold text-lg">Rupee112</h3>
         <p class="text-xs uppercase opacity-80">Instant Approval</p>
       </div>
 
-      <!-- Loan112 -->
-      <div class="p-8 rounded-3xl text-center hover-lift bg-indigo-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">L</div>
-        <h3 class="font-bold">Loan112</h3>
+      <div class="p-8 rounded-3xl text-center hover-lift bg-indigo-700 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
+        <h3 class="font-bold text-lg">Loan112</h3>
         <p class="text-xs uppercase opacity-80">Short-term</p>
       </div>
 
-      <!-- RupeeOnTime -->
       <div class="p-8 rounded-3xl text-center hover-lift bg-purple-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">T</div>
-        <h3 class="font-bold">RupeeOnTime</h3>
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
+        <h3 class="font-bold text-lg">RupeeOnTime</h3>
         <p class="text-xs uppercase opacity-80">Flexi-Repay</p>
       </div>
 
@@ -96,10 +124,10 @@
     <span class="mx-auto font-bold">BharatLoan</span>
   </header>
 
-  <div class="max-w-6xl mx-auto px-6 py-12">
+  <div class="max-w-6xl mx-auto px-6 py-14">
     <h1 class="text-3xl font-extrabold text-center mb-10">BharatLoan SOP</h1>
 
-    <div class="bg-slate-50 p-8 rounded-[3rem]">
+    <div class="bg-slate-50 p-10 rounded-[3rem]">
       <div class="bg-white p-8 rounded-3xl">
         <h3 class="text-2xl font-black mb-6">1. Customer Journey</h3>
 
@@ -107,14 +135,13 @@
           <div>
             <h4 class="text-xs font-bold text-blue-600 uppercase mb-3">Customer Flow</h4>
             <p class="text-slate-600">
-              End-to-end journey from customer registration, KYC, loan selection, digital signing,
-              verification, and final loan disbursal.
+              End-to-end journey from customer registration, KYC, loan selection,
+              digital signing, verification, and final loan disbursal.
             </p>
           </div>
-
           <div>
             <h4 class="text-xs font-bold text-blue-600 uppercase mb-3">System Process</h4>
-            <ul class="space-y-2 text-slate-600 text-sm">
+            <ul class="space-y-2 text-sm text-slate-600">
               <li>✔ Registration & OTP verification</li>
               <li>✔ KYC & financial assessment</li>
               <li>✔ Risk & compliance checks</li>
@@ -123,15 +150,15 @@
             </ul>
           </div>
         </div>
+
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
 function navigateTo(id){
-  document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
