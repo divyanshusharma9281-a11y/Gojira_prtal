@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,517 +9,195 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-        
-        .app-view { 
-            display: none; 
-            min-height: 100vh;
-            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .app-view { display: none; min-height: 100vh; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .app-view.active { display: block; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .faq-item { border-bottom: 1px solid #f1f5f9; }
-        .faq-answer { 
-            max-height: 0; 
-            overflow: hidden; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            opacity: 0;
-        }
-        .faq-item.active .faq-answer { 
-            max-height: 1500px; 
-            opacity: 1; 
-            padding-bottom: 2rem; 
-            padding-top: 0.5rem;
-        }
-        .faq-item.active .chevron { transform: rotate(180deg); color: #2563eb; }
-        .chevron { transition: transform 0.3s ease; }
-        
-        .badge-call {
-            background: #dbeafe;
-            color: #1e40af;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 99px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .pulse-icon {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .step-transition { transition: all 0.3s ease; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-900">
 
-    <!-- SECTION 1: MAIN DASHBOARD -->
-    <div id="view-home" class="app-view active">
-        <nav class="bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
-            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 bg-slate-900 rounded flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-chart-line text-sm"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Gojira <span class="text-blue-600">TP</span></span>
-                </div>
-                <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-500">
-                    <span class="text-slate-900">Training Home</span>
-                    <a href="#" class="hover:text-blue-600 transition-colors">Support</a>
-                </div>
-            </div>
-        </nav>
+<!-- BHARATLOAN SOP VIEW -->
+<div id="view-bharatloan" class="app-view active bg-white">
+    <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
+        <button onclick="navigateTo('view-entities')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold">
+            <i class="fa-solid fa-arrow-left"></i> Brand SOPs
+        </button>
+        <span class="font-bold text-slate-800">BharatLoan</span>
+        <div class="w-10"></div>
+    </header>
 
-        <main class="max-w-7xl mx-auto px-6 py-12 md:py-20">
-            <div class="text-center mb-16">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
-                    Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Training Portal</span>
-                </h1>
-                <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.</p>
-            </div>
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-4 text-center tracking-tight">
+            BharatLoan Customer Journey: Step-by-Step SOP
+        </h1>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- KB Card -->
-                <div onclick="navigateTo('view-kb')" class="glass-card hover-lift p-8 rounded-[2rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border border-slate-100">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-book-open text-2xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold mb-2">Knowledge Base</h2>
-                    <p class="text-slate-500 text-xs mb-4">Crucial FAQs and Operational Guidelines.</p>
-                    <span class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mt-auto">Open <i class="fa-solid fa-arrow-right ml-1"></i></span>
+        <p class="text-slate-600 text-center max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
+            This document outlines the end-to-end customer journey for BharatLoan as defined in the Gojira TP training portal.
+            It pairs customer actions with the necessary backend Standard Operating Procedures (SOPs).
+        </p>
+
+        <div class="bg-slate-50 rounded-[3rem] border border-slate-100 p-8 shadow-sm">
+            <!-- STEPS -->
+            <div class="relative flex justify-between mb-12">
+                <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
+
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(1)">
+                    <div id="circle-1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white">1</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Register</span>
                 </div>
-
-                <!-- Entities Card -->
-                <div onclick="navigateTo('view-entities')" class="glass-card hover-lift p-8 rounded-[2rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border border-slate-100">
-                    <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-building-columns text-2xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold mb-2">Brand SOPs</h2>
-                    <p class="text-slate-500 text-xs mb-4">Specific guidelines for each entity.</p>
-                    <span class="text-indigo-600 font-bold text-[10px] tracking-widest uppercase mt-auto">View Brands <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(2)">
+                    <div id="circle-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">2</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">KYC</span>
                 </div>
-
-                <!-- Updates Card -->
-                <div onclick="navigateTo('view-updates')" class="glass-card hover-lift p-8 rounded-[2rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border-2 border-dashed border-amber-100">
-                    <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-bullhorn text-2xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold mb-2">New Updates</h2>
-                    <p class="text-slate-500 text-xs mb-4">Latest system & policy logs.</p>
-                    <span class="text-amber-600 font-bold text-[10px] tracking-widest uppercase mt-auto">Check Logs <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(3)">
+                    <div id="circle-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">3</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Finance</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(4)">
+                    <div id="circle-4" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">4</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Select</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(5)">
+                    <div id="circle-5" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">5</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Sign</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(6)">
+                    <div id="circle-6" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">6</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Verify</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(7)">
+                    <div id="circle-7" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">7</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Disbursal</span>
                 </div>
             </div>
-        </main>
-    </div>
 
-    <!-- SECTION 2: KNOWLEDGE BASE MODULE -->
-    <div id="view-kb" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <div class="flex-1 max-w-md mx-8">
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="kbSearch" onkeyup="searchKb()" placeholder="Search FAQs..." class="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <!-- CONTENT -->
+            <div id="step-content" class="bg-white border border-slate-100 rounded-3xl p-8 step-transition shadow-sm">
+                <h3 id="step-title" class="text-2xl font-black text-slate-900 mb-6"></h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Customer Activity</h4>
+                        <p id="customer-action" class="text-slate-600 font-medium leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Backend SOP</h4>
+                        <ul id="backend-process" class="space-y-3"></ul>
+                    </div>
                 </div>
             </div>
-            <div class="w-20"></div>
-        </header>
 
-        <div class="max-w-4xl mx-auto px-6 py-12">
-            <div class="mb-12">
-                <h1 class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Frequently Asked Questions (FAQ)</h1>
-                <p class="text-slate-500 font-medium">Official responses to common loan and repayment queries.</p>
-            </div>
-
-            <div id="faqContainer" class="space-y-2">
-                <!-- FAQ 1 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">1. My loan is approved but not disbursed. Why?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 leading-relaxed mb-3">Loan disbursement may be pending due to:</p>
-                        <ul class="space-y-2 mb-3">
-                            <li class="flex gap-3 text-slate-700 font-medium"><i class="fa-solid fa-circle-info text-blue-500 mt-1.5 text-xs"></i><span>Incomplete documentation</span></li>
-                            <li class="flex gap-3 text-slate-700 font-medium"><i class="fa-solid fa-circle-info text-blue-500 mt-1.5 text-xs"></i><span>Bank account verification</span></li>
-                            <li class="flex gap-3 text-slate-700 font-medium"><i class="fa-solid fa-circle-info text-blue-500 mt-1.5 text-xs"></i><span>Internal compliance or risk checks</span></li>
-                        </ul>
-                        <p class="text-slate-600 italic">Our team will assist you with the exact reason.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 2 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">2. Can I increase my loan amount after sanction?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 leading-relaxed mb-3">Loan enhancement depends on the criteria mentioned below, but can only be done while accepting the offer, not post-sanction:</p>
-                        <ul class="space-y-2 mb-4">
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-circle-dot text-blue-500 mt-1.5 text-xs"></i><span>Your credit profile</span></li>
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-circle-dot text-blue-500 mt-1.5 text-xs"></i><span>Repayment history</span></li>
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-circle-dot text-blue-500 mt-1.5 text-xs"></i><span>Internal eligibility checks</span></li>
-                        </ul>
-                        <p class="text-slate-600">You may reapply after closing your current loan or maintaining a good repayment track.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 3 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">3. Why was my loan application rejected?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 mb-3">Loan applications can be rejected due to:</p>
-                        <ul class="space-y-2 mb-4">
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-xmark text-red-500 mt-1.5 text-sm"></i><span>Credit score or repayment history</span></li>
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-xmark text-red-500 mt-1.5 text-sm"></i><span>Existing liabilities</span></li>
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-xmark text-red-500 mt-1.5 text-sm"></i><span>Internal risk assessment</span></li>
-                        </ul>
-                        <div class="p-4 bg-amber-50 border border-amber-100 rounded-2xl text-amber-800 text-sm">
-                            Customer care can guide you, but they cannot override automated system decisions.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FAQ 4 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">4. How long does it take for repayment to reflect?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600">Payments usually reflect within <strong>24–48 working hours</strong>. Delays may occur due to bank processing times or public holidays.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 5 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">5. How is my total payable amount calculated?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 mb-3">Your payable amount includes:</p>
-                        <ul class="space-y-3">
-                            <li class="flex justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-slate-700 font-semibold">Principal Loan Amount</span>
-                                <i class="fa-solid fa-hand-holding-dollar text-slate-300"></i>
-                            </li>
-                            <li class="flex justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-slate-700 font-semibold">Interest</span>
-                                <span class="text-xs text-slate-400">Calculated up to repayment date</span>
-                            </li>
-                            <li class="flex justify-between p-3 bg-red-50 rounded-xl border border-red-100">
-                                <span class="text-red-700 font-semibold">Penalty (Post Repayment Date)</span>
-                                <span class="font-bold text-red-600">2%</span>
-                            </li>
-                        </ul>
-                        <p class="text-[10px] text-slate-400 mt-4">*Penalty consists of 1% daily interest and 1% penalty.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 6 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">6. Will my credit score be affected by delays?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <div class="bg-red-600 text-white p-6 rounded-3xl shadow-lg">
-                            <p class="text-lg font-bold">YES.</p>
-                            <p class="text-sm opacity-90">Any delay in repayment may negatively impact your CIBIL score, which can make it difficult to get future loan or credit card approvals.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FAQ 7 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="text-lg font-bold text-slate-800">7. Why am I being called after sharing PTP?</span>
-                            <span class="badge-call">Collections</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 mb-3">We may call to:</p>
-                        <ul class="space-y-2 mb-4">
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-phone-volume text-blue-500 mt-1 text-sm"></i><span>Confirm your payment readiness</span></li>
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-phone-volume text-blue-500 mt-1 text-sm"></i><span>Check if funds have been arranged</span></li>
-                            <li class="flex gap-3 text-slate-700"><i class="fa-solid fa-phone-volume text-blue-500 mt-1 text-sm"></i><span>Assist you in making payment earlier</span></li>
-                        </ul>
-                        <p class="text-slate-600 font-medium">Maintaining communication helps you avoid further penalties or legal escalation.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 8 -->
-                <div class="faq-item searchable">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">8. Will I continue to receive calls after payment?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 leading-relaxed"><strong>No.</strong> Once the payment is successfully received and updated in our system, collection calls will stop automatically. If you still receive a call shortly after paying, please share the payment reference number with the agent.</p>
-                    </div>
-                </div>
+            <!-- NOTES -->
+            <div class="mt-10 border-t pt-6 text-slate-600">
+                <h4 class="font-bold mb-2">Key Operational Notes</h4>
+                <ul class="list-disc ml-6 text-sm space-y-1">
+                    <li>Most steps are automated to ensure instant approval.</li>
+                    <li>If a customer stalls at Step 3 or Step 5, the Support/Collections team may assist.</li>
+                    <li>Timely repayment is critical to maintain a healthy CIBIL score.</li>
+                </ul>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- SECTION 3: ENTITIES MODULE -->
-    <div id="view-entities" class="app-view bg-slate-50">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <span class="font-bold text-slate-800">Financial Brands</span>
-            <div class="w-10"></div>
-        </header>
+<script>
+const journeyData = {
+    1: {
+        title: "Step 1: Registration",
+        action: "The customer visits the portal and enters their mobile number. They receive and enter an OTP (One-Time Password) to verify their identity.",
+        process: [
+            "System triggers an automated OTP via the gateway.",
+            "Validation of user identity and active session management.",
+            "Capture of initial lead metadata (device info, timestamp, referral source)."
+        ]
+    },
+    2: {
+        title: "Step 2: KYC Submission",
+        action: "The customer uploads their National ID (Aadhaar/PAN) and performs a live selfie capture for biometric matching.",
+        process: [
+            "Automated OCR extracts data from the ID.",
+            "Liveness check performed to prevent spoofing or fraud.",
+            "Cross-referencing with UIDAI / IT Department databases."
+        ]
+    },
+    3: {
+        title: "Step 3: Financial Verification",
+        action: "The customer connects their primary bank account through an Account Aggregator or uploads digital bank statements.",
+        process: [
+            "Automated flow analysis of the last 6 months of transactions.",
+            "Calculation of Debt-to-Income (DTI) ratio.",
+            "Triggering of the internal risk scoring engine."
+        ]
+    },
+    4: {
+        title: "Step 4: Loan Selection",
+        action: "Based on the approved limit shown, the customer selects the loan amount and preferred repayment tenure.",
+        process: [
+            "Real-time EMI generation using current interest rates.",
+            "Validation against the maximum risk threshold.",
+            "Generation of the digital Sanction Letter."
+        ]
+    },
+    5: {
+        title: "Step 5: E-Sign Agreement",
+        action: "The customer reviews the digital loan agreement and signs it electronically (Aadhaar-based e-Sign).",
+        process: [
+            "Generation of a legally binding digital contract.",
+            "Timestamping and secure document storage.",
+            "Triggering e-Mandate (NACH) setup for repayments."
+        ]
+    },
+    6: {
+        title: "Step 6: Final Verification",
+        action: "The customer may receive a verification call or be asked to confirm final bank account details.",
+        process: [
+            "Human-in-the-loop or automated compliance audit.",
+            "Bank account ownership verification (Penny-drop).",
+            "AML and blacklist checks."
+        ]
+    },
+    7: {
+        title: "Step 7: Disbursal",
+        action: "The customer receives confirmation and the loan amount is credited to their bank account.",
+        process: [
+            "IMPS/NEFT payment gateway triggered.",
+            "Loan status updated to Active in CBS.",
+            "Automated SMS/Email with repayment schedule."
+        ]
+    }
+};
 
-        <div class="max-w-6xl mx-auto px-6 py-12">
-            <h1 class="text-3xl font-extrabold text-slate-900 mb-10 text-center tracking-tight">Entity Guidelines</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- UPDATED: BHARATLOAN NOW OPENS CUSTOMER JOURNEY -->
-                <div onclick="navigateTo('view-bharatloan')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-blue-100">B</div>
-                    <h3 class="font-bold text-lg">BharatLoan</h3>
-                    <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Premium Segment</p>
-                </div>
+function showStep(stepId) {
+    const data = journeyData[stepId];
+    document.getElementById("step-title").innerText = data.title;
+    document.getElementById("customer-action").innerText = data.action;
 
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-emerald-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-emerald-100">R</div>
-                    <h3 class="font-bold text-lg">Rupee112</h3>
-                    <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Instant Approval</p>
-                </div>
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-indigo-100">L</div>
-                    <h3 class="font-bold text-lg">Loan112</h3>
-                    <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Short-term</p>
-                </div>
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-orange-100">T</div>
-                    <h3 class="font-bold text-lg">Rupeeontime</h3>
-                    <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Flexi-Repay</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    const list = document.getElementById("backend-process");
+    list.innerHTML = "";
+    data.process.forEach(p => {
+        list.innerHTML += `<li class="flex gap-2 text-slate-600 text-sm">
+            <i class="fa-solid fa-check text-blue-500 mt-1"></i>${p}
+        </li>`;
+    });
 
-    <!-- NEW SECTION: BHARATLOAN CUSTOMER JOURNEY VIEW -->
-    <div id="view-bharatloan" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-entities')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Brand SOPs
-            </button>
-            <span class="font-bold text-slate-800">BharatLoan</span>
-            <div class="w-10"></div>
-        </header>
-
-        <div class="max-w-6xl mx-auto px-6 py-12">
-            <h1 class="text-3xl font-extrabold text-slate-900 mb-10 text-center tracking-tight">BharatLoan SOP</h1>
-
-            <!-- CUSTOMER JOURNEY INSIDE BHARATLOAN -->
-            <div class="bg-slate-50 rounded-[3rem] border border-slate-100 p-8 shadow-sm">
-                <div class="relative flex justify-between mb-12">
-                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
-
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(1)">
-                        <div id="circle-1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white">1</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Register</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(2)">
-                        <div id="circle-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">2</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">KYC</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(3)">
-                        <div id="circle-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">3</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Finance</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(4)">
-                        <div id="circle-4" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">4</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Select</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(5)">
-                        <div id="circle-5" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">5</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Sign</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(6)">
-                        <div id="circle-6" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">6</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Verify</span>
-                    </div>
-                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(7)">
-                        <div id="circle-7" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">7</div>
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Disbursal</span>
-                    </div>
-                </div>
-
-                <div id="step-content" class="bg-white border border-slate-100 rounded-3xl p-8 step-transition shadow-sm">
-                    <h3 id="step-title" class="text-2xl font-black text-slate-900 mb-6">1. Customer Registration</h3>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Customer Activity</h4>
-                            <p id="customer-action" class="text-slate-600 leading-relaxed font-medium">Customer logs into the portal and verifies their mobile number via OTP.</p>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Backend SOP</h4>
-                            <ul id="backend-process" class="space-y-3">
-                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> System triggers automated OTP</li>
-                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> Validates user identity and session</li>
-                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> Captures initial lead metadata</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECTION 5: UPDATES -->
-    <div id="view-updates" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <span class="font-bold text-slate-800">System Updates</span>
-            <div class="w-10"></div>
-        </header>
-
-        <div class="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center text-center">
-            <div class="w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-8 pulse-icon">
-                <i class="fa-solid fa-satellite-dish text-3xl"></i>
-            </div>
-            <h1 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">System Status: Active</h1>
-            <p class="text-slate-600 max-w-lg mb-8 leading-relaxed">The portal is currently up-to-date. No new policy changes reported for today.</p>
-            <div class="w-full max-w-md p-6 bg-slate-50 rounded-3xl border border-slate-100 text-left">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Version 2.3.0</span>
-                </div>
-                <p class="text-sm text-slate-400 italic">Updated: Comprehensive Operational FAQs added to Knowledge Base.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function navigateTo(viewId) {
-            document.querySelectorAll('.app-view').forEach(view => {
-                view.classList.remove('active');
-            });
-            const target = document.getElementById(viewId);
-            target.classList.add('active');
-            window.scrollTo(0, 0);
+    for (let i = 1; i <= 7; i++) {
+        const c = document.getElementById(`circle-${i}`);
+        if (i < stepId) {
+            c.className = "w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white";
+            c.innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else if (i === stepId) {
+            c.className = "w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white";
+            c.innerHTML = i;
+        } else {
+            c.className = "w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white";
+            c.innerHTML = i;
         }
+    }
+}
 
-        function toggleFaq(btn) {
-            const item = btn.parentElement;
-            const isActive = item.classList.contains('active');
-            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-            if (!isActive) item.classList.add('active');
-        }
+showStep(1);
+</script>
 
-        function searchKb() {
-            const query = document.getElementById('kbSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.searchable');
-            items.forEach(item => {
-                const text = item.innerText.toLowerCase();
-                item.style.display = text.includes(query) ? "block" : "none";
-            });
-        }
-
-        const journeyData = {
-            1: {
-                title: "1. Registration",
-                action: "Customer logs into the portal and verifies their mobile number via OTP.",
-                process: ["System triggers automated OTP", "Validates user identity and session", "Captures initial lead metadata"]
-            },
-            2: {
-                title: "2. KYC Submission",
-                action: "Uploads National ID and takes a live selfie for biometric verification.",
-                process: ["Automated OCR verification", "Liveness check performed to prevent fraud", "Aadhaar/PAN cross-check"]
-            },
-            3: {
-                title: "3. Financial Verification",
-                action: "Connects bank account via Account Aggregator for digital statement analysis.",
-                process: ["Flow analysis for 6 months", "Debt-to-Income calculation", "Risk scoring trigger"]
-            },
-            4: {
-                title: "4. Loan Selection",
-                action: "Chooses specific amount and tenure within the approved limit.",
-                process: ["EMI generation based on tenure", "Interest rate assignment", "Fee disclosure generation"]
-            },
-            5: {
-                title: "5. Digital Signing",
-                action: "Reviews the contract and signs via e-sign OTP service.",
-                process: ["Legal agreement timestamping", "Document storage in secure vault", "Compliance audit trail logged"]
-            },
-            6: {
-                title: "6. Operational Verification",
-                action: "Waiting phase for final manual/automated sanity checks.",
-                process: ["Fraud engine final sweep", "Data consistency check", "Credit team final approval"]
-            },
-            7: {
-                title: "7. Disbursal",
-                action: "Receives SMS/Mail confirmation as funds are wired to the bank.",
-                process: ["IMPS/NEFT payment trigger", "Transaction ID update in CRM", "Repayment schedule activation"]
-            }
-        };
-
-        function showStep(stepId) {
-            const data = journeyData[stepId];
-            document.getElementById('step-title').innerText = data.title;
-            document.getElementById('customer-action').innerText = data.action;
-            const list = document.getElementById('backend-process');
-            list.innerHTML = '';
-            data.process.forEach(p => {
-                list.innerHTML += `<li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> ${p}</li>`;
-            });
-
-            for (let i = 1; i <= 7; i++) {
-                const circle = document.getElementById(`circle-${i}`);
-                if (i < stepId) {
-                    circle.className = "w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white transition-all";
-                    circle.innerHTML = '<i class="fa-solid fa-check"></i>';
-                } else if (i == stepId) {
-                    circle.className = "w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white transition-all scale-110";
-                    circle.innerHTML = i;
-                } else {
-                    circle.className = "w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white transition-all";
-                    circle.innerHTML = i;
-                }
-            }
-        }
-    </script>
 </body>
 </html>
-
