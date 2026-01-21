@@ -1,141 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gojira TP | Professional Training Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-        .app-view { display: none; min-height: 100vh; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .app-view.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-card { background: rgba(255,255,255,.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.3); transition: all .3s ease; }
-        .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,.1); }
-        .step-transition { transition: all .3s ease; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gojira TP | Training Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .app-view { display:none; min-height:100vh; }
+    .app-view.active { display:block; }
+    .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 18px 25px -5px rgba(0,0,0,.1); }
+  </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
 
 <!-- HOME -->
 <div id="view-home" class="app-view active">
-    <main class="max-w-7xl mx-auto px-6 py-20">
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-extrabold mb-6">
-                Welcome to <span class="text-blue-600">Training Portal</span>
-            </h1>
-            <p class="text-slate-500 max-w-2xl mx-auto">
-                Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
-            </p>
-        </div>
+  <main class="max-w-7xl mx-auto px-6 py-20 text-center">
+    <h1 class="text-5xl font-extrabold mb-6">
+      Welcome to <span class="text-blue-600">Training Portal</span>
+    </h1>
+    <p class="text-slate-500 max-w-2xl mx-auto mb-16">
+      Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
+    </p>
 
-        <div class="grid md:grid-cols-3 gap-6">
-            <div onclick="navigateTo('view-kb')" class="glass-card hover-lift p-8 rounded-3xl text-center cursor-pointer">
-                <h2 class="font-bold text-xl">Knowledge Base</h2>
-                <p class="text-xs text-slate-500 mt-2">Crucial FAQs and operational guidelines.</p>
-            </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div onclick="navigateTo('view-kb')" class="bg-white p-8 rounded-3xl cursor-pointer hover-lift">
+        <h2 class="font-bold text-xl">Knowledge Base</h2>
+        <p class="text-xs text-slate-500 mt-2">Crucial FAQs and operational guidelines.</p>
+      </div>
 
-            <!-- RENAMED -->
-            <div onclick="navigateTo('view-entities')" class="glass-card hover-lift p-8 rounded-3xl text-center cursor-pointer">
-                <h2 class="font-bold text-xl">Brand Entities</h2>
-                <p class="text-xs text-slate-500 mt-2">Specific guidelines for each entity.</p>
-            </div>
+      <div onclick="navigateTo('view-entities')" class="bg-white p-8 rounded-3xl cursor-pointer hover-lift">
+        <h2 class="font-bold text-xl">Brand Entities</h2>
+        <p class="text-xs text-slate-500 mt-2">Specific guidelines for each entity.</p>
+      </div>
 
-            <div onclick="navigateTo('view-updates')" class="glass-card hover-lift p-8 rounded-3xl text-center cursor-pointer">
-                <h2 class="font-bold text-xl">New Updates</h2>
-                <p class="text-xs text-slate-500 mt-2">Latest system & policy logs.</p>
-            </div>
-        </div>
-    </main>
-</div>
-
-<!-- ENTITIES -->
-<div id="view-entities" class="app-view bg-slate-50">
-    <header class="h-16 flex items-center px-6 border-b bg-white">
-        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">
-            ← Home
-        </button>
-        <span class="mx-auto font-bold">Brand Entities</span>
-    </header>
-
-    <div class="max-w-6xl mx-auto px-6 py-12">
-        <h1 class="text-3xl font-extrabold text-center mb-10">Entity Guidelines</h1>
-
-        <div class="grid md:grid-cols-4 gap-6">
-            <div onclick="navigateTo('view-bharatloan')" class="bg-white p-8 rounded-3xl text-center cursor-pointer hover:shadow-xl">
-                <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl mx-auto mb-4 flex items-center justify-center font-bold text-2xl">B</div>
-                <h3 class="font-bold">BharatLoan</h3>
-                <p class="text-xs text-slate-400 uppercase">Premium Segment</p>
-            </div>
-        </div>
+      <div onclick="navigateTo('view-updates')" class="bg-white p-8 rounded-3xl cursor-pointer hover-lift">
+        <h2 class="font-bold text-xl">New Updates</h2>
+        <p class="text-xs text-slate-500 mt-2">Latest system & policy logs.</p>
+      </div>
     </div>
+  </main>
 </div>
 
-<!-- BHARATLOAN -->
+<!-- BRAND ENTITIES -->
+<div id="view-entities" class="app-view">
+  <header class="h-16 flex items-center px-6 border-b bg-white">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
+    <span class="mx-auto font-bold">Brand Entities</span>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-extrabold text-center mb-10">Entity Guidelines</h1>
+
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <!-- BharatLoan -->
+      <div onclick="navigateTo('view-bharatloan')" class="bg-white p-8 rounded-3xl text-center cursor-pointer hover-lift">
+        <img src="assets/bharatloan.png" alt="BharatLoan" class="h-16 mx-auto mb-4">
+        <h3 class="font-bold">BharatLoan</h3>
+        <p class="text-xs text-slate-400 uppercase">Premium Segment</p>
+      </div>
+
+      <!-- Rupee112 -->
+      <div class="bg-white p-8 rounded-3xl text-center hover-lift">
+        <img src="assets/rupee112.png" alt="Rupee112" class="h-16 mx-auto mb-4">
+        <h3 class="font-bold">Rupee112</h3>
+        <p class="text-xs text-slate-400 uppercase">Instant Approval</p>
+      </div>
+
+      <!-- Loan112 -->
+      <div class="bg-white p-8 rounded-3xl text-center hover-lift">
+        <img src="assets/loan112.png" alt="Loan112" class="h-16 mx-auto mb-4">
+        <h3 class="font-bold">Loan112</h3>
+        <p class="text-xs text-slate-400 uppercase">Short-term</p>
+      </div>
+
+      <!-- RupeeOnTime -->
+      <div class="bg-white p-8 rounded-3xl text-center hover-lift">
+        <img src="assets/rupeeontime.png" alt="RupeeOnTime" class="h-16 mx-auto mb-4">
+        <h3 class="font-bold">RupeeOnTime</h3>
+        <p class="text-xs text-slate-400 uppercase">Flexi-Repay</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- BHARATLOAN SOP -->
 <div id="view-bharatloan" class="app-view bg-white">
-    <header class="h-16 flex items-center px-6 border-b bg-white">
-        <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500">
-            ← Brand Entities
-        </button>
-        <span class="mx-auto font-bold">BharatLoan</span>
-    </header>
+  <header class="h-16 flex items-center px-6 border-b">
+    <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500">← Brand Entities</button>
+    <span class="mx-auto font-bold">BharatLoan</span>
+  </header>
 
-    <div class="max-w-6xl mx-auto px-6 py-12">
-        <h1 class="text-3xl font-extrabold text-center mb-10">BharatLoan SOP</h1>
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-extrabold text-center mb-10">BharatLoan SOP</h1>
 
-        <div class="bg-slate-50 p-8 rounded-[3rem]">
-            <div id="step-content" class="bg-white p-8 rounded-3xl step-transition">
-                <!-- UPDATED TITLE -->
-                <h3 id="step-title" class="text-2xl font-black mb-6">
-                    1. Customer Journey
-                </h3>
+    <div class="bg-slate-50 p-8 rounded-[3rem]">
+      <div class="bg-white p-8 rounded-3xl">
+        <h3 class="text-2xl font-black mb-6">1. Customer Journey</h3>
 
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-xs font-bold text-blue-600 uppercase mb-3">Customer Flow</h4>
-                        <p id="customer-action" class="text-slate-600">
-                            Complete journey from customer registration, KYC, loan selection, digital signing, verification,
-                            and finally loan disbursal to the registered bank account.
-                        </p>
-                    </div>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h4 class="text-xs font-bold text-blue-600 uppercase mb-3">Customer Flow</h4>
+            <p class="text-slate-600">
+              End-to-end journey from customer registration, KYC, loan selection, digital signing,
+              verification, and final loan disbursal.
+            </p>
+          </div>
 
-                    <div>
-                        <h4 class="text-xs font-bold text-blue-600 uppercase mb-3">System Process</h4>
-                        <ul id="backend-process" class="space-y-3">
-                            <li>✔ Registration & OTP Verification</li>
-                            <li>✔ KYC & Financial Assessment</li>
-                            <li>✔ Risk Checks & Approval</li>
-                            <li>✔ Digital Agreement Signing</li>
-                            <li>✔ Final Verification & Disbursal</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+          <div>
+            <h4 class="text-xs font-bold text-blue-600 uppercase mb-3">System Process</h4>
+            <ul class="space-y-2 text-slate-600 text-sm">
+              <li>✔ Registration & OTP verification</li>
+              <li>✔ KYC & financial assessment</li>
+              <li>✔ Risk & compliance checks</li>
+              <li>✔ Digital agreement signing</li>
+              <li>✔ Verification & loan disbursal</li>
+            </ul>
+          </div>
         </div>
+      </div>
     </div>
+
+  </div>
 </div>
 
 <!-- UPDATES -->
 <div id="view-updates" class="app-view bg-white">
-    <header class="h-16 flex items-center px-6 border-b bg-white">
-        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">
-            ← Home
-        </button>
-        <span class="mx-auto font-bold">System Updates</span>
-    </header>
+  <header class="h-16 flex items-center px-6 border-b">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
+    <span class="mx-auto font-bold">System Updates</span>
+  </header>
 </div>
 
 <script>
-function navigateTo(viewId) {
-    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    window.scrollTo(0,0);
+function navigateTo(id){
+  document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
 }
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
