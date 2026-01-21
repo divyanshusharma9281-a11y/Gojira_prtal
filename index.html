@@ -1,231 +1,272 @@
-import React, { useState } from 'react';
-import { 
-  Globe, 
-  Smartphone, 
-  UserCheck, 
-  FileSearch, 
-  ShieldCheck, 
-  CheckCircle, 
-  ArrowRight,
-  Info,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BharatLoan Brand Entities - Customer Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            padding-bottom: 1.25rem;
+        }
+        .accordion-item.active .chevron {
+            transform: rotate(180deg);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased text-slate-900">
 
-const App = () => {
-  const [activeSubSection, setActiveSubSection] = useState('journey');
-  const [expandedStep, setExpandedStep] = useState(0);
+    <!-- Header Section (Inside BharatLoan Brand Tab) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-200">
+                        B
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">BharatLoan</h1>
+                        <p class="text-slate-500 text-sm flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            Brand Entity Portal
+                        </p>
+                    </div>
+                </div>
+                <a href="https://www.bharatloan.com/" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-colors">
+                    Visit Website <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                </a>
+            </div>
 
-  const fullJourney = [
-    {
-      title: "1. Initial Access & Registration",
-      platform: "Website/Mobile App",
-      description: "Customer visits bharatloan.com or downloads the app. Enters mobile number for OTP verification.",
-      details: [
-        "Landing Page: https://www.bharatloan.com/",
-        "OTP-based authentication for security",
-        "Permission granting for app-based users"
-      ],
-      icon: <Globe className="w-5 h-5" />
-    },
-    {
-      title: "2. Basic Profile Creation",
-      platform: "Digital Form",
-      description: "User provides essential details to determine initial eligibility.",
-      details: [
-        "Full Name as per PAN",
-        "Personal Email Address",
-        "Employment Type (Salaried/Self-Employed)",
-        "Monthly Income details"
-      ],
-      icon: <Smartphone className="w-5 h-5" />
-    },
-    {
-      title: "3. Digital KYC Completion",
-      platform: "Real-time Verification",
-      description: "100% paperless KYC process through government-verified channels.",
-      details: [
-        "Aadhaar XML/e-KYC verification",
-        "PAN Card verification",
-        "Real-time Liveness check (Selfie)"
-      ],
-      icon: <UserCheck className="w-5 h-5" />
-    },
-    {
-      title: "4. Underwriting & Credit Check",
-      platform: "Backend Engine",
-      description: "BharatLoan's proprietary algorithm checks creditworthiness.",
-      details: [
-        "Bureau (CIBIL/Experian) data fetch",
-        "Banking data analysis (AA or Statement upload)",
-        "Loan amount and interest rate calculation"
-      ],
-      icon: <FileSearch className="w-5 h-5" />
-    },
-    {
-      title: "5. Loan Offer & E-Signing",
-      platform: "Contract Execution",
-      description: "User reviews the loan agreement and signs digitally.",
-      details: [
-        "Review of Sanction Letter",
-        "Digital Signature (e-Sign via Aadhaar OTP)",
-        "Repayment schedule transparency"
-      ],
-      icon: <ShieldCheck className="w-5 h-5" />
-    },
-    {
-      title: "6. E-Mandate & Disbursal",
-      platform: "Payment Gateway",
-      description: "Setting up auto-repayment and transferring funds.",
-      icon: <CheckCircle className="w-5 h-5" />,
-      details: [
-        "E-NACH / E-Mandate setup for automated EMI",
-        "Final verification by Operations",
-        "Instant Disbursal to bank account"
-      ]
-    }
-  ];
-
-  return (
-    <div className="bg-white min-h-screen">
-      {/* Simulation of the BharatLoan Tab Header inside Brand Entities */}
-      <div className="border-b border-slate-200 bg-slate-50/50 p-6">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl">B</div>
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">BharatLoan</h2>
-            <p className="text-slate-500 text-sm">Brand Identity & Process Guidelines</p>
-          </div>
+            <!-- Sub-Tabs Navigation -->
+            <nav class="flex gap-8 mt-8 border-b border-slate-100">
+                <button onclick="switchTab('journey')" id="tab-btn-journey" class="tab-btn pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition-all">
+                    Customer Journey
+                </button>
+                <button onclick="switchTab('specs')" id="tab-btn-specs" class="tab-btn pb-3 text-sm font-semibold text-slate-400 hover:text-slate-600 transition-all">
+                    Product Specs
+                </button>
+                <button onclick="switchTab('assets')" id="tab-btn-assets" class="tab-btn pb-3 text-sm font-semibold text-slate-400 hover:text-slate-600 transition-all">
+                    Marketing Assets
+                </button>
+            </nav>
         </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-10">
         
-        {/* Internal Sub-Tabs for BharatLoan */}
-        <div className="flex gap-6 border-b border-slate-200 mt-4">
-          {['Customer Journey', 'Product Specs', 'Marketing Assets', 'Compliance'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveSubSection(tab.toLowerCase().replace(' ', ''))}
-              className={`pb-3 text-sm font-semibold transition-all relative ${
-                activeSubSection === tab.toLowerCase().replace(' ', '') 
-                ? 'text-blue-600' 
-                : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {tab}
-              {activeSubSection === tab.toLowerCase().replace(' ', '') && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="p-8 max-w-5xl">
-        {activeSubSection === 'journey' ? (
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <div className="flex justify-between items-start mb-8">
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">End-to-End Customer Journey</h3>
-                <p className="text-slate-500 mt-1">A comprehensive guide to the BharatLoan user experience from registration to disbursal.</p>
-              </div>
-              <a 
-                href="https://www.bharatloan.com/" 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-2 text-blue-600 font-medium text-sm hover:underline"
-              >
-                Visit Live Site <ExternalLink className="w-4 h-4" />
-              </a>
+        <!-- Tab 1: Customer Journey -->
+        <section id="tab-journey" class="tab-content active space-y-6">
+            <div class="mb-8">
+                <h2 class="text-xl font-extrabold text-slate-800">1st Pointer: Interactive Customer Journey</h2>
+                <p class="text-slate-500 mt-2">Click on each phase to learn about the complete lifecycle from registration to disbursal.</p>
             </div>
 
-            {/* Interactive Journey Accordion */}
-            <div className="space-y-4">
-              {fullJourney.map((step, index) => (
-                <div 
-                  key={index}
-                  className={`border rounded-2xl transition-all ${
-                    expandedStep === index ? 'border-blue-200 bg-blue-50/30 ring-1 ring-blue-100' : 'border-slate-200 bg-white hover:border-slate-300'
-                  }`}
-                >
-                  <button 
-                    onClick={() => setExpandedStep(expandedStep === index ? -1 : index)}
-                    className="w-full flex items-center justify-between p-5 text-left"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                        expandedStep === index ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        {step.icon}
-                      </div>
-                      <div>
-                        <h4 className={`font-bold transition-colors ${expandedStep === index ? 'text-blue-700' : 'text-slate-800'}`}>
-                          {step.title}
-                        </h4>
-                        <span className="text-xs font-medium px-2 py-0.5 bg-slate-100 text-slate-500 rounded uppercase tracking-wider">
-                          {step.platform}
-                        </span>
-                      </div>
+            <!-- Journey Accordion Container -->
+            <div class="space-y-4" id="journey-accordion">
+                
+                <!-- Step 1 -->
+                <div class="accordion-item border border-slate-200 rounded-2xl bg-white overflow-hidden transition-all hover:shadow-md active">
+                    <button class="w-full flex items-center justify-between p-5 text-left" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800">Initial Access & Registration</h3>
+                                <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter">Website: bharatloan.com / App</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-5 ml-14">
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            The journey starts with the customer reaching the landing page or downloading the BharatLoan app. The entry point is built for speed and high conversion.
+                        </p>
+                        <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <li class="text-sm text-slate-600 flex items-center gap-2 italic">
+                                    <i class="fa-solid fa-link text-blue-400"></i> URL: https://www.bharatloan.com/
+                                </li>
+                                <li class="text-sm text-slate-600 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-blue-400 text-xs"></i> OTP-based Mobile Verification
+                                </li>
+                                <li class="text-sm text-slate-600 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-blue-400 text-xs"></i> Consent Management
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    {expandedStep === index ? <ChevronUp className="w-5 h-5 text-blue-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
-                  </button>
+                </div>
 
-                  {expandedStep === index && (
-                    <div className="px-5 pb-5 pt-0 ml-14 animate-in zoom-in-95 duration-200">
-                      <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                        {step.description}
-                      </p>
-                      <div className="bg-white/50 border border-blue-100 rounded-xl p-4">
-                        <h5 className="text-xs font-bold text-blue-600 uppercase mb-3 tracking-widest flex items-center gap-2">
-                          <Info className="w-3 h-3" /> Key Checklist / Components
-                        </h5>
-                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
-                          {step.details.map((item, i) => (
-                            <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                <!-- Step 2 -->
+                <div class="accordion-item border border-slate-200 rounded-2xl bg-white overflow-hidden transition-all hover:shadow-md">
+                    <button class="w-full flex items-center justify-between p-5 text-left" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800">Basic Profile & Digital KYC</h3>
+                                <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter">Real-time Paperless Verification</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-5 ml-14">
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            Customer provides basic details and undergoes a 100% digital KYC process.
+                        </p>
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-id-card text-slate-400"></i> PAN Verification</li>
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-fingerprint text-slate-400"></i> Aadhaar e-KYC</li>
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-camera text-slate-400"></i> Liveness Check (Selfie)</li>
+                            </ul>
+                        </div>
                     </div>
-                  )}
                 </div>
-              ))}
+
+                <!-- Step 3 -->
+                <div class="accordion-item border border-slate-200 rounded-2xl bg-white overflow-hidden transition-all hover:shadow-md">
+                    <button class="w-full flex items-center justify-between p-5 text-left" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold">3</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800">Underwriting & Loan Offer</h3>
+                                <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter">Proprietary Credit Engine</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-5 ml-14">
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            Backend algorithms analyze bureau data and banking transactions to generate a real-time sanction letter.
+                        </p>
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-magnifying-glass-chart text-slate-400"></i> Credit Bureau Pull</li>
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-file-signature text-slate-400"></i> e-Sign (Aadhaar OTP)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="accordion-item border border-slate-200 rounded-2xl bg-white overflow-hidden transition-all hover:shadow-md">
+                    <button class="w-full flex items-center justify-between p-5 text-left" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold">4</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800">Disbursal & Repayment</h3>
+                                <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter">Instant Fund Transfer</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-5 ml-14">
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            Setting up auto-repayment and transferring funds directly to the customer's verified bank account.
+                        </p>
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-building-columns text-slate-400"></i> E-NACH/Mandate Setup</li>
+                                <li class="text-sm text-slate-600 flex items-center gap-2"><i class="fa-solid fa-money-bill-transfer text-slate-400"></i> Direct Bank Transfer</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            {/* Quick Summary Bar */}
-            <div className="mt-12 bg-slate-900 rounded-2xl p-6 text-white flex items-center justify-between">
-              <div className="flex gap-4 items-center">
-                <div className="h-10 w-10 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6" />
+            <!-- Footer Metrics Card -->
+            <div class="mt-12 bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <h4 class="text-2xl font-bold mb-1">Process Speed: <span class="text-blue-400">10 Minutes</span></h4>
+                        <p class="text-slate-400">The entire journey is optimized for zero-friction digital onboarding.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-center px-4">
+                            <p class="text-3xl font-bold">100%</p>
+                            <p class="text-[10px] uppercase tracking-widest text-slate-400">Digital</p>
+                        </div>
+                        <div class="w-px h-12 bg-slate-700"></div>
+                        <div class="text-center px-4">
+                            <p class="text-3xl font-bold">0</p>
+                            <p class="text-[10px] uppercase tracking-widest text-slate-400">Paperwork</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-400 uppercase font-bold tracking-widest">Efficiency Goal</p>
-                  <p className="font-semibold text-lg">Total Process Time: &lt; 10 Minutes</p>
-                </div>
-              </div>
-              <div className="h-10 w-[1px] bg-slate-700 hidden md:block" />
-              <div className="hidden md:block">
-                <p className="text-xs text-slate-400 uppercase font-bold tracking-widest">Document Requirement</p>
-                <p className="font-semibold text-lg">Zero Physical Paperwork</p>
-              </div>
-              <button className="bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 text-sm">
-                View Onboarding Analytics <ArrowRight className="w-4 h-4" />
-              </button>
+                <!-- Decorative Circle -->
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl"></div>
             </div>
-          </div>
-        ) : (
-          <div className="py-20 text-center">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-              <Info className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-800 uppercase tracking-widest">Section Empty</h3>
-            <p className="text-slate-500 text-sm mt-2">The {activeSubSection} section for BharatLoan is currently being drafted.</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+        </section>
 
-export default App;
+        <!-- Tab 2: Specs (Placeholder) -->
+        <section id="tab-specs" class="tab-content text-center py-20">
+            <i class="fa-solid fa-gears text-5xl text-slate-200 mb-4"></i>
+            <h2 class="text-xl font-bold text-slate-800 uppercase tracking-widest">Product Specifications</h2>
+            <p class="text-slate-500 max-w-sm mx-auto mt-2">Detailed loan slabs and interest calculation logic will appear here.</p>
+        </section>
+
+        <!-- Tab 3: Assets (Placeholder) -->
+        <section id="tab-assets" class="tab-content text-center py-20">
+            <i class="fa-solid fa-photo-film text-5xl text-slate-200 mb-4"></i>
+            <h2 class="text-xl font-bold text-slate-800 uppercase tracking-widest">Brand Assets</h2>
+            <p class="text-slate-500 max-w-sm mx-auto mt-2">Logos, color palettes, and marketing collateral for BharatLoan.</p>
+        </section>
+
+    </main>
+
+    <script>
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            // Close all items
+            document.querySelectorAll('.accordion-item').forEach(el => {
+                el.classList.remove('active');
+                el.querySelector('.w-10').classList.remove('bg-blue-600', 'text-white');
+                el.querySelector('.w-10').classList.add('bg-slate-100', 'text-slate-600');
+            });
+
+            // If it wasn't active, open it
+            if (!isActive) {
+                item.classList.add('active');
+                item.querySelector('.w-10').classList.remove('bg-slate-100', 'text-slate-600');
+                item.querySelector('.w-10').classList.add('bg-blue-600', 'text-white');
+            }
+        }
+
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                btn.classList.add('text-slate-400');
+                btn.classList.remove('font-bold');
+                btn.classList.add('font-semibold');
+            });
+
+            // Show current
+            document.getElementById('tab-' + tabId).classList.add('active');
+            const activeBtn = document.getElementById('tab-btn-' + tabId);
+            activeBtn.classList.add('text-blue-600', 'border-b-2', 'border-blue-600', 'font-bold');
+            activeBtn.classList.remove('text-slate-400', 'font-semibold');
+        }
+    </script>
+</body>
+</html>
