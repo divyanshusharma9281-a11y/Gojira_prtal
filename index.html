@@ -1,317 +1,200 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gojira TP | Training Portal</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { darkMode: 'class' }
-  </script>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    .app-view { display:none; min-height:100vh; }
-    .app-view.active { display:block; }
-    .hover-lift:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 30px -10px rgba(0,0,0,.15);
-    }
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: all 0.4s ease;
-    }
-    .faq-item.active .faq-answer {
-      max-height: 1200px;
-      opacity: 1;
-      padding-top: 0.75rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gojira TP | Professional Training Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        .app-view { display: none; min-height: 100vh; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .app-view.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .step-transition { transition: all 0.3s ease; }
+    </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+<body class="bg-slate-50 text-slate-900">
 
-<!-- TOP NAV -->
-<nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold">₹</div>
-      <span class="font-extrabold text-xl">
-        Gojira <span class="text-blue-600">TP</span>
-      </span>
+<!-- BHARATLOAN CUSTOMER JOURNEY VIEW -->
+<div id="view-bharatloan" class="app-view active bg-white">
+    <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
+        <button onclick="window.history.back()" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold">
+            <i class="fa-solid fa-arrow-left"></i> Brand SOPs
+        </button>
+        <span class="font-bold text-slate-800">BharatLoan</span>
+        <div class="w-10"></div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-4 text-center tracking-tight">
+            BharatLoan Customer Journey: Step-by-Step SOP
+        </h1>
+
+        <p class="text-slate-600 text-center max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
+            This document outlines the end-to-end customer journey for BharatLoan as defined in the Gojira TP training portal. 
+            It pairs customer actions with the necessary backend Standard Operating Procedures (SOPs).
+        </p>
+
+        <div class="bg-slate-50 rounded-[3rem] border border-slate-100 p-8 shadow-sm">
+            <div class="relative flex justify-between mb-12">
+                <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
+
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(1)">
+                    <div id="circle-1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white">1</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Register</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(2)">
+                    <div id="circle-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">2</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">KYC</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(3)">
+                    <div id="circle-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">3</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Finance</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(4)">
+                    <div id="circle-4" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">4</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Select</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(5)">
+                    <div id="circle-5" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">5</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Sign</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(6)">
+                    <div id="circle-6" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">6</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Verify</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(7)">
+                    <div id="circle-7" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">7</div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Disbursal</span>
+                </div>
+            </div>
+
+            <div id="step-content" class="bg-white border border-slate-100 rounded-3xl p-8 step-transition shadow-sm">
+                <h3 id="step-title" class="text-2xl font-black text-slate-900 mb-6"></h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Customer Activity</h4>
+                        <p id="customer-action" class="text-slate-600 font-medium leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Backend SOP</h4>
+                        <ul id="backend-process" class="space-y-3"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-10 border-t pt-6 text-slate-600">
+                <h4 class="font-bold mb-2">Key Operational Notes</h4>
+                <ul class="list-disc ml-6 text-sm space-y-1">
+                    <li>Most steps are automated to ensure "Instant Approval" status.</li>
+                    <li>If a customer stalls at Step 3 or Step 5, the Collections/Support team may assist via follow-up.</li>
+                    <li>Timely repayment is critical for maintaining a healthy CIBIL score and increasing future loan limits.</li>
+                </ul>
+            </div>
+        </div>
     </div>
-
-    <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
-      <span id="theme-icon">🌙</span>
-      <span id="theme-text">Dark</span>
-    </button>
-  </div>
-</nav>
-
-<!-- HOME -->
-<div id="view-home" class="app-view active">
-  <main class="max-w-7xl mx-auto px-6 py-20 text-center">
-    <h1 class="text-5xl font-extrabold mb-6">
-      Welcome to
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-        Training Portal
-      </span>
-    </h1>
-
-    <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-20">
-      Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
-    </p>
-
-    <div class="grid md:grid-cols-3 gap-8">
-      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
-        <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
-        <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
-      </div>
-
-      <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
-        <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
-        <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
-      </div>
-
-      <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
-        <h2 class="text-2xl font-bold mb-2">New Updates</h2>
-        <p class="text-sm opacity-90">Latest system & policy logs.</p>
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- KNOWLEDGE BASE -->
-<div id="view-kb" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Knowledge Base</span>
-  </header>
-
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-4xl font-extrabold mb-4">Frequently Asked Questions (FAQ)</h1>
-    <p class="text-slate-500 dark:text-slate-400 mb-10">
-      Official responses to common loan, repayment, and platform-related queries.
-    </p>
-
-    <div class="space-y-4">
-
-      <!-- FAQs 1–10 -->
-      <!-- (UNCHANGED – SAME AS DISCUSSED) -->
-
-      <!-- FAQ items exactly as previously finalized -->
-      <!-- START -->
-      <!-- FAQ 1 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          1. My loan is approved but not disbursed. Why?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 mb-2">
-            <li>Incomplete documentation</li>
-            <li>Bank account verification</li>
-            <li>Internal compliance or risk checks</li>
-          </ul>
-          <p>Our team will assist you with the exact reason.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          2. Can I increase my loan amount after sanction?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 mb-2">
-            <li>Your credit profile</li>
-            <li>Repayment history</li>
-            <li>Internal eligibility checks</li>
-          </ul>
-          <p>You may reapply after closing the loan or maintaining a good repayment track.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          3. Why was my loan application rejected?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 mb-2">
-            <li>Credit score or repayment history</li>
-            <li>Existing liabilities</li>
-            <li>Internal risk assessment</li>
-          </ul>
-          <p>Customer care can guide but cannot override system decisions.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          4. How long does it take for repayment to reflect?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>24–48 working hours depending on bank processing.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          5. How is my total payable amount calculated?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6">
-            <li>Loan amount</li>
-            <li>Interest till repayment date</li>
-            <li>Penalty (2% post due date)</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          6. Will my credit score be affected if I delay payment?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Yes, delays negatively impact your CIBIL score.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          7. Why am I being called after sharing PTP?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6">
-            <li>Confirm readiness</li>
-            <li>Check fund arrangement</li>
-            <li>Assist with early payment</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          8. Will calls stop after payment?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Yes, once payment reflects in the system.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          9. What is NBFC?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>NBFC is a Non-Banking Financial Company regulated by RBI.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          10. What is Account Aggregator?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>It securely shares financial data with lenders after consent.</p>
-        </div>
-      </div>
-      <!-- END -->
-
-    </div>
-  </div>
-</div>
-
-<!-- BRAND ENTITIES (RESTORED – NO CHANGES) -->
-<div id="view-entities" class="app-view">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
-    <span class="mx-auto font-bold">Brand Entities</span>
-  </header>
-
-  <div class="max-w-6xl mx-auto px-6 py-14">
-    <h1 class="text-3xl font-extrabold text-center mb-12">Entity Guidelines</h1>
-
-    <div class="grid md:grid-cols-4 gap-8">
-
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl text-center cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
-        <h3 class="font-bold text-lg">BharatLoan</h3>
-        <p class="text-xs uppercase opacity-80">Premium Segment</p>
-      </div>
-
-      <div class="p-8 rounded-3xl text-center hover-lift bg-emerald-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
-        <h3 class="font-bold text-lg">Rupee112</h3>
-        <p class="text-xs uppercase opacity-80">Instant Approval</p>
-      </div>
-
-      <div class="p-8 rounded-3xl text-center hover-lift bg-indigo-700 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
-        <h3 class="font-bold text-lg">Loan112</h3>
-        <p class="text-xs uppercase opacity-80">Short-term</p>
-      </div>
-
-      <div class="p-8 rounded-3xl text-center hover-lift bg-purple-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
-        <h3 class="font-bold text-lg">RupeeOnTime</h3>
-        <p class="text-xs uppercase opacity-80">Flexi-Repay</p>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- UPDATES -->
-<div id="view-updates" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
-    <span class="mx-auto font-bold">System Updates</span>
-  </header>
 </div>
 
 <script>
-function navigateTo(id){
-  document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+const journeyData = {
+    1: {
+        title: "Step 1: Registration",
+        action: "The customer visits the BharatLoan portal or app and enters their active mobile number. They receive and input a 6-digit OTP for identity verification.",
+        process: [
+            "System triggers an automated OTP via the SMS gateway.",
+            "Validation of user identity and creation of a temporary lead profile.",
+            "Capture of initial lead metadata (IP address, device info, and timestamp)."
+        ]
+    },
+    2: {
+        title: "Step 2: KYC Submission",
+        action: "The customer provides their PAN/Aadhaar details and performs a real-time liveness check (selfie capture) to match biometric data.",
+        process: [
+            "Automated OCR extracts data from the ID documents instantly.",
+            "A biometric liveness check ensures the presence of the actual customer.",
+            "Real-time cross-referencing with NSDL/UIDAI databases for authenticity."
+        ]
+    },
+    3: {
+        title: "Step 3: Financial Verification",
+        action: "The customer links their bank account using the Account Aggregator framework or by uploading the last 6 months' bank statements.",
+        process: [
+            "AI-driven analysis of banking transactions to assess income stability.",
+            "Automated calculation of Debt-to-Income (DTI) and monthly surplus.",
+            "Internal risk engine assigns a credit score based on historical data."
+        ]
+    },
+    4: {
+        title: "Step 4: Loan Selection",
+        action: "Based on the approved credit limit displayed, the customer selects the loan amount and chooses a convenient repayment tenure.",
+        process: [
+            "Dynamic EMI schedule generation based on tenure and interest rates.",
+            "Sanity check to ensure the requested amount is within the risk threshold.",
+            "Drafting of the Digital Sanction Letter for customer review."
+        ]
+    },
+    5: {
+        title: "Step 5: E-Sign Agreement",
+        action: "The customer reviews the loan terms and performs a digital signature (Aadhaar e-Sign) to finalize the contract.",
+        process: [
+            "Generation of a legally binding digital loan agreement.",
+            "Secure vaulting of the signed contract for compliance and auditing.",
+            "Initiation of the e-Mandate (e-NACH) for automated EMI deductions."
+        ]
+    },
+    6: {
+        title: "Step 6: Final Verification",
+        action: "The system performs a final automated check; occasionally, a brief verification call may be placed to confirm details.",
+        process: [
+            "Final compliance audit and Human-in-the-Loop (HITL) review if flagged.",
+            "Penny-drop test (₹1 credit) to verify the destination bank account.",
+            "Anti-Money Laundering (AML) and internal blacklist verification."
+        ]
+    },
+    7: {
+        title: "Step 7: Disbursal",
+        action: "Funds are transferred directly to the customer's bank account, and they receive a confirmation with the repayment schedule.",
+        process: [
+            "Automated triggering of the IMPS/NEFT payment instruction.",
+            "Updating the loan status to 'Active' in the Core Banking System.",
+            "Distribution of the final loan kit and repayment schedule via Email/SMS."
+        ]
+    }
+};
+
+function showStep(stepId) {
+    const data = journeyData[stepId];
+    document.getElementById("step-title").innerText = data.title;
+    document.getElementById("customer-action").innerText = data.action;
+
+    const list = document.getElementById("backend-process");
+    list.innerHTML = "";
+    data.process.forEach(p => {
+        list.innerHTML += `<li class="flex gap-2 text-slate-600 text-sm">
+            <i class="fa-solid fa-check text-blue-500 mt-1"></i>${p}
+        </li>`;
+    });
+
+    for (let i = 1; i <= 7; i++) {
+        const c = document.getElementById(`circle-${i}`);
+        if (i < stepId) {
+            c.className = "w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white";
+            c.innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else if (i === stepId) {
+            c.className = "w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white";
+            c.innerHTML = i;
+        } else {
+            c.className = "w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white";
+            c.innerHTML = i;
+        }
+    }
 }
 
-function toggleFaq(btn){
-  btn.parentElement.classList.toggle('active');
-}
-
-function toggleTheme(){
-  const html = document.documentElement;
-  const icon = document.getElementById('theme-icon');
-  const text = document.getElementById('theme-text');
-
-  if(html.classList.contains('dark')){
-    html.classList.remove('dark');
-    icon.innerText = '🌙';
-    text.innerText = 'Dark';
-    localStorage.setItem('theme','light');
-  } else {
-    html.classList.add('dark');
-    icon.innerText = '☀️';
-    text.innerText = 'Light';
-    localStorage.setItem('theme','dark');
-  }
-}
-
-if(localStorage.getItem('theme') === 'dark'){
-  document.documentElement.classList.add('dark');
-  document.getElementById('theme-icon').innerText = '☀️';
-  document.getElementById('theme-text').innerText = 'Light';
-}
+// Initialize first step on load
+window.onload = () => showStep(1);
 </script>
 
 </body>
