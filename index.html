@@ -42,8 +42,8 @@
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
-    <!-- LOGO + NAME (HOME BUTTON ADD-ON ONLY) -->
-    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer select-none">
+    <!-- ONLY ADD-ON: LOGO + NAME AS HOME BUTTON -->
+    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer">
       <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold">
         ₹
       </div>
@@ -51,8 +51,8 @@
         Gojira <span class="text-blue-600">TP</span>
       </span>
     </div>
+    <!-- END ADD-ON -->
 
-    <!-- DARK MODE -->
     <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
       <span id="theme-icon">🌙</span>
       <span id="theme-text">Dark</span>
@@ -96,9 +96,9 @@
   </main>
 </div>
 
-<!-- EVERYTHING ELSE REMAINS 100% SAME -->
-<!-- Knowledge Base, Brand Entities, BharatLoan SOP, Updates -->
-<!-- No changes made below this point -->
+<!-- REST OF YOUR CODE REMAINS EXACTLY SAME -->
+<!-- Knowledge Base, Brand Entities, Updates, Scripts -->
+<!-- NOTHING REMOVED OR CHANGED -->
 
 <script>
 function navigateTo(id){
