@@ -104,13 +104,29 @@
                     <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                         <i class="fa-solid fa-book-open text-3xl"></i>
                     </div>
+                    <div id="sop-procedure" class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100">
                     <h2 class="text-2xl font-bold mb-3 text-slate-800">Knowledge Base</h2>
                     <p class="text-slate-500 mb-6 px-4 leading-relaxed text-sm">General FAQs, NBFC differences, Personal Loan details, and AA processes.</p>
                     <span class="flex items-center gap-2 text-blue-600 font-bold text-sm tracking-widest uppercase">
                         ENTER <i class="fa-solid fa-chevron-right text-xs"></i>
                     </span>
                 </div>
+<div id="sop-journey" class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100 hidden">
+    <h2 class="text-2xl font-black mb-6 text-slate-900">Customer Journey</h2>
 
+    <ol class="space-y-4 text-slate-700 text-sm">
+        <li><strong>01. Customer Registration</strong><br>Mobile number registration with OTP verification.</li>
+        <li><strong>02. Basic Profile Creation</strong><br>Name, DOB, address, employment details.</li>
+        <li><strong>03. KYC Verification</strong><br>PAN & Aadhaar verified via system / DigiLocker.</li>
+        <li><strong>04. Loan Application Submission</strong><br>Loan amount, tenure and income submission.</li>
+        <li><strong>05. Credit Bureau Check</strong><br>Credit score fetched from bureau.</li>
+        <li><strong>06. Risk & Eligibility Assessment</strong><br>Eligibility based on internal rules.</li>
+        <li><strong>07. Loan Offer Generation</strong><br>Loan offer with EMI & interest.</li>
+        <li><strong>08. Offer Acceptance & eMandate</strong><br>Offer acceptance and eMandate setup.</li>
+        <li><strong>09. Loan Agreement eSign</strong><br>Digital agreement signing.</li>
+        <li><strong>10. Loan Disbursal</strong><br>Loan credited to bank account.</li>
+    </ol>
+</div>
                 <!-- Module 2: Entities -->
                 <div onclick="navigateTo('view-entities')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm">
                     <div class="w-20 h-20 bg-slate-100 text-slate-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
@@ -148,7 +164,18 @@
             <div class="w-10"></div>
         </header>
 
-        <div class="max-w-4xl mx-auto px-6 py-12">
+        <!-- SOP Tabs -->
+<div class="flex gap-4 mb-8">
+    <button id="tab-procedure" onclick="switchSopTab('procedure')"
+        class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold text-sm">
+        Brand Operational Procedure
+    </button>
+
+    <button id="tab-journey" onclick="switchSopTab('journey')"
+        class="px-5 py-2 rounded-xl bg-white text-slate-600 border border-slate-200 font-bold text-sm">
+        Customer Journey
+    </button>
+</div>
             <div class="mb-12">
                 <h1 class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Frequently Asked Questions</h1>
                 <p class="text-slate-500 font-medium italic">Standard responses and regulatory information for internal staff.</p>
@@ -352,7 +379,17 @@
             <div class="w-10"></div>
         </header>
 
-        <div class="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center text-center">
+       <div class="flex gap-4 mb-6">
+    <button id="tab-procedure" onclick="switchSopTab('procedure')"
+        class="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm">
+        Brand Operational Procedure
+    </button>
+
+    <button id="tab-journey" onclick="switchSopTab('journey')"
+        class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm">
+        Customer Journey
+    </button>
+</div>
             <div class="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-8 pulse-icon shadow-sm">
                 <i class="fa-solid fa-satellite-dish text-4xl"></i>
             </div>
@@ -532,6 +569,9 @@
             icon.innerText = name.charAt(0);
             icon.className = `w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs ${colorClass}`;
             navigateTo('view-sop-details');
+            function switchSopTab(tab) {
+    document.getElementById('sop-procedure').classList.toggle('hidden', tab === 'journey');
+    document.getElementById('sop-journey').classList.toggle('hidden', tab === 'procedure');
         }
     </script>
 </body>
