@@ -321,11 +321,13 @@
         <div class="max-w-6xl mx-auto px-6 py-12">
             <h1 class="text-3xl font-extrabold text-slate-900 mb-10 text-center tracking-tight">Entity Guidelines</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
+                <!-- UPDATED: BHARATLOAN NOW OPENS CUSTOMER JOURNEY -->
+                <div onclick="navigateTo('view-bharatloan')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
                     <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-blue-100">B</div>
                     <h3 class="font-bold text-lg">BharatLoan</h3>
                     <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Premium Segment</p>
                 </div>
+
                 <div class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
                     <div class="w-16 h-16 bg-emerald-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-emerald-100">R</div>
                     <h3 class="font-bold text-lg">Rupee112</h3>
@@ -340,6 +342,75 @@
                     <div class="w-16 h-16 bg-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-lg shadow-orange-100">T</div>
                     <h3 class="font-bold text-lg">Rupeeontime</h3>
                     <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Flexi-Repay</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW SECTION: BHARATLOAN CUSTOMER JOURNEY VIEW -->
+    <div id="view-bharatloan" class="app-view bg-white">
+        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
+            <button onclick="navigateTo('view-entities')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Brand SOPs
+            </button>
+            <span class="font-bold text-slate-800">BharatLoan</span>
+            <div class="w-10"></div>
+        </header>
+
+        <div class="max-w-6xl mx-auto px-6 py-12">
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-10 text-center tracking-tight">BharatLoan SOP</h1>
+
+            <!-- CUSTOMER JOURNEY INSIDE BHARATLOAN -->
+            <div class="bg-slate-50 rounded-[3rem] border border-slate-100 p-8 shadow-sm">
+                <div class="relative flex justify-between mb-12">
+                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
+
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(1)">
+                        <div id="circle-1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2 ring-4 ring-white">1</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Register</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(2)">
+                        <div id="circle-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">2</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">KYC</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(3)">
+                        <div id="circle-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">3</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Finance</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(4)">
+                        <div id="circle-4" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">4</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Select</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(5)">
+                        <div id="circle-5" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">5</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Sign</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(6)">
+                        <div id="circle-6" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">6</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Verify</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer" onclick="showStep(7)">
+                        <div id="circle-7" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold mb-2 ring-4 ring-white">7</div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Disbursal</span>
+                    </div>
+                </div>
+
+                <div id="step-content" class="bg-white border border-slate-100 rounded-3xl p-8 step-transition shadow-sm">
+                    <h3 id="step-title" class="text-2xl font-black text-slate-900 mb-6">1. Customer Registration</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Customer Activity</h4>
+                            <p id="customer-action" class="text-slate-600 leading-relaxed font-medium">Customer logs into the portal and verifies their mobile number via OTP.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">Backend SOP</h4>
+                            <ul id="backend-process" class="space-y-3">
+                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> System triggers automated OTP</li>
+                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> Validates user identity and session</li>
+                                <li class="flex gap-2 text-slate-600 text-sm"><i class="fa-solid fa-check text-blue-500 mt-1"></i> Captures initial lead metadata</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
