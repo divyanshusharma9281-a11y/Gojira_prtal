@@ -7,433 +7,232 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        
-        .app-view { 
-            display: none; 
-            min-height: 100vh;
-            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .app-view { display: none; min-height: 100vh; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .app-view.active { display: block; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .faq-item { border-bottom: 1px solid #f1f5f9; }
-        .faq-answer { 
-            max-height: 0; 
-            overflow: hidden; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            opacity: 0;
-        }
-        .faq-item.active .faq-answer { 
-            max-height: 1500px; 
-            opacity: 1; 
-            padding-bottom: 2rem; 
-            padding-top: 0.5rem;
-        }
-        .faq-item.active .chevron { transform: rotate(180deg); color: #2563eb; }
-        .chevron { transition: transform 0.3s ease; }
-        
-        .badge-call {
-            background: #dbeafe;
-            color: #1e40af;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 99px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .pulse-icon {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-900">
 
-    <!-- SECTION 1: MAIN DASHBOARD -->
-    <div id="view-home" class="app-view active">
-        <nav class="bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
-            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 bg-slate-900 rounded flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-chart-line text-sm"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Gojira <span class="text-blue-600">TP</span></span>
+<!-- ================= HOME ================= -->
+<div id="view-home" class="app-view active">
+    <nav class="bg-white sticky top-0 border-b">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 bg-slate-900 rounded flex items-center justify-center text-white">
+                    <i class="fa-solid fa-chart-line"></i>
                 </div>
-                <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-500">
-                    <span class="text-slate-900">Training Home</span>
-                    <a href="#" class="hover:text-blue-600 transition-colors">Resources</a>
-                    <a href="#" class="hover:text-blue-600 transition-colors">Support</a>
-                </div>
+                <span class="font-bold text-xl">Gojira <span class="text-blue-600">TP</span></span>
             </div>
-        </nav>
-
-        <main class="max-w-7xl mx-auto px-6 py-12 md:py-24">
-            <div class="text-center mb-16">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
-                    Welcome to the <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-blue-600">Training Portal</span>
-                </h1>
-                <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Select a module to access regulatory documentation, FAQ guides, and brand-specific procedures.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Module 1: KB -->
-                <div onclick="navigateTo('view-kb')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm">
-                    <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                        <i class="fa-solid fa-book-open text-3xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold mb-3 text-slate-800">Knowledge Base</h2>
-                    <p class="text-slate-500 mb-6 px-4 leading-relaxed text-sm">General FAQs, NBFC differences, Personal Loan details, and AA processes.</p>
-                    <span class="flex items-center gap-2 text-blue-600 font-bold text-sm tracking-widest uppercase">
-                        ENTER <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </span>
-                </div>
-
-                <!-- Module 2: Entities -->
-                <div onclick="navigateTo('view-entities')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm">
-                    <div class="w-20 h-20 bg-slate-100 text-slate-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
-                        <i class="fa-solid fa-layer-group text-3xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold mb-3 text-slate-800">Brand Entities</h2>
-                    <p class="text-slate-500 mb-6 px-4 leading-relaxed text-sm">Access brand-specific operational procedures for BharatLoan and others.</p>
-                    <span class="flex items-center gap-2 text-slate-900 font-bold text-sm tracking-widest uppercase">
-                        VIEW BRANDS <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </span>
-                </div>
-
-                <!-- Module 3: New Updates -->
-                <div onclick="navigateTo('view-updates')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border-2 border-dashed border-blue-100">
-                    <div class="w-20 h-20 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
-                        <i class="fa-solid fa-bell-concierge text-3xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold mb-3 text-slate-800">New Updates</h2>
-                    <p class="text-slate-500 mb-6 px-4 leading-relaxed text-sm">Stay informed with the latest policy changes, system updates, and announcements.</p>
-                    <span class="flex items-center gap-2 text-amber-600 font-bold text-sm tracking-widest uppercase">
-                        CHECK UPDATES <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </span>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- SECTION 2: KNOWLEDGE BASE MODULE -->
-    <div id="view-kb" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <span class="font-bold text-slate-800">Knowledge Base Module</span>
-            <div class="w-10"></div>
-        </header>
-
-        <div class="max-w-4xl mx-auto px-6 py-12">
-            <div class="mb-12">
-                <h1 class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Frequently Asked Questions</h1>
-                <p class="text-slate-500 font-medium italic">Standard responses and regulatory information for internal staff.</p>
-            </div>
-
-            <div class="space-y-2">
-                <!-- FAQ 1 -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">1. What is a Non-Banking Financial Company (NBFC)?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 leading-relaxed mb-3">A Non-Banking Financial Company (NBFC) is a financial institution that provides various services such as loans, advances, leasing, hire-purchase, and insurance, but does not engage in activities such as agriculture, industrial operations, or the sale of goods or services.</p>
-                        <p class="text-slate-600 leading-relaxed">It is also a company registered under the Companies Act 1956 and is not allowed to accept deposits from the public. Additionally, NBFCs are also known as <strong>Residuary non-banking company</strong>.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 2 -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">2. Differences between Banks and NBFCs?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 mb-4 font-medium italic">While both perform similar functions such as lending and investing, they differ in the following ways:</p>
-                        <ul class="space-y-3">
-                            <li class="flex gap-3 text-slate-700">
-                                <i class="fa-solid fa-circle-dot text-blue-500 mt-1.5 text-xs"></i>
-                                <span>NBFCs cannot accept demand deposits.</span>
-                            </li>
-                            <li class="flex gap-3 text-slate-700">
-                                <i class="fa-solid fa-circle-dot text-blue-500 mt-1.5 text-xs"></i>
-                                <span>NBFCs do not form part of the payment and settlement system and cannot issue cheques drawn on themselves.</span>
-                            </li>
-                            <li class="flex gap-3 text-slate-700">
-                                <i class="fa-solid fa-circle-dot text-blue-500 mt-1.5 text-xs"></i>
-                                <span>The deposit insurance facility of Deposit Insurance and Credit Guarantee Corporation is not available to depositors of NBFCs, unlike in the case of banks.</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- FAQ 3 -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">3. What is a Personal Loan?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-slate-600 leading-relaxed mb-3">A personal loan is a type of unsecured loan typically used for personal expenses (medical bills, repairs, etc.). Unlike a mortgage, personal loans do not require collateral. Lenders evaluate creditworthiness and income to determine ability to repay.</p>
-                        <p class="text-slate-600 leading-relaxed italic border-l-4 border-slate-200 pl-4">"Personal loans typically have a fixed interest rate and a fixed monthly payment, and are typically repaid over a period of one to five years."</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 4 -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">4. How much can I borrow from BharatLoan?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4 text-slate-600 space-y-3">
-                        <p>Loan amounts and repayment periods vary based on the specific type of loan. Agents should check the latest website updates for exact figures.</p>
-                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-sm">
-                            <h5 class="font-bold text-amber-800 mb-1">Key Note:</h5>
-                            The amount you qualify for depends on creditworthiness, income, debt-to-income ratio, and other internal lender factors.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FAQ 5 -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">5. Documents required for BharatLoan application?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-slate-50 p-4 rounded-xl">
-                                <h6 class="font-bold text-slate-900 mb-2 text-sm">Identity & Income</h6>
-                                <ul class="text-sm space-y-1 text-slate-600">
-                                    <li>• PAN Card (Photo Identity)</li>
-                                    <li>• Latest Salary Slip</li>
-                                    <li>• Aadhaar Card</li>
-                                    <li>• Latest Bank Statement (Salary Credit)</li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-xl">
-                                <h6 class="font-bold text-slate-900 mb-2 text-sm">Address Proof</h6>
-                                <ul class="text-sm space-y-1 text-slate-600">
-                                    <li>• Passport / DL / Voter ID</li>
-                                    <li>• Utility Bills (Not older than 2 months)</li>
-                                    <li>• Current Address: Rent Agreement / Recent Utility Bill (if different from Permanent)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FAQ 6 -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <span class="text-lg font-bold text-slate-800">6. Can I repay my loan before my due date?</span>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4">
-                        <p class="text-emerald-700 font-bold text-lg">Yes.</p>
-                        <p class="text-slate-600">Customers have the option to repay early to avoid accruing additional daily interest.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 7: ACCOUNT AGGREGATOR -->
-                <div class="faq-item">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-6 text-left hover:bg-slate-50 px-4 rounded-xl transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="text-lg font-bold text-slate-800">7. What is Account Aggregator (AA)?</span>
-                            <span class="badge-call">Priority</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down chevron text-slate-400"></i>
-                    </button>
-                    <div class="faq-answer px-4 space-y-6">
-                        <div class="bg-blue-600 text-white p-6 rounded-[2rem] shadow-lg">
-                            <h6 class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">Best for calls:</h6>
-                            <p class="text-xl font-medium">“Sir/Madam, Account Aggregator is a safe RBI-approved way where you allow us to check your bank details online for loan processing.”</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="p-5 border border-slate-100 rounded-2xl bg-slate-50">
-                                <h6 class="font-bold mb-3 text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-list-ol text-blue-500"></i> How it works (3 Steps)
-                                </h6>
-                                <ol class="space-y-2 text-sm text-slate-600">
-                                    <li>1. We send a consent link</li>
-                                    <li>2. Customer approves it</li>
-                                    <li>3. Bank details are shared automatically</li>
-                                </ol>
-                            </div>
-                            <div class="p-5 border border-slate-100 rounded-2xl bg-slate-50">
-                                <h6 class="font-bold mb-3 text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Security & Control
-                                </h6>
-                                <ul class="space-y-2 text-sm text-slate-600">
-                                    <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500"></i> No money will be deducted</li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Only bank details are shared</li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Permission can be stopped anytime</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="p-5 bg-indigo-50 border border-indigo-100 rounded-2xl">
-                            <p class="text-indigo-800 font-bold italic">“It’s like giving OTP access to view, not to withdraw money.”</p>
-                            <p class="text-xs text-indigo-500 mt-2 uppercase font-bold tracking-tighter">Use this analogy for faster customer understanding</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="hidden md:flex gap-6 text-sm font-semibold text-slate-500">
+                <span class="text-slate-900">Training Home</span>
+                <span>Resources</span>
+                <span>Support</span>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- SECTION 3: ENTITIES LIST MODULE -->
-    <div id="view-entities" class="app-view bg-slate-50">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <span class="font-bold text-slate-800">Financial Brand Entities</span>
-            <div class="w-10"></div>
-        </header>
+    <main class="max-w-7xl mx-auto px-6 py-20 text-center">
+        <h1 class="text-5xl font-extrabold mb-6">Welcome to the <span class="text-blue-600">Training Portal</span></h1>
+        <p class="text-slate-500 max-w-2xl mx-auto mb-14">
+            Select a module to access regulatory documentation, FAQs, and brand SOPs.
+        </p>
 
-        <div class="max-w-6xl mx-auto px-6 py-12">
-            <h1 class="text-3xl font-extrabold text-slate-900 mb-10 text-center tracking-tight">Select Entity for Brand SOPs</h1>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div onclick="openSop('BharatLoan', 'bg-blue-600')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl">B</div>
-                    <h3 class="font-bold text-lg">BharatLoan</h3>
-                </div>
-                <div onclick="openSop('Rupee112', 'bg-emerald-600')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-emerald-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl">R</div>
-                    <h3 class="font-bold text-lg">Rupee112</h3>
-                </div>
-                <div onclick="openSop('Loan112', 'bg-indigo-600')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl">L</div>
-                    <h3 class="font-bold text-lg">Loan112</h3>
-                </div>
-                <div onclick="openSop('Rupeeontime', 'bg-orange-500')" class="bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer hover:shadow-xl transition-all text-center group">
-                    <div class="w-16 h-16 bg-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl">T</div>
-                    <h3 class="font-bold text-lg">Rupeeontime</h3>
-                </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div onclick="navigateTo('view-kb')" class="bg-white p-10 rounded-3xl shadow hover:shadow-xl cursor-pointer">
+                <i class="fa-solid fa-book-open text-4xl text-blue-600 mb-4"></i>
+                <h2 class="font-bold text-xl">Knowledge Base</h2>
+            </div>
+
+            <div onclick="navigateTo('view-entities')" class="bg-white p-10 rounded-3xl shadow hover:shadow-xl cursor-pointer">
+                <i class="fa-solid fa-layer-group text-4xl text-slate-700 mb-4"></i>
+                <h2 class="font-bold text-xl">Brand Entities</h2>
+            </div>
+
+            <div onclick="navigateTo('view-updates')" class="bg-white p-10 rounded-3xl shadow hover:shadow-xl cursor-pointer">
+                <i class="fa-solid fa-bell text-4xl text-amber-500 mb-4"></i>
+                <h2 class="font-bold text-xl">New Updates</h2>
             </div>
         </div>
-    </div>
+    </main>
+</div>
 
-    <!-- SECTION 4: NEW UPDATES MODULE -->
-    <div id="view-updates" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Home
-            </button>
-            <span class="font-bold text-slate-800">System Updates</span>
-            <div class="w-10"></div>
-        </header>
+<!-- ================= ENTITIES ================= -->
+<div id="view-entities" class="app-view">
+    <header class="h-16 flex items-center px-6 border-b bg-white">
+        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">
+            ← Home
+        </button>
+        <h2 class="mx-auto font-bold">Financial Brand Entities</h2>
+    </header>
 
-        <div class="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center text-center">
-            <div class="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-8 pulse-icon shadow-sm">
-                <i class="fa-solid fa-satellite-dish text-4xl"></i>
-            </div>
-            <h1 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Stay Tuned!</h1>
-            <p class="text-xl text-slate-600 max-w-lg mb-8 leading-relaxed">There's no any new update. Stay tuned on the portal for new updates.</p>
-            
-            <div class="w-full max-w-md p-6 bg-slate-50 rounded-3xl border border-slate-100 text-left">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Update Stream</span>
-                </div>
-                <p class="text-sm text-slate-400 italic">Logs are currently empty. New notifications will appear here as they are published by the administration.</p>
-            </div>
+    <div class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-4 gap-6">
+        <div onclick="openSop('BharatLoan','bg-blue-600')" class="bg-white p-8 rounded-3xl text-center shadow cursor-pointer">
+            <div class="w-14 h-14 bg-blue-600 text-white rounded-xl mx-auto mb-4 flex items-center justify-center font-bold">B</div>
+            <h3 class="font-bold">BharatLoan</h3>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl text-center shadow">
+            <div class="w-14 h-14 bg-emerald-600 text-white rounded-xl mx-auto mb-4 flex items-center justify-center font-bold">R</div>
+            <h3 class="font-bold">Rupee112</h3>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl text-center shadow">
+            <div class="w-14 h-14 bg-indigo-600 text-white rounded-xl mx-auto mb-4 flex items-center justify-center font-bold">L</div>
+            <h3 class="font-bold">Loan112</h3>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl text-center shadow">
+            <div class="w-14 h-14 bg-orange-500 text-white rounded-xl mx-auto mb-4 flex items-center justify-center font-bold">T</div>
+            <h3 class="font-bold">Rupeeontime</h3>
         </div>
     </div>
+</div>
 
-    <!-- SECTION 5: SOP DETAILS -->
-    <div id="view-sop-details" class="app-view bg-white">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
-            <button onclick="navigateTo('view-entities')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
-                <i class="fa-solid fa-arrow-left"></i> All Brands
-            </button>
-            <div class="flex items-center gap-3">
-                <div id="active-entity-icon" class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs italic"></div>
-                <span id="active-entity-name" class="font-bold text-slate-800"></span>
-            </div>
-            <button onclick="navigateTo('view-home')" class="text-slate-400 hover:text-slate-900 transition-colors">
-                <i class="fa-solid fa-house"></i>
-            </button>
-        </header>
+<!-- ================= SOP DETAILS (UPDATED) ================= -->
+<div id="view-sop-details" class="app-view bg-white">
+    <header class="h-16 flex items-center justify-between px-6 border-b">
+        <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500">
+            ← All Brands
+        </button>
+        <div class="flex items-center gap-2">
+            <div id="active-entity-icon" class="w-8 h-8 rounded-lg text-white flex items-center justify-center font-bold"></div>
+            <span id="active-entity-name" class="font-bold"></span>
+        </div>
+        <button onclick="navigateTo('view-home')">
+            <i class="fa-solid fa-house"></i>
+        </button>
+    </header>
 
-        <div class="max-w-4xl mx-auto px-6 py-12">
-            <div class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100">
-                <h2 class="text-2xl font-black mb-6 text-slate-900">Brand Operational Procedure</h2>
-                <div class="space-y-6">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold flex-shrink-0">01</div>
-                        <div>
-                            <h4 class="font-bold text-slate-800">KYC Verification</h4>
-                            <p class="text-slate-500 text-sm mt-1">Check PAN/Aadhaar data against portal records for authenticity.</p>
-                        </div>
+    <div class="max-w-4xl mx-auto px-6 py-14">
+        <div class="bg-slate-50 p-10 rounded-3xl">
+
+            <!-- CUSTOMER JOURNEY -->
+            <h2 class="text-2xl font-extrabold mb-2">Customer Journey – BharatLoan</h2>
+            <p class="text-slate-500 mb-10">
+                Complete customer flow from registration to loan disbursal.
+            </p>
+
+            <div class="space-y-6">
+                <!-- STEP TEMPLATE -->
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">01</div>
+                    <div>
+                        <h4 class="font-bold">Customer Registration</h4>
+                        <p class="text-sm text-slate-500">Mobile number registration with OTP verification.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">02</div>
+                    <div>
+                        <h4 class="font-bold">Basic Profile Creation</h4>
+                        <p class="text-sm text-slate-500">Personal, address, DOB and employment details.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">03</div>
+                    <div>
+                        <h4 class="font-bold">KYC Verification</h4>
+                        <p class="text-sm text-slate-500">PAN & Aadhaar verified via DigiLocker/internal systems.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">04</div>
+                    <div>
+                        <h4 class="font-bold">Loan Application Submission</h4>
+                        <p class="text-sm text-slate-500">Loan amount, tenure and income details submitted.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">05</div>
+                    <div>
+                        <h4 class="font-bold">Credit Bureau Check</h4>
+                        <p class="text-sm text-slate-500">Credit score & repayment history fetched.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">06</div>
+                    <div>
+                        <h4 class="font-bold">Risk & Eligibility Assessment</h4>
+                        <p class="text-sm text-slate-500">Eligibility based on income, liabilities & risk rules.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">07</div>
+                    <div>
+                        <h4 class="font-bold">Loan Offer Generation</h4>
+                        <p class="text-sm text-slate-500">Sanctioned amount, EMI, tenure & interest shared.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">08</div>
+                    <div>
+                        <h4 class="font-bold">Offer Acceptance & eMandate</h4>
+                        <p class="text-sm text-slate-500">Customer accepts offer & completes eNACH.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">09</div>
+                    <div>
+                        <h4 class="font-bold">Loan Agreement eSign</h4>
+                        <p class="text-sm text-slate-500">Agreement signed via Aadhaar / OTP eSign.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center font-bold">10</div>
+                    <div>
+                        <h4 class="font-bold">Loan Disbursal</h4>
+                        <p class="text-sm text-slate-500">Amount credited to registered bank account.</p>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+</div>
 
-    <script>
-        function navigateTo(viewId) {
-            document.querySelectorAll('.app-view').forEach(view => {
-                view.classList.remove('active');
-            });
-            const target = document.getElementById(viewId);
-            target.classList.add('active');
-            window.scrollTo(0, 0);
-        }
+<!-- ================= UPDATES ================= -->
+<div id="view-updates" class="app-view">
+    <header class="h-16 flex items-center px-6 border-b bg-white">
+        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">
+            ← Home
+        </button>
+    </header>
 
-        function toggleFaq(btn) {
-            const item = btn.parentElement;
-            const isActive = item.classList.contains('active');
-            
-            // Close other open items
-            document.querySelectorAll('.faq-item').forEach(i => {
-                if(i !== item) i.classList.remove('active');
-            });
+    <div class="py-20 text-center">
+        <h2 class="text-2xl font-bold">No new updates</h2>
+        <p class="text-slate-500 mt-2">Please check back later.</p>
+    </div>
+</div>
 
-            // Toggle current
-            if (!isActive) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        }
+<script>
+function navigateTo(viewId) {
+    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    window.scrollTo(0,0);
+}
 
-        function openSop(name, colorClass) {
-            document.getElementById('active-entity-name').innerText = name;
-            const icon = document.getElementById('active-entity-icon');
-            icon.innerText = name.charAt(0);
-            icon.className = `w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs ${colorClass}`;
-            navigateTo('view-sop-details');
-        }
-    </script>
+function openSop(name, color) {
+    document.getElementById('active-entity-name').innerText = name;
+    const icon = document.getElementById('active-entity-icon');
+    icon.innerText = name.charAt(0);
+    icon.className = `w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold ${color}`;
+    navigateTo('view-sop-details');
+}
+</script>
+
 </body>
 </html>
