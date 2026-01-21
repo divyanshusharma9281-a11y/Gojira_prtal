@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BharatLoan | Operations SOP Portal v2.0</title>
+    <title>BharatLoan Group | Training Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,189 +13,267 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .status-badge { padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        
+        /* Entity Card Hover Effects */
+        .entity-card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .entity-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        #main-portal { display: none; }
+        #entity-selection { display: flex; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
 
-    <!-- Sidebar Navigation -->
-    <aside class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-200 z-30 flex flex-col">
-        <div class="p-8 border-b border-slate-100">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg">B</div>
-                <div>
-                    <h1 class="text-xl font-extrabold tracking-tight">BharatLoan</h1>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Internal Portal</p>
-                </div>
-            </div>
-        </div>
-
-        <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
-            <button onclick="switchTab('journey')" id="btn-journey" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition-all">
-                <i class="fa-solid fa-route w-5"></i>
-                <span class="text-sm">Customer Journey</span>
-            </button>
-            <button onclick="switchTab('procedures')" id="btn-procedures" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
-                <i class="fa-solid fa-briefcase w-5"></i>
-                <span class="text-sm">Operational Procedures</span>
-            </button>
-            <button onclick="switchTab('escalation')" id="btn-escalation" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
-                <i class="fa-solid fa-envelope-circle-check w-5"></i>
-                <span class="text-sm">Email Escalation</span>
-            </button>
-            <button onclick="switchTab('repayment')" id="btn-repayment" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
-                <i class="fa-solid fa-hand-holding-dollar w-5"></i>
-                <span class="text-sm">Repayment & Refund</span>
-            </button>
-            <button onclick="switchTab('audit')" id="btn-audit" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
-                <i class="fa-solid fa-clipboard-check w-5"></i>
-                <span class="text-sm">Eligibility Audit</span>
-            </button>
-        </nav>
-
-        <div class="p-6">
-            <div class="bg-slate-900 p-5 rounded-2xl text-white text-[11px]">
-                <p class="text-blue-400 font-bold uppercase mb-1">Compliance Alert</p>
-                <p class="opacity-70 leading-relaxed italic">All PII data must be handled per DPDP guidelines. Do not share logs externally.</p>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 ml-72 p-12">
-        <div class="max-w-5xl mx-auto">
+    <!-- Section 1: Entity Selection Screen -->
+    <section id="entity-selection" class="fixed inset-0 z-50 bg-slate-50 flex-col items-center justify-center p-6">
+        <div class="max-w-6xl w-full text-center">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-2">Fintech Training Portal</h1>
+            <p class="text-slate-500 mb-12 font-medium">Select your entity to access specific SOPs and Guidelines</p>
             
-            <!-- Tab 1: Journey -->
-            <section id="journey" class="tab-content active">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-extrabold">Section 3: Customer Journey</h2>
-                    <p class="text-slate-500 mt-2">Standard application flow from install to disbursal.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <div class="text-blue-600 font-bold text-lg mb-2">01. Registration</div>
-                        <p class="text-xs text-slate-500 leading-relaxed">App installation and OTP validation via registered mobile number.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <div class="text-blue-600 font-bold text-lg mb-2">02. eKYC</div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Aadhaar verification via DigiLocker and selfie-matching.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <div class="text-blue-600 font-bold text-lg mb-2">03. Disbursal</div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Acceptance of Sanction Letter followed by E-Sign and ICICI API funding.</p>
-                    </div>
-                </div>
-            </section>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Entity 1: BharatLoan -->
+                <button onclick="enterPortal('BharatLoan', 'B', 'bg-blue-600')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
+                    <div class="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">B</div>
+                    <h3 class="text-xl font-bold text-slate-800">BharatLoan</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v2.0</p>
+                </button>
 
-            <!-- Tab 2: Procedures -->
-            <section id="procedures" class="tab-content">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-extrabold">Section 7: Operational Procedures</h2>
-                    <p class="text-slate-500 mt-2">Departmental roles and CRM handling.</p>
-                </div>
-                <div class="space-y-6">
-                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                        <div class="bg-slate-800 text-white px-6 py-3 font-bold text-sm">Customer Care (L1)</div>
-                        <div class="p-6 grid md:grid-cols-2 gap-6">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h5 class="font-bold text-xs text-blue-600 uppercase mb-2">Lead Conversion</h5>
-                                <p class="text-xs text-slate-600">Filter 'Initiated' cases in CRM. Call customers failing document upload.</p>
-                            </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h5 class="font-bold text-xs text-blue-600 uppercase mb-2">Status Script</h5>
-                                <p class="text-xs text-slate-600">"Under Review: Please wait 24-48 hours for manual audit."</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <!-- Entity 2: Rupee112 -->
+                <button onclick="enterPortal('Rupee112', 'R', 'bg-emerald-600')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
+                    <div class="w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">R</div>
+                    <h3 class="text-xl font-bold text-slate-800">Rupee112</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v1.5</p>
+                </button>
 
-            <!-- Tab 3: Escalation -->
-            <section id="escalation" class="tab-content">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-extrabold">Section 9: Email Escalation Flow</h2>
-                    <p class="text-slate-500 mt-2">support@bharatloanfintech.com protocols.</p>
-                </div>
-                <div class="bg-red-50 border border-red-200 rounded-3xl p-8 relative overflow-hidden">
-                    <div class="relative z-10">
-                        <h4 class="text-red-900 font-extrabold text-xl mb-6">CRITICAL: Forwarding Protocol</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-4 bg-white p-4 rounded-xl border border-red-100">
-                                <div class="bg-red-600 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs shrink-0">!</div>
-                                <p class="text-sm font-semibold text-red-700">You MUST copy the "Application Logs" from the admin portal before forwarding any email to Collections or Settlement.</p>
-                            </div>
-                            <ul class="text-sm text-slate-600 space-y-2 ml-10 list-disc">
-                                <li>Search customer via PAN/Mobile.</li>
-                                <li>Navigate to "Log History".</li>
-                                <li>Paste logs directly into the escalation email.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <!-- Entity 3: Loan112 -->
+                <button onclick="enterPortal('Loan112', 'L', 'bg-indigo-600')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
+                    <div class="w-20 h-20 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">L</div>
+                    <h3 class="text-xl font-bold text-slate-800">Loan112</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v1.8</p>
+                </button>
 
-            <!-- Tab 4: Repayment -->
-            <section id="repayment" class="tab-content">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-extrabold">Section 10: Repayment & Refund</h2>
-                    <p class="text-slate-500 mt-2">Service Level Agreements (SLA) for financial operations.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <h4 class="font-bold mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-clock text-blue-600"></i> Repayment TAT
-                        </h4>
-                        <p class="text-xs text-slate-500">Reflection time: <strong>24 Hours</strong>. If delayed, request UTR screenshot for manual accounts team check.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <h4 class="font-bold mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-money-bill-transfer text-green-600"></i> Refund TAT
-                        </h4>
-                        <p class="text-xs text-slate-500">Reflection time: <strong>5-7 Working Days</strong>. Case must be logged in the "Refund Sheet".</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Tab 5: Audit -->
-            <section id="audit" class="tab-content">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-extrabold">Eligibility Audit Checklist</h2>
-                    <p class="text-slate-500 mt-2">Mandatory criteria for application approval.</p>
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 uppercase text-[10px] font-bold text-slate-400 tracking-widest">
-                            <tr>
-                                <th class="px-6 py-4">Parameter</th>
-                                <th class="px-6 py-4">SOP Requirement</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr>
-                                <td class="px-6 py-4 font-semibold text-slate-700">Employment</td>
-                                <td class="px-6 py-4">Strictly Salaried Only</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 font-semibold text-slate-700">Net Salary</td>
-                                <td class="px-6 py-4">₹25,000 Minimum</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 font-semibold text-slate-700">Age</td>
-                                <td class="px-6 py-4">25 - 55 Years</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 font-semibold text-slate-700 text-red-600">Negative Check</td>
-                                <td class="px-6 py-4 text-red-600 italic">REJECT if existing loan with Partner</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
+                <!-- Entity 4: Rupeeontime -->
+                <button onclick="enterPortal('Rupeeontime', 'T', 'bg-orange-500')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
+                    <div class="w-20 h-20 bg-orange-500 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">T</div>
+                    <h3 class="text-xl font-bold text-slate-800">Rupeeontime</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v1.2</p>
+                </button>
+            </div>
+            
+            <p class="mt-12 text-slate-400 text-sm italic">All entities offer loan products from ₹5,000 to ₹1,00,000</p>
         </div>
-    </main>
+    </section>
+
+    <!-- Section 2: Main Portal Container (Initially Hidden) -->
+    <div id="main-portal" class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-200 z-30 flex flex-col">
+            <div class="p-8 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="entity-logo" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg">B</div>
+                    <div>
+                        <h1 id="entity-name" class="text-xl font-extrabold tracking-tight">BharatLoan</h1>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Internal Portal</p>
+                    </div>
+                </div>
+                <button onclick="exitToSelection()" class="text-slate-300 hover:text-red-500 transition-colors">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+
+            <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
+                <button onclick="switchTab('journey')" id="btn-journey" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition-all">
+                    <i class="fa-solid fa-route w-5"></i>
+                    <span class="text-sm">Customer Journey</span>
+                </button>
+                <button onclick="switchTab('procedures')" id="btn-procedures" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-briefcase w-5"></i>
+                    <span class="text-sm">Operational Procedures</span>
+                </button>
+                <button onclick="switchTab('escalation')" id="btn-escalation" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-envelope-circle-check w-5"></i>
+                    <span class="text-sm">Email Escalation</span>
+                </button>
+                <button onclick="switchTab('repayment')" id="btn-repayment" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-hand-holding-dollar w-5"></i>
+                    <span class="text-sm">Repayment & Refund</span>
+                </button>
+                <button onclick="switchTab('audit')" id="btn-audit" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-clipboard-check w-5"></i>
+                    <span class="text-sm">Eligibility Audit</span>
+                </button>
+            </nav>
+
+            <div class="p-6">
+                <div class="bg-slate-900 p-5 rounded-2xl text-white text-[11px]">
+                    <p class="text-blue-400 font-bold uppercase mb-1">Compliance Alert</p>
+                    <p class="opacity-70 leading-relaxed italic">PII data handling must strictly follow DPDP guidelines for <span id="compliance-entity">BharatLoan</span>.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-12">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Tab 1: Journey -->
+                <section id="journey" class="tab-content active">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-extrabold">Section 3: Customer Journey</h2>
+                        <p class="text-slate-500 mt-2">Standard application flow from install to disbursal.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="text-blue-600 font-bold text-lg mb-2">01. Registration</div>
+                            <p class="text-xs text-slate-500 leading-relaxed">App installation and OTP validation via registered mobile number.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="text-blue-600 font-bold text-lg mb-2">02. eKYC</div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Aadhaar verification via DigiLocker and selfie-matching.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="text-blue-600 font-bold text-lg mb-2">03. Disbursal</div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Acceptance of Sanction Letter followed by E-Sign and ICICI API funding.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 2: Procedures -->
+                <section id="procedures" class="tab-content">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-extrabold">Section 7: Operational Procedures</h2>
+                        <p class="text-slate-500 mt-2">Departmental roles and CRM handling.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                            <div class="bg-slate-800 text-white px-6 py-3 font-bold text-sm">Customer Care (L1)</div>
+                            <div class="p-6 grid md:grid-cols-2 gap-6">
+                                <div class="p-4 bg-slate-50 rounded-xl">
+                                    <h5 class="font-bold text-xs text-blue-600 uppercase mb-2">Lead Conversion</h5>
+                                    <p class="text-xs text-slate-600">Filter 'Initiated' cases in CRM. Call customers failing document upload.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-xl">
+                                    <h5 class="font-bold text-xs text-blue-600 uppercase mb-2">Status Script</h5>
+                                    <p class="text-xs text-slate-600">"Under Review: Please wait 24-48 hours for manual audit."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 3: Escalation -->
+                <section id="escalation" class="tab-content">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-extrabold">Section 9: Email Escalation Flow</h2>
+                        <p id="escalation-email" class="text-slate-500 mt-2">support@bharatloanfintech.com protocols.</p>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 rounded-3xl p-8 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h4 class="text-red-900 font-extrabold text-xl mb-6">CRITICAL: Forwarding Protocol</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-4 bg-white p-4 rounded-xl border border-red-100">
+                                    <div class="bg-red-600 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs shrink-0">!</div>
+                                    <p class="text-sm font-semibold text-red-700">You MUST copy the "Application Logs" from the admin portal before forwarding any email to Collections or Settlement.</p>
+                                </div>
+                                <ul class="text-sm text-slate-600 space-y-2 ml-10 list-disc">
+                                    <li>Search customer via PAN/Mobile.</li>
+                                    <li>Navigate to "Log History".</li>
+                                    <li>Paste logs directly into the escalation email.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 4: Repayment -->
+                <section id="repayment" class="tab-content">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-extrabold">Section 10: Repayment & Refund</h2>
+                        <p class="text-slate-500 mt-2">Service Level Agreements (SLA) for financial operations.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-blue-600"></i> Repayment TAT
+                            </h4>
+                            <p class="text-xs text-slate-500">Reflection time: <strong>24 Hours</strong>. If delayed, request UTR screenshot for manual accounts team check.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-money-bill-transfer text-green-600"></i> Refund TAT
+                            </h4>
+                            <p class="text-xs text-slate-500">Reflection time: <strong>5-7 Working Days</strong>. Case must be logged in the "Refund Sheet".</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 5: Audit -->
+                <section id="audit" class="tab-content">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-extrabold">Eligibility Audit Checklist</h2>
+                        <p class="text-slate-500 mt-2">Mandatory criteria for application approval.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 uppercase text-[10px] font-bold text-slate-400 tracking-widest">
+                                <tr>
+                                    <th class="px-6 py-4">Parameter</th>
+                                    <th class="px-6 py-4">SOP Requirement</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-slate-700">Employment</td>
+                                    <td class="px-6 py-4">Strictly Salaried Only</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-slate-700">Net Salary</td>
+                                    <td class="px-6 py-4">₹25,000 Minimum</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-slate-700">Age</td>
+                                    <td class="px-6 py-4">25 - 55 Years</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-slate-700 text-red-600">Negative Check</td>
+                                    <td class="px-6 py-4 text-red-600 italic">REJECT if existing loan with Partner</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
 
     <script>
+        function enterPortal(name, initial, colorClass) {
+            // Update Branding
+            document.getElementById('entity-name').innerText = name;
+            document.getElementById('compliance-entity').innerText = name;
+            
+            const logo = document.getElementById('entity-logo');
+            logo.innerText = initial;
+            logo.className = `w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg ${colorClass}`;
+            
+            // Update dynamic email (example logic)
+            const emailId = name.toLowerCase() + "@fintech.com";
+            document.getElementById('escalation-email').innerText = `support@${name.toLowerCase()}.com protocols.`;
+
+            // Transition UI
+            document.getElementById('entity-selection').style.display = 'none';
+            document.getElementById('main-portal').style.display = 'flex';
+            
+            // Default to journey tab
+            switchTab('journey');
+        }
+
+        function exitToSelection() {
+            document.getElementById('entity-selection').style.display = 'flex';
+            document.getElementById('main-portal').style.display = 'none';
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
