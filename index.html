@@ -384,21 +384,120 @@
             </button>
         </header>
 
-        <div class="max-w-4xl mx-auto px-6 py-12">
-            <div class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100">
-                <h2 class="text-2xl font-black mb-6 text-slate-900">Brand Operational Procedure</h2>
-                <div class="space-y-6">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold flex-shrink-0">01</div>
-                        <div>
-                            <h4 class="font-bold text-slate-800">KYC Verification</h4>
-                            <p class="text-slate-500 text-sm mt-1">Check PAN/Aadhaar data against portal records for authenticity.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="space-y-8">
+
+    <!-- STEP 01 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">01</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Customer Registration</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Customer registers on BharatLoan platform using mobile number. OTP verification is mandatory to activate the account.
+            </p>
         </div>
     </div>
+
+    <!-- STEP 02 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">02</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Basic Profile Creation</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Customer fills basic details such as full name, date of birth, address, and employment type.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 03 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">03</div>
+        <div>
+            <h4 class="font-bold text-slate-800">KYC Verification</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                PAN and Aadhaar details are collected and verified via internal systems or DigiLocker for authenticity.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 04 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">04</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Loan Application Submission</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Customer selects loan amount and tenure, and submits income and employment-related information.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 05 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">05</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Credit Bureau Check</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                System fetches customer credit score and repayment history from authorized credit bureaus.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 06 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">06</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Risk & Eligibility Assessment</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Customer eligibility is evaluated based on credit score, income, liabilities, and internal risk rules.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 07 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">07</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Loan Offer Generation</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Approved customers receive a loan offer with sanctioned amount, interest rate, EMI, and tenure.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 08 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">08</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Offer Acceptance & eMandate</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Customer accepts the loan offer and completes eNACH / eMandate setup for EMI auto-debit.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 09 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">09</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Loan Agreement eSign</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Customer digitally signs the loan agreement through Aadhaar-based or OTP-based eSign.
+            </p>
+        </div>
+    </div>
+
+    <!-- STEP 10 -->
+    <div class="flex gap-4 items-start">
+        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold">10</div>
+        <div>
+            <h4 class="font-bold text-slate-800">Loan Disbursal</h4>
+            <p class="text-slate-500 text-sm mt-1">
+                Post final checks, the loan amount is credited directly to the customer’s registered bank account.
+            </p>
+        </div>
+    </div>
+
+</div>
+
 
     <script>
         function navigateTo(viewId) {
@@ -433,142 +532,7 @@
             icon.innerText = name.charAt(0);
             icon.className = `w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs ${colorClass}`;
             navigateTo('view-sop-details');
-            <!-- Scrollable Content -->
-            <div class="p-10 max-w-5xl mx-auto w-full">
-                <!-- Section Header -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-slate-800">Complete Customer Journey</h3>
-                    <p class="text-slate-500 mt-1">Operational flow from registration to fund disbursal.</p>
-                </div>
-
-                <!-- Vertical Journey Tracker -->
-                <div class="space-y-6">
-                    
-                    <!-- Step 01: Registration -->
-                    <div class="journey-card active bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                        <div class="step-indicator">
-                            <div class="step-line"></div>
-                            <div class="flex items-start gap-6">
-                                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg shadow-blue-100 z-10">01</div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="text-lg font-bold text-slate-900">User Registration & Authentication</h4>
-                                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full uppercase">Touchpoint: App/Web</span>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                                        The user initiates the journey via BharatLoan.com or the Mobile App. Primary authentication is handled via <strong>OTP-based verification</strong> of the mobile number.
-                                    </p>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center gap-3">
-                                            <i class="fa-solid fa-mobile-screen text-blue-500"></i>
-                                            <span class="text-xs font-semibold">Mobile Pincode Verification</span>
-                                        </div>
-                                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center gap-3">
-                                            <i class="fa-solid fa-user-plus text-blue-500"></i>
-                                            <span class="text-xs font-semibold">Basic Profile Creation</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 02: Digital KYC -->
-                    <div class="journey-card bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <div class="step-indicator">
-                            <div class="step-line"></div>
-                            <div class="flex items-start gap-6">
-                                <div class="w-12 h-12 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center font-black text-lg z-10">02</div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="text-lg font-bold text-slate-900">Smart KYC & Document Upload</h4>
-                                        <span class="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-full uppercase">Compliance Phase</span>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                                        Paperless verification engine processes identity documents in real-time.
-                                    </p>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="px-3 py-1.5 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200">PAN Validation</span>
-                                        <span class="px-3 py-1.5 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200">Aadhaar e-KYC</span>
-                                        <span class="px-3 py-1.5 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200">Selfie Liveness</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 03: Underwriting -->
-                    <div class="journey-card bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <div class="step-indicator">
-                            <div class="step-line"></div>
-                            <div class="flex items-start gap-6">
-                                <div class="w-12 h-12 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center font-black text-lg z-10">03</div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="text-lg font-bold text-slate-900">Automated Underwriting & Score Analysis</h4>
-                                        <span class="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-bold rounded-full uppercase">AI Engine</span>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                                        System pulls credit bureau data and analyzes bank statements via <strong>Account Aggregator (AA)</strong> to determine the loan limit.
-                                    </p>
-                                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center justify-between">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-indigo-500 uppercase">System Output</p>
-                                            <p class="text-xs font-bold text-indigo-900">Real-time Loan Offer Generation</p>
-                                        </div>
-                                        <i class="fa-solid fa-microchip text-indigo-300 text-2xl"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 04: Digital Agreement -->
-                    <div class="journey-card bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <div class="step-indicator">
-                            <div class="step-line"></div>
-                            <div class="flex items-start gap-6">
-                                <div class="w-12 h-12 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center font-black text-lg z-10">04</div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="text-lg font-bold text-slate-900">e-Sign & Repayment Setup</h4>
-                                        <span class="px-3 py-1 bg-teal-50 text-teal-600 text-[10px] font-bold rounded-full uppercase">Final Consent</span>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed">
-                                        The user accepts the loan terms through <strong>Aadhaar-based e-Sign</strong> and sets up an <strong>e-NACH mandate</strong> for automated EMI deductions.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 05: Disbursal -->
-                    <div class="journey-card bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <div class="step-indicator">
-                            <div class="step-line"></div>
-                            <div class="flex items-start gap-6">
-                                <div class="w-12 h-12 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center font-black text-lg z-10">05</div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="text-lg font-bold text-slate-900">Instant Disbursal</h4>
-                                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full uppercase">Complete</span>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                                        Loan amount is credited instantly to the verified bank account via IMPS/NEFT.
-                                    </p>
-                                    <div class="flex items-center gap-2 text-emerald-600 font-bold text-sm">
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        <span>TAT: &lt; 15 Minutes</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </main>
-    </div>
-
+        }
+    </script>
 </body>
 </html>
