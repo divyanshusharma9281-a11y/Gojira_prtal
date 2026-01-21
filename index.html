@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gojira TP | Training Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -59,31 +58,31 @@
     <div class="grid md:grid-cols-4 gap-6">
 
       <!-- BharatLoan -->
-      <div onclick="navigateTo('view-bharatloan')" class="bg-white p-8 rounded-3xl text-center cursor-pointer hover-lift">
-        <img src="assets/bharatloan.png" alt="BharatLoan" class="h-16 mx-auto mb-4">
+      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl text-center cursor-pointer hover-lift bg-blue-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">B</div>
         <h3 class="font-bold">BharatLoan</h3>
-        <p class="text-xs text-slate-400 uppercase">Premium Segment</p>
+        <p class="text-xs uppercase opacity-80">Premium Segment</p>
       </div>
 
       <!-- Rupee112 -->
-      <div class="bg-white p-8 rounded-3xl text-center hover-lift">
-        <img src="assets/rupee112.png" alt="Rupee112" class="h-16 mx-auto mb-4">
+      <div class="p-8 rounded-3xl text-center hover-lift bg-emerald-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">R</div>
         <h3 class="font-bold">Rupee112</h3>
-        <p class="text-xs text-slate-400 uppercase">Instant Approval</p>
+        <p class="text-xs uppercase opacity-80">Instant Approval</p>
       </div>
 
       <!-- Loan112 -->
-      <div class="bg-white p-8 rounded-3xl text-center hover-lift">
-        <img src="assets/loan112.png" alt="Loan112" class="h-16 mx-auto mb-4">
+      <div class="p-8 rounded-3xl text-center hover-lift bg-indigo-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">L</div>
         <h3 class="font-bold">Loan112</h3>
-        <p class="text-xs text-slate-400 uppercase">Short-term</p>
+        <p class="text-xs uppercase opacity-80">Short-term</p>
       </div>
 
       <!-- RupeeOnTime -->
-      <div class="bg-white p-8 rounded-3xl text-center hover-lift">
-        <img src="assets/rupeeontime.png" alt="RupeeOnTime" class="h-16 mx-auto mb-4">
+      <div class="p-8 rounded-3xl text-center hover-lift bg-purple-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl font-extrabold">T</div>
         <h3 class="font-bold">RupeeOnTime</h3>
-        <p class="text-xs text-slate-400 uppercase">Flexi-Repay</p>
+        <p class="text-xs uppercase opacity-80">Flexi-Repay</p>
       </div>
 
     </div>
@@ -130,14 +129,6 @@
   </div>
 </div>
 
-<!-- UPDATES -->
-<div id="view-updates" class="app-view bg-white">
-  <header class="h-16 flex items-center px-6 border-b">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
-    <span class="mx-auto font-bold">System Updates</span>
-  </header>
-</div>
-
 <script>
 function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));
@@ -148,9 +139,3 @@ function navigateTo(id){
 
 </body>
 </html>
-
-
-
-
-
-
