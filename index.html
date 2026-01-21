@@ -41,13 +41,18 @@
 <!-- TOP NAV -->
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold">₹</div>
+
+    <!-- LOGO AS HOME BUTTON (ADD-ON ONLY) -->
+    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer select-none">
+      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold">
+        ₹
+      </div>
       <span class="font-extrabold text-xl">
         Gojira <span class="text-blue-600">TP</span>
       </span>
     </div>
 
+    <!-- DARK MODE -->
     <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
       <span id="theme-icon">🌙</span>
       <span id="theme-text">Dark</span>
@@ -97,177 +102,14 @@
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
     <span class="mx-auto font-bold">Knowledge Base</span>
   </header>
-
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-4xl font-extrabold mb-4">Frequently Asked Questions (FAQ)</h1>
-    <p class="text-slate-500 dark:text-slate-400 mb-10">
-      Official responses to common loan, repayment, and platform-related queries.
-    </p>
-
-    <div class="space-y-4">
-
-      <!-- FAQs 1–10 -->
-      <!-- (UNCHANGED – SAME AS DISCUSSED) -->
-
-      <!-- FAQ items exactly as previously finalized -->
-      <!-- START -->
-      <!-- FAQ 1 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          1. My loan is approved but not disbursed. Why?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 mb-2">
-            <li>Incomplete documentation</li>
-            <li>Bank account verification</li>
-            <li>Internal compliance or risk checks</li>
-          </ul>
-          <p>Our team will assist you with the exact reason.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          2. Can I increase my loan amount after sanction?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 mb-2">
-            <li>Your credit profile</li>
-            <li>Repayment history</li>
-            <li>Internal eligibility checks</li>
-          </ul>
-          <p>You may reapply after closing the loan or maintaining a good repayment track.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          3. Why was my loan application rejected?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 mb-2">
-            <li>Credit score or repayment history</li>
-            <li>Existing liabilities</li>
-            <li>Internal risk assessment</li>
-          </ul>
-          <p>Customer care can guide but cannot override system decisions.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          4. How long does it take for repayment to reflect?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>24–48 working hours depending on bank processing.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          5. How is my total payable amount calculated?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6">
-            <li>Loan amount</li>
-            <li>Interest till repayment date</li>
-            <li>Penalty (2% post due date)</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          6. Will my credit score be affected if I delay payment?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Yes, delays negatively impact your CIBIL score.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          7. Why am I being called after sharing PTP?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6">
-            <li>Confirm readiness</li>
-            <li>Check fund arrangement</li>
-            <li>Assist with early payment</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          8. Will calls stop after payment?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Yes, once payment reflects in the system.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          9. What is NBFC?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>NBFC is a Non-Banking Financial Company regulated by RBI.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">
-          10. What is Account Aggregator?
-        </button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>It securely shares financial data with lenders after consent.</p>
-        </div>
-      </div>
-      <!-- END -->
-
-    </div>
-  </div>
 </div>
 
-<!-- BRAND ENTITIES (RESTORED – NO CHANGES) -->
+<!-- BRAND ENTITIES -->
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500">← Home</button>
     <span class="mx-auto font-bold">Brand Entities</span>
   </header>
-
-  <div class="max-w-6xl mx-auto px-6 py-14">
-    <h1 class="text-3xl font-extrabold text-center mb-12">Entity Guidelines</h1>
-
-    <div class="grid md:grid-cols-4 gap-8">
-
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl text-center cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
-        <h3 class="font-bold text-lg">BharatLoan</h3>
-        <p class="text-xs uppercase opacity-80">Premium Segment</p>
-      </div>
-
-      <div class="p-8 rounded-3xl text-center hover-lift bg-emerald-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
-        <h3 class="font-bold text-lg">Rupee112</h3>
-        <p class="text-xs uppercase opacity-80">Instant Approval</p>
-      </div>
-
-      <div class="p-8 rounded-3xl text-center hover-lift bg-indigo-700 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
-        <h3 class="font-bold text-lg">Loan112</h3>
-        <p class="text-xs uppercase opacity-80">Short-term</p>
-      </div>
-
-      <div class="p-8 rounded-3xl text-center hover-lift bg-purple-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
-        <h3 class="font-bold text-lg">RupeeOnTime</h3>
-        <p class="text-xs uppercase opacity-80">Flexi-Repay</p>
-      </div>
-
-    </div>
-  </div>
 </div>
 
 <!-- UPDATES -->
@@ -283,10 +125,6 @@ function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
-}
-
-function toggleFaq(btn){
-  btn.parentElement.classList.toggle('active');
 }
 
 function toggleTheme(){
