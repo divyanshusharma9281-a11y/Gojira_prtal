@@ -100,20 +100,137 @@
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
     <div class="space-y-4">
+      <!-- 1 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6">
+          <p class="mb-2">Loan disbursement may be pending due to:</p>
+          <ul class="list-disc ml-6 space-y-1">
             <li>Incomplete documentation</li>
             <li>Bank account verification</li>
             <li>Internal compliance or risk checks</li>
           </ul>
+          <p class="mt-2 font-medium">Our team will assist you with the exact reason.</p>
         </div>
       </div>
+
+      <!-- 2 -->
       <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. How long does it take for repayment to reflect?</button>
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. Can I increase my loan amount after sanction?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>24–48 working hours depending on bank processing.</p>
+          <p class="mb-2">Loan enhancement depends on below mentioned criteria but can be done while accepting the offer not post sanction:</p>
+          <ul class="list-disc ml-6 space-y-1">
+            <li>Your credit profile</li>
+            <li>Repayment history</li>
+            <li>Internal eligibility checks</li>
+          </ul>
+          <p class="mt-2">You may reapply after closing or maintaining a good repayment track.</p>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">3. Why was my loan application rejected?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-2">Loan applications can be rejected due to:</p>
+          <ul class="list-disc ml-6 space-y-1">
+            <li>Credit score or repayment history</li>
+            <li>Existing liabilities</li>
+            <li>Internal risk assessment</li>
+          </ul>
+          <p class="mt-2">Customer care can guide but cannot override system decisions.</p>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">4. How long does it take for repayment to reflect after payment?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p>Payments usually reflect within 24–48 working hours. Delays may occur due to bank processing or holidays.</p>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount calculated?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-2">Your payable amount includes:</p>
+          <ul class="list-disc ml-6 space-y-1">
+            <li>Loan Amount</li>
+            <li>Interest calculated till the repayment date</li>
+            <li>Penalty (2% post repayment date where 1% is daily interest and 1% is penalty)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">6. Will my credit score be affected if I delay payment?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p>Yes. Any delay in repayment may negatively impact your CIBIL score, which can affect future loan or credit card approvals.</p>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">7. I have already shared a Promise to Pay (PTP). Why am I being called again?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-2">We may call to:</p>
+          <ul class="list-disc ml-6 space-y-1">
+            <li>Confirm your payment readiness</li>
+            <li>Check if funds have been arranged</li>
+            <li>Assist you in making the payment earlier, if possible</li>
+          </ul>
+          <p class="mt-2">This helps avoid further penalties or escalation.</p>
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">8. Will I continue to receive calls after making the payment?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p>No. Once the payment is successfully received and updated in our system, collection calls will stop.</p>
+          <p class="mt-2">If you still receive a call, please share the payment reference number with the agent.</p>
+        </div>
+      </div>
+
+      <!-- 9 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p>NBFC means Non-Banking Financial Company. It is a company that gives loans, but it is not a bank.</p>
+          <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
+            <p>🏦 <strong>Bank</strong> = savings account + loans</p>
+            <p>💰 <strong>NBFC</strong> = only loans</p>
+          </div>
+          <ul class="list-disc ml-6 mt-4 space-y-1">
+            <li>NBFCs give personal loans, business loans, etc.</li>
+            <li>They are approved by RBI</li>
+            <li>You cannot open a savings account in an NBFC</li>
+            <li>They are commonly used in instant loan apps</li>
+          </ul>
+          <p class="mt-3 text-sm italic">Example: If you take a quick loan from an app and get money fast, it is usually an NBFC, not a bank.</p>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">10. What is an Account Aggregator?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-3">An Account Aggregator (AA) is a secure system that lets you share your bank details digitally with a lender only after your permission. It helps banks/NBFCs check your financial data online, without paperwork.</p>
+          <h4 class="font-bold mb-2">How it works:</h4>
+          <ol class="list-decimal ml-6 space-y-1 mb-4">
+            <li>You give consent</li>
+            <li>Your bank statement / financial data is shared securely</li>
+            <li>The lender checks your eligibility</li>
+            <li>Loan gets processed faster</li>
+          </ol>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">🔒 Safe & secure</div>
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">✅ RBI regulated</div>
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">❌ No data without consent</div>
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
+          </div>
         </div>
       </div>
     </div>
@@ -131,7 +248,6 @@
     <h1 class="text-3xl font-extrabold mb-12">Select an Entity to View Guidelines</h1>
 
     <div class="grid md:grid-cols-4 gap-8">
-      <!-- BHARATLOAN CLICKABLE -->
       <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-lg">BharatLoan</h3>
@@ -159,7 +275,7 @@
   </div>
 </div>
 
-<!-- BHARATLOAN SPECIFIC VIEW (Contains "Our Tools") -->
+<!-- BHARATLOAN SPECIFIC VIEW -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
@@ -175,14 +291,12 @@
       </div>
     </div>
 
-    <!-- SECTION: OUR TOOLS -->
     <div class="mt-12">
       <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
         <span class="text-blue-600">🛠️</span> Our Operating Tools
       </h2>
       
       <div class="grid gap-6">
-        <!-- BharatLoan Portal -->
         <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex-1">
@@ -195,7 +309,6 @@
           </div>
         </div>
 
-        <!-- WOCOM 365 -->
         <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex-1">
@@ -208,7 +321,6 @@
           </div>
         </div>
 
-        <!-- Yellow Ai -->
         <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex-1">
@@ -221,7 +333,6 @@
           </div>
         </div>
 
-        <!-- Outlook -->
         <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex-1">
