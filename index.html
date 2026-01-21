@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BharatLoan Group | Training Portal</title>
+    <title>Training Portal | BharatLoan Group</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,12 +14,14 @@
         .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Entity Card Hover Effects */
         .entity-card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         .entity-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
         #main-portal { display: none; }
         #entity-selection { display: flex; }
+
+        /* Logo Placeholder Styling */
+        .brand-logo { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">
@@ -27,44 +29,51 @@
     <!-- Section 1: Entity Selection Screen -->
     <section id="entity-selection" class="fixed inset-0 z-50 bg-slate-50 flex-col items-center justify-center p-6">
         <div class="max-w-6xl w-full text-center">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-2">Fintech Training Portal</h1>
-            <p class="text-slate-500 mb-12 font-medium">Select your entity to access specific SOPs and Guidelines</p>
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-2">Training portal</h1>
+            <p class="text-slate-500 mb-12 font-medium">Select an entity to access specialized guidelines and SOPs</p>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Entity 1: BharatLoan -->
                 <button onclick="enterPortal('BharatLoan', 'B', 'bg-blue-600')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
-                    <div class="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">B</div>
+                    <div class="w-24 h-24 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden border-2 border-transparent group-hover:border-blue-100">
+                        <!-- Placeholder for Logo -->
+                        <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center text-white text-3xl font-black italic shadow-md">B</div>
+                    </div>
                     <h3 class="text-xl font-bold text-slate-800">BharatLoan</h3>
                     <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v2.0</p>
                 </button>
 
                 <!-- Entity 2: Rupee112 -->
                 <button onclick="enterPortal('Rupee112', 'R', 'bg-emerald-600')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
-                    <div class="w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">R</div>
+                    <div class="w-24 h-24 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden border-2 border-transparent group-hover:border-emerald-100">
+                        <div class="w-16 h-16 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-3xl font-black italic shadow-md">R</div>
+                    </div>
                     <h3 class="text-xl font-bold text-slate-800">Rupee112</h3>
                     <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v1.5</p>
                 </button>
 
                 <!-- Entity 3: Loan112 -->
                 <button onclick="enterPortal('Loan112', 'L', 'bg-indigo-600')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
-                    <div class="w-20 h-20 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">L</div>
+                    <div class="w-24 h-24 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden border-2 border-transparent group-hover:border-indigo-100">
+                        <div class="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-3xl font-black italic shadow-md">L</div>
+                    </div>
                     <h3 class="text-xl font-bold text-slate-800">Loan112</h3>
                     <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v1.8</p>
                 </button>
 
                 <!-- Entity 4: Rupeeontime -->
                 <button onclick="enterPortal('Rupeeontime', 'T', 'bg-orange-500')" class="entity-card bg-white p-8 rounded-3xl border border-slate-200 flex flex-col items-center group">
-                    <div class="w-20 h-20 bg-orange-500 rounded-2xl flex items-center justify-center text-white text-3xl font-black italic shadow-lg mb-6 group-hover:scale-110 transition-transform">T</div>
+                    <div class="w-24 h-24 bg-orange-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden border-2 border-transparent group-hover:border-orange-100">
+                        <div class="w-16 h-16 bg-orange-500 rounded-xl flex items-center justify-center text-white text-3xl font-black italic shadow-md">T</div>
+                    </div>
                     <h3 class="text-xl font-bold text-slate-800">Rupeeontime</h3>
                     <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">SOP v1.2</p>
                 </button>
             </div>
-            
-            <p class="mt-12 text-slate-400 text-sm italic">All entities offer loan products from ₹5,000 to ₹1,00,000</p>
         </div>
     </section>
 
-    <!-- Section 2: Main Portal Container (Initially Hidden) -->
+    <!-- Section 2: Main Portal Container -->
     <div id="main-portal" class="flex">
         <!-- Sidebar Navigation -->
         <aside class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-200 z-30 flex flex-col">
@@ -102,6 +111,10 @@
                     <i class="fa-solid fa-clipboard-check w-5"></i>
                     <span class="text-sm">Eligibility Audit</span>
                 </button>
+                <button onclick="switchTab('faqs')" id="btn-faqs" class="sidebar-item w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-circle-question w-5"></i>
+                    <span class="text-sm">FAQs</span>
+                </button>
             </nav>
 
             <div class="p-6">
@@ -134,6 +147,32 @@
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                             <div class="text-blue-600 font-bold text-lg mb-2">03. Disbursal</div>
                             <p class="text-xs text-slate-500 leading-relaxed">Acceptance of Sanction Letter followed by E-Sign and ICICI API funding.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: FAQs -->
+                <section id="faqs" class="tab-content">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-extrabold">Frequently Asked Questions</h2>
+                        <p class="text-slate-500 mt-2">Standard responses for common customer queries.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 mb-2">Q: Why is my loan application still under verification?</h4>
+                            <p class="text-sm text-slate-600">A: Manual audit takes 24-48 working hours. If documents are missing, our team will contact you or you will see an update in the app.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 mb-2">Q: Can I apply if I am self-employed?</h4>
+                            <p class="text-sm text-slate-600">A: Currently, our lending policy only supports salaried individuals with a minimum monthly income of ₹25,000.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 mb-2">Q: I have paid my loan, but the app still shows it as active.</h4>
+                            <p class="text-sm text-slate-600">A: Payments can take up to 24 hours to reflect. Please share your UTR/payment screenshot at our support email for manual verification.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 mb-2">Q: How do I get my NOC?</h4>
+                            <p class="text-sm text-slate-600">A: Once the loan is closed in our system, the NOC is sent to your registered email address within 24 hours.</p>
                         </div>
                     </div>
                 </section>
@@ -257,8 +296,7 @@
             logo.innerText = initial;
             logo.className = `w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg ${colorClass}`;
             
-            // Update dynamic email (example logic)
-            const emailId = name.toLowerCase() + "@fintech.com";
+            // Update dynamic email
             document.getElementById('escalation-email').innerText = `support@${name.toLowerCase()}.com protocols.`;
 
             // Transition UI
