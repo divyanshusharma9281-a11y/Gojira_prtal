@@ -59,6 +59,15 @@
             font-weight: 700;
             text-transform: uppercase;
         }
+
+        .pulse-icon {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -89,7 +98,8 @@
                 <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Select a module to access regulatory documentation, FAQ guides, and brand-specific procedures.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Module 1: KB -->
                 <div onclick="navigateTo('view-kb')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm">
                     <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                         <i class="fa-solid fa-book-open text-3xl"></i>
@@ -101,6 +111,7 @@
                     </span>
                 </div>
 
+                <!-- Module 2: Entities -->
                 <div onclick="navigateTo('view-entities')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm">
                     <div class="w-20 h-20 bg-slate-100 text-slate-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
                         <i class="fa-solid fa-layer-group text-3xl"></i>
@@ -109,6 +120,18 @@
                     <p class="text-slate-500 mb-6 px-4 leading-relaxed text-sm">Access brand-specific operational procedures for BharatLoan and others.</p>
                     <span class="flex items-center gap-2 text-slate-900 font-bold text-sm tracking-widest uppercase">
                         VIEW BRANDS <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </span>
+                </div>
+
+                <!-- Module 3: New Updates -->
+                <div onclick="navigateTo('view-updates')" class="glass-card hover-lift p-10 rounded-[2.5rem] cursor-pointer group flex flex-col items-center text-center shadow-sm border-2 border-dashed border-blue-100">
+                    <div class="w-20 h-20 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                        <i class="fa-solid fa-bell-concierge text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-3 text-slate-800">New Updates</h2>
+                    <p class="text-slate-500 mb-6 px-4 leading-relaxed text-sm">Stay informed with the latest policy changes, system updates, and announcements.</p>
+                    <span class="flex items-center gap-2 text-amber-600 font-bold text-sm tracking-widest uppercase">
+                        CHECK UPDATES <i class="fa-solid fa-chevron-right text-xs"></i>
                     </span>
                 </div>
             </div>
@@ -319,7 +342,34 @@
         </div>
     </div>
 
-    <!-- SECTION 4: SOP DETAILS -->
+    <!-- SECTION 4: NEW UPDATES MODULE -->
+    <div id="view-updates" class="app-view bg-white">
+        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
+            <button onclick="navigateTo('view-home')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Home
+            </button>
+            <span class="font-bold text-slate-800">System Updates</span>
+            <div class="w-10"></div>
+        </header>
+
+        <div class="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-8 pulse-icon shadow-sm">
+                <i class="fa-solid fa-satellite-dish text-4xl"></i>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Stay Tuned!</h1>
+            <p class="text-xl text-slate-600 max-w-lg mb-8 leading-relaxed">There's no any new update. Stay tuned on the portal for new updates.</p>
+            
+            <div class="w-full max-w-md p-6 bg-slate-50 rounded-3xl border border-slate-100 text-left">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Update Stream</span>
+                </div>
+                <p class="text-sm text-slate-400 italic">Logs are currently empty. New notifications will appear here as they are published by the administration.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 5: SOP DETAILS -->
     <div id="view-sop-details" class="app-view bg-white">
         <header class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white sticky top-0 z-50">
             <button onclick="navigateTo('view-entities')" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-all">
