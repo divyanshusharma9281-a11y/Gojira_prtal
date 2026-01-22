@@ -12,11 +12,10 @@
   </script>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .gojira-font { font-family: 'Orbitron', sans-serif; letter-spacing: -0.05em; }
     .app-view { display:none; min-height:100vh; }
     .app-view.active { display:block; }
     .hover-lift:hover {
@@ -55,13 +54,6 @@
     #support-dropdown.show {
       display: block;
     }
-
-    /* Logo Styling */
-    .site-logo {
-      height: 40px;
-      width: auto;
-      object-fit: contain;
-    }
   </style>
 </head>
 
@@ -71,11 +63,9 @@
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
     <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
-      <div class="flex items-center justify-center transition-transform group-hover:scale-105">
-        <img src="https://i.ibb.co/3ykpY6mX/Screenshot-2025-02-21-140510.png" alt="Gojira TP Logo" class="site-logo rounded-lg">
-      </div>
-      <span class="gojira-font text-2xl uppercase tracking-tighter italic hidden sm:block">
-        Gojira <span class="text-blue-600 not-italic">TP</span>
+      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition-colors">₹</div>
+      <span class="font-extrabold text-xl">
+        Gojira <span class="text-blue-600">TP</span>
       </span>
     </div>
 
@@ -133,6 +123,7 @@
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
     <div class="space-y-4">
+      <!-- FAQ Content ... remains same ... -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -182,6 +173,7 @@
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount calculated?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-2">Your payable amount includes:</p>
           <ul class="list-disc ml-6 space-y-1">
             <li>Loan Amount</li>
             <li>Interest calculated till the repayment date</li>
@@ -207,9 +199,9 @@
           </ul>
         </div>
       </div>
-
+      <!-- ... Rest of FAQ remains same ... -->
       <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">8. What is NBFC?</button>
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
           <p>NBFC means Non-Banking Financial Company. It is a company that gives loans, but it is not a bank.</p>
           <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
@@ -232,53 +224,41 @@
   <div class="max-w-6xl mx-auto px-6 py-14 text-center">
     <h1 class="text-3xl font-extrabold mb-12 text-slate-900 dark:text-white">Select an Entity to View Guidelines</h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
-      <!-- BharatLoan (Active) -->
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white relative overflow-hidden group">
+    <div class="grid md:grid-cols-4 gap-8 text-left">
+      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-lg text-center">BharatLoan</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Premium Segment</p>
       </div>
 
-      <!-- Rupee112 (Placeholder) -->
-      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-60 relative group cursor-not-allowed">
+      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
         <h3 class="font-bold text-lg text-center">Rupee112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Instant Approval</p>
-        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl">
-          <span class="font-bold text-xs uppercase tracking-widest">Coming Soon</span>
-        </div>
       </div>
 
-      <!-- Loan112 (Placeholder) -->
-      <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-60 relative group cursor-not-allowed">
+      <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
         <h3 class="font-bold text-lg text-center">Loan112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Short-term</p>
-        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl">
-          <span class="font-bold text-xs uppercase tracking-widest">Coming Soon</span>
-        </div>
       </div>
 
-      <!-- RupeeOnTime (Placeholder) -->
-      <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-60 relative group cursor-not-allowed">
+      <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
         <h3 class="font-bold text-lg text-center">RupeeOnTime</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Flexi-Repay</p>
-        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl">
-          <span class="font-bold text-xs uppercase tracking-widest">Coming Soon</span>
-        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- BHARATLOAN SPECIFIC VIEW -->
+<!-- BHARATLOAN SPECIFIC VIEW (INTEGRATED SUPPORT HERE) -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
     
+    <!-- SUPPORT INTEGRATED IN THE HEADER OF BHARATLOAN -->
     <div class="relative">
         <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
@@ -326,7 +306,7 @@
                 Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
               </p>
             </div>
-            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition text-center whitespace-nowrap">Visit Portal ↗</a>
+            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition text-center">Visit Portal ↗</a>
           </div>
         </div>
 
@@ -338,7 +318,7 @@
                 Telephony integration, lead management, and communication logging.
               </p>
             </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition text-center whitespace-nowrap">Open WOCOM ↗</a>
+            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition text-center">Open WOCOM ↗</a>
           </div>
         </div>
 
@@ -350,7 +330,7 @@
                 Handle real-time customer chats efficiently through the AI-powered cloud platform.
               </p>
             </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition text-center whitespace-nowrap">Login Chat ↗</a>
+            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition text-center">Login Chat ↗</a>
           </div>
         </div>
 
@@ -362,7 +342,7 @@
                 Review customer emails and attachments. Standard channel for ticketing and complex queries.
               </p>
             </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition text-center whitespace-nowrap">Open Mail ↗</a>
+            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition text-center">Open Mail ↗</a>
           </div>
         </div>
       </div>
@@ -390,8 +370,7 @@
 function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const support = document.getElementById('support-dropdown');
-  if (support) support.classList.remove('show'); 
+  document.getElementById('support-dropdown').classList.remove('show'); 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -404,6 +383,7 @@ function toggleSupport(event){
   document.getElementById('support-dropdown').classList.toggle('show');
 }
 
+// Close support dropdown if clicked outside
 window.onclick = function(event) {
   if (!event.target.closest('.relative')) {
     const dropdown = document.getElementById('support-dropdown');
