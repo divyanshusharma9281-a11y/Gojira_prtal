@@ -141,233 +141,6 @@
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
     <div class="space-y-4">
-      <!-- All FAQ items remain exactly the same as original -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">Loan disbursement may be pending due to:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Incomplete documentation</li>
-            <li>Bank account verification</li>
-            <li>Internal compliance or risk checks</li>
-          </ul>
-          <p class="mt-2 font-medium">Our team will assist you with the exact reason.</p>
-        </div>
-      </div>
-      <!-- ... all other FAQs exactly as original ... -->
-    </div>
-  </div>
-</div>
-
-<div id="view-entities" class="app-view">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Brand Entities</span>
-  </header>
-
-  <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-    <h1 class="text-3xl font-extrabold mb-12 text-slate-900 dark:text-white">Select an Entity to View Guidelines</h1>
-
-    <div class="grid md:grid-cols-4 gap-8 text-left">
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
-        <h3 class="font-bold text-lg text-center">BharatLoan</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Premium Segment</p>
-      </div>
-
-      <div onclick="navigateTo('view-rupee112')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-emerald-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
-        <h3 class="font-bold text-lg text-center">Rupee112</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Instant Approval</p>
-      </div>
-
-      <div onclick="navigateTo('view-loan112')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-indigo-700 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
-        <h3 class="font-bold text-lg text-center">Loan112</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Short-term</p>
-      </div>
-
-      <div onclick="navigateTo('view-rupeeontime')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-purple-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
-        <h3 class="font-bold text-lg text-center">RupeeOnTime</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Flexi-Repay</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- COMPLETE BharatLoan View with ALL Original Content RESTORED -->
-<div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 justify-between">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
-    <span class="mx-auto font-bold">BharatLoan Portal</span>
-    
-    <div class="relative">
-      <button onclick="toggleSupport(event, 'bharatloan')" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
-        <span>🎧 Support</span>
-      </button>
-      
-      <div id="support-dropdown-bharatloan" class="support-dropdown p-2">
-        <a href="tel:8282824644" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-          <span class="text-xl">📞</span>
-          <div class="text-left">
-            <p class="text-[10px] uppercase font-bold text-slate-400">Call Us</p>
-            <p class="text-sm font-bold tracking-wide">8282824644</p>
-          </div>
-        </a>
-        <a href="mailto:care@bharatloan.com" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-t border-slate-100 dark:border-slate-700 mt-1 pt-3">
-          <span class="text-xl">📧</span>
-          <div class="text-left">
-            <p class="text-[10px] uppercase font-bold text-slate-400">Email Us</p>
-            <p class="text-sm font-bold">care@bharatloan.com</p>
-          </div>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <div class="max-w-5xl mx-auto px-6 py-14 text-left">
-
-    <div class="border-b border-slate-200 dark:border-slate-700">
-      <div class="max-w-5xl mx-auto px-6 flex flex-col">
-        <button onclick="switchTab('tools', 'bharatloan')" id="tab-btn-tools-bharatloan" class="tab-button">1. Operating Tools</button>
-        <button onclick="switchTab('journey', 'bharatloan')" id="tab-btn-journey-bharatloan" class="tab-button">2. Customer Journey</button>
-      </div>
-    </div>
-
-    <!-- OPERATING TOOLS TAB - FULLY RESTORED -->
-    <div id="tab-tools-bharatloan" class="tab-content">
-      <div class="mt-12">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <span class="text-blue-600">🛠️</span> Our Operating Tools
-        </h2>
-        
-        <div class="grid gap-6">
-          <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-                </p>
-              </div>
-              <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition text-center">Visit Portal ↗</a>
-            </div>
-          </div>
-
-          <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Telephony integration, lead management, and communication logging.
-                </p>
-              </div>
-              <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition text-center">Open WOCOM ↗</a>
-            </div>
-          </div>
-
-          <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
-                </p>
-              </div>
-              <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition text-center">Login Chat ↗</a>
-            </div>
-          </div>
-
-          <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
-                </p>
-              </div>
-              <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition text-center">Open Mail ↗</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CUSTOMER JOURNEY TAB - FULLY RESTORED -->
-    <div id="tab-journey-bharatloan" class="tab-content">
-      <div class="mt-12">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <span class="text-green-600">🚀</span> Customer Journey
-        </h2>
-        <div class="space-y-8">
-          <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
-            <h3 class="text-xl font-bold mb-4 text-blue-600">Step 1: Customer Registration</h3>
-            <ul class="list-disc ml-6 space-y-2 text-slate-600 dark:text-slate-300">
-              <li>Customer accesses the BharatLoan platform (App / Website).</li>
-              <li>Registers using a mobile number.</li>
-              <li>OTP is generated and verified automatically.</li>
-              <li>Customer account is created after acceptance of Terms & Conditions.</li>
-            </ul>
-          </div>
-          
-          <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
-            <h3 class="text-xl font-bold mb-4 text-blue-600">Step 2: Basic Details Submission</h3>
-            <p class="mb-4 text-slate-600 dark:text-slate-300">Customer enters personal information:</p>
-            <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-              <li>Full Name</li>
-              <li>Date of Birth</li>
-              <li>PAN Number</li>
-              <li>Address</li>
-            </ul>
-            <p class="mt-4 text-slate-600 dark:text-slate-300">System performs real-time validation and eligibility checks.</p>
-            <p class="mt-2 font-medium text-slate-600 dark:text-slate-300">Outcome:</p>
-            <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-              <li>Eligible customers proceed further.</li>
-              <li>Ineligible applications are declined automatically.</li>
-            </ul>
-          </div>
-          
-  
-<!-- Home View -->
-<div id="view-home" class="app-view active">
-  <main class="max-w-7xl mx-auto px-6 py-20 text-center">
-    <h1 class="text-5xl font-extrabold mb-6">
-      Welcome to
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Training Portal</span>
-    </h1>
-    <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-16">
-      Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
-        <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
-        <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
-      </div>
-      <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
-        <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
-        <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
-      </div>
-      <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
-        <h2 class="text-2xl font-bold mb-2">New Updates</h2>
-        <p class="text-sm opacity-90">Latest system & policy logs.</p>
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- Knowledge Base View -->
-<div id="view-kb" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Knowledge Base</span>
-  </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
-    <div class="space-y-4">
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -474,19 +247,19 @@
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Premium Segment</p>
       </div>
 
-      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-80">
+      <div onclick="navigateTo('view-rupee112')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-emerald-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
         <h3 class="font-bold text-lg text-center">Rupee112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Instant Approval</p>
       </div>
 
-      <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-80">
+      <div onclick="navigateTo('view-loan112')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-indigo-700 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
         <h3 class="font-bold text-lg text-center">Loan112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Short-term</p>
       </div>
 
-      <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-80">
+      <div onclick="navigateTo('view-rupeeontime')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-purple-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
         <h3 class="font-bold text-lg text-center">RupeeOnTime</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Flexi-Repay</p>
@@ -495,35 +268,79 @@
   </div>
 </div>
 
+<!-- BharatLoan View (Existing) -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 justify-between">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
-    
     <div class="relative">
-        <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
-          <span>🎧 Support</span>
-        </button>
-        
-        <div id="support-dropdown" class="p-2">
-          <a href="tel:8282824644" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-            <span class="text-xl">📞</span>
-            <div class="text-left">
-              <p class="text-[10px] uppercase font-bold text-slate-400">Call Us</p>
-              <p class="text-sm font-bold tracking-wide">8282824644</p>
-            </div>
-          </a>
-          <a href="mailto:care@bharatloan.com" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-t border-slate-100 dark:border-slate-700 mt-1 pt-3">
-            <span class="text-xl">📧</span>
-            <div class="text-left">
-              <p class="text-[10px] uppercase font-bold text-slate-400">Email Us</p>
-              <p class="text-sm font-bold">care@bharatloan.com</p>
-            </div>
-          </a>
-        </div>
+      <button onclick="toggleSupport(event, 'bharatloan')" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
+        <span>🎧 Support</span>
+      </button>
+      <div id="support-dropdown-bharatloan" class="support-dropdown p-2">
+        <a href="tel:8282824644" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+          <span class="text-xl">📞</span>
+          <div class="text-left">
+            <p class="text-[10px] uppercase font-bold text-slate-400">Call Us</p>
+            <p class="text-sm font-bold tracking-wide">8282824644</p>
+          </div>
+        </a>
+        <a href="mailto:care@bharatloan.com" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-t border-slate-100 dark:border-slate-700 mt-1 pt-3">
+          <span class="text-xl">📧</span>
+          <div class="text-left">
+            <p class="text-[10px] uppercase font-bold text-slate-400">Email Us</p>
+            <p class="text-sm font-bold">care@bharatloan.com</p>
+          </div>
+        </a>
+      </div>
     </div>
   </header>
-  <!-- Rupee112 View -->
+
+  <!-- BharatLoan content remains same -->
+  <div class="max-w-5xl mx-auto px-6 py-14 text-left">
+    <div class="border-b border-slate-200 dark:border-slate-700">
+      <div class="max-w-5xl mx-auto px-6 flex flex-col">
+        <button onclick="switchTab('tools', 'bharatloan')" id="tab-btn-tools-bharatloan" class="tab-button">1. Operating Tools</button>
+        <button onclick="switchTab('journey', 'bharatloan')" id="tab-btn-journey-bharatloan" class="tab-button">2. Customer Journey</button>
+      </div>
+    </div>
+
+    <div id="tab-tools-bharatloan" class="tab-content">
+      <!-- Existing BharatLoan tools content -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <span class="text-blue-600">🛠️</span> Our Operating Tools
+        </h2>
+        <div class="grid gap-6">
+          <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
+                </p>
+              </div>
+              <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition text-center">Visit Portal ↗</a>
+            </div>
+          </div>
+          <!-- Other tools... -->
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-journey-bharatloan" class="tab-content">
+      <!-- Existing BharatLoan journey content -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <span class="text-green-600">🚀</span> Customer Journey
+        </h2>
+        <!-- Journey steps remain same -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rupee112 View -->
 <div id="view-rupee112" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 justify-between">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-emerald-600">← Back to Entities</button>
