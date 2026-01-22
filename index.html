@@ -71,7 +71,6 @@
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
     <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
-      <!-- Inserted Shared Logo -->
       <div class="flex items-center justify-center transition-transform group-hover:scale-105">
         <img src="https://i.ibb.co/3ykpY6mX/Screenshot-2025-02-21-140510.png" alt="Gojira TP Logo" class="site-logo rounded-lg">
       </div>
@@ -233,29 +232,42 @@
   <div class="max-w-6xl mx-auto px-6 py-14 text-center">
     <h1 class="text-3xl font-extrabold mb-12 text-slate-900 dark:text-white">Select an Entity to View Guidelines</h1>
 
-    <div class="grid md:grid-cols-4 gap-8 text-left">
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
+      <!-- BharatLoan (Active) -->
+      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white relative overflow-hidden group">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-lg text-center">BharatLoan</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Premium Segment</p>
       </div>
 
-      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-80">
+      <!-- Rupee112 (Placeholder) -->
+      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-60 relative group cursor-not-allowed">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
         <h3 class="font-bold text-lg text-center">Rupee112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Instant Approval</p>
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl">
+          <span class="font-bold text-xs uppercase tracking-widest">Coming Soon</span>
+        </div>
       </div>
 
-      <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-80">
+      <!-- Loan112 (Placeholder) -->
+      <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-60 relative group cursor-not-allowed">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
         <h3 class="font-bold text-lg text-center">Loan112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Short-term</p>
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl">
+          <span class="font-bold text-xs uppercase tracking-widest">Coming Soon</span>
+        </div>
       </div>
 
-      <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-80">
+      <!-- RupeeOnTime (Placeholder) -->
+      <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-60 relative group cursor-not-allowed">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
         <h3 class="font-bold text-lg text-center">RupeeOnTime</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Flexi-Repay</p>
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl">
+          <span class="font-bold text-xs uppercase tracking-widest">Coming Soon</span>
+        </div>
       </div>
     </div>
   </div>
@@ -267,7 +279,6 @@
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
     
-    <!-- SUPPORT INTEGRATED -->
     <div class="relative">
         <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
@@ -379,7 +390,8 @@
 function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.getElementById('support-dropdown').classList.remove('show'); 
+  const support = document.getElementById('support-dropdown');
+  if (support) support.classList.remove('show'); 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
