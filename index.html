@@ -123,7 +123,6 @@
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
     <div class="space-y-4">
-      <!-- FAQ Content ... remains same ... -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -199,7 +198,7 @@
           </ul>
         </div>
       </div>
-      <!-- ... Rest of FAQ remains same ... -->
+
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -225,40 +224,39 @@
     <h1 class="text-3xl font-extrabold mb-12 text-slate-900 dark:text-white">Select an Entity to View Guidelines</h1>
 
     <div class="grid md:grid-cols-4 gap-8 text-left">
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
-        <h3 class="font-bold text-lg text-center">BharatLoan</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Premium Segment</p>
+      <!-- Card 1 -->
+      <div onclick="navigateTo('view-bharatloan')" class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
+        <h3 class="font-bold text-xl text-center">BharatLoan</h3>
       </div>
 
-      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-80">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
-        <h3 class="font-bold text-lg text-center">Rupee112</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Instant Approval</p>
+      <!-- Card 2 -->
+      <div class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-emerald-600 text-white flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
+        <h3 class="font-bold text-xl text-center">Rupee112</h3>
       </div>
 
-      <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-80">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
-        <h3 class="font-bold text-lg text-center">Loan112</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Short-term</p>
+      <!-- Card 3 -->
+      <div class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-indigo-700 text-white flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
+        <h3 class="font-bold text-xl text-center">Loan112</h3>
       </div>
 
-      <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-80">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
-        <h3 class="font-bold text-lg text-center">RupeeOnTime</h3>
-        <p class="text-xs uppercase opacity-80 mt-2 text-center">Flexi-Repay</p>
+      <!-- Card 4 -->
+      <div class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-purple-600 text-white flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
+        <h3 class="font-bold text-xl text-center">RupeeOnTime</h3>
       </div>
     </div>
   </div>
 </div>
 
-<!-- BHARATLOAN SPECIFIC VIEW (INTEGRATED SUPPORT HERE) -->
+<!-- BHARATLOAN SPECIFIC VIEW -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
     
-    <!-- SUPPORT INTEGRATED IN THE HEADER OF BHARATLOAN -->
     <div class="relative">
         <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
@@ -383,7 +381,6 @@ function toggleSupport(event){
   document.getElementById('support-dropdown').classList.toggle('show');
 }
 
-// Close support dropdown if clicked outside
 window.onclick = function(event) {
   if (!event.target.closest('.relative')) {
     const dropdown = document.getElementById('support-dropdown');
