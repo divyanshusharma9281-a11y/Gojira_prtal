@@ -68,11 +68,6 @@
         Gojira <span class="text-blue-600">TP</span>
       </span>
     </div>
-    
-<span class="stylish-font font-black text-2xl tracking-tighter logo-glow">
-        GOJIRA <span class="text-blue-600 dark:text-blue-400">TP</span>
-      </span>
-    </div>  
 
     <div class="flex items-center gap-2">
       <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
@@ -97,23 +92,22 @@
       Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
     </p>
 
-   <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white shadow-xl shadow-blue-200 dark:shadow-none">
-     
-  <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
-        <h2 class="stylish-font text-2xl font-bold mb-2 uppercase tracking-wide">Knowledge Base</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
+        <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
         <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
       </div>
 
       <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
-    <h2 class="stylish-font text-2xl font-bold mb-2 uppercase tracking-wide">Brand Entities</h2>
+        <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
         <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
       </div>
 
       <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
-        <h2 class="stylish-font text-2xl font-bold mb-2 uppercase tracking-wide">New Updates</h2>
+        <h2 class="text-2xl font-bold mb-2">New Updates</h2>
         <p class="text-sm opacity-90">Latest system & policy logs.</p>
       </div>
     </div>
@@ -124,7 +118,7 @@
 <div id="view-kb" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto stylish-font font-bold">Knowledge Base</span>
+    <span class="mx-auto font-bold">Knowledge Base</span>
   </header>
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
@@ -224,7 +218,7 @@
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-   <span class="mx-auto stylish-font font-bold">Brand Entities</span>
+    <span class="mx-auto font-bold">Brand Entities</span>
   </header>
 
   <div class="max-w-6xl mx-auto px-6 py-14 text-center">
@@ -234,10 +228,10 @@
       <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-lg text-center">BharatLoan</h3>
-        <p class="text-xs uppercase font-bold opacity-80 mt-2 text-center">Premium Segment</p>
+        <p class="text-xs uppercase opacity-80 mt-2 text-center">Premium Segment</p>
       </div>
 
-      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-90 shadow-lg">
+      <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
         <h3 class="font-bold text-lg text-center">Rupee112</h3>
         <p class="text-xs uppercase opacity-80 mt-2 text-center">Instant Approval</p>
@@ -397,30 +391,7 @@ window.onclick = function(event) {
   }
 }
 
-function toggleTheme(){
-  const html = document.documentElement;
-  const icon = document.getElementById('theme-icon');
-  const text = document.getElementById('theme-text');
-
-  if(html.classList.contains('dark')){
-    html.classList.remove('dark');
-    icon.innerText = '🌙';
-    text.innerText = 'Dark';
-    localStorage.setItem('theme','light');
-  } else {
-    html.classList.add('dark');
-    icon.innerText = '☀️';
-    text.innerText = 'Light';
-    localStorage.setItem('theme','dark');
-  }
-}
-
-window.onload = () => {
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme === 'dark') {
-    document.documentElement.classList.add('dark');
-    document.getElementById('theme-icon').innerText = '☀️';
-    document.getElementById('theme-text').innerText = 'Light';
+function toggleTheme(){ const html = document.documentElement; const icon = document.getElementById('theme-icon'); const text = document.getElementById('theme-text'); if(html.classList.contains('dark')){ html.classList.remove('dark'); icon.innerText = '🌙'; text.innerText = 'Dark'; localStorage.setItem('theme','light'); } else { html.classList.add('dark'); icon.innerText = '☀️'; text.innerText = 'Light'; localStorage.setItem('theme','dark'); } } window.onload = () => { const savedTheme = localStorage.getItem('theme'); if(savedTheme === 'dark') { document.documentElement.classList.add('dark'); document.getElementById('theme-icon').innerText = '☀️'; document.getElementById('theme-text').innerText = 'Light';
   }
 }
 </script>
