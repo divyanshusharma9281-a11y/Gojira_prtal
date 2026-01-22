@@ -274,11 +274,11 @@
     <span class="mx-auto font-bold">BharatLoan Portal</span>
     
     <div class="relative">
-        <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
+        <button onclick="toggleSupport('bharatloan')" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
         </button>
         
-        <div id="support-dropdown" class="p-2 support-dropdown">
+        <div id="support-dropdown-bharatloan" class="p-2 support-dropdown">
           <a href="tel:8282824644" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
             <span class="text-xl">📞</span>
             <div class="text-left">
@@ -474,7 +474,7 @@
     <span class="mx-auto font-bold">Rupee112 Portal</span>
     
     <div class="relative">
-        <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
+        <button onclick="toggleSupport('rupee112')" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
         </button>
         
@@ -674,7 +674,7 @@
     <span class="mx-auto font-bold">Loan112 Portal</span>
     
     <div class="relative">
-        <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
+        <button onclick="toggleSupport('loan112')" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
         </button>
         
@@ -874,7 +874,7 @@
     <span class="mx-auto font-bold">RupeeOnTime Portal</span>
     
     <div class="relative">
-        <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
+        <button onclick="toggleSupport('rupeeontime')" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
         </button>
         
@@ -1095,9 +1095,8 @@ function toggleFaq(btn){
   btn.parentElement.classList.toggle('active');
 }
 
-function toggleSupport(event){
-  event.stopPropagation();
-  const dropdown = event.target.nextElementSibling;
+function toggleSupport(entity){
+  const dropdown = document.getElementById('support-dropdown-' + entity);
   if (dropdown) dropdown.classList.toggle('show');
 }
 
