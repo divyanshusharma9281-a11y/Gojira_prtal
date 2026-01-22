@@ -55,10 +55,10 @@
 
     /* Tab Styling */
     .tab-button {
-      @apply px-6 py-4 font-bold text-4xl text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:from-orange-600 hover:via-pink-600 hover:to-purple-600 transition cursor-pointer;
+      @apply px-8 py-6 font-bold text-5xl text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:from-orange-600 hover:via-pink-600 hover:to-purple-600 transition-all duration-300 cursor-pointer;
     }
     .tab-button.active {
-      @apply from-orange-700 via-pink-700 to-purple-700 border-b-2 border-pink-500;
+      @apply from-orange-700 via-pink-700 to-purple-700 border-b-4 border-pink-500;
     }
     .tab-content {
       display: none;
@@ -370,8 +370,100 @@
       <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
         <span class="text-green-600">🚀</span> Customer Journey
       </h2>
-      <p class="text-slate-600 dark:text-slate-300">This section will outline the customer journey for BharatLoan.</p>
-      <!-- Add more content here as needed -->
+      <div class="space-y-8">
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 1: Customer Registration</h3>
+          <ul class="list-disc ml-6 space-y-2 text-slate-600 dark:text-slate-300">
+            <li>Customer accesses the BharatLoan platform (App / Website).</li>
+            <li>Registers using a mobile number.</li>
+            <li>OTP is generated and verified automatically.</li>
+            <li>Customer account is created after acceptance of Terms & Conditions.</li>
+          </ul>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 2: Basic Details Submission</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">Customer enters personal information:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>Full Name</li>
+            <li>Date of Birth</li>
+            <li>PAN Number</li>
+            <li>Address</li>
+          </ul>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">System performs real-time validation and eligibility checks.</p>
+          <p class="mt-2 font-medium text-slate-600 dark:text-slate-300">Outcome:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>Eligible customers proceed further.</li>
+            <li>Ineligible applications are declined automatically.</li>
+          </ul>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 3: Digital KYC Verification</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">Customer uploads KYC documents:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>PAN card</li>
+            <li>Aadhaar or other valid ID (as applicable)</li>
+            <li>Selfie / face verification is completed.</li>
+          </ul>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">KYC is verified automatically through integrated services.</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 4: Employment, Income & Bank Details</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">Customer submits:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>Employment type</li>
+            <li>Income details</li>
+            <li>Bank account information</li>
+          </ul>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">Bank account verification is completed using automated validation methods.</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 5: Automated Credit & Risk Assessment</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">System performs:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>Credit bureau checks</li>
+            <li>Internal risk scoring</li>
+            <li>Repayment capacity evaluation</li>
+          </ul>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">Decision is fully automated with no manual intervention.</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 6: Instant Loan Offer</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">System generates a loan offer including:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>Approved amount</li>
+            <li>Tenure</li>
+            <li>Interest rate and applicable charges</li>
+          </ul>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">Customer reviews and accepts the offer digitally.</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 7: Digital Agreement & e-Sign</h3>
+          <ul class="list-disc ml-6 space-y-2 text-slate-600 dark:text-slate-300">
+            <li>Loan agreement is auto-generated.</li>
+            <li>Customer completes OTP-based e-sign.</li>
+            <li>Agreement acceptance is validated in real time.</li>
+          </ul>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 8: Auto-Compliance Validation</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">System runs final automated checks for:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>KYC status</li>
+            <li>Bank verification</li>
+            <li>Agreement completion</li>
+          </ul>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">Any mismatch results in automatic hold or decline.</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Step 9: Auto Loan Disbursal</h3>
+          <p class="mb-4 text-slate-600 dark:text-slate-300">Loan amount is automatically credited to the customer’s verified bank account.</p>
+          <p class="text-slate-600 dark:text-slate-300">Disbursal timeline:</p>
+          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
+            <li>Instant to within 24 working hours</li>
+            <li>Up to 48 working hours in rare system or bank delays</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>
