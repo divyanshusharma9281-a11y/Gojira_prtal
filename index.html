@@ -5,15 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gojira TP | Training Portal</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
   </script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { font-family: 'Inter', sans-serif; }
     .app-view { display:none; min-height:100vh; }
     .app-view.active { display:block; }
     .hover-lift:hover {
@@ -57,16 +59,32 @@
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
+<!-- TOP NAV -->
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
-      <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:rotate-6 transition-transform duration-300">
-        <span class="text-xl font-black">₹</span>
-      </div>
-      <div class="flex flex-col leading-none">
-        <span class="text-xl font-extrabold tracking-tight italic">GOJIRA</span>
-        <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 tracking-[0.2em]">TRAINING PORTAL</span>
-      </div>
+   
+<div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group select-none">
+
+  <!-- LOGO ICON -->
+  <div class="relative">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+      <span class="text-white font-extrabold text-lg">₹</span>
+    </div>
+    <div class="absolute inset-0 rounded-xl bg-blue-600 opacity-0 blur-md group-hover:opacity-20 transition-all"></div>
+  </div>
+
+  <!-- LOGO TEXT -->
+  <div class="flex items-baseline gap-1">
+    <span class="text-xl font-extrabold tracking-tight">Gojira</span>
+    <span class="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
+      TP
+    </span>
+  </div>
+
+</div>
+      <span class="font-extrabold text-xl">
+        Gojira <span class="text-blue-600">TP</span>
+      </span>
     </div>
 
     <div class="flex items-center gap-2">
@@ -78,6 +96,7 @@
   </div>
 </nav>
 
+<!-- HOME -->
 <div id="view-home" class="app-view active">
   <main class="max-w-7xl mx-auto px-6 py-20 text-center">
     <h1 class="text-5xl font-extrabold mb-6">
@@ -113,6 +132,7 @@
   </main>
 </div>
 
+<!-- KNOWLEDGE BASE -->
 <div id="view-kb" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
@@ -121,6 +141,7 @@
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
     <div class="space-y-4">
+      <!-- FAQ Content ... remains same ... -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -196,7 +217,7 @@
           </ul>
         </div>
       </div>
-
+      <!-- ... Rest of FAQ remains same ... -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -211,6 +232,7 @@
   </div>
 </div>
 
+<!-- BRAND ENTITIES -->
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
@@ -248,11 +270,13 @@
   </div>
 </div>
 
+<!-- BHARATLOAN SPECIFIC VIEW (INTEGRATED SUPPORT HERE) -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
     
+    <!-- SUPPORT INTEGRATED IN THE HEADER OF BHARATLOAN -->
     <div class="relative">
         <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
           <span>🎧 Support</span>
@@ -344,6 +368,7 @@
   </div>
 </div>
 
+<!-- UPDATES -->
 <div id="view-updates" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
@@ -376,6 +401,7 @@ function toggleSupport(event){
   document.getElementById('support-dropdown').classList.toggle('show');
 }
 
+// Close support dropdown if clicked outside
 window.onclick = function(event) {
   if (!event.target.closest('.relative')) {
     const dropdown = document.getElementById('support-dropdown');
