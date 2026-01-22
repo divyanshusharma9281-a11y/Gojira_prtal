@@ -8,14 +8,23 @@
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { darkMode: 'class' }
+    tailwind.config = { 
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            'gojira': ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
   </script>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Plus Jakarta Sans for a premium tech feel -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .app-view { display:none; min-height:100vh; }
     .app-view.active { display:block; }
     .hover-lift:hover {
@@ -34,7 +43,6 @@
       padding-top: 0.75rem;
     }
     
-    /* Support Dropdown Styling */
     #support-dropdown {
       display: none;
       position: absolute;
@@ -54,23 +62,37 @@
     #support-dropdown.show {
       display: block;
     }
+
+    /* Custom Stylish Logo Glow */
+    .logo-gradient {
+        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
 <!-- TOP NAV -->
-<nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+<nav class="h-16 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+    <!-- STYLISH LOGO SECTION -->
     <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
-      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition-colors">₹</div>
-      <span class="font-extrabold text-xl">
-        Gojira <span class="text-blue-600">TP</span>
+      <div class="relative w-10 h-10 flex items-center justify-center">
+        <div class="absolute inset-0 bg-blue-600 rounded-xl rotate-6 group-hover:rotate-12 transition-transform duration-300 opacity-20"></div>
+        <div class="absolute inset-0 logo-gradient rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center">
+            <!-- Modern Geometric SVG Logo -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+        </div>
+      </div>
+      <span class="font-extrabold text-2xl tracking-tight">
+        Gojira<span class="text-blue-600">.</span><span class="text-slate-400 dark:text-slate-500 font-medium">TP</span>
       </span>
     </div>
 
     <div class="flex items-center gap-2">
-      <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
+      <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-bold transition-all hover:bg-slate-200 dark:hover:bg-slate-600">
         <span id="theme-icon">🌙</span>
         <span id="theme-text">Dark</span>
       </button>
@@ -80,35 +102,38 @@
 
 <!-- HOME -->
 <div id="view-home" class="app-view active">
-  <main class="max-w-7xl mx-auto px-6 py-20 text-center">
-    <h1 class="text-5xl font-extrabold mb-6">
+  <main class="max-w-7xl mx-auto px-6 py-24 text-center">
+    <div class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
+        Internal Access Only
+    </div>
+    <h1 class="text-6xl font-extrabold mb-8 tracking-tighter">
       Welcome to
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+      <span class="text-transparent bg-clip-text bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600">
         Training Portal
       </span>
     </h1>
 
-    <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-16">
-      Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
+    <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto mb-16 leading-relaxed">
+      Comprehensive SOPs, Knowledge Base, and Brand Guidelines for our world-class Customer Success Teams.
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
-        <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
-        <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
+      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 group">
+        <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/40 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl transition-transform group-hover:scale-110">📘</div>
+        <h2 class="text-2xl font-bold mb-2 group-hover:text-blue-600 transition-colors">Knowledge Base</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Crucial FAQs and operational guidelines for daily tasks.</p>
       </div>
 
-      <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
+      <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white shadow-xl shadow-indigo-500/20">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
         <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
-        <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
+        <p class="text-sm opacity-90">Specific guidelines and workflows for each legal entity.</p>
       </div>
 
-      <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
-        <h2 class="text-2xl font-bold mb-2">New Updates</h2>
-        <p class="text-sm opacity-90">Latest system & policy logs.</p>
+      <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 group">
+        <div class="w-16 h-16 bg-amber-50 dark:bg-amber-900/40 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl transition-transform group-hover:scale-110">📢</div>
+        <h2 class="text-2xl font-bold mb-2 group-hover:text-amber-600 transition-colors">New Updates</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Latest system logs, policy changes, and news.</p>
       </div>
     </div>
   </main>
@@ -117,14 +142,21 @@
 <!-- KNOWLEDGE BASE -->
 <div id="view-kb" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Knowledge Base</span>
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600 flex items-center gap-2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Home
+    </button>
+    <span class="mx-auto font-bold tracking-tight">Knowledge Base</span>
   </header>
   <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
+    <h1 class="text-4xl font-extrabold mb-10 tracking-tight">Frequently Asked Questions</h1>
     <div class="space-y-4">
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
+      <!-- FAQ Item 1 -->
+      <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg flex items-center justify-between group">
+            1. My loan is approved but not disbursed. Why?
+            <span class="text-slate-300 group-hover:text-blue-600">+</span>
+        </button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
           <p class="mb-2">Loan disbursement may be pending due to:</p>
           <ul class="list-disc ml-6 space-y-1">
@@ -136,8 +168,12 @@
         </div>
       </div>
 
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. Can I increase my loan amount after sanction?</button>
+      <!-- FAQ Item 2 -->
+      <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg flex items-center justify-between group">
+            2. Can I increase my loan amount after sanction?
+            <span class="text-slate-300 group-hover:text-blue-600">+</span>
+        </button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
           <p class="mb-2">Loan enhancement depends on below mentioned criteria but can be done while accepting the offer not post sanction:</p>
           <ul class="list-disc ml-6 space-y-1">
@@ -149,8 +185,12 @@
         </div>
       </div>
 
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">3. Why was my loan application rejected?</button>
+      <!-- FAQ Item 3 -->
+      <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg flex items-center justify-between group">
+            3. Why was my loan application rejected?
+            <span class="text-slate-300 group-hover:text-blue-600">+</span>
+        </button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
           <p class="mb-2">Loan applications can be rejected due to:</p>
           <ul class="list-disc ml-6 space-y-1">
@@ -158,55 +198,17 @@
             <li>Existing liabilities</li>
             <li>Internal risk assessment</li>
           </ul>
-          <p class="mt-2">Customer care can guide but cannot override system decisions.</p>
+          <p class="mt-2 text-red-500 font-medium italic">Customer care can guide but cannot override system decisions.</p>
         </div>
       </div>
       
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">4. How long does it take for repayment to reflect after payment?</button>
+      <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg flex items-center justify-between group">
+            4. How long does it take for repayment to reflect?
+            <span class="text-slate-300 group-hover:text-blue-600">+</span>
+        </button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
           <p>Payments usually reflect within 24–48 working hours. Delays may occur due to bank processing or holidays.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount calculated?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">Your payable amount includes:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Loan Amount</li>
-            <li>Interest calculated till the repayment date</li>
-            <li>Penalty (2% post repayment date where 1% is daily interest and 1% is penalty)</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">6. Will my credit score be affected if I delay payment?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Yes. Any delay in repayment may negatively impact your CIBIL score, which can affect future loan or credit card approvals.</p>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">7. I have already shared a Promise to Pay (PTP). Why am I being called again?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Confirm your payment readiness</li>
-            <li>Check if funds have been arranged</li>
-            <li>Assist you in making the payment earlier, if possible</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>NBFC means Non-Banking Financial Company. It is a company that gives loans, but it is not a bank.</p>
-          <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
-            <p>🏦 <strong>Bank</strong> = savings account + loans</p>
-            <p>💰 <strong>NBFC</strong> = only loans</p>
-          </div>
         </div>
       </div>
     </div>
@@ -217,34 +219,30 @@
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Brand Entities</span>
+    <span class="mx-auto font-bold tracking-tight">Brand Entities</span>
   </header>
 
   <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-    <h1 class="text-3xl font-extrabold mb-12 text-slate-900 dark:text-white">Select an Entity to View Guidelines</h1>
+    <h1 class="text-4xl font-extrabold mb-12 text-slate-900 dark:text-white tracking-tight">Select Entity Guidelines</h1>
 
     <div class="grid md:grid-cols-4 gap-8 text-left">
-      <!-- Card 1 -->
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white flex flex-col items-center justify-center">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
+      <div onclick="navigateTo('view-bharatloan')" class="p-8 py-12 rounded-[2rem] cursor-pointer hover-lift bg-blue-600 text-white flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-xl text-center">BharatLoan</h3>
       </div>
 
-      <!-- Card 2 -->
-      <div class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-emerald-600 text-white flex flex-col items-center justify-center">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
+      <div class="p-8 py-12 rounded-[2rem] cursor-pointer hover-lift bg-emerald-600 text-white flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">R</div>
         <h3 class="font-bold text-xl text-center">Rupee112</h3>
       </div>
 
-      <!-- Card 3 -->
-      <div class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-indigo-700 text-white flex flex-col items-center justify-center">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
+      <div class="p-8 py-12 rounded-[2rem] cursor-pointer hover-lift bg-indigo-700 text-white flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
         <h3 class="font-bold text-xl text-center">Loan112</h3>
       </div>
 
-      <!-- Card 4 -->
-      <div class="p-8 py-12 rounded-3xl cursor-pointer hover-lift bg-purple-600 text-white flex flex-col items-center justify-center">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
+      <div class="p-8 py-12 rounded-[2rem] cursor-pointer hover-lift bg-purple-600 text-white flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl mb-4 flex items-center justify-center font-extrabold text-2xl">T</div>
         <h3 class="font-bold text-xl text-center">RupeeOnTime</h3>
       </div>
     </div>
@@ -254,7 +252,7 @@
 <!-- BHARATLOAN SPECIFIC VIEW -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
+    <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
     
     <div class="relative">
@@ -282,66 +280,40 @@
   </header>
 
   <div class="max-w-5xl mx-auto px-6 py-14 text-left">
-    <div class="flex items-center gap-4 mb-8">
-      <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">B</div>
+    <div class="flex items-center gap-6 mb-12">
+      <div class="w-16 h-16 bg-blue-600 text-white rounded-3xl flex items-center justify-center font-extrabold text-2xl shadow-xl shadow-blue-500/30">B</div>
       <div>
-        <h1 class="text-3xl font-extrabold">BharatLoan Guidelines</h1>
-        <p class="text-slate-500">Resource center and toolset for BharatLoan agents.</p>
+        <h1 class="text-4xl font-extrabold tracking-tight">BharatLoan Guidelines</h1>
+        <p class="text-slate-500 text-lg">Resource center and toolset for BharatLoan agents.</p>
       </div>
     </div>
 
-    <div class="mt-12">
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-        <span class="text-blue-600">🛠️</span> Our Operating Tools
+    <div class="grid gap-6">
+      <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+        <span class="text-blue-600 text-sm">●</span> Operating Tools
       </h2>
       
-      <div class="grid gap-6">
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-              </p>
-            </div>
-            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition text-center">Visit Portal ↗</a>
+      <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-[2rem] transition-all hover:shadow-xl hover:bg-white dark:hover:bg-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">BharatLoan Portal</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Main application processing, document view, and status checks.
+            </p>
           </div>
+          <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">Visit Portal</a>
         </div>
+      </div>
 
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
-            </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition text-center">Open WOCOM ↗</a>
+      <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-[2rem] transition-all hover:shadow-xl hover:bg-white dark:hover:bg-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Telephony integration and lead management.
+            </p>
           </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
-            </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition text-center">Login Chat ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
-            </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition text-center">Open Mail ↗</a>
-          </div>
+          <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">Open WOCOM</a>
         </div>
       </div>
     </div>
@@ -354,12 +326,11 @@
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
     <span class="mx-auto font-bold">System Updates</span>
   </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
-      <h2 class="text-3xl font-extrabold mb-8 text-left">Recent Policy Changes</h2>
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-          <div class="text-4xl mb-4">✨</div>
-          <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
-          <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
+  <div class="max-w-4xl mx-auto px-6 py-20 text-center">
+      <div class="bg-slate-50 dark:bg-slate-800 p-12 rounded-[3rem] border border-slate-100 dark:border-slate-700">
+          <div class="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">✨</div>
+          <h3 class="text-2xl font-extrabold mb-4 tracking-tight">Stay Tuned!</h3>
+          <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto">We are constantly improving. Check back later for new policy updates or system logs.</p>
       </div>
   </div>
 </div>
@@ -374,6 +345,8 @@ function navigateTo(id){
 
 function toggleFaq(btn){
   btn.parentElement.classList.toggle('active');
+  const icon = btn.querySelector('span');
+  icon.innerText = btn.parentElement.classList.contains('active') ? '−' : '+';
 }
 
 function toggleSupport(event){
