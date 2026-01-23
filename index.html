@@ -304,7 +304,7 @@
   <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="font-bold">BharatLoan Portal</span>
-    <button onclick="alert('Call 8282824644, Email care@bharatloan.com')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
+    <button onclick="showTab('support')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
   </header>
 
   <div class="max-w-5xl mx-auto px-6 py-14">
@@ -312,6 +312,7 @@
     <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
       <button onclick="showTab('guidelines')" id="tab-guidelines" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
       <button onclick="showTab('tools')" id="tab-tools" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      <button onclick="showTab('support')" id="tab-support" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Support</button>
     </div>
 
     <!-- Guidelines Tab Content -->
@@ -373,6 +374,14 @@
             <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="content-support" class="tab-content hidden">
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h3 class="text-xl font-bold mb-4">Contact Support</h3>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Call:</strong> 8282824644</p>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Email:</strong> care@bharatloan.com</p>
       </div>
     </div>
   </div>
@@ -440,7 +449,7 @@
   <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="font-bold">Rupee112 Portal</span>
-    <button onclick="alert('Call- 9220644112 Email- care@rupee112.com')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
+    <button onclick="showTab('support', 'rupee112')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
   </header>
 
   <div class="max-w-5xl mx-auto px-6 py-14">
@@ -448,6 +457,7 @@
     <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
       <button onclick="showTab('guidelines')" id="tab-guidelines-rupee112" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
       <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      <button onclick="showTab('support', 'rupee112')" id="tab-support-rupee112" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Support</button>
     </div>
 
     <!-- Guidelines Tab Content -->
@@ -475,6 +485,14 @@
         </div>
       </div>
     </div>
+
+    <div id="content-support-rupee112" class="tab-content hidden">
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h3 class="text-xl font-bold mb-4">Contact Support</h3>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Call:</strong> 9220644112</p>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Email:</strong> care@rupee112.com</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -483,7 +501,7 @@
   <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="font-bold">Loan112 Portal</span>
-    <button onclick="alert('Call- 9311912970 Email- care@loan112.com')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
+    <button onclick="showTab('support', 'loan112')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
   </header>
 
   <div class="max-w-5xl mx-auto px-6 py-14">
@@ -491,6 +509,7 @@
     <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
       <button onclick="showTab('guidelines')" id="tab-guidelines-loan112" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
       <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      <button onclick="showTab('support', 'loan112')" id="tab-support-loan112" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Support</button>
     </div>
 
     <!-- Guidelines Tab Content -->
@@ -518,6 +537,14 @@
         </div>
       </div>
     </div>
+
+    <div id="content-support-loan112" class="tab-content hidden">
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h3 class="text-xl font-bold mb-4">Contact Support</h3>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Call:</strong> 9311912970</p>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Email:</strong> care@loan112.com</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -526,7 +553,7 @@
   <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="font-bold">RupeeOnTime Portal</span>
-    <button onclick="alert('Call 9220912304 Email- care@rupeeontime.com')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
+    <button onclick="showTab('support', 'rupeeontime')" class="text-slate-500 hover:text-blue-600">Support 📞</button>
   </header>
 
   <div class="max-w-5xl mx-auto px-6 py-14">
@@ -534,6 +561,7 @@
     <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
       <button onclick="showTab('guidelines')" id="tab-guidelines-rupeeontime" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
       <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      <button onclick="showTab('support', 'rupeeontime')" id="tab-support-rupeeontime" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Support</button>
     </div>
 
     <!-- Guidelines Tab Content -->
@@ -561,6 +589,14 @@
         </div>
       </div>
     </div>
+
+    <div id="content-support-rupeeontime" class="tab-content hidden">
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h3 class="text-xl font-bold mb-4">Contact Support</h3>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Call:</strong> 9220912304</p>
+        <p class="text-slate-600 dark:text-slate-300"><strong>Email:</strong> care@rupeeontime.com</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -577,10 +613,39 @@ function toggleFaq(btn){
 
 function showTab(tab, entity = ''){
   const prefix = entity ? '-' + entity : '';
+  if (tab === 'support') {
+    const supportContent = document.getElementById('content-' + tab + prefix);
+    const supportTab = document.getElementById('tab-' + tab + prefix);
+    if (supportContent.classList.contains('hidden')) {
+      // Show support, hide others
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      supportContent.classList.remove('hidden');
+      // Activate support tab
+      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}, #tab-support${prefix}` : '#tab-guidelines, #tab-tools, #tab-support';
+      document.querySelectorAll(tabSelectors).forEach(btn => {
+        btn.classList.remove('text-blue-600', 'border-blue-600');
+        btn.classList.add('text-slate-500', 'border-transparent');
+      });
+      supportTab.classList.add('text-blue-600', 'border-blue-600');
+      supportTab.classList.remove('text-slate-500', 'border-transparent');
+    } else {
+      // Hide support, show tools
+      supportContent.classList.add('hidden');
+      supportTab.classList.remove('text-blue-600', 'border-blue-600');
+      supportTab.classList.add('text-slate-500', 'border-transparent');
+      // Show tools
+      const toolsContent = document.getElementById('content-tools' + prefix);
+      toolsContent.classList.remove('hidden');
+      const toolsTab = document.getElementById('tab-tools' + prefix);
+      toolsTab.classList.add('text-blue-600', 'border-blue-600');
+      toolsTab.classList.remove('text-slate-500', 'border-transparent');
+    }
+    return;
+  }
   // Hide all tab contents
   document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
   // Remove active from all tabs
-  const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}` : '#tab-guidelines, #tab-tools';
+  const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}, #tab-support${prefix}` : '#tab-guidelines, #tab-tools, #tab-support';
   document.querySelectorAll(tabSelectors).forEach(btn => {
     btn.classList.remove('text-blue-600', 'border-blue-600');
     btn.classList.add('text-slate-500', 'border-transparent');
