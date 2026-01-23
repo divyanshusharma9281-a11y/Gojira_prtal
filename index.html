@@ -774,7 +774,10 @@ function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  toggleSearch(); // Close search after navigation
+  // Close search after navigation
+  document.getElementById('search-bar').classList.add('hidden');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
 }
 
 function toggleFaq(btn){
