@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gojira TP | Training Portal</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
   </script>
 
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -31,92 +33,29 @@
       opacity: 1;
       padding-top: 0.75rem;
     }
-    
-    /* Support Dropdown Styling */
-    #support-dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 110%;
-      width: 260px;
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-      border: 1px solid #e2e8f0;
-    }
-    .dark #support-dropdown {
-      background: #1e293b;
-      border-color: #334155;
-    }
-    #support-dropdown.show {
-      display: block;
-    }
-
-    /* Tab Styling */
-    .tab-button {
-      @apply px-8 py-6 font-bold text-5xl text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:from-orange-600 hover:via-pink-600 hover:to-purple-600 transition-all duration-300 cursor-pointer;
-    }
-    .tab-button.active {
-      @apply from-orange-700 via-pink-700 to-purple-700 border-b-4 border-pink-500;
-    }
-    .tab-content {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.5s ease;
-    }
-    .tab-content.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .tab-journey-step {
-      animation: fadeInUp 0.5s ease forwards;
-      opacity: 0;
-    }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
+<!-- TOP NAV -->
 <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-    
-    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group select-none">
-      <div class="relative">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
-          <span class="text-white font-extrabold text-lg">₹</span>
-        </div>
-        <div class="absolute inset-0 rounded-xl bg-blue-600 opacity-0 blur-md group-hover:opacity-20 transition-all"></div>
-      </div>
-      <div class="flex items-baseline gap-1">
-        <span class="text-xl font-extrabold tracking-tight">Gojira</span>
-        <span class="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
-          TP
-        </span>
-      </div>
+    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
+      <div class="w-9 h-9 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition-colors">₹</div>
+      <span class="font-extrabold text-xl">
+        Gojira <span class="text-blue-600">TP</span>
+      </span>
     </div>
 
-    <div class="flex items-center gap-2">
-      <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition hover:ring-2 hover:ring-blue-500/20">
-        <span id="theme-icon">🌙</span>
-        <span id="theme-text">Dark</span>
-      </button>
-    </div>
+    <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-text">Dark</span>
+    </button>
   </div>
 </nav>
 
+<!-- HOME -->
 <div id="view-home" class="app-view active">
   <main class="max-w-7xl mx-auto px-6 py-20 text-center">
     <h1 class="text-5xl font-extrabold mb-6">
@@ -152,6 +91,7 @@
   </main>
 </div>
 
+<!-- KNOWLEDGE BASE -->
 <div id="view-kb" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
@@ -160,6 +100,7 @@
   <div class="max-w-4xl mx-auto px-6 py-14">
     <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
     <div class="space-y-4">
+      <!-- 1 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -173,6 +114,7 @@
         </div>
       </div>
 
+      <!-- 2 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. Can I increase my loan amount after sanction?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -186,6 +128,7 @@
         </div>
       </div>
 
+      <!-- 3 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">3. Why was my loan application rejected?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -198,7 +141,8 @@
           <p class="mt-2">Customer care can guide but cannot override system decisions.</p>
         </div>
       </div>
-      
+
+      <!-- 4 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">4. How long does it take for repayment to reflect after payment?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -206,6 +150,7 @@
         </div>
       </div>
 
+      <!-- 5 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount calculated?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -217,7 +162,8 @@
           </ul>
         </div>
       </div>
-      
+
+      <!-- 6 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">6. Will my credit score be affected if I delay payment?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -225,17 +171,30 @@
         </div>
       </div>
 
+      <!-- 7 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">7. I have already shared a Promise to Pay (PTP). Why am I being called again?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-2">We may call to:</p>
           <ul class="list-disc ml-6 space-y-1">
             <li>Confirm your payment readiness</li>
             <li>Check if funds have been arranged</li>
             <li>Assist you in making the payment earlier, if possible</li>
           </ul>
+          <p class="mt-2">This helps avoid further penalties or escalation.</p>
         </div>
       </div>
 
+      <!-- 8 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">8. Will I continue to receive calls after making the payment?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p>No. Once the payment is successfully received and updated in our system, collection calls will stop.</p>
+          <p class="mt-2">If you still receive a call, please share the payment reference number with the agent.</p>
+        </div>
+      </div>
+
+      <!-- 9 -->
       <div class="faq-item border-b pb-4">
         <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
         <div class="faq-answer text-slate-600 dark:text-slate-300">
@@ -244,12 +203,41 @@
             <p>🏦 <strong>Bank</strong> = savings account + loans</p>
             <p>💰 <strong>NBFC</strong> = only loans</p>
           </div>
+          <ul class="list-disc ml-6 mt-4 space-y-1">
+            <li>NBFCs give personal loans, business loans, etc.</li>
+            <li>They are approved by RBI</li>
+            <li>You cannot open a savings account in an NBFC</li>
+            <li>They are commonly used in instant loan apps</li>
+          </ul>
+          <p class="mt-3 text-sm italic">Example: If you take a quick loan from an app and get money fast, it is usually an NBFC, not a bank.</p>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="faq-item border-b pb-4">
+        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">10. What is an Account Aggregator?</button>
+        <div class="faq-answer text-slate-600 dark:text-slate-300">
+          <p class="mb-3">An Account Aggregator (AA) is a secure system that lets you share your bank details digitally with a lender only after your permission. It helps banks/NBFCs check your financial data online, without paperwork.</p>
+          <h4 class="font-bold mb-2">How it works:</h4>
+          <ol class="list-decimal ml-6 space-y-1 mb-4">
+            <li>You give consent</li>
+            <li>Your bank statement / financial data is shared securely</li>
+            <li>The lender checks your eligibility</li>
+            <li>Loan gets processed faster</li>
+          </ol>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">🔒 Safe & secure</div>
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">✅ RBI regulated</div>
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">❌ No data without consent</div>
+            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- BRAND ENTITIES -->
 <div id="view-entities" class="app-view">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
@@ -257,71 +245,51 @@
   </header>
 
   <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-    <h1 class="text-3xl font-extrabold mb-12 text-slate-900 dark:text-white">Select an Entity to View Guidelines</h1>
+    <h1 class="text-3xl font-extrabold mb-12">Select an Entity to View Guidelines</h1>
 
-    <div class="grid md:grid-cols-4 gap-8 text-left">
+    <div class="grid md:grid-cols-4 gap-8">
       <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
-        <h3 class="font-bold text-lg text-center">BharatLoan</h3>
+        <h3 class="font-bold text-lg">BharatLoan</h3>
+        <p class="text-xs uppercase opacity-80 mt-2">Premium Segment</p>
       </div>
 
       <div class="p-8 rounded-3xl bg-emerald-600 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">₹</div>
-        <h3 class="font-bold text-lg text-center">Rupee112</h3>
+        <h3 class="font-bold text-lg">Rupee112</h3>
+        <p class="text-xs uppercase opacity-80 mt-2">Instant Approval</p>
       </div>
 
       <div class="p-8 rounded-3xl bg-indigo-700 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">L</div>
-        <h3 class="font-bold text-lg text-center">Loan112</h3>
+        <h3 class="font-bold text-lg">Loan112</h3>
+        <p class="text-xs uppercase opacity-80 mt-2">Short-term</p>
       </div>
 
       <div class="p-8 rounded-3xl bg-purple-600 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">✔</div>
-        <h3 class="font-bold text-lg text-center">RupeeOnTime</h3>
+        <h3 class="font-bold text-lg">RupeeOnTime</h3>
+        <p class="text-xs uppercase opacity-80 mt-2">Flexi-Repay</p>
       </div>
     </div>
   </div>
 </div>
 
+<!-- BHARATLOAN SPECIFIC VIEW -->
 <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
     <span class="mx-auto font-bold">BharatLoan Portal</span>
-    
-    <div class="relative">
-        <button onclick="toggleSupport(event)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-bold transition hover:bg-blue-100">
-          <span>🎧 Support</span>
-        </button>
-        
-        <div id="support-dropdown" class="p-2">
-          <a href="tel:8282824644" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-            <span class="text-xl">📞</span>
-            <div class="text-left">
-              <p class="text-[10px] uppercase font-bold text-slate-400">Call Us</p>
-              <p class="text-sm font-bold tracking-wide">8282824644</p>
-            </div>
-          </a>
-          <a href="mailto:care@bharatloan.com" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-t border-slate-100 dark:border-slate-700 mt-1 pt-3">
-            <span class="text-xl">📧</span>
-            <div class="text-left">
-              <p class="text-[10px] uppercase font-bold text-slate-400">Email Us</p>
-              <p class="text-sm font-bold">care@bharatloan.com</p>
-            </div>
-          </a>
-        </div>
-    </div>
   </header>
 
-  <div class="max-w-5xl mx-auto px-6 py-14 text-left">
-
-    <div class="border-b border-slate-200 dark:border-slate-700">
-      <div class="max-w-5xl mx-auto px-6 flex flex-col">
-        <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-button">1. Operating Tools</button>
-        <button onclick="switchTab('journey')" id="tab-btn-journey" class="tab-button">2. Customer Journey</button>
+  <div class="max-w-5xl mx-auto px-6 py-14">
+    <div class="flex items-center gap-4 mb-8">
+      <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">B</div>
+      <div>
+        <h1 class="text-3xl font-extrabold">BharatLoan Guidelines</h1>
+        <p class="text-slate-500">Resource center and toolset for BharatLoan agents.</p>
       </div>
     </div>
-
-    <div id="tab-tools" class="tab-content">
 
     <div class="mt-12">
       <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -337,7 +305,7 @@
                 Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
               </p>
             </div>
-            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition text-center">Visit Portal ↗</a>
+            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
           </div>
         </div>
 
@@ -349,7 +317,7 @@
                 Telephony integration, lead management, and communication logging.
               </p>
             </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition text-center">Open WOCOM ↗</a>
+            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
           </div>
         </div>
 
@@ -361,7 +329,7 @@
                 Handle real-time customer chats efficiently through the AI-powered cloud platform.
               </p>
             </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition text-center">Login Chat ↗</a>
+            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
           </div>
         </div>
 
@@ -373,123 +341,22 @@
                 Review customer emails and attachments. Standard channel for ticketing and complex queries.
               </p>
             </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition text-center">Open Mail ↗</a>
+            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-journey" class="tab-content">
-    <div class="mt-12">
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-        <span class="text-green-600">🚀</span> Customer Journey
-      </h2>
-      <div class="space-y-8">
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">📱 Step 1: Customer Registration</h3>
-          <ul class="list-disc ml-6 space-y-2 text-slate-600 dark:text-slate-300">
-            <li>Customer accesses the BharatLoan platform (App / Website).</li>
-            <li>Registers using a mobile number.</li>
-            <li>OTP is generated and verified automatically.</li>
-            <li>Customer account is created after acceptance of Terms & Conditions.</li>
-          </ul>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.1s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">📝 Step 2: Basic Details Submission</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">Customer enters personal information:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>Full Name</li>
-            <li>Date of Birth</li>
-            <li>PAN Number</li>
-            <li>Address</li>
-          </ul>
-          <p class="mt-4 text-slate-600 dark:text-slate-300">System performs real-time validation and eligibility checks.</p>
-          <p class="mt-2 font-medium text-slate-600 dark:text-slate-300">Outcome:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>Eligible customers proceed further.</li>
-            <li>Ineligible applications are declined automatically.</li>
-          </ul>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.2s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">🆔 Step 3: Digital KYC Verification</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">Customer uploads KYC documents:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>PAN card</li>
-            <li>Aadhaar or other valid ID (as applicable)</li>
-            <li>Selfie / face verification is completed.</li>
-          </ul>
-          <p class="mt-4 text-slate-600 dark:text-slate-300">KYC is verified automatically through integrated services.</p>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.3s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">💼 Step 4: Employment, Income & Bank Details</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">Customer submits:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>Employment type</li>
-            <li>Income details</li>
-            <li>Bank account information</li>
-          </ul>
-          <p class="mt-4 text-slate-600 dark:text-slate-300">Bank account verification is completed using automated validation methods.</p>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.4s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">🔍 Step 5: Automated Credit & Risk Assessment</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">System performs:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>Credit bureau checks</li>
-            <li>Internal risk scoring</li>
-            <li>Repayment capacity evaluation</li>
-          </ul>
-          <p class="mt-4 text-slate-600 dark:text-slate-300">Decision is fully automated with no manual intervention.</p>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.5s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">💡 Step 6: Instant Loan Offer</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">System generates a loan offer including:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>Approved amount</li>
-            <li>Tenure</li>
-            <li>Interest rate and applicable charges</li>
-          </ul>
-          <p class="mt-4 text-slate-600 dark:text-slate-300">Customer reviews and accepts the offer digitally.</p>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.6s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">✍️ Step 7: Digital Agreement & e-Sign</h3>
-          <ul class="list-disc ml-6 space-y-2 text-slate-600 dark:text-slate-300">
-            <li>Loan agreement is auto-generated.</li>
-            <li>Customer completes OTP-based e-sign.</li>
-            <li>Agreement acceptance is validated in real time.</li>
-          </ul>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.7s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">✅ Step 8: Auto-Compliance Validation</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">System runs final automated checks for:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>KYC status</li>
-            <li>Bank verification</li>
-            <li>Agreement completion</li>
-          </ul>
-          <p class="mt-4 text-slate-600 dark:text-slate-300">Any mismatch results in automatic hold or decline.</p>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl hover:shadow-lg transition-all duration-300 tab-journey-step" style="animation-delay: 0.8s;">
-          <h3 class="text-xl font-bold mb-4 text-blue-600">💰 Step 9: Auto Loan Disbursal</h3>
-          <p class="mb-4 text-slate-600 dark:text-slate-300">Loan amount is automatically credited to the customer’s verified bank account.</p>
-          <p class="text-slate-600 dark:text-slate-300">Disbursal timeline:</p>
-          <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-            <li>Instant to within 24 working hours</li>
-            <li>Up to 48 working hours in rare system or bank delays</li>
-          </ul>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- UPDATES -->
 <div id="view-updates" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
     <span class="mx-auto font-bold">System Updates</span>
   </header>
   <div class="max-w-4xl mx-auto px-6 py-14">
-      <h2 class="text-3xl font-extrabold mb-8 text-left">Recent Policy Changes</h2>
+      <h2 class="text-3xl font-extrabold mb-8">Recent Policy Changes</h2>
       <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
           <div class="text-4xl mb-4">✨</div>
           <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
@@ -502,7 +369,6 @@
 function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.getElementById('support-dropdown').classList.remove('show'); 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -510,54 +376,29 @@ function toggleFaq(btn){
   btn.parentElement.classList.toggle('active');
 }
 
-function toggleSupport(event){
-  event.stopPropagation();
-  document.getElementById('support-dropdown').classList.toggle('show');
-}
+function toggleTheme(){
+  const html = document.documentElement;
+  const icon = document.getElementById('theme-icon');
+  const text = document.getElementById('theme-text');
 
-function switchTab(tabId) {
-  const tabContent = document.getElementById('tab-' + tabId);
-  const tabButton = document.getElementById('tab-btn-' + tabId);
-  if (tabContent.classList.contains('active')) {
-    tabContent.classList.remove('active');
-    tabButton.classList.remove('active');
+  if(html.classList.contains('dark')){
+    html.classList.remove('dark');
+    icon.innerText = '🌙';
+    text.innerText = 'Dark';
+    localStorage.setItem('theme','light');
   } else {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-    tabContent.classList.add('active');
-    tabButton.classList.add('active');
+    html.classList.add('dark');
+    icon.innerText = '☀️';
+    text.innerText = 'Light';
+    localStorage.setItem('theme','dark');
   }
 }
 
-window.onclick = function(event) {
-  if (!event.target.closest('.relative')) {
-    const dropdown = document.getElementById('support-dropdown');
-    if (dropdown) dropdown.classList.remove('show');
-  }
-}
-
-function toggleTheme(){ 
-  const html = document.documentElement; 
-  const icon = document.getElementById('theme-icon'); 
-  const text = document.getElementById('theme-text'); 
-  if(html.classList.contains('dark')){ 
-    html.classList.remove('dark'); 
-    icon.innerText = '🌙'; 
-    text.innerText = 'Dark'; 
-    localStorage.setItem('theme','light'); 
-  } else { 
-    html.classList.add('dark'); 
-    icon.innerText = '☀️'; 
-    text.innerText = 'Light'; 
-    localStorage.setItem('theme','dark'); 
-  } 
-} 
-
-window.onload = () => { 
-  const savedTheme = localStorage.getItem('theme'); 
-  if(savedTheme === 'dark') { 
-    document.documentElement.classList.add('dark'); 
-    document.getElementById('theme-icon').innerText = '☀️'; 
+window.onload = () => {
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.getElementById('theme-icon').innerText = '☀️';
     document.getElementById('theme-text').innerText = 'Light';
   }
 }
