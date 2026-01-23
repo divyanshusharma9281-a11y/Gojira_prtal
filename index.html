@@ -448,10 +448,10 @@
     <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
 
     <ol class="text-left max-w-md mx-auto space-y-4 text-slate-700 dark:text-slate-300">
-      <li>1. BharatLoan</li>
-      <li>2. RupeeOnTime</li>
-      <li>3. Rupee112</li>
-      <li>4. Loan112</li>
+      <li onclick="showLogin('BharatLoan')" class="cursor-pointer hover:text-blue-600 transition">1. BharatLoan</li>
+      <li onclick="showLogin('RupeeOnTime')" class="cursor-pointer hover:text-blue-600 transition">2. RupeeOnTime</li>
+      <li onclick="showLogin('Rupee112')" class="cursor-pointer hover:text-blue-600 transition">3. Rupee112</li>
+      <li onclick="showLogin('Loan112')" class="cursor-pointer hover:text-blue-600 transition">4. Loan112</li>
     </ol>
   </div>
 </div>
@@ -708,6 +708,27 @@
   </div>
 </div>
 
+<!-- LOGIN MODAL -->
+<div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
+    <div class="flex justify-between items-center mb-6">
+      <h2 id="login-title" class="text-2xl font-bold">Login</h2>
+      <button onclick="hideLogin()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+    </div>
+    <form onsubmit="submitLogin(event)">
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Username</label>
+        <input type="text" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2">Password</label>
+        <input type="password" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
+    </form>
+  </div>
+</div>
+
 <script>
 const searchData = [
   { name: 'Knowledge Base', id: 'view-kb' },
@@ -795,6 +816,22 @@ function performSearch(query) {
   }
   const filtered = searchData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
   resultsDiv.innerHTML = filtered.map(item => `<div onclick="navigateTo('${item.id}')" class="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">${item.name}</div>`).join('');
+}
+
+function showLogin(entity) {
+  document.getElementById('login-title').innerText = `Login to ${entity}`;
+  document.getElementById('login-modal').classList.remove('hidden');
+}
+
+function hideLogin() {
+  document.getElementById('login-modal').classList.add('hidden');
+}
+
+function submitLogin(event) {
+  event.preventDefault();
+  // Placeholder: In a real app, validate credentials
+  alert('Login successful!'); // Or navigate to entity's checklist view
+  hideLogin();
 }
 
 window.onload = () => {
