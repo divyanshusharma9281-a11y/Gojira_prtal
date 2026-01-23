@@ -107,6 +107,12 @@
         <h2 class="text-2xl font-bold mb-2">Resources</h2>
         <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
       </div>
+
+      <div onclick="navigateTo('view-roster')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-teal-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📅</div>
+        <h2 class="text-2xl font-bold mb-2">Weekly Roster</h2>
+        <p class="text-sm opacity-90">View and manage weekly schedules.</p>
+      </div>
     </div>
   </main>
 </div>
@@ -434,6 +440,22 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- WEEKLY ROSTER -->
+<div id="view-roster" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+    <span class="mx-auto font-bold">Weekly Roster</span>
+  </header>
+  <div class="max-w-4xl mx-auto px-6 py-14">
+      <h2 class="text-3xl font-extrabold mb-8">Weekly Roster</h2>
+      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📅</div>
+          <h3 class="text-xl font-bold mb-2">Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Weekly roster will be available here.</p>
+      </div>
   </div>
 </div>
 
@@ -765,6 +787,7 @@ const searchData = [
   { name: 'WOCOM 365', id: 'view-bharatloan' },
   { name: 'Yellow Ai', id: 'view-bharatloan' },
   { name: 'Outlook', id: 'view-bharatloan' },
+  { name: 'Weekly Roster', id: 'view-roster' },
   // Add more for other entities if needed
 ];
 
