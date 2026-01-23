@@ -69,7 +69,7 @@
       Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
     </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
       <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
         <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
@@ -92,6 +92,12 @@
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
         <h2 class="text-2xl font-bold mb-2">Resources</h2>
         <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
+      </div>
+
+      <div onclick="navigateTo('view-tools')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-teal-600 text-white">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🛠️</div>
+        <h2 class="text-2xl font-bold mb-2">Our Operating Tools</h2>
+        <p class="text-sm opacity-90">Portals and platforms for daily operations.</p>
       </div>
     </div>
   </main>
@@ -254,7 +260,7 @@
     <h1 class="text-3xl font-extrabold mb-12">Select an Entity to View Guidelines</h1>
 
     <div class="grid md:grid-cols-4 gap-8">
-      <div onclick="navigateTo('view-bharatloan')" class="p-8 rounded-3xl cursor-pointer hover-lift bg-blue-600 text-white">
+      <div class="p-8 rounded-3xl bg-blue-600 text-white opacity-80">
         <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl">B</div>
         <h3 class="font-bold text-lg">BharatLoan</h3>
         <p class="text-xs uppercase opacity-80 mt-2">Premium Segment</p>
@@ -281,81 +287,83 @@
   </div>
 </div>
 
-<!-- BHARATLOAN SPECIFIC VIEW -->
-<div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Entities</button>
-    <span class="mx-auto font-bold">BharatLoan Portal</span>
+<!-- UPDATES -->
+<div id="view-updates" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+    <span class="mx-auto font-bold">System Updates</span>
   </header>
-
-  <div class="max-w-5xl mx-auto px-6 py-14">
-    <div class="flex items-center gap-4 mb-8">
-      <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">B</div>
-      <div>
-        <h1 class="text-3xl font-extrabold">BharatLoan Guidelines</h1>
-        <p class="text-slate-500">Resource center and toolset for BharatLoan agents.</p>
+  <div class="max-w-4xl mx-auto px-6 py-14">
+      <h2 class="text-3xl font-extrabold mb-8">Recent Policy Changes</h2>
+      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">✨</div>
+          <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
+          <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
       </div>
-    </div>
+  </div>
+</div>
 
-    <div class="mt-12">
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-        <span class="text-blue-600">🛠️</span> Our Operating Tools
-      </h2>
-      
-      <div class="grid gap-6">
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-              </p>
-            </div>
-            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
+<!-- OUR OPERATING TOOLS -->
+<div id="view-tools" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+    <span class="mx-auto font-bold">Our Operating Tools</span>
+  </header>
+  <div class="max-w-5xl mx-auto px-6 py-14">
+    <h1 class="text-4xl font-extrabold mb-10">Portals and Platforms</h1>
+    <div class="grid gap-6">
+      <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
+            </p>
           </div>
+          <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
         </div>
+      </div>
 
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
-            </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
+      <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Telephony integration, lead management, and communication logging.
+            </p>
           </div>
+          <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
         </div>
+      </div>
 
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
-            </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
+      <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Handle real-time customer chats efficiently through the AI-powered cloud platform.
+            </p>
           </div>
+          <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
         </div>
+      </div>
 
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
-            </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
+      <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Review customer emails and attachments. Standard channel for ticketing and complex queries.
+            </p>
           </div>
+          <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- UPDATES -->
+<!-- RESOURCES -->
 <div id="view-updates" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
     <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
