@@ -718,11 +718,11 @@
     <form onsubmit="submitLogin(event)">
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2">Username</label>
-        <input type="text" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+        <input id="username" type="text" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
       </div>
       <div class="mb-6">
         <label class="block text-sm font-medium mb-2">Password</label>
-        <input type="password" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+        <input id="password" type="password" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
       </div>
       <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
     </form>
@@ -745,6 +745,8 @@ const searchData = [
   { name: 'Outlook', id: 'view-bharatloan' },
   // Add more for other entities if needed
 ];
+
+let currentEntity = '';
 
 function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
@@ -819,6 +821,7 @@ function performSearch(query) {
 }
 
 function showLogin(entity) {
+  currentEntity = entity;
   document.getElementById('login-title').innerText = `Login to ${entity}`;
   document.getElementById('login-modal').classList.remove('hidden');
 }
@@ -829,9 +832,15 @@ function hideLogin() {
 
 function submitLogin(event) {
   event.preventDefault();
-  // Placeholder: In a real app, validate credentials
-  alert('Login successful!'); // Or navigate to entity's checklist view
-  hideLogin();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  if (currentEntity === 'BharatLoan' && username === 'BLdivyansh' && password === 'Divyansh@bl') {
+    alert('Login successful!');
+    hideLogin();
+    navigateTo('view-bharatloan'); // Navigate to BharatLoan view
+  } else {
+    alert('Invalid credentials. Please try again.');
+  }
 }
 
 window.onload = () => {
