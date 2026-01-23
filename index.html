@@ -708,6 +708,31 @@
   </div>
 </div>
 
+<!-- PERFORMANCE VIEW -->
+<div id="view-performance" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Checklist</button>
+    <span class="mx-auto font-bold">Quality Performance</span>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-6 py-14">
+    <h1 class="text-3xl font-extrabold mb-8">Quality Assurance Performance</h1>
+
+    <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+      <h2 class="text-xl font-bold mb-4">Agent Performance</h2>
+      <ol class="space-y-2">
+        <li>1. Divyansh</li>
+        <ul class="ml-6 space-y-1">
+          <li>First week score</li>
+          <li>Audit: 5</li>
+          <li>Fatal: 0</li>
+          <li>100: 5</li>
+        </ul>
+      </ol>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN MODAL -->
 <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
@@ -739,6 +764,7 @@ const searchData = [
   { name: 'Rupee112', id: 'view-rupee112' },
   { name: 'Loan112', id: 'view-loan112' },
   { name: 'RupeeOnTime', id: 'view-rupeeontime' },
+  { name: 'Quality Performance', id: 'view-performance' },
   { name: 'BharatLoan Portal', id: 'view-bharatloan' },
   { name: 'WOCOM 365', id: 'view-bharatloan' },
   { name: 'Yellow Ai', id: 'view-bharatloan' },
@@ -837,7 +863,7 @@ function submitLogin(event) {
   if (currentEntity === 'BharatLoan' && username === 'BLdivyansh' && password === 'Divyansh@bl') {
     alert('Login successful!');
     hideLogin();
-    navigateTo('view-bharatloan'); // Navigate to BharatLoan view
+    navigateTo('view-performance'); // Navigate to performance view
   } else {
     alert('Invalid credentials. Please try again.');
   }
