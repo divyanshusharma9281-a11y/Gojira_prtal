@@ -424,19 +424,48 @@
         </div>
       </div>
 
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer" onclick="toggleChecklist()">
+      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer" onclick="navigateTo('view-checklist')">
         <div class="flex items-center gap-4 mb-4">
           <div class="w-12 h-12 bg-teal-600 text-white rounded-xl flex items-center justify-center text-xl">🎯</div>
           <div>
             <h3 class="text-xl font-bold">Quality Assurance Checklist</h3>
-            <ol class="text-slate-600 dark:text-slate-300 list-decimal list-inside mt-2 hidden" id="checklist-options">
-              <li>BharatLoan</li>
-              <li>RupeeOnTime</li>
-              <li>Rupee112</li>
-              <li>Loan112</li>
-            </ol>
+            <p class="text-slate-600 dark:text-slate-300">Click to view entity checklists.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST VIEW -->
+<div id="view-checklist" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-resources')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Resources</button>
+    <span class="mx-auto font-bold">Quality Assurance Checklist</span>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-6 py-14 text-center">
+    <h1 class="text-3xl font-extrabold mb-12">Select an Entity for Checklist</h1>
+
+    <div class="grid md:grid-cols-4 gap-8">
+      <div onclick="navigateTo('view-bharatloan')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white">
+        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">B</div>
+        <h3 class="font-bold text-lg">BharatLoan</h3>
+      </div>
+
+      <div onclick="navigateTo('view-rupeeontime')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-purple-600 to-red-600 text-white">
+        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">✔</div>
+        <h3 class="font-bold text-lg">RupeeOnTime</h3>
+      </div>
+
+      <div onclick="navigateTo('view-rupee112')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-green-500 to-red-600 text-white">
+        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">₹</div>
+        <h3 class="font-bold text-lg">Rupee112</h3>
+      </div>
+
+      <div onclick="navigateTo('view-loan112')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-900 to-red-600 text-white">
+        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">L</div>
+        <h3 class="font-bold text-lg">Loan112</h3>
       </div>
     </div>
   </div>
@@ -760,11 +789,6 @@ function toggleTheme(){
 function toggleDropdown(entity) {
   const dropdown = document.getElementById('support-dropdown' + (entity ? '-' + entity : ''));
   dropdown.classList.toggle('hidden');
-}
-
-function toggleChecklist() {
-  const options = document.getElementById('checklist-options');
-  options.classList.toggle('hidden');
 }
 
 function toggleSearch() {
