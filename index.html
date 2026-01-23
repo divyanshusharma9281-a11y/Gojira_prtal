@@ -5,18 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gojira TP | Training Portal</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
   </script>
 
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
+
     .app-view { display:none; min-height:100vh; }
     .app-view.active { display:block; }
 
+    .hover-lift {
+      transition: all 0.3s ease;
+    }
     .hover-lift:hover {
       transform: translateY(-8px);
       box-shadow: 0 20px 30px -10px rgba(0,0,0,.15);
@@ -34,26 +40,22 @@
       padding-top: 0.75rem;
     }
 
-    .support-dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 110%;
-      width: 260px;
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-      border: 1px solid #e2e8f0;
-    }
-    .dark .support-dropdown {
-      background: #1e293b;
-      border-color: #334155;
-    }
-    .support-dropdown.show { display: block; }
-
     .tab-content { display:none; }
     .tab-content.active { display:block; }
+
+    .tab-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      background: #e2e8f0;
+    }
+    .dark .tab-btn {
+      background: #334155;
+    }
+    .tab-btn.active {
+      background: linear-gradient(to right, #2563eb, #4f46e5);
+      color: white;
+    }
   </style>
 </head>
 
@@ -127,24 +129,32 @@
   </div>
 </div>
 
-<!-- BHARATLOAN (FULL DETAILS KEPT) -->
+<!-- BHARATLOAN -->
 <div id="view-bharatloan" class="app-view">
   <div class="max-w-5xl mx-auto px-6 py-16">
     <button onclick="navigateTo('view-entities')" class="mb-6 font-bold text-blue-600">← Back</button>
 
     <h1 class="text-3xl font-extrabold mb-8">BharatLoan</h1>
 
-    <div class="flex gap-4 mb-6">
-      <button onclick="switchTab('tools')" id="tab-btn-tools" class="font-bold">Operating Tools</button>
-      <button onclick="switchTab('journey')" id="tab-btn-journey" class="font-bold">Customer Journey</button>
+    <div class="flex gap-4 mb-10">
+      <button id="tab-btn-tools" onclick="switchTab('tools')" class="tab-btn active">Operating Tools</button>
+      <button id="tab-btn-journey" onclick="switchTab('journey')" class="tab-btn">Customer Journey</button>
     </div>
 
     <div id="tab-tools" class="tab-content active">
-      <p>BharatLoan Portal, WOCOM, Yellow.ai, Outlook</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="p-6 rounded-2xl bg-blue-50 dark:bg-slate-800">
+          <h3 class="font-bold text-lg mb-2">Internal Tools</h3>
+          <p>BharatLoan Portal, WOCOM, Yellow.ai, Outlook</p>
+        </div>
+      </div>
     </div>
 
     <div id="tab-journey" class="tab-content">
-      <p>End-to-end loan lifecycle from registration to disbursal.</p>
+      <div class="p-6 rounded-2xl bg-indigo-50 dark:bg-slate-800">
+        <h3 class="font-bold text-lg mb-2">Loan Lifecycle</h3>
+        <p>End-to-end journey from customer registration to loan disbursal and closure.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -175,7 +185,10 @@ function toggleFaq(btn){
 
 function switchTab(tab){
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
   document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('tab-btn-' + tab).classList.add('active');
 }
 
 function toggleTheme(){
