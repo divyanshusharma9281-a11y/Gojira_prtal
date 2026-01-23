@@ -457,7 +457,7 @@
           <li>BharatLoan</li>
           <li>Rupee112</li>
           <li>Loan112</li>
-          <li>RupeeOnTime</li>
+          <li onclick="showLogin('RupeeOnTime')" class="cursor-pointer hover:text-blue-600 transition">RupeeOnTime</li>
         </ul>
       </div>
   </div>
@@ -734,6 +734,65 @@
   </div>
 </div>
 
+<!-- RUPEEONTIME ROSTER VIEW -->
+<div id="view-roster-rupeeontime" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-roster')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Roster</button>
+    <span class="mx-auto font-bold">RupeeOnTime Roster</span>
+  </header>
+  <div class="max-w-6xl mx-auto px-6 py-14">
+      <h2 class="text-3xl font-extrabold mb-8">RupeeOnTime Weekly Roster</h2>
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-slate-300 dark:border-slate-600">
+              <th class="py-2 px-4 font-bold">Agent</th>
+              <th class="py-2 px-4 font-bold">Mon</th>
+              <th class="py-2 px-4 font-bold">Tue</th>
+              <th class="py-2 px-4 font-bold">Wed</th>
+              <th class="py-2 px-4 font-bold">Thu</th>
+              <th class="py-2 px-4 font-bold">Fri</th>
+              <th class="py-2 px-4 font-bold">Sat</th>
+              <th class="py-2 px-4 font-bold">Sun</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-700 dark:text-slate-300">
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2 px-4">John Doe</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">Off</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">Off</td>
+              <td class="py-2 px-4">Off</td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2 px-4">Jane Smith</td>
+              <td class="py-2 px-4">Off</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">Off</td>
+              <td class="py-2 px-4">Off</td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2 px-4">Mike Johnson</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">Off</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">Off</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+              <td class="py-2 px-4">9AM-5PM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>
+
 <!-- PERFORMANCE VIEW -->
 <div id="view-performance" class="app-view bg-white dark:bg-slate-900">
   <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
@@ -792,6 +851,7 @@ const searchData = [
   { name: 'Yellow Ai', id: 'view-bharatloan' },
   { name: 'Outlook', id: 'view-bharatloan' },
   { name: 'Weekly Roster', id: 'view-roster' },
+  { name: 'RupeeOnTime Roster', id: 'view-roster-rupeeontime' },
   // Add more for other entities if needed
 ];
 
@@ -887,6 +947,10 @@ function submitLogin(event) {
     alert('Login successful!');
     hideLogin();
     navigateTo('view-performance'); // Navigate to performance view
+  } else if (currentEntity === 'RupeeOnTime' && (empId === 'ROT/AA/123' || empId === 'ROT/BB/456' || empId === 'ROT/CC/789')) {
+    alert('Login successful!');
+    hideLogin();
+    navigateTo('view-roster-rupeeontime');
   } else {
     alert('Invalid Employee ID. Please try again.');
   }
