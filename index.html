@@ -178,7 +178,18 @@ function navigateTo(id){
   document.getElementById(id).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+ <script>
+    function openPortal(id) {
+      document.getElementById("home").classList.add("hidden");
+      document.getElementById(id).classList.remove("hidden");
+    }
 
+    function goHome() {
+      document.getElementById("portal1").classList.add("hidden");
+      document.getElementById("portal2").classList.add("hidden");
+      document.getElementById("home").classList.remove("hidden");
+    }
+  </script>
 function toggleFaq(btn){
   btn.parentElement.classList.toggle('active');
 }
