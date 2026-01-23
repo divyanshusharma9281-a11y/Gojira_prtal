@@ -53,10 +53,18 @@
     </div>
 
     <div class="flex flex-col items-end gap-2">
-      <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
-        <span id="theme-icon">🌙</span>
-        <span id="theme-text">Dark</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
+        <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
+          <span id="theme-icon">🌙</span>
+          <span id="theme-text">Dark</span>
+        </button>
+      </div>
+
+      <div id="search-bar" class="hidden">
+        <input id="search-input" type="text" oninput="performSearch(this.value)" placeholder="Search portal..." class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm w-64">
+        <div id="search-results" class="mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
+      </div>
     </div>
   </div>
 </nav>
@@ -692,10 +700,27 @@
 </div>
 
 <script>
+const searchData = [
+  { name: 'Knowledge Base', id: 'view-kb' },
+  { name: 'Brand Entities', id: 'view-entities' },
+  { name: 'New Updates', id: 'view-updates' },
+  { name: 'Resources', id: 'view-resources' },
+  { name: 'BharatLoan', id: 'view-bharatloan' },
+  { name: 'Rupee112', id: 'view-rupee112' },
+  { name: 'Loan112', id: 'view-loan112' },
+  { name: 'RupeeOnTime', id: 'view-rupeeontime' },
+  { name: 'BharatLoan Portal', id: 'view-bharatloan' },
+  { name: 'WOCOM 365', id: 'view-bharatloan' },
+  { name: 'Yellow Ai', id: 'view-bharatloan' },
+  { name: 'Outlook', id: 'view-bharatloan' },
+  // Add more for other entities if needed
+];
+
 function navigateTo(id){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  toggleSearch(); // Close search after navigation
 }
 
 function toggleFaq(btn){
@@ -740,6 +765,27 @@ function toggleTheme(){
 function toggleDropdown(entity) {
   const dropdown = document.getElementById('support-dropdown' + (entity ? '-' + entity : ''));
   dropdown.classList.toggle('hidden');
+}
+
+function toggleSearch() {
+  const bar = document.getElementById('search-bar');
+  bar.classList.toggle('hidden');
+  if (!bar.classList.contains('hidden')) {
+    document.getElementById('search-input').focus();
+  } else {
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-results').innerHTML = '';
+  }
+}
+
+function performSearch(query) {
+  const resultsDiv = document.getElementById('search-results');
+  if (!query.trim()) {
+    resultsDiv.innerHTML = '';
+    return;
+  }
+  const filtered = searchData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+  resultsDiv.innerHTML = filtered.map(item => `<div onclick="navigateTo('${item.id}')" class="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">${item.name}</div>`).join('');
 }
 
 window.onload = () => {
