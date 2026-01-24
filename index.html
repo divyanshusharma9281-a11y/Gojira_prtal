@@ -1401,6 +1401,17 @@
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
+        // STRICT ENTITY CHECK
+        if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
+          // Show Access Denied Modal reusing the existing one
+          const modalText = document.querySelector('#access-denied-modal p');
+          if (modalText) modalText.innerText = 'Kindly choose the correct entity to access.';
+
+          hideLogin();
+          document.getElementById('access-denied-modal').classList.remove('hidden');
+          return;
+        }
+
         currentUser = user;
 
         if (user.role === 'admin') {
