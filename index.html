@@ -880,7 +880,7 @@
       </div>
 
       <!-- Dashboard Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
 
         <!-- Weekly Performance Tab/Card -->
         <div onclick="openAgentPerformanceModal()"
@@ -903,27 +903,7 @@
           </div>
         </div>
 
-        <!-- Resources Card -->
-        <div onclick="navigateTo('view-resources')"
-          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-          <div
-            class="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-emerald-600">
-            📚
-          </div>
-          <h3 class="text-2xl font-bold mb-2">Resources</h3>
-          <p class="text-slate-500 text-sm mb-6">Access scripts, guidelines, and training materials.</p>
-        </div>
 
-        <!-- Updates Card -->
-        <div onclick="navigateTo('view-updates')"
-          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-          <div
-            class="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-amber-600">
-            📢
-          </div>
-          <h3 class="text-2xl font-bold mb-2">Updates</h3>
-          <p class="text-slate-500 text-sm mb-6">Check the latest policy changes and announcements.</p>
-        </div>
       </div>
     </div>
   </div>
