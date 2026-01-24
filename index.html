@@ -733,38 +733,6 @@
   </div>
 </div>
 
-<!-- ADMIN UPLOAD VIEW -->
-<div id="view-admin-upload" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Admin Upload</span>
-  </header>
-
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-3xl font-extrabold mb-8">Upload Quality Reports</h1>
-
-    <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-6">
-      <input type="file" id="file-input" multiple accept=".xlsx,.xls,.png,.jpg,.jpeg,.pdf" class="mb-4">
-      <button onclick="handleUpload()" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Upload Files</button>
-      <div id="upload-status" class="mt-4"></div>
-    </div>
-
-    <button onclick="navigateTo('view-agent-reports')" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">View Reports & Comments</button>
-  </div>
-</div>
-
-<!-- AGENT REPORTS VIEW -->
-<div id="view-agent-reports" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Quality Reports</span>
-  </header>
-
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <div id="reports-list" class="space-y-4"></div>
-  </div>
-</div>
-
 <!-- LOGIN MODAL -->
 <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
@@ -813,10 +781,6 @@ function navigateTo(id){
   document.getElementById('search-bar').classList.add('hidden');
   document.getElementById('search-input').value = '';
   document.getElementById('search-results').innerHTML = '';
-  // Load reports if navigating to agent reports
-  if (id === 'view-agent-reports') {
-    loadReports();
-  }
 }
 
 function toggleFaq(btn){
@@ -895,123 +859,15 @@ function hideLogin() {
   document.getElementById('empid').value = '';
 }
 
-let currentUser = '';
-
 function submitLogin(event) {
   event.preventDefault();
-  const empId = document.getElementById('empid').value.trim().toUpperCase();
-  if (empId === 'ADMIN/001') {
-    alert('Admin login successful!');
-    currentUser = 'admin';
+  const empId = document.getElementById('empid').value;
+  if (currentEntity === 'BharatLoan' && empId === 'BL/GG/704') {
+    alert('Login successful!');
     hideLogin();
-    navigateTo('view-admin-upload');
-  } else if (empId === 'BL/GG/704') {
-    alert('Agent login successful!');
-    currentUser = 'agent';
-    hideLogin();
-    navigateTo('view-agent-reports');
+    navigateTo('view-performance'); // Navigate to performance view
   } else {
     alert('Invalid Employee ID. Please try again.');
-  }
-}
-
-function handleUpload() {
-  const files = document.getElementById('file-input').files;
-  if (files.length === 0) {
-    document.getElementById('upload-status').innerText = 'No files selected.';
-    return;
-  }
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  for (let file of files) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        reports.push({
-          name: file.name,
-          type: file.type,
-          data: e.target.result,
-          comments: []
-        });
-        localStorage.setItem('qualityReports', JSON.stringify(reports));
-        document.getElementById('upload-status').innerText = 'Files uploaded successfully!';
-      } catch (error) {
-        document.getElementById('upload-status').innerText = 'Error uploading file. File may be too large for local storage.';
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function loadReports() {
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  const list = document.getElementById('reports-list');
-  if (reports.length === 0) {
-    list.innerHTML = '<p class="text-center text-slate-500 dark:text-slate-400">No quality reports available. Please check back later or contact your supervisor.</p>';
-  } else {
-    const headline = '<h1 class="text-3xl font-extrabold mb-8">Uploaded Quality Reports</h1>';
-    list.innerHTML = headline + reports.map((report, index) => {
-      let content = '';
-      if (report.type.startsWith('image/')) {
-        content = `<img src="${report.data}" alt="${report.name}" class="max-w-full h-auto rounded">`;
-      } else if (report.type === 'application/pdf') {
-        content = `<embed src="${report.data}" type="application/pdf" width="100%" height="600px">`;
-      } else {
-        content = `<p>File type not directly viewable. Download below.</p>`;
-      }
-      let commentsHtml = report.comments.map(comment => `<p class="text-sm text-slate-600 dark:text-slate-400">- ${comment}</p>`).join('');
-      let addCommentHtml = '';
-      if (currentUser === 'agent' && report.comments.length === 0) {
-        addCommentHtml = `
-          <textarea id="comment-${index}" placeholder="Add your comment..." class="w-full p-2 mt-2 border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700"></textarea>
-          <button onclick="addComment(${index})" class="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700">Add Comment</button>
-        `;
-      }
-      let deleteHtml = '';
-      if (currentUser === 'admin') {
-        deleteHtml = `<button onclick="deleteReport(${index})" class="mt-2 bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">Delete Report</button>`;
-      }
-      return `
-        <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-4">
-          <h3 class="font-bold mb-2">${report.name}</h3>
-          ${content}
-          <a href="${report.data}" download="${report.name}" class="text-blue-600 hover:text-blue-700 mt-2 inline-block">Download</a>
-          ${deleteHtml}
-          <div class="mt-4">
-            <h4 class="font-semibold">Comments:</h4>
-            ${commentsHtml}
-            ${addCommentHtml}
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-  // Automatically remove comments after admin views them
-  if (currentUser === 'admin') {
-    reports.forEach(report => report.comments = []);
-    localStorage.setItem('qualityReports', JSON.stringify(reports));
-  }
-}
-
-function deleteReport(index) {
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  reports.splice(index, 1);
-  localStorage.setItem('qualityReports', JSON.stringify(reports));
-  loadReports();
-}
-
-function startReview() {
-  localStorage.setItem('reviewStarted', 'true');
-  loadReports();
-}
-
-function addComment(index) {
-  const commentText = document.getElementById(`comment-${index}`).value.trim();
-  if (!commentText) return;
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  if (reports[index]) {
-    reports[index].comments.push(commentText);
-    localStorage.setItem('qualityReports', JSON.stringify(reports));
-    loadReports(); // Reload to show new comment
   }
 }
 
@@ -1026,4 +882,4 @@ window.onload = () => {
 </script>
 
 </body>
-</html>
+</html>	
