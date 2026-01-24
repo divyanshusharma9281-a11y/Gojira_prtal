@@ -1009,15 +1009,18 @@
         return JSON.parse(localStorage.getItem('gojira_reports') || '[]');
       }
 
-      static addReport(file) {
+      static addReport(file, content) {
         const reports = this.getReports();
         reports.unshift({
           id: Date.now(),
           name: file.name,
           type: file.type || 'Unknown',
           date: new Date().toLocaleString(),
-          uploader: 'Admin'
+          uploader: 'Admin',
+          content: content // Store Base64 string
         });
+        // Limit storage to prevent quota exceeded (keep last 5)
+        if (reports.length > 5) reports.pop();
         localStorage.setItem('gojira_reports', JSON.stringify(reports));
       }
 
