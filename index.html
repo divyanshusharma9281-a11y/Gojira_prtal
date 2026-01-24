@@ -1273,12 +1273,20 @@
 
     function navigateTo(id) {
       // CHECK ACCESS PERMISSION
-      if (currentUser && currentUser.role !== 'admin') {
-        const targetEntity = ENTITY_VIEW_MAP[id];
-        if (targetEntity && targetEntity !== currentUser.entity) {
-          // Show Access Denied Modal
-          document.getElementById('access-denied-modal').classList.remove('hidden');
-          return; // STOP NAVIGATION
+      if (currentUser) {
+        if (currentUser.entity !== 'ALL') {
+          const targetEntity = ENTITY_VIEW_MAP[id];
+          if (targetEntity && targetEntity !== currentUser.entity) {
+
+            // Dynamic check: Update modal text to ensure it matches requirement
+            const modalTitle = document.querySelector('#access-denied-modal h2');
+            const modalText = document.querySelector('#access-denied-modal p');
+            if (modalText) modalText.innerText = 'Kindly choose the correct entity to access.';
+
+            // Show Access Denied Modal
+            document.getElementById('access-denied-modal').classList.remove('hidden');
+            return; // STOP NAVIGATION
+          }
         }
       }
 
