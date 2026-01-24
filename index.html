@@ -860,28 +860,66 @@
     </div>
   </div>
 
-  <!-- PERFORMANCE VIEW -->
+  <!-- PERFORMANCE VIEW (AGENT DASHBOARD) -->
   <div id="view-performance" class="app-view bg-white dark:bg-slate-900">
-    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-      <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">← Back to
-        Checklist</button>
-      <span class="mx-auto font-bold">Quality Performance</span>
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">←
+          Back</button>
+        <span class="font-bold text-xl">Agent Dashboard</span>
+      </div>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
 
-    <div class="max-w-4xl mx-auto px-6 py-14">
-      <h1 class="text-3xl font-extrabold mb-8">Quality Assurance Performance</h1>
+    <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <h2 class="text-xl font-bold mb-4">Agent Performance</h2>
-        <ol class="space-y-2">
-          <li>1. Divyansh</li>
-          <ul class="ml-6 space-y-1">
-            <li>First week score</li>
-            <li>Audit: 5</li>
-            <li>Fatal: 0</li>
-            <li>100: 5</li>
-          </ul>
-        </ol>
+      <!-- Existing Performance Stats -->
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h2 class="text-xl font-bold mb-6">🎯 Weekly Performance</h2>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
+            <span>Audit Score</span>
+            <span class="font-bold text-green-600">92%</span>
+          </div>
+          <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
+            <span>Fatal Errors</span>
+            <span class="font-bold text-slate-400">0</span>
+          </div>
+          <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
+            <span>100% Compliance</span>
+            <span class="font-bold text-blue-600">5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Actions Column -->
+      <div class="space-y-8">
+
+        <!-- Files Download Section -->
+        <div class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl border border-indigo-100 dark:border-slate-700">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span class="text-indigo-600">📥</span> Quality Reports
+          </h2>
+          <div id="agent-reports-list" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+            <!-- JS Populates this -->
+          </div>
+        </div>
+
+        <!-- Add Comment Section -->
+        <div
+          class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="text-pink-600">📢</span> Submit Feedback / Comment
+          </h2>
+          <textarea id="agent-comment-input" rows="3"
+            class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-pink-500 outline-none transition"
+            placeholder="Type your message for the admin here..."></textarea>
+          <button onclick="handleCommentSubmit()"
+            class="mt-4 w-full bg-pink-600 text-white font-bold py-3 rounded-xl hover:bg-pink-700 transition">
+            Send to Admin
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
