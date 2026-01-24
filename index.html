@@ -972,11 +972,16 @@ function loadReports() {
           <button onclick="addComment(${index})" class="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700">Add Comment</button>
         `;
       }
+      let deleteHtml = '';
+      if (currentUser === 'admin') {
+        deleteHtml = `<button onclick="deleteReport(${index})" class="mt-2 bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">Delete Report</button>`;
+      }
       return `
         <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-4">
           <h3 class="font-bold mb-2">${report.name}</h3>
           ${content}
           <a href="${report.data}" download="${report.name}" class="text-blue-600 hover:text-blue-700 mt-2 inline-block">Download</a>
+          ${deleteHtml}
           <div class="mt-4">
             <h4 class="font-semibold">Comments:</h4>
             ${commentsHtml}
@@ -992,6 +997,13 @@ function loadReports() {
     localStorage.setItem('qualityReports', JSON.stringify(reports));
     localStorage.setItem('reviewStarted', 'false'); // Reset review for agents
   }
+}
+
+function deleteReport(index) {
+  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
+  reports.splice(index, 1);
+  localStorage.setItem('qualityReports', JSON.stringify(reports));
+  loadReports();
 }
 
 function startReview() {
