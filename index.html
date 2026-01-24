@@ -926,14 +926,18 @@ function handleUpload() {
   for (let file of files) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      reports.push({
-        name: file.name,
-        type: file.type,
-        data: e.target.result,
-        comments: []
-      });
-      localStorage.setItem('qualityReports', JSON.stringify(reports));
-      document.getElementById('upload-status').innerText = 'Files uploaded successfully!';
+      try {
+        reports.push({
+          name: file.name,
+          type: file.type,
+          data: e.target.result,
+          comments: []
+        });
+        localStorage.setItem('qualityReports', JSON.stringify(reports));
+        document.getElementById('upload-status').innerText = 'Files uploaded successfully!';
+      } catch (error) {
+        document.getElementById('upload-status').innerText = 'Error uploading file. File may be too large for local storage.';
+      }
     };
     reader.readAsDataURL(file);
   }
