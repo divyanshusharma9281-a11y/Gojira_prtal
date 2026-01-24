@@ -991,69 +991,93 @@
             </thead>
             <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
               <!-- JS Populates this -->
-            </tbody>
-          </table>
+        </div>
+        <div class="flex-1">
+          <!-- Spacer or Stats -->
         </div>
       </div>
 
-      <!-- Update Performance Section (New) -->
-      <div
-        class="mb-12 bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl border border-emerald-100 dark:border-slate-700">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">🎯</span>
-          Update Agent Performance
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-          <div>
-            <label class="block text-sm font-semibold mb-2 ml-1">Agent ID</label>
-            <input type="text" id="admin-perf-id" placeholder="e.g. BL/GG/25/704"
-              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2 ml-1">Audit Score (%)</label>
-            <input type="number" id="admin-perf-score" placeholder="92"
-              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2 ml-1">Fatal Errors</label>
-            <input type="number" id="admin-perf-errors" placeholder="0"
-              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2 ml-1">Compliance Score</label>
-            <input type="number" id="admin-perf-compliance" placeholder="5"
-              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-          </div>
-        </div>
-        <button onclick="handlePerformanceUpdate()"
-          class="mt-6 bg-emerald-600 text-white font-bold py-3 px-8 rounded-full hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 w-full md:w-auto">
-          Update Metrics
-        </button>
-      </div>
+      <!-- Step 2: Controls & Grid -->
+      <div id="bulk-manager-interface" class="hidden animate-fade-in">
 
-      <!-- Comments Section -->
-      <div>
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-pink-600 text-white rounded-lg p-2 text-xl">💬</span>
-          Agent Comments Management
-        </h2>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+        <!-- Bulk Controls -->
+        <div
+          class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-100 dark:border-slate-600 mb-4 flex flex-wrap gap-4 items-end shadow-sm">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Audit Score</label>
+            <select id="bulk-score"
+              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-emerald-600">
+              <option value="100">100%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Fatal Errors</label>
+            <select id="bulk-errors"
+              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-red-500">
+              <option value="0">0</option>
+              <option value="1">1</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Compliance</label>
+            <select id="bulk-compliance"
+              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-blue-600">
+              <option value="100">100%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+          <button onclick="applyBulkUpdate()"
+            class="ml-auto bg-emerald-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-emerald-700 transition flex items-center gap-2">
+            <span>⚡ Apply to Selected</span>
+          </button>
+        </div>
+
+        <!-- Agent List -->
+        <div class="overflow-hidden rounded-2xl border border-emerald-100 dark:border-slate-600">
+          <table class="w-full text-left border-collapse bg-white dark:bg-slate-800">
+            <thead class="bg-emerald-50/50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
               <tr>
-                <th class="p-6">Date</th>
-                <th class="p-6">Agent ID</th>
-                <th class="p-6">Comment</th>
-                <th class="p-6 text-right">Action</th>
+                <th class="p-4 w-12 text-center">
+                  <input type="checkbox" onchange="toggleAllAgents(this)"
+                    class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                </th>
+                <th class="p-4">Agent Name</th>
+                <th class="p-4">Agent ID</th>
+                <th class="p-4 text-right">Current Score</th>
               </tr>
             </thead>
-            <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+            <tbody id="bulk-agent-list" class="divide-y divide-slate-100 dark:divide-slate-700">
               <!-- JS Populates this -->
             </tbody>
           </table>
         </div>
       </div>
     </div>
+
+    <!-- Comments Section -->
+    <div>
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="bg-pink-600 text-white rounded-lg p-2 text-xl">💬</span>
+        Agent Comments Management
+      </h2>
+      <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+        <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+          <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+            <tr>
+              <th class="p-6">Date</th>
+              <th class="p-6">Agent ID</th>
+              <th class="p-6">Comment</th>
+              <th class="p-6 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+            <!-- JS Populates this -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   </div>
 
   <!-- LOGIN MODAL -->
@@ -1285,31 +1309,65 @@
       }
     }
 
-    function handlePerformanceUpdate() {
-      const agentId = document.getElementById('admin-perf-id').value.trim();
-      const score = document.getElementById('admin-perf-score').value.trim();
-      const errors = document.getElementById('admin-perf-errors').value.trim();
-      const compliance = document.getElementById('admin-perf-compliance').value.trim();
+    // BULK PERFORMANCE MANAGER
+    function renderBulkAgentList() {
+      const entity = document.getElementById('bulk-entity-select').value;
+      const listContainer = document.getElementById('bulk-agent-list');
+      const interfaceDiv = document.getElementById('bulk-manager-interface');
 
-      if (!agentId || !score || !errors || !compliance) {
-        alert('Please fill in all fields (ID, Score, Errors, Compliance).');
+      if (!entity) {
+        interfaceDiv.classList.add('hidden');
         return;
       }
 
-      // Validate Agent Exists (Optional but good)
-      const agentExists = USER_DB.some(u => u.id === agentId);
-      if (!agentExists) {
-        if (!confirm(`Agent ID "${agentId}" not found in local database. Continue anyway?`)) return;
+      // Filter Agents by Entity
+      const agents = USER_DB.filter(u => u.entity === entity && u.role === 'agent');
+
+      if (agents.length === 0) {
+        listContainer.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No agents found for this entity.</td></tr>';
+      } else {
+        listContainer.innerHTML = agents.map(user => {
+          const perf = MockBackend.getPerformance(user.id);
+          const scoreDisplay = perf ?
+            `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-bold">${perf.score}%</span>` :
+            `<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded text-xs">--</span>`;
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+              <td class="p-4 text-center">
+                <input type="checkbox" value="${user.id}" class="agent-checkbox w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+              </td>
+              <td class="p-4 font-bold text-slate-700 dark:text-slate-300">${user.name}</td>
+              <td class="p-4 text-sm text-slate-500 font-mono">${user.id}</td>
+              <td class="p-4 text-right">${scoreDisplay}</td>
+            </tr>
+          `;
+        }).join('');
       }
+      interfaceDiv.classList.remove('hidden');
+    }
 
-      MockBackend.savePerformance(agentId, { score, errors, compliance });
-      alert(`Performance updated for ${agentId} successfully!`);
+    function toggleAllAgents(source) {
+      const checkboxes = document.querySelectorAll('.agent-checkbox');
+      checkboxes.forEach(cb => cb.checked = source.checked);
+    }
 
-      // Reset form
-      document.getElementById('admin-perf-id').value = '';
-      document.getElementById('admin-perf-score').value = '';
-      document.getElementById('admin-perf-errors').value = '';
-      document.getElementById('admin-perf-compliance').value = '';
+    function applyBulkUpdate() {
+      const checkboxes = document.querySelectorAll('.agent-checkbox:checked');
+      if (checkboxes.length === 0) return alert('Please select at least one agent.');
+
+      const score = document.getElementById('bulk-score').value;
+      const errors = document.getElementById('bulk-errors').value;
+      const compliance = document.getElementById('bulk-compliance').value;
+
+      if (!confirm(`Update performance for ${checkboxes.length} agents?\nScore: ${score}%, Errors: ${errors}, Comp: ${compliance}`)) return;
+
+      checkboxes.forEach(cb => {
+        MockBackend.savePerformance(cb.value, { score, errors, compliance });
+      });
+
+      alert('Bulk update completed successfully! 🚀');
+      renderBulkAgentList(); // Refresh list to show new scores
     }
 
     function openReport(content, type) {
