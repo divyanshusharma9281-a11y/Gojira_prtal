@@ -866,7 +866,7 @@
       <div class="flex items-center gap-4">
         <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">←
           Back</button>
-        <span class="font-bold text-xl">Agent Dashboard</span>
+        <span id="agent-dashboard-title" class="font-bold text-xl">Agent Dashboard</span>
       </div>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
@@ -1345,12 +1345,20 @@
       const empId = document.getElementById('empid').value.trim();
 
       if (empId === 'ADMIN/001') {
-        currentUser = { id: empId, role: 'admin' };
+        currentUser = { id: empId, role: 'admin', name: 'Administrator' };
         renderAdminDashboard();
         navigateTo('view-admin');
         hideLogin();
-      } else if (empId.startsWith('BL/GG/') || empId === 'BL/GG/704') {
-        currentUser = { id: empId, role: 'agent' };
+      } else if (empId.startsWith('BL/GG/')) {
+        let name = 'Agent';
+        if (empId === 'BL/GG/704') name = 'Divyanshu';
+
+        currentUser = { id: empId, role: 'agent', name: name };
+
+        // Update Title
+        const titleSpan = document.getElementById('agent-dashboard-title');
+        if (titleSpan) titleSpan.innerText = `Welcome, ${name}`;
+
         renderAgentDashboard();
         navigateTo('view-performance');
         hideLogin();
