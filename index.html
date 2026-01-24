@@ -924,6 +924,65 @@
     </div>
   </div>
 
+  <!-- ADMIN DASHBOARD -->
+  <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <span class="font-bold text-xl text-indigo-600">Admin Dashboard (ADMIN/001)</span>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Upload Section -->
+      <div class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-indigo-100 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📂</span>
+          Upload Quality Reports
+        </h2>
+        <div class="flex gap-4 items-end">
+          <div class="flex-1">
+            <label class="block text-sm font-semibold mb-2 ml-1">Select Report File (PDF, Excel, Image)</label>
+            <input type="file" id="admin-file-upload" class="block w-full text-sm text-slate-500
+              file:mr-4 file:py-3 file:px-6
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-indigo-100 file:text-indigo-700
+              hover:file:bg-indigo-200
+              dark:file:bg-slate-700 dark:file:text-white
+            " />
+          </div>
+          <button onclick="handleFileUpload()"
+            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">
+            Upload Report
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mt-3 ml-2">* Files will be simulated in this demo environment.</p>
+      </div>
+
+      <!-- Comments Section -->
+      <div>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-pink-600 text-white rounded-lg p-2 text-xl">💬</span>
+          Agent Comments Management
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent ID</th>
+                <th class="p-6">Comment</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- LOGIN MODAL -->
   <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
@@ -981,6 +1040,93 @@
         const comments = this.getComments().filter(c => c.id != id);
         localStorage.setItem('gojira_comments', JSON.stringify(comments));
       }
+    }
+
+    // ADMIN & AGENT FUNCTIONS
+    function renderAdminDashboard() {
+      const comments = MockBackend.getComments();
+      const listContainer = document.getElementById('admin-comments-list');
+
+      if (!listContainer) return;
+
+      if (comments.length === 0) {
+        listContainer.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-500">No comments yet.</td></tr>';
+        return;
+      }
+
+      listContainer.innerHTML = comments.map(c => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+          <td class="p-6 text-slate-500 text-sm whitespace-nowrap">${c.date}</td>
+          <td class="p-6 font-bold text-indigo-600">${c.agentId}</td>
+          <td class="p-6 text-slate-700 dark:text-slate-300">${c.text}</td>
+          <td class="p-6 text-right">
+            <button onclick="handleDeleteComment(${c.id})" class="text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg text-xs font-bold transition">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function handleFileUpload() {
+      const fileInput = document.getElementById('admin-file-upload');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        MockBackend.addReport(file);
+        alert(`Successfully uploaded "${file.name}"`);
+        fileInput.value = ''; // Reset
+      } else {
+        alert('Please select a file first.');
+      }
+    }
+
+    function handleDeleteComment(id) {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        MockBackend.deleteComment(id);
+        renderAdminDashboard(); // Refresh
+      }
+    }
+
+    function renderAgentDashboard() {
+      const reports = MockBackend.getReports();
+      const listContainer = document.getElementById('agent-reports-list');
+
+      if (!listContainer) return;
+
+      if (reports.length === 0) {
+        listContainer.innerHTML = '<p class="text-sm text-slate-400 italic">No reports available to download.</p>';
+        return;
+      }
+
+      listContainer.innerHTML = reports.map(r => `
+        <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl hover:shadow-md transition group">
+          <div class="flex items-center gap-3 overflow-hidden">
+            <span class="text-xl">${r.type.includes('image') ? '🖼️' : '📄'}</span>
+            <div class="min-w-0">
+              <p class="font-bold text-sm truncate text-slate-800 dark:text-slate-200">${r.name}</p>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">${r.id} • ${r.date}</p>
+            </div>
+          </div>
+          <button onclick="alert('Downloading ${r.name}...')" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg hover:bg-indigo-100 transition">
+            ⬇
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function handleCommentSubmit() {
+      const input = document.getElementById('agent-comment-input');
+      const text = input.value.trim();
+
+      if (!text) return alert('Please write a comment first.');
+      if (!currentUser) return alert('You must be logged in.');
+
+      MockBackend.addComment(text, currentUser.id);
+      alert('Feedback sent to Admin successfully!');
+      input.value = '';
+    }
+
+    function logout() {
+      currentUser = null;
+      navigateTo('view-home');
     }
 
     const searchData = [
