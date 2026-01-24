@@ -906,6 +906,45 @@
   </div>
 
   <script>
+    // MOCK BACKEND
+    class MockBackend {
+      static getReports() {
+        return JSON.parse(localStorage.getItem('gojira_reports') || '[]');
+      }
+
+      static addReport(file) {
+        const reports = this.getReports();
+        reports.unshift({
+          id: Date.now(),
+          name: file.name,
+          type: file.type || 'Unknown',
+          date: new Date().toLocaleString(),
+          uploader: 'Admin'
+        });
+        localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
+
+      static getComments() {
+        return JSON.parse(localStorage.getItem('gojira_comments') || '[]');
+      }
+
+      static addComment(text, agentId) {
+        const comments = this.getComments();
+        comments.unshift({
+          id: Date.now(),
+          text,
+          agentId,
+          date: new Date().toLocaleString()
+        });
+        localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+
+      static deleteComment(id) {
+        const comments = this.getComments().filter(c => c.id != id);
+        localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+    }
+
     const searchData = [
       { name: 'Knowledge Base', id: 'view-kb' },
       { name: 'Brand Entities', id: 'view-entities' },
@@ -923,10 +962,10 @@
       { name: 'WOCOM 365', id: 'view-bharatloan' },
       { name: 'Yellow Ai', id: 'view-bharatloan' },
       { name: 'Outlook', id: 'view-bharatloan' },
-      // Add more for other entities if needed
     ];
 
     let currentEntity = '';
+    let currentUser = null;
 
     function navigateTo(id) {
       document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
@@ -1016,13 +1055,20 @@
 
     function submitLogin(event) {
       event.preventDefault();
-      const empId = document.getElementById('empid').value;
-      if (currentEntity === 'BharatLoan' && empId === 'BL/GG/704') {
-        alert('Login successful!');
+      const empId = document.getElementById('empid').value.trim();
+
+      if (empId === 'ADMIN/001') {
+        currentUser = { id: empId, role: 'admin' };
+        renderAdminDashboard();
+        navigateTo('view-admin');
         hideLogin();
-        navigateTo('view-performance'); // Navigate to performance view
+      } else if (empId.startsWith('BL/GG/') || empId === 'BL/GG/704') {
+        currentUser = { id: empId, role: 'agent' };
+        renderAgentDashboard();
+        navigateTo('view-performance');
+        hideLogin();
       } else {
-        alert('Invalid Employee ID. Please try again.');
+        alert('Invalid Employee ID. Try "ADMIN/001" or "BL/GG/704".');
       }
     }
 
