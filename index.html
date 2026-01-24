@@ -1179,9 +1179,20 @@
               <p class="text-[10px] text-slate-400 uppercase tracking-wider">${r.id} • ${r.date}</p>
             </div>
           </div>
-          <button onclick="alert('Downloading ${r.name}...')" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg hover:bg-indigo-100 transition">
-            ⬇
-          </button>
+          <div class="flex gap-2">
+            ${r.content ? `
+            <a href="${r.content}" target="_blank" class="text-blue-600 bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg hover:bg-blue-100 transition" title="View">
+              👁️
+            </a>
+            <a href="${r.content}" download="${r.name}" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg hover:bg-indigo-100 transition" title="Download">
+              ⬇
+            </a>
+            ` : `
+            <button onclick="alert('File content not available (Mock Data). Delete and re-upload to fix.')" class="text-slate-400 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg cursor-not-allowed">
+              ⚠️
+            </button>
+            `}
+          </div>
         </div>
       `).join('');
     }
