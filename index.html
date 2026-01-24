@@ -998,6 +998,19 @@
       </div>
 
       <!-- Step 2: Controls & Grid -->
+      <div class="mb-6">
+        <label class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wider">Select Entity to Load
+          Agents</label>
+        <select id="bulk-entity-select" onchange="renderBulkAgentList()"
+          class="w-full md:w-1/3 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-none transition shadow-sm">
+          <option value="">-- Choose Entity --</option>
+          <option value="BharatLoan">BharatLoan</option>
+          <option value="Rupee112">Rupee112</option>
+          <option value="Loan112">Loan112</option>
+          <option value="RupeeOnTime">RupeeOnTime</option>
+        </select>
+      </div>
+
       <div id="bulk-manager-interface" class="hidden animate-fade-in">
 
         <!-- Bulk Controls -->
@@ -1051,6 +1064,100 @@
               <!-- JS Populates this -->
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Individual Agent Score & Proof Upload -->
+      <div class="mt-12 bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl border border-indigo-100 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">👤</span>
+          Individual Agent Performance
+        </h2>
+
+        <div class="space-y-6">
+          <!-- Search Agent -->
+          <div>
+            <label class="block text-sm font-bold text-slate-500 mb-2 uppercase">Search Agent (ID or Name)</label>
+            <div class="relative">
+              <input type="text" id="indiv-agent-search" placeholder="Type ID or Name..."
+                oninput="handleAgentSearch(this.value)"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition shadow-sm">
+              <div id="indiv-agent-results"
+                class="hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-20 max-h-60 overflow-y-auto">
+                <!-- Data populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected Agent Display -->
+          <div id="indiv-agent-selected"
+            class="hidden p-4 bg-white dark:bg-slate-700 rounded-xl border border-indigo-200 dark:border-indigo-900 flex justify-between items-center transition-all">
+            <div>
+              <p class="text-xs text-slate-500 uppercase font-bold">Selected Agent</p>
+              <h3 id="selected-agent-name" class="text-lg font-bold text-indigo-600">Name</h3>
+              <p id="selected-agent-id" class="text-sm font-mono text-slate-500">ID</p>
+            </div>
+            <button onclick="clearSelectedAgent()"
+              class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1 rounded-lg text-sm font-bold transition">Change</button>
+          </div>
+
+          <!-- Upload Form -->
+          <div id="indiv-upload-form" class="hidden space-y-6 animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Audit Score (%)</label>
+                <input type="number" id="indiv-score" min="0" max="100"
+                  class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-emerald-600 text-center text-xl">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Fatal Errors</label>
+                <input type="number" id="indiv-errors" min="0"
+                  class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-red-500 text-center text-xl">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Compliance</label>
+                <select id="indiv-compliance"
+                  class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-blue-600 text-xl">
+                  <option value="100">100%</option>
+                  <option value="0">0%</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Proof 1: Call Recording -->
+              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+                  <span>🎤</span> Call Recording
+                </label>
+                <input type="file" id="proof-audio" accept="audio/*"
+                  class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+              </div>
+
+              <!-- Proof 2: Chat Transcript -->
+              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+                  <span>💬</span> Chat Transcript
+                </label>
+                <input type="file" id="proof-chat" accept="image/*,application/pdf"
+                  class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+              </div>
+
+              <!-- Proof 3: Email -->
+              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+                  <span>✉️</span> Email Proof
+                </label>
+                <input type="file" id="proof-email" accept="image/*,application/pdf"
+                  class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+              </div>
+            </div>
+
+            <button onclick="submitIndividualScore()"
+              class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
+              <span>✅ Submit Score & Proofs</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1299,8 +1406,32 @@
             metricsContainer.classList.remove('hidden');
             document.getElementById('perf-score').innerText = perfData.score + '%';
             document.getElementById('perf-errors').innerText = perfData.errors;
-            document.getElementById('perf-compliance').innerText = perfData.compliance;
+            document.getElementById('perf-compliance').innerText = perfData.compliance === '100' ? '100%' : (perfData.compliance + '%' || '0%');
           }
+
+          // Render Proofs (New Addition)
+          if (perfData.proofs && perfData.proofs.length > 0) {
+            const existingProofsDiv = document.getElementById('perf-proofs-section');
+            if (existingProofsDiv) existingProofsDiv.remove(); // Clean up prev
+
+            const proofsHtml = `
+               <div id="perf-proofs-section" class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                 <h3 class="text-sm font-bold text-slate-500 uppercase mb-3">Supporting Proofs</h3>
+                 <div class="grid grid-cols-1 gap-3">
+                   ${perfData.proofs.map(p => `
+                     <div class="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg border border-slate-100 dark:border-slate-600">
+                       <span class="flex items-center gap-2 text-sm font-semibold">
+                         <span>${p.icon}</span> ${p.name}
+                       </span>
+                       <button onclick="openReport('${p.content}', '${p.type}')" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-3 py-1.5 rounded-md font-bold hover:bg-indigo-100 transition">View Proof 👁️</button>
+                     </div>
+                   `).join('')}
+                 </div>
+               </div>
+             `;
+            metricsContainer.insertAdjacentHTML('beforeend', proofsHtml);
+          }
+
         } else {
           // No data: Show empty msg, Hide metrics (or show 0s)
           if (emptyMsg) emptyMsg.classList.remove('hidden');
@@ -1403,6 +1534,125 @@
     function logout() {
       currentUser = null;
       navigateTo('view-home');
+    }
+
+    // INDIVIDUAL SCORE UPLOAD FUNCTIONS
+    let selectedAgentForUpload = null;
+
+    function handleAgentSearch(query) {
+      const resultsDiv = document.getElementById('indiv-agent-results');
+      if (!query || query.length < 2) {
+        resultsDiv.classList.add('hidden');
+        return;
+      }
+
+      const matched = USER_DB.filter(u =>
+        u.role === 'agent' &&
+        (u.name.toLowerCase().includes(query.toLowerCase()) || u.id.toLowerCase().includes(query.toLowerCase()))
+      );
+
+      if (matched.length === 0) {
+        resultsDiv.innerHTML = '<div class="p-4 text-sm text-slate-500 italic">No agents found</div>';
+      } else {
+        resultsDiv.innerHTML = matched.map(u => `
+          <div onclick="selectAgent('${u.id}')" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-50 dark:border-slate-700 last:border-0">
+             <div class="font-bold text-slate-700 dark:text-slate-200">${u.name}</div>
+             <div class="text-xs text-slate-500 font-mono">${u.id} • ${u.entity}</div>
+          </div>
+        `).join('');
+      }
+      resultsDiv.classList.remove('hidden');
+    }
+
+    function selectAgent(id) {
+      selectedAgentForUpload = USER_DB.find(u => u.id === id);
+      if (!selectedAgentForUpload) return;
+
+      // Update UI
+      document.getElementById('indiv-agent-search').value = '';
+      document.getElementById('indiv-agent-results').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.remove('hidden');
+      document.getElementById('indiv-agent-selected').classList.add('flex');
+      document.getElementById('indiv-upload-form').classList.remove('hidden');
+
+      document.getElementById('selected-agent-name').innerText = selectedAgentForUpload.name;
+      document.getElementById('selected-agent-id').innerText = selectedAgentForUpload.id;
+
+      // Search Input hidden or disabled
+      document.getElementById('indiv-agent-search').parentElement.parentElement.classList.add('hidden');
+    }
+
+    function clearSelectedAgent() {
+      selectedAgentForUpload = null;
+      document.getElementById('indiv-agent-selected').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.remove('flex');
+      document.getElementById('indiv-upload-form').classList.add('hidden');
+
+      // Show Search again
+      document.getElementById('indiv-agent-search').parentElement.parentElement.classList.remove('hidden');
+      // Reset form
+      document.getElementById('indiv-score').value = '';
+      document.getElementById('indiv-errors').value = '';
+      document.getElementById('proof-audio').value = '';
+      document.getElementById('proof-chat').value = '';
+      document.getElementById('proof-email').value = '';
+    }
+
+    async function submitIndividualScore() {
+      if (!selectedAgentForUpload) return alert('No agent selected.');
+
+      const score = document.getElementById('indiv-score').value;
+      const errors = document.getElementById('indiv-errors').value;
+      const compliance = document.getElementById('indiv-compliance').value;
+
+      if (!score || !errors) return alert('Please enter Score and Errors.');
+
+      // Handle File Uploads
+      const proofs = [];
+      const files = [
+        { id: 'proof-audio', name: 'Call Recording', icon: '🎤' },
+        { id: 'proof-chat', name: 'Chat Transcript', icon: '💬' },
+        { id: 'proof-email', name: 'Email Proof', icon: '✉️' }
+      ];
+
+      try {
+        for (const f of files) {
+          const input = document.getElementById(f.id);
+          if (input.files.length > 0) {
+            const file = input.files[0];
+            const content = await readFileAsBase64(file);
+            proofs.push({
+              name: f.name + ` (${file.name})`,
+              icon: f.icon,
+              type: file.type,
+              content: content
+            });
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        return alert('Error processing files. Please try again.');
+      }
+
+      // Save
+      MockBackend.savePerformance(selectedAgentForUpload.id, {
+        score,
+        errors,
+        compliance,
+        proofs
+      });
+
+      alert(`Performance updated for ${selectedAgentForUpload.name} successfully!`);
+      clearSelectedAgent();
+    }
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
     }
 
     const searchData = [
