@@ -1137,12 +1137,11 @@
       <input type="file" id="proof-email" accept="image/*,application/pdf"
         class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
     </div>
+    <button onclick="submitIndividualScore()"
+      class="mt-6 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
+      <span>Submit</span>
+    </button>
   </div>
-
-  <button onclick="submitIndividualScore()"
-    class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
-    <span>Submit</span>
-  </button>
   </div>
   </div>
   </div>
@@ -1150,10 +1149,7 @@
 
   <!-- Comments Section -->
   <div>
-    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-      <span class="bg-pink-600 text-white rounded-lg p-2 text-xl">💬</span>
-      Agent Comments Management
-    </h2>
+
     <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
       <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
         <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
