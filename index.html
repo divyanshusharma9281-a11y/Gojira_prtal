@@ -1264,7 +1264,24 @@
     let currentEntity = '';
     let currentUser = null;
 
+    const ENTITY_VIEW_MAP = {
+      'view-bharatloan': 'BharatLoan',
+      'view-rupee112': 'Rupee112',
+      'view-loan112': 'Loan112',
+      'view-rupeeontime': 'RupeeOnTime'
+    };
+
     function navigateTo(id) {
+      // CHECK ACCESS PERMISSION
+      if (currentUser && currentUser.role !== 'admin') {
+        const targetEntity = ENTITY_VIEW_MAP[id];
+        if (targetEntity && targetEntity !== currentUser.entity) {
+          // Show Access Denied Modal
+          document.getElementById('access-denied-modal').classList.remove('hidden');
+          return; // STOP NAVIGATION
+        }
+      }
+
       document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
