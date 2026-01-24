@@ -761,7 +761,6 @@
   </header>
 
   <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-3xl font-extrabold mb-8">Uploaded Quality Reports</h1>
     <div id="reports-list" class="space-y-4"></div>
   </div>
 </div>
@@ -900,7 +899,7 @@ let currentUser = '';
 
 function submitLogin(event) {
   event.preventDefault();
-  const empId = document.getElementById('empid').value.toUpperCase();
+  const empId = document.getElementById('empid').value.trim().toUpperCase();
   if (empId === 'ADMIN/001') {
     alert('Admin login successful!');
     currentUser = 'admin';
@@ -955,7 +954,8 @@ function loadReports() {
   if (reports.length === 0) {
     list.innerHTML = '<p class="text-center text-slate-500 dark:text-slate-400">No quality reports available. Please check back later or contact your supervisor.</p>';
   } else {
-    list.innerHTML = reports.map((report, index) => {
+    const headline = '<h1 class="text-3xl font-extrabold mb-8">Uploaded Quality Reports</h1>';
+    list.innerHTML = headline + reports.map((report, index) => {
       let content = '';
       if (report.type.startsWith('image/')) {
         content = `<img src="${report.data}" alt="${report.name}" class="max-w-full h-auto rounded">`;
