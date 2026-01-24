@@ -1281,7 +1281,7 @@
             // Dynamic check: Update modal text to ensure it matches requirement
             const modalTitle = document.querySelector('#access-denied-modal h2');
             const modalText = document.querySelector('#access-denied-modal p');
-            if (modalText) modalText.innerText = 'Kindly choose the correct entity to access.';
+            if (modalText) modalText.innerText = 'Please enter the correct emp. ID or choose the correct entity for this ID';
 
             // Show Access Denied Modal
             document.getElementById('access-denied-modal').classList.remove('hidden');
@@ -1418,7 +1418,7 @@
         if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
           // Show Access Denied Modal reusing the existing one
           const modalText = document.querySelector('#access-denied-modal p');
-          if (modalText) modalText.innerText = 'Please enter the correct emp. ID, Select the correct entity for this emp. ID';
+          if (modalText) modalText.innerText = 'Please enter the correct emp. ID or choose the correct entity for this ID';
 
           hideLogin();
           document.getElementById('access-denied-modal').classList.remove('hidden');
