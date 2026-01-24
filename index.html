@@ -874,20 +874,26 @@
     <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
 
       <!-- Existing Performance Stats -->
+      <!-- Performance Stats -->
       <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
         <h2 class="text-xl font-bold mb-6">🎯 Weekly Performance</h2>
-        <div class="space-y-4">
+
+        <!-- Default Message -->
+        <p id="perf-empty-msg" class="text-slate-500 italic mb-4">There's no performance currently.</p>
+
+        <!-- Metrics Container (Hidden by default or shows 0) -->
+        <div id="perf-metrics-container" class="space-y-4">
           <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
             <span>Audit Score</span>
-            <span class="font-bold text-green-600">92%</span>
+            <span id="perf-score" class="font-bold text-green-600">0%</span>
           </div>
           <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
             <span>Fatal Errors</span>
-            <span class="font-bold text-slate-400">0</span>
+            <span id="perf-errors" class="font-bold text-slate-400">0</span>
           </div>
           <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
             <span>100% Compliance</span>
-            <span class="font-bold text-blue-600">5</span>
+            <span id="perf-compliance" class="font-bold text-blue-600">0</span>
           </div>
         </div>
       </div>
@@ -990,6 +996,41 @@
         </div>
       </div>
 
+      <!-- Update Performance Section (New) -->
+      <div
+        class="mb-12 bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl border border-emerald-100 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">🎯</span>
+          Update Agent Performance
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="block text-sm font-semibold mb-2 ml-1">Agent ID</label>
+            <input type="text" id="admin-perf-id" placeholder="e.g. BL/GG/25/704"
+              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2 ml-1">Audit Score (%)</label>
+            <input type="number" id="admin-perf-score" placeholder="92"
+              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2 ml-1">Fatal Errors</label>
+            <input type="number" id="admin-perf-errors" placeholder="0"
+              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2 ml-1">Compliance Score</label>
+            <input type="number" id="admin-perf-compliance" placeholder="5"
+              class="w-full px-4 py-3 rounded-xl border border-emerald-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+        </div>
+        <button onclick="handlePerformanceUpdate()"
+          class="mt-6 bg-emerald-600 text-white font-bold py-3 px-8 rounded-full hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 w-full md:w-auto">
+          Update Metrics
+        </button>
+      </div>
+
       <!-- Comments Section -->
       <div>
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -1079,6 +1120,21 @@
       static deleteReport(id) {
         const reports = this.getReports().filter(r => r.id != id);
         localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
+
+      // PERFORMANCE DATA
+      static getPerformance(agentId) {
+        const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+        return db[agentId] || null;
+      }
+
+      static savePerformance(agentId, data) {
+        const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+        db[agentId] = {
+          ...data,
+          lastUpdated: new Date().toLocaleString()
+        };
+        localStorage.setItem('gojira_performance', JSON.stringify(db));
       }
     }
 
@@ -1170,41 +1226,90 @@
     }
 
     function renderAgentDashboard() {
+      // 1. Render Reports (Existing)
       const reports = MockBackend.getReports();
       const listContainer = document.getElementById('agent-reports-list');
 
-      if (!listContainer) return;
+      if (listContainer) {
+        if (reports.length === 0) {
+          listContainer.innerHTML = '<p class="text-sm text-slate-400 italic">No reports available to download.</p>';
+        } else {
+          listContainer.innerHTML = reports.map(r => `
+            <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl hover:shadow-md transition group">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <span class="text-xl">${r.type.includes('image') ? '🖼️' : '📄'}</span>
+                <div class="min-w-0">
+                  <p class="font-bold text-sm truncate text-slate-800 dark:text-slate-200">${r.name}</p>
+                  <p class="text-[10px] text-slate-400 uppercase tracking-wider">${r.id} • ${r.date}</p>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                ${r.content ? `
+                <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg hover:bg-blue-100 transition" title="View">
+                  👁️
+                </button>
+                <a href="${r.content}" download="${r.name}" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg hover:bg-indigo-100 transition" title="Download">
+                  ⬇
+                </a>
+                ` : `
+                <button onclick="alert('File content not available. Please re-upload.')" class="text-slate-400 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg cursor-not-allowed">
+                  ⚠️
+                </button>
+                `}
+              </div>
+            </div>
+          `).join('');
+        }
+      }
 
-      if (reports.length === 0) {
-        listContainer.innerHTML = '<p class="text-sm text-slate-400 italic">No reports available to download.</p>';
+      // 2. Render Performance Stats (New)
+      if (currentUser) {
+        const perfData = MockBackend.getPerformance(currentUser.id);
+        const emptyMsg = document.getElementById('perf-empty-msg');
+        const metricsContainer = document.getElementById('perf-metrics-container');
+
+        if (perfData) {
+          // Has data: Hide empty msg, Show metrics
+          if (emptyMsg) emptyMsg.classList.add('hidden');
+          if (metricsContainer) {
+            metricsContainer.classList.remove('hidden');
+            document.getElementById('perf-score').innerText = perfData.score + '%';
+            document.getElementById('perf-errors').innerText = perfData.errors;
+            document.getElementById('perf-compliance').innerText = perfData.compliance;
+          }
+        } else {
+          // No data: Show empty msg, Hide metrics (or show 0s)
+          if (emptyMsg) emptyMsg.classList.remove('hidden');
+          if (metricsContainer) metricsContainer.classList.add('hidden');
+        }
+      }
+    }
+
+    function handlePerformanceUpdate() {
+      const agentId = document.getElementById('admin-perf-id').value.trim();
+      const score = document.getElementById('admin-perf-score').value.trim();
+      const errors = document.getElementById('admin-perf-errors').value.trim();
+      const compliance = document.getElementById('admin-perf-compliance').value.trim();
+
+      if (!agentId || !score || !errors || !compliance) {
+        alert('Please fill in all fields (ID, Score, Errors, Compliance).');
         return;
       }
 
-      listContainer.innerHTML = reports.map(r => `
-        <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl hover:shadow-md transition group">
-          <div class="flex items-center gap-3 overflow-hidden">
-            <span class="text-xl">${r.type.includes('image') ? '🖼️' : '📄'}</span>
-            <div class="min-w-0">
-              <p class="font-bold text-sm truncate text-slate-800 dark:text-slate-200">${r.name}</p>
-              <p class="text-[10px] text-slate-400 uppercase tracking-wider">${r.id} • ${r.date}</p>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            ${r.content ? `
-            <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg hover:bg-blue-100 transition" title="View">
-              👁️
-            </button>
-            <a href="${r.content}" download="${r.name}" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg hover:bg-indigo-100 transition" title="Download">
-              ⬇
-            </a>
-            ` : `
-            <button onclick="alert('File content not available. Please re-upload.')" class="text-slate-400 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg cursor-not-allowed">
-              ⚠️
-            </button>
-            `}
-          </div>
-        </div>
-      `).join('');
+      // Validate Agent Exists (Optional but good)
+      const agentExists = USER_DB.some(u => u.id === agentId);
+      if (!agentExists) {
+        if (!confirm(`Agent ID "${agentId}" not found in local database. Continue anyway?`)) return;
+      }
+
+      MockBackend.savePerformance(agentId, { score, errors, compliance });
+      alert(`Performance updated for ${agentId} successfully!`);
+
+      // Reset form
+      document.getElementById('admin-perf-id').value = '';
+      document.getElementById('admin-perf-score').value = '';
+      document.getElementById('admin-perf-errors').value = '';
+      document.getElementById('admin-perf-compliance').value = '';
     }
 
     function openReport(content, type) {
