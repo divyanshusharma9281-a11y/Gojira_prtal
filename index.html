@@ -1411,6 +1411,9 @@
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
+        // DEBUGGING ALERTS - ACTIVE
+        alert(`Debug Check:\nUser Entity: ${user.entity}\nCurrent Target: ${currentEntity}`);
+
         // STRICT ENTITY CHECK
         if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
           // Show Access Denied Modal reusing the existing one
