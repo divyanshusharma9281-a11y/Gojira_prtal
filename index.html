@@ -945,12 +945,6 @@ function handleUpload() {
 function loadReports() {
   const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
   const list = document.getElementById('reports-list');
-  if (currentUser === 'agent') {
-    if (localStorage.getItem('reviewStarted') !== 'true') {
-      list.innerHTML = '<div class="text-center"><button onclick="startReview()" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Review Reports</button><p class="mt-4 text-slate-500 dark:text-slate-400">Click to start reviewing quality reports and provide feedback.</p></div>';
-      return;
-    }
-  }
   if (reports.length === 0) {
     list.innerHTML = '<p class="text-center text-slate-500 dark:text-slate-400">No quality reports available. Please check back later or contact your supervisor.</p>';
   } else {
@@ -995,7 +989,6 @@ function loadReports() {
   if (currentUser === 'admin') {
     reports.forEach(report => report.comments = []);
     localStorage.setItem('qualityReports', JSON.stringify(reports));
-    localStorage.setItem('reviewStarted', 'false'); // Reset review for agents
   }
 }
 
