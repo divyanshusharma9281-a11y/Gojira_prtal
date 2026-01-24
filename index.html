@@ -871,59 +871,140 @@
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
 
-    <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <div class="max-w-6xl mx-auto px-6 py-10">
 
-      <!-- Existing Performance Stats -->
-      <!-- Performance Stats -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <h2 class="text-xl font-bold mb-6">🎯 Weekly Performance</h2>
-
-        <!-- Default Message -->
-        <p id="perf-empty-msg" class="text-slate-500 italic mb-4">There's no performance currently.</p>
-
-        <!-- Metrics Container (Hidden by default or shows 0) -->
-        <div id="perf-metrics-container" class="space-y-4">
-          <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
-            <span>Audit Score</span>
-            <span id="perf-score" class="font-bold text-green-600">0%</span>
-          </div>
-          <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
-            <span>Fatal Errors</span>
-            <span id="perf-errors" class="font-bold text-slate-400">0</span>
-          </div>
-          <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-sm">
-            <span>100% Compliance</span>
-            <span id="perf-compliance" class="font-bold text-blue-600">0</span>
-          </div>
-        </div>
+      <!-- Welcome Banner -->
+      <div class="mb-12 p-8 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl">
+        <h1 class="text-3xl font-extrabold mb-2">Hello, <span id="agent-name-display">Agent</span> 👋</h1>
+        <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
       </div>
 
-      <!-- Agent Actions Column -->
-      <div class="space-y-8">
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-        <!-- Files Download Section -->
-        <div class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl border border-indigo-100 dark:border-slate-700">
-          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-            <span class="text-indigo-600">📥</span> Quality Reports
-          </h2>
-          <div id="agent-reports-list" class="space-y-3 max-h-60 overflow-y-auto pr-2">
-            <!-- JS Populates this -->
+        <!-- Weekly Performance Tab/Card -->
+        <div onclick="openAgentPerformanceModal()"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
+            <span class="text-9xl">📈</span>
+          </div>
+
+          <div
+            class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-indigo-600">
+            🎯
+          </div>
+
+          <h3 class="text-2xl font-bold mb-2">Weekly Performance</h3>
+          <p class="text-slate-500 text-sm mb-6">Review your audit scores, compliance stats, and proofs.</p>
+
+          <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
+            <span>View Details</span>
+            <span>→</span>
           </div>
         </div>
 
-        <!-- Add Comment Section -->
-        <div
-          class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none">
-          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-            <span class="text-pink-600">📢</span> Submit Feedback / Comment
+        <!-- Resources Card -->
+        <div onclick="navigateTo('view-resources')"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+          <div
+            class="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-emerald-600">
+            📚
+          </div>
+          <h3 class="text-2xl font-bold mb-2">Resources</h3>
+          <p class="text-slate-500 text-sm mb-6">Access scripts, guidelines, and training materials.</p>
+        </div>
+
+        <!-- Updates Card -->
+        <div onclick="navigateTo('view-updates')"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+          <div
+            class="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-amber-600">
+            📢
+          </div>
+          <h3 class="text-2xl font-bold mb-2">Updates</h3>
+          <p class="text-slate-500 text-sm mb-6">Check the latest policy changes and announcements.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT PERFORMANCE MODAL -->
+  <div id="agent-performance-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col animate-scale-up">
+
+      <!-- Modal Header -->
+      <div
+        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 z-10">
+        <div>
+          <h2 class="text-2xl font-extrabold flex items-center gap-2">
+            <span>📊</span> Performance Review
           </h2>
-          <textarea id="agent-comment-input" rows="3"
-            class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-pink-500 outline-none transition"
-            placeholder="Type your message for the admin here..."></textarea>
-          <button onclick="handleCommentSubmit()"
-            class="mt-4 w-full bg-pink-600 text-white font-bold py-3 rounded-xl hover:bg-pink-700 transition">
-            Send to Admin
-          </button>
+          <p class="text-xs text-slate-500 font-mono mt-1" id="modal-agent-id">ID: --</p>
+        </div>
+        <button onclick="closeAgentPerformanceModal()"
+          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+
+      <!-- Modal Content (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-8">
+
+        <div id="perf-content-loaded" class="space-y-10">
+
+          <!-- Score Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
+              <div id="modal-total-score" class="text-4xl font-black text-indigo-600">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Audit Score</p>
+              <div id="modal-audit-score" class="text-2xl font-bold text-slate-700 dark:text-slate-200">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal Errors</p>
+              <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Compliance</p>
+              <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
+            </div>
+          </div>
+
+          <!-- Proofs Section -->
+          <div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📎</span>
+              Attached Proofs
+            </h3>
+            <div id="modal-proofs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Comment Section -->
+          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-bold mb-4">💬 Submit Feedback to Admin</h3>
+            <textarea id="agent-comment-input" rows="3"
+              class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition mb-4"
+              placeholder="Write your comments regarding this review..."></textarea>
+            <button onclick="handleCommentSubmit()"
+              class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Send
+              Comment</button>
+          </div>
+
+        </div>
+
+        <!-- Empty State -->
+        <div id="perf-content-empty"
+          class="hidden h-full flex flex-col items-center justify-center text-center opacity-50 py-20">
+          <div class="text-6xl mb-4">📭</div>
+          <h3 class="text-xl font-bold">No performance review available yet.</h3>
         </div>
 
       </div>
@@ -1053,123 +1134,62 @@
         </div>
       </div>
 
-      <!-- Individual Agent Score & Proof Upload -->
-      <div class="mt-12 bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl border border-indigo-100 dark:border-slate-700">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">👤</span>
-          Individual Agent Performance
-        </h2>
-
-        <div class="space-y-6">
-          <!-- Search Agent -->
-          <div>
-            <label class="block text-sm font-bold text-slate-500 mb-2 uppercase">Search Agent (ID or Name)</label>
-            <div class="relative">
-              <input type="text" id="indiv-agent-search" placeholder="Type ID or Name..."
-                oninput="handleAgentSearch(this.value)"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition shadow-sm">
-              <div id="indiv-agent-results"
-                class="hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-20 max-h-60 overflow-y-auto">
-                <!-- Data populated by JS -->
-              </div>
-            </div>
-          </div>
-
-          <!-- Selected Agent Display -->
-          <div id="indiv-agent-selected"
-            class="hidden p-4 bg-white dark:bg-slate-700 rounded-xl border border-indigo-200 dark:border-indigo-900 flex justify-between items-center transition-all">
-            <div>
-              <p class="text-xs text-slate-500 uppercase font-bold">Selected Agent</p>
-              <h3 id="selected-agent-name" class="text-lg font-bold text-indigo-600">Name</h3>
-              <p id="selected-agent-id" class="text-sm font-mono text-slate-500">ID</p>
-            </div>
-            <button onclick="clearSelectedAgent()"
-              class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1 rounded-lg text-sm font-bold transition">Change</button>
-          </div>
-
-          <!-- Upload Form -->
-          <div id="indiv-upload-form" class="hidden space-y-6 animate-fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Audit Score (%)</label>
-                <input type="number" id="indiv-score" min="0" max="100"
-                  class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-emerald-600 text-center text-xl">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Fatal Errors</label>
-                <input type="number" id="indiv-errors" min="0"
-                  class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-red-500 text-center text-xl">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Compliance</label>
-                <select id="indiv-compliance"
-                  class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-blue-600 text-xl">
-                  <option value="100">100%</option>
-                  <option value="0">0%</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <!-- Proof 1: Call Recording -->
-              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-                <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-                  <span>🎤</span> Call Recording
-                </label>
-                <input type="file" id="proof-audio" accept="audio/*"
-                  class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-              </div>
-
-              <!-- Proof 2: Chat Transcript -->
-              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-                <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-                  <span>💬</span> Chat Transcript
-                </label>
-                <input type="file" id="proof-chat" accept="image/*,application/pdf"
-                  class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-              </div>
-
-              <!-- Proof 3: Email -->
-              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-                <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-                  <span>✉️</span> Email Proof
-                </label>
-                <input type="file" id="proof-email" accept="image/*,application/pdf"
-                  class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-              </div>
-            </div>
-
-            <button onclick="submitIndividualScore()"
-              class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
-              <span>✅ Submit Score & Proofs</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <span>🎤</span> Call Recording
+      </label>
+      <input type="file" id="proof-audio" accept="audio/*"
+        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
     </div>
 
-    <!-- Comments Section -->
-    <div>
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-        <span class="bg-pink-600 text-white rounded-lg p-2 text-xl">💬</span>
-        Agent Comments Management
-      </h2>
-      <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-        <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-          <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-            <tr>
-              <th class="p-6">Date</th>
-              <th class="p-6">Agent ID</th>
-              <th class="p-6">Comment</th>
-              <th class="p-6 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-            <!-- JS Populates this -->
-          </tbody>
-        </table>
-      </div>
+    <!-- Proof 2: Chat Transcript -->
+    <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+      <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+        <span>💬</span> Chat Transcript
+      </label>
+      <input type="file" id="proof-chat" accept="image/*,application/pdf"
+        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
     </div>
+
+    <!-- Proof 3: Email -->
+    <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+      <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+        <span>✉️</span> Email Proof
+      </label>
+      <input type="file" id="proof-email" accept="image/*,application/pdf"
+        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+    </div>
+  </div>
+
+  <button onclick="submitIndividualScore()"
+    class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
+    <span>✅ Submit Score & Proofs</span>
+  </button>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div>
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+      <span class="bg-pink-600 text-white rounded-lg p-2 text-xl">💬</span>
+      Agent Comments Management
+    </h2>
+    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+          <tr>
+            <th class="p-6">Date</th>
+            <th class="p-6">Agent ID</th>
+            <th class="p-6">Comment</th>
+            <th class="p-6 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+          <!-- JS Populates this -->
+        </tbody>
+      </table>
+    </div>
+  </div>
   </div>
   </div>
 
@@ -1257,49 +1277,120 @@
 
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
-      // Render Comments (Existing)
-      const comments = MockBackend.getComments();
-      const listContainer = document.getElementById('admin-comments-list');
+      // 1. Set Entity Header
+      const entityContext = currentEntity || 'ALL'; // Fallback
+      document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
 
-      if (listContainer) {
-        if (comments.length === 0) {
-          listContainer.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-500">No comments yet.</td></tr>';
-        } else {
-          listContainer.innerHTML = comments.map(c => `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-              <td class="p-6 text-slate-500 text-sm whitespace-nowrap">${c.date}</td>
-              <td class="p-6 font-bold text-indigo-600">${c.agentId}</td>
-              <td class="p-6 text-slate-700 dark:text-slate-300">${c.text}</td>
-              <td class="p-6 text-right">
-                <button onclick="handleDeleteComment(${c.id})" class="text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg text-xs font-bold transition">Delete</button>
-              </td>
-            </tr>
-          `).join('');
-        }
+      // 2. Populate Agent List
+      const listContainer = document.getElementById('admin-agent-list-container');
+
+      // Filter Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entityContext !== 'ALL') {
+        agents = agents.filter(u => u.entity === entityContext);
       }
 
-      // Render Reports (New)
-      const reports = MockBackend.getReports();
-      const reportContainer = document.getElementById('admin-reports-list');
+      if (agents.length === 0) {
+        listContainer.innerHTML = '<div class="p-6 text-center text-slate-400">No agents found for this entity.</div>';
+      } else {
+        listContainer.innerHTML = agents.map(u => {
+          const perf = MockBackend.getPerformance(u.id);
+          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-amber-500') : 'text-slate-300';
+          const scoreText = perf ? perf.score + '%' : 'N/A';
+          const isSelected = selectedAgentForUpload && selectedAgentForUpload.id === u.id;
+          const bgClass = isSelected ? 'bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500' : 'bg-white hover:bg-slate-50 border-slate-200';
 
-      if (reportContainer) {
-        if (reports.length === 0) {
-          reportContainer.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-slate-500">No reports uploaded yet.</td></tr>';
-        } else {
-          reportContainer.innerHTML = reports.map(r => `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-              <td class="p-6 text-slate-500 text-sm whitespace-nowrap">${r.date}</td>
-              <td class="p-6 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span class="text-xl">${r.type.includes('image') ? '🖼️' : '📄'}</span>
-                ${r.name}
-              </td>
-              <td class="p-6 text-right">
-                <button onclick="handleDeleteReport(${r.id})" class="text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg text-xs font-bold transition">Delete</button>
-              </td>
-            </tr>
-          `).join('');
-        }
+          return `
+            <div onclick="toggleAdminAgentSelection('${u.id}')" 
+                 class="cursor-pointer ${bgClass} p-4 rounded-2xl border transition-all mb-2 flex items-center justify-between group dark:bg-slate-700 dark:border-slate-600">
+               <div>
+                  <h4 class="font-bold text-slate-700 dark:text-slate-200">${u.name}</h4>
+                  <p class="text-xs text-slate-400 font-mono">${u.id}</p>
+               </div>
+               <div class="text-right">
+                  <div class="font-black ${scoreClass} text-lg">${scoreText}</div>
+                  <div class="text-[10px] text-slate-400 uppercase">Current</div>
+               </div>
+            </div>
+           `;
+        }).join('');
       }
+    }
+
+    function toggleAdminAgentSelection(id) {
+      // Toggle logic
+      if (selectedAgentForUpload && selectedAgentForUpload.id === id) {
+        // Deselect (Optional, user might prefer sticking)
+        // selectedAgentForUpload = null; 
+        // But usually we just switch.
+      } else {
+        selectedAgentForUpload = USER_DB.find(u => u.id === id);
+      }
+
+      renderAdminDashboard(); // Re-render list to show active state
+      updateUploadFormUI();
+    }
+
+    function updateUploadFormUI() {
+      const placeholder = document.getElementById('indiv-agent-selected');
+      const form = document.getElementById('indiv-upload-form');
+
+      if (selectedAgentForUpload) {
+        placeholder.classList.add('hidden');
+        placeholder.classList.remove('flex');
+        form.classList.remove('hidden');
+
+        document.getElementById('selected-agent-name').innerText = selectedAgentForUpload.name;
+        document.getElementById('selected-agent-id').innerText = selectedAgentForUpload.id;
+
+        // Update current score badge
+        const perf = MockBackend.getPerformance(selectedAgentForUpload.id);
+        const badge = document.getElementById('current-score-badge');
+        if (perf) {
+          badge.innerHTML = `Current Score: <span class="${perf.score >= 90 ? 'text-emerald-600' : 'text-amber-600'}">${perf.score}%</span>`;
+        } else {
+          badge.innerHTML = `Current Score: <span class="text-slate-400">Not Scored</span>`;
+        }
+
+      } else {
+        placeholder.classList.remove('hidden');
+        placeholder.classList.add('flex');
+        form.classList.add('hidden');
+      }
+    }
+
+    function calculateTotalScore() {
+      const audit = parseInt(document.getElementById('indiv-score').value) || 0;
+      const errors = parseInt(document.getElementById('indiv-errors').value);
+      const compliance = parseInt(document.getElementById('indiv-compliance').value) || 0;
+
+      const display = document.getElementById('calc-total-score');
+
+      // Logic: 
+      // If Fatal Error (1) -> Score 0
+      // Else -> Average of Audit & Compliance? Or just Audit?
+      // User said "choose the score 0 and hundred... automatically fetch total"
+      // Let's assume strict compliance.
+
+      let total = 0;
+
+      if (document.getElementById('indiv-errors').value === "") {
+        display.innerText = "--";
+        return;
+      }
+
+      if (errors === 1) {
+        total = 0;
+      } else {
+        // If no fatal errors
+        // Using simple average for now, standard QA math
+        total = (audit + compliance) / 2;
+      }
+
+      display.innerText = total + "%";
+      if (total === 100) display.className = "text-2xl font-black text-emerald-500";
+      else if (total === 0) display.className = "text-2xl font-black text-red-500";
+      else display.className = "text-2xl font-black text-indigo-600";
     }
 
     function handleFileUpload() {
@@ -1343,87 +1434,73 @@
     }
 
     function renderAgentDashboard() {
-      // 1. Render Reports (Existing)
-      const reports = MockBackend.getReports();
-      const listContainer = document.getElementById('agent-reports-list');
-
-      if (listContainer) {
-        if (reports.length === 0) {
-          listContainer.innerHTML = '<p class="text-sm text-slate-400 italic">No reports available to download.</p>';
-        } else {
-          listContainer.innerHTML = reports.map(r => `
-            <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl hover:shadow-md transition group">
-              <div class="flex items-center gap-3 overflow-hidden">
-                <span class="text-xl">${r.type.includes('image') ? '🖼️' : '📄'}</span>
-                <div class="min-w-0">
-                  <p class="font-bold text-sm truncate text-slate-800 dark:text-slate-200">${r.name}</p>
-                  <p class="text-[10px] text-slate-400 uppercase tracking-wider">${r.id} • ${r.date}</p>
-                </div>
-              </div>
-              <div class="flex gap-2">
-                ${r.content ? `
-                <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg hover:bg-blue-100 transition" title="View">
-                  👁️
-                </button>
-                <a href="${r.content}" download="${r.name}" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg hover:bg-indigo-100 transition" title="Download">
-                  ⬇
-                </a>
-                ` : `
-                <button onclick="alert('File content not available. Please re-upload.')" class="text-slate-400 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg cursor-not-allowed">
-                  ⚠️
-                </button>
-                `}
-              </div>
-            </div>
-          `).join('');
-        }
-      }
-
-      // 2. Render Performance Stats (New)
       if (currentUser) {
-        const perfData = MockBackend.getPerformance(currentUser.id);
-        const emptyMsg = document.getElementById('perf-empty-msg');
-        const metricsContainer = document.getElementById('perf-metrics-container');
-
-        if (perfData) {
-          // Has data: Hide empty msg, Show metrics
-          if (emptyMsg) emptyMsg.classList.add('hidden');
-          if (metricsContainer) {
-            metricsContainer.classList.remove('hidden');
-            document.getElementById('perf-score').innerText = perfData.score + '%';
-            document.getElementById('perf-errors').innerText = perfData.errors;
-            document.getElementById('perf-compliance').innerText = perfData.compliance === '100' ? '100%' : (perfData.compliance + '%' || '0%');
-          }
-
-          // Render Proofs (New Addition)
-          if (perfData.proofs && perfData.proofs.length > 0) {
-            const existingProofsDiv = document.getElementById('perf-proofs-section');
-            if (existingProofsDiv) existingProofsDiv.remove(); // Clean up prev
-
-            const proofsHtml = `
-               <div id="perf-proofs-section" class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-                 <h3 class="text-sm font-bold text-slate-500 uppercase mb-3">Supporting Proofs</h3>
-                 <div class="grid grid-cols-1 gap-3">
-                   ${perfData.proofs.map(p => `
-                     <div class="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg border border-slate-100 dark:border-slate-600">
-                       <span class="flex items-center gap-2 text-sm font-semibold">
-                         <span>${p.icon}</span> ${p.name}
-                       </span>
-                       <button onclick="openReport('${p.content}', '${p.type}')" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-3 py-1.5 rounded-md font-bold hover:bg-indigo-100 transition">View Proof 👁️</button>
-                     </div>
-                   `).join('')}
-                 </div>
-               </div>
-             `;
-            metricsContainer.insertAdjacentHTML('beforeend', proofsHtml);
-          }
-
-        } else {
-          // No data: Show empty msg, Hide metrics (or show 0s)
-          if (emptyMsg) emptyMsg.classList.remove('hidden');
-          if (metricsContainer) metricsContainer.classList.add('hidden');
-        }
+        document.getElementById('agent-name-display').innerText = currentUser.name;
       }
+    }
+
+    function openAgentPerformanceModal() {
+      if (!currentUser) return;
+      const modal = document.getElementById('agent-performance-modal');
+      const contentLoaded = document.getElementById('perf-content-loaded');
+      const contentEmpty = document.getElementById('perf-content-empty');
+
+      document.getElementById('modal-agent-id').innerText = `ID: ${currentUser.id}`;
+      modal.classList.remove('hidden');
+
+      const perfData = MockBackend.getPerformance(currentUser.id);
+
+      if (perfData) {
+        contentLoaded.classList.remove('hidden');
+        contentEmpty.classList.add('hidden');
+
+        // Populate Scores
+        document.getElementById('modal-audit-score').innerText = perfData.score + '%';
+        document.getElementById('modal-fatal-errors').innerText = perfData.errors;
+        document.getElementById('modal-compliance').innerText = perfData.compliance === '100' ? '100%' : '0%';
+
+        // Calculate Total if not saved, or use saved logic. 
+        // Since we save specific fields, let's re-calculate display total or assume Audit is main.
+        // User said "Total Quality Score... automatically fetch".
+        // In Admin calc we did: If Fatal=1 -> 0, else (Audit+Comp)/2. Let's replicate or use saved.
+        // We should ideally save the Total. But for now re-calc.
+        let total = 0;
+        const audit = parseInt(perfData.score) || 0;
+        const comp = parseInt(perfData.compliance) || 0;
+        const errors = parseInt(perfData.errors) || 0;
+
+        if (errors === 1) total = 0;
+        else total = (audit + comp) / 2;
+
+        document.getElementById('modal-total-score').innerText = total + '%';
+
+        // Populate Proofs
+        const proofsList = document.getElementById('modal-proofs-list');
+        if (perfData.proofs && perfData.proofs.length > 0) {
+          proofsList.innerHTML = perfData.proofs.map(p => `
+                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+                   <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
+                      <div>
+                         <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
+                         <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
+                      </div>
+                   </div>
+                   <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
+                </div>
+             `).join('');
+        } else {
+          proofsList.innerHTML = '<p class="col-span-2 text-center text-slate-400 italic">No proofs attached.</p>';
+        }
+
+      } else {
+        contentLoaded.classList.add('hidden');
+        contentEmpty.classList.remove('hidden');
+      }
+    }
+
+    function closeAgentPerformanceModal() {
+      document.getElementById('agent-performance-modal').classList.add('hidden');
     }
 
     // BULK PERFORMANCE MANAGER
@@ -1522,8 +1599,7 @@
       navigateTo('view-home');
     }
 
-    // INDIVIDUAL SCORE UPLOAD FUNCTIONS
-    let selectedAgentForUpload = null;
+
 
     function handleAgentSearch(query) {
       const resultsDiv = document.getElementById('indiv-agent-results');
@@ -1568,21 +1644,7 @@
       document.getElementById('indiv-agent-search').parentElement.parentElement.classList.add('hidden');
     }
 
-    function clearSelectedAgent() {
-      selectedAgentForUpload = null;
-      document.getElementById('indiv-agent-selected').classList.add('hidden');
-      document.getElementById('indiv-agent-selected').classList.remove('flex');
-      document.getElementById('indiv-upload-form').classList.add('hidden');
 
-      // Show Search again
-      document.getElementById('indiv-agent-search').parentElement.parentElement.classList.remove('hidden');
-      // Reset form
-      document.getElementById('indiv-score').value = '';
-      document.getElementById('indiv-errors').value = '';
-      document.getElementById('proof-audio').value = '';
-      document.getElementById('proof-chat').value = '';
-      document.getElementById('proof-email').value = '';
-    }
 
     async function submitIndividualScore() {
       if (!selectedAgentForUpload) return alert('No agent selected.');
