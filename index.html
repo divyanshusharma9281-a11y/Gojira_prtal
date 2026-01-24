@@ -972,6 +972,11 @@ function loadReports() {
       </div>
     `;
   }).join('');
+  // Automatically remove comments after admin views them
+  if (currentUser === 'admin') {
+    reports.forEach(report => report.comments = []);
+    localStorage.setItem('qualityReports', JSON.stringify(reports));
+  }
 }
 
 function addComment(index) {
