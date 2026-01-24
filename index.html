@@ -1415,7 +1415,7 @@
         if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
           // Show Access Denied Modal reusing the existing one
           const modalText = document.querySelector('#access-denied-modal p');
-          if (modalText) modalText.innerText = 'Kindly choose the correct entity to access.';
+          if (modalText) modalText.innerText = 'Please enter the correct emp. ID, Select the correct entity for this emp. ID';
 
           hideLogin();
           document.getElementById('access-denied-modal').classList.remove('hidden');
