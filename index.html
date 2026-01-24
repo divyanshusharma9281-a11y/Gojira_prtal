@@ -1279,9 +1279,8 @@
           if (targetEntity && targetEntity !== currentUser.entity) {
 
             // Dynamic check: Update modal text to ensure it matches requirement
-            const modalTitle = document.querySelector('#access-denied-modal h2');
-            const modalText = document.querySelector('#access-denied-modal p');
-            if (modalText) modalText.innerText = 'Please enter the correct emp. ID or choose the correct entity for this ID';
+            const modalTitle = document.getElementById('access-denied-title');
+            if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
 
             // Show Access Denied Modal
             document.getElementById('access-denied-modal').classList.remove('hidden');
@@ -1411,14 +1410,11 @@
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
-        // DEBUGGING ALERTS - ACTIVE
-        alert(`Debug Check:\nUser Entity: ${user.entity}\nCurrent Target: ${currentEntity}`);
-
         // STRICT ENTITY CHECK
         if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
-          // Show Access Denied Modal reusing the existing one
-          const modalText = document.querySelector('#access-denied-modal p');
-          if (modalText) modalText.innerText = 'Please enter the correct emp. ID or choose the correct entity for this ID';
+          // Show Access Denied Modal using the updated title ID
+          const modalTitle = document.getElementById('access-denied-title');
+          if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
 
           hideLogin();
           document.getElementById('access-denied-modal').classList.remove('hidden');
