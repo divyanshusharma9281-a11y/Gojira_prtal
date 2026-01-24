@@ -958,6 +958,28 @@
         <p class="text-xs text-slate-500 mt-3 ml-2">* Files will be simulated in this demo environment.</p>
       </div>
 
+      <!-- Manage Reports Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
+          Manage Uploaded Reports
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">File Name</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Comments Section -->
       <div>
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -1043,41 +1065,90 @@
         const comments = this.getComments().filter(c => c.id != id);
         localStorage.setItem('gojira_comments', JSON.stringify(comments));
       }
+
+      static deleteReport(id) {
+        const reports = this.getReports().filter(r => r.id != id);
+        localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
     }
 
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
+      // Render Comments (Existing)
       const comments = MockBackend.getComments();
       const listContainer = document.getElementById('admin-comments-list');
 
-      if (!listContainer) return;
-
-      if (comments.length === 0) {
-        listContainer.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-500">No comments yet.</td></tr>';
-        return;
+      if (listContainer) {
+        if (comments.length === 0) {
+          listContainer.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-500">No comments yet.</td></tr>';
+        } else {
+          listContainer.innerHTML = comments.map(c => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+              <td class="p-6 text-slate-500 text-sm whitespace-nowrap">${c.date}</td>
+              <td class="p-6 font-bold text-indigo-600">${c.agentId}</td>
+              <td class="p-6 text-slate-700 dark:text-slate-300">${c.text}</td>
+              <td class="p-6 text-right">
+                <button onclick="handleDeleteComment(${c.id})" class="text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg text-xs font-bold transition">Delete</button>
+              </td>
+            </tr>
+          `).join('');
+        }
       }
 
-      listContainer.innerHTML = comments.map(c => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-          <td class="p-6 text-slate-500 text-sm whitespace-nowrap">${c.date}</td>
-          <td class="p-6 font-bold text-indigo-600">${c.agentId}</td>
-          <td class="p-6 text-slate-700 dark:text-slate-300">${c.text}</td>
-          <td class="p-6 text-right">
-            <button onclick="handleDeleteComment(${c.id})" class="text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg text-xs font-bold transition">Delete</button>
-          </td>
-        </tr>
-      `).join('');
+      // Render Reports (New)
+      const reports = MockBackend.getReports();
+      const reportContainer = document.getElementById('admin-reports-list');
+
+      if (reportContainer) {
+        if (reports.length === 0) {
+          reportContainer.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-slate-500">No reports uploaded yet.</td></tr>';
+        } else {
+          reportContainer.innerHTML = reports.map(r => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+              <td class="p-6 text-slate-500 text-sm whitespace-nowrap">${r.date}</td>
+              <td class="p-6 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <span class="text-xl">${r.type.includes('image') ? '🖼️' : '📄'}</span>
+                ${r.name}
+              </td>
+              <td class="p-6 text-right">
+                <button onclick="handleDeleteReport(${r.id})" class="text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg text-xs font-bold transition">Delete</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
     }
 
     function handleFileUpload() {
       const fileInput = document.getElementById('admin-file-upload');
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        MockBackend.addReport(file);
-        alert(`Successfully uploaded "${file.name}"`);
+
+        // Read file content
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const content = e.target.result;
+          try {
+            MockBackend.addReport(file, content);
+            alert(`Successfully uploaded "${file.name}"`);
+            renderAdminDashboard(); // Refresh UI
+          } catch (err) {
+            alert('Upload failed: File might be too large for browser storage.');
+            console.error(err);
+          }
+        };
+        reader.readAsDataURL(file);
+
         fileInput.value = ''; // Reset
       } else {
         alert('Please select a file first.');
+      }
+    }
+
+    function handleDeleteReport(id) {
+      if (confirm('Are you sure you want to delete this report? It will be removed for all agents.')) {
+        MockBackend.deleteReport(id);
+        renderAdminDashboard(); // Refresh
       }
     }
 
