@@ -953,7 +953,7 @@ function loadReports() {
     }
     let commentsHtml = report.comments.map(comment => `<p class="text-sm text-slate-600 dark:text-slate-400">- ${comment}</p>`).join('');
     let addCommentHtml = '';
-    if (currentUser === 'agent') {
+    if (currentUser === 'agent' && report.comments.length === 0) {
       addCommentHtml = `
         <textarea id="comment-${index}" placeholder="Add your comment..." class="w-full p-2 mt-2 border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700"></textarea>
         <button onclick="addComment(${index})" class="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700">Add Comment</button>
