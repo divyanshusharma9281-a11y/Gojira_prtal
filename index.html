@@ -733,6 +733,37 @@
   </div>
 </div>
 
+<!-- ADMIN UPLOAD VIEW -->
+<div id="view-admin-upload" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+    <span class="mx-auto font-bold">Admin Upload</span>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-6 py-14">
+    <h1 class="text-3xl font-extrabold mb-8">Upload Quality Reports</h1>
+
+    <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+      <input type="file" id="file-input" multiple accept=".xlsx,.xls,.png,.jpg,.jpeg,.pdf" class="mb-4">
+      <button onclick="handleUpload()" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Upload Files</button>
+      <div id="upload-status" class="mt-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENT REPORTS VIEW -->
+<div id="view-agent-reports" class="app-view bg-white dark:bg-slate-900">
+  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+    <span class="mx-auto font-bold">Quality Reports</span>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-6 py-14">
+    <h1 class="text-3xl font-extrabold mb-8">Uploaded Quality Reports</h1>
+    <div id="reports-list" class="space-y-4"></div>
+  </div>
+</div>
+
 <!-- LOGIN MODAL -->
 <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
@@ -781,6 +812,10 @@ function navigateTo(id){
   document.getElementById('search-bar').classList.add('hidden');
   document.getElementById('search-input').value = '';
   document.getElementById('search-results').innerHTML = '';
+  // Load reports if navigating to agent reports
+  if (id === 'view-agent-reports') {
+    loadReports();
+  }
 }
 
 function toggleFaq(btn){
@@ -862,13 +897,50 @@ function hideLogin() {
 function submitLogin(event) {
   event.preventDefault();
   const empId = document.getElementById('empid').value;
-  if (currentEntity === 'BharatLoan' && empId === 'BL/GG/704') {
-    alert('Login successful!');
+  if (empId === 'ADMIN/001') {
+    alert('Admin login successful!');
     hideLogin();
-    navigateTo('view-performance'); // Navigate to performance view
+    navigateTo('view-admin-upload');
+  } else if (empId === 'BL/GG/704') {
+    alert('Agent login successful!');
+    hideLogin();
+    navigateTo('view-agent-reports');
   } else {
     alert('Invalid Employee ID. Please try again.');
   }
+}
+
+function handleUpload() {
+  const files = document.getElementById('file-input').files;
+  if (files.length === 0) {
+    document.getElementById('upload-status').innerText = 'No files selected.';
+    return;
+  }
+  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
+  for (let file of files) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      reports.push({
+        name: file.name,
+        type: file.type,
+        data: e.target.result
+      });
+      localStorage.setItem('qualityReports', JSON.stringify(reports));
+      document.getElementById('upload-status').innerText = 'Files uploaded successfully!';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function loadReports() {
+  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
+  const list = document.getElementById('reports-list');
+  list.innerHTML = reports.map(report => `
+    <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+      <h3 class="font-bold">${report.name}</h3>
+      <a href="${report.data}" download="${report.name}" class="text-blue-600 hover:text-blue-700">Download</a>
+    </div>
+  `).join('');
 }
 
 window.onload = () => {
