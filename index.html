@@ -935,12 +935,23 @@ function handleUpload() {
 function loadReports() {
   const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
   const list = document.getElementById('reports-list');
-  list.innerHTML = reports.map(report => `
-    <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-      <h3 class="font-bold">${report.name}</h3>
-      <a href="${report.data}" download="${report.name}" class="text-blue-600 hover:text-blue-700">Download</a>
-    </div>
-  `).join('');
+  list.innerHTML = reports.map(report => {
+    let content = '';
+    if (report.type.startsWith('image/')) {
+      content = `<img src="${report.data}" alt="${report.name}" class="max-w-full h-auto rounded">`;
+    } else if (report.type === 'application/pdf') {
+      content = `<embed src="${report.data}" type="application/pdf" width="100%" height="600px">`;
+    } else {
+      content = `<p>File type not directly viewable. Download below.</p>`;
+    }
+    return `
+      <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+        <h3 class="font-bold mb-2">${report.name}</h3>
+        ${content}
+        <a href="${report.data}" download="${report.name}" class="text-blue-600 hover:text-blue-700 mt-2 inline-block">Download</a>
+      </div>
+    `;
+  }).join('');
 }
 
 window.onload = () => {
