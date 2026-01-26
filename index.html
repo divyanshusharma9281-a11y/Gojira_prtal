@@ -1112,89 +1112,11 @@
 
         <button onclick="submitFeedbackAndProceed()"
           class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
-          Proceed to Additional Feedback
-        </button>
-      </div>
-
-      <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
-      <div id="additional-feedback-section"
-        class="hidden bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📝</span>
-            Additional Feedback for <span id="selected-agent-name-additional" class="text-purple-600"></span>
-          </h2>
-          <button onclick="backToFeedbackForm()"
-            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            ← Back to Feedback
-          </button>
-        </div>
-
-        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div><strong>Agent ID:</strong> <span id="selected-agent-id-additional" class="font-mono"></span></div>
-            <div><strong>Process:</strong> <span id="process-type-additional"></span></div>
-            <div><strong>Interaction:</strong> <span id="interaction-type-additional"></span></div>
-          </div>
-          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            <strong>Primary Feedback:</strong> <span id="primary-feedback-display"></span>
-          </div>
-        </div>
-
-        <!-- Additional Feedback Items -->
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-4">Additional Feedback Items (3-10 required)</label>
-          <div id="additional-feedback-container">
-            <!-- Feedback items will be added here dynamically -->
-            <div
-              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-sm font-medium">Feedback Item 1</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
-                  disabled>Remove</button>
-              </div>
-              <input type="text" placeholder="Enter additional feedback point..."
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-            </div>
-            <div
-              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-sm font-medium">Feedback Item 2</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
-                  disabled>Remove</button>
-              </div>
-              <input type="text" placeholder="Enter additional feedback point..."
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-            </div>
-            <div
-              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-sm font-medium">Feedback Item 3</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
-                  disabled>Remove</button>
-              </div>
-              <input type="text" placeholder="Enter additional feedback point..."
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-            </div>
-          </div>
-
-          <div class="flex gap-3 mb-4">
-            <button onclick="addFeedbackItem()"
-              class="bg-purple-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-purple-600 transition text-sm"
-              id="add-feedback-btn">
-              + Add Feedback Item
-            </button>
-            <span class="text-sm text-slate-500 self-center">
-              Items: <span id="feedback-count">3</span>/10
-            </span>
-          </div>
-        </div>
-
-        <button onclick="submitAdditionalFeedback()"
-          class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-500/30">
           Proceed to Scoring
         </button>
       </div>
+
+
 
       <!-- Step 4: Scoring Section (Hidden initially) -->
       <div id="scoring-section"
@@ -1996,15 +1918,9 @@
     }
 
     function backToFeedback() {
-      // Hide scoring, show additional feedback section
+      // Hide scoring, show feedback form
       document.getElementById('scoring-section').classList.add('hidden');
-      document.getElementById('additional-feedback-section').classList.remove('hidden');
-
-      // Restore additional feedback data
-      const feedbackData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
-      if (feedbackData && feedbackData.additionalFeedback) {
-        restoreAdditionalFeedback(feedbackData.additionalFeedback);
-      }
+      document.getElementById('feedback-form-section').classList.remove('hidden');
     }
 
     function restoreAdditionalFeedback(feedbackItems) {
