@@ -2772,8 +2772,7 @@ Open attached proof?
         currentUser = user;
 
         if (user.role === 'admin') {
-          // Clear all existing performance data for fresh start
-          MockBackend.clearAllPerformanceData();
+          // Do not clear existing data on login
           renderAdminDashboard();
           navigateTo('view-admin');
         } else {
