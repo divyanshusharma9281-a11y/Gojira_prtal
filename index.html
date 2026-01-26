@@ -1190,6 +1190,31 @@
         </div>
       </div>
 
+      <!-- Manage Performance Reviews Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-red-600 text-white rounded-lg p-2 text-xl">🗑️</span>
+          Manage Performance Reviews
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">Score</th>
+                <th class="p-6">Interaction</th>
+                <th class="p-6">File</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Individual Agent Upload Section -->
       <div class="mb-12">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -1445,6 +1470,41 @@
           reviewerId: performanceData.reviewerId
         });
       }
+
+      static getPerformanceScores() {
+        return JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+      }
+
+      static deletePerformanceScore(scoreId) {
+        const scores = this.getPerformanceScores();
+        const scoreToDelete = scores.find(s => s.id == scoreId);
+
+        if (scoreToDelete) {
+          // Remove the score
+          const updatedScores = scores.filter(s => s.id != scoreId);
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(updatedScores));
+
+          // Check if this was the agent's most recent score
+          const agentScores = updatedScores.filter(s => s.agentId === scoreToDelete.agentId);
+          if (agentScores.length === 0) {
+            // No more scores for this agent, remove their performance record
+            const performanceDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+            delete performanceDb[scoreToDelete.agentId];
+            localStorage.setItem('gojira_performance', JSON.stringify(performanceDb));
+          } else {
+            // Update with the most recent remaining score
+            const latestScore = agentScores.reduce((latest, current) =>
+              new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
+            );
+            this.savePerformance(scoreToDelete.agentId, {
+              score: latestScore.score,
+              isFatal: latestScore.isFatal,
+              lastReviewDate: new Date(latestScore.timestamp).toLocaleString(),
+              reviewerId: latestScore.reviewerId
+            });
+          }
+        }
+      }
     }
 
     // ADMIN & AGENT FUNCTIONS
@@ -1494,7 +1554,36 @@
         `).join('');
       }
 
-      // 4. Populate Comments Table
+      // 4. Populate Performance Reviews Table
+      const reviews = MockBackend.getPerformanceScores();
+      const reviewsList = document.getElementById('admin-reviews-list');
+      if (reviews.length === 0) {
+        reviewsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No performance reviews yet.</td></tr>';
+      } else {
+        reviewsList.innerHTML = reviews.map(r => {
+          const agent = USER_DB.find(u => u.id === r.agentId);
+          const agentName = agent ? agent.name : r.agentId;
+          const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
+          const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
+          const date = new Date(r.timestamp).toLocaleString();
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6">${date}</td>
+              <td class="p-6">${agentName}</td>
+              <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
+              <td class="p-6">${r.feedbackData.interactionType}</td>
+              <td class="p-6">${r.feedbackData.fileName}</td>
+              <td class="p-6 text-right">
+                <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 5. Populate Comments Table
       const comments = MockBackend.getComments();
       const commentsList = document.getElementById('admin-comments-list');
       if (comments.length === 0) {
@@ -1798,6 +1887,39 @@
       if (confirm('Are you sure you want to delete this comment?')) {
         MockBackend.deleteComment(id);
         renderAdminDashboard(); // Refresh
+      }
+    }
+
+    function viewReviewDetails(reviewId) {
+      const reviews = MockBackend.getPerformanceScores();
+      const review = reviews.find(r => r.id == reviewId);
+
+      if (review) {
+        const agent = USER_DB.find(u => u.id === review.agentId);
+        const agentName = agent ? agent.name : review.agentId;
+        const date = new Date(review.timestamp).toLocaleString();
+
+        const details = `
+Review Details:
+- Date: ${date}
+- Agent: ${agentName} (${review.agentId})
+- Score: ${review.score === 0 ? '0 (Fatal Error)' : review.score}
+- Interaction Type: ${review.feedbackData.interactionType}
+- File: ${review.feedbackData.fileName}
+- Feedback: ${review.feedbackData.feedback}
+
+Reviewer: ${review.reviewerId}
+        `;
+
+        alert(details);
+      }
+    }
+
+    function handleDeleteReview(reviewId) {
+      if (confirm('Are you sure you want to delete this performance review? This action cannot be undone.')) {
+        MockBackend.deletePerformanceScore(reviewId);
+        renderAdminDashboard(); // Refresh to update the UI
+        alert('Performance review deleted successfully.');
       }
     }
 
