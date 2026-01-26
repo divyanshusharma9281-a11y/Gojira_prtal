@@ -1367,9 +1367,38 @@
           id: Date.now() + Math.floor(Math.random() * 1000), // Ensure unique ID
           ...performanceData
         });
-        // Keep only last 100 scores
-        if (scores.length > 100) scores.pop();
-        localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+
+        // Strict limit to avoid QuotaExceededError with Base64 files
+        // A single file can be 2MB+. LocalStorage is ~5MB. 
+        // We can only keep very few full records.
+        if (scores.length > 15) scores.pop(); // aggressive pruning
+
+        try {
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+        } catch (e) {
+          if (e.name === 'QuotaExceededError' || e.code === 22) {
+            alert("Storage Full! Cannot save new review history with files. Oldest data will be removed.");
+
+            // Fallback: Prune aggressively
+            // Remove the one we just added to try saving it after pruning others
+            scores.shift();
+
+            // Remove oldest 3
+            scores.splice(scores.length - 3, 3);
+
+            // Try adding again
+            try {
+              scores.unshift({
+                id: Date.now() + Math.floor(Math.random() * 1000),
+                ...performanceData
+              });
+              localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+            } catch (retryErr) {
+              console.error("Critical Storage Error", retryErr);
+              alert("Critical Storage Error: Could not save review even after pruning. Browser storage is full. Review saved without history.");
+            }
+          }
+        }
       }
 
       static savePerformanceScore(performanceData) {
@@ -2790,7 +2819,13 @@ Open attached proof?
         if (review.feedbackData.file && review.feedbackData.file.content) {
           openReport(review.feedbackData.file.content, review.feedbackData.file.type);
         } else {
-          alert("No attached proof found or file content was not saved.");
+          // Debug info for user
+          let reason = "Unknown error";
+          if (!review.feedbackData) reason = "No feedback data object.";
+          else if (!review.feedbackData.file) reason = "No file attached to this review.";
+          else if (!review.feedbackData.file.content) reason = "File attached but content is empty (Storage Quota Exceeded).";
+
+          alert(`Cannot open proof: ${reason}. Please ask Admin to re-upload with a smaller file.`);
         }
       }
     }
