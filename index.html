@@ -2267,9 +2267,46 @@
 
       // Clear file selection
       selectedFileForReview = null;
-      document.getElementById('file-input').value = '';
+      const fileInput = document.getElementById('quality-feedback-file');
+      if (fileInput) fileInput.value = '';
+
       document.getElementById('selected-file-name').innerText = 'No file selected';
-      document.getElementById('proceed-to-feedback-btn').disabled = true;
+
+      // Reset Feedback Form
+      document.getElementById('feedback-observations').value = '';
+
+      // Reset Additional Feedback Section to default 3 items
+      const container = document.getElementById('additional-feedback-container');
+      container.innerHTML = `
+        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item 1</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item 2</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item 3</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+      `;
+      updateFeedbackCount();
+      document.getElementById('add-feedback-btn').disabled = false;
+      document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+      // Reset Performance Score Radios
+      const scoreRadios = document.getElementsByName('performance-score');
+      scoreRadios.forEach(radio => radio.checked = false);
     }
 
     function calculateTotalScore() {
