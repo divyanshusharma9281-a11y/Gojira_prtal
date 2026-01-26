@@ -1011,40 +1011,130 @@
       <!-- Hidden legacy container for compatibility -->
       <div id="admin-agent-list-container" class="hidden"></div>
 
-      <!-- Upload Section -->
-      <div class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-indigo-100 dark:border-slate-700">
+      <!-- Step 1: Agent List -->
+      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📂</span>
-          Upload Quality Reports
+          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
+          Select Agent for Quality Review
         </h2>
-        <div class="flex gap-4 items-end">
-          <div class="flex-1">
-            <label class="block text-sm font-semibold mb-2 ml-1">Target Entity</label>
-            <select id="admin-upload-entity"
-              class="w-full px-4 py-3 rounded-xl border border-indigo-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none mb-4">
-              <option value="BharatLoan">BharatLoan</option>
-              <option value="Rupee112">Rupee112</option>
-              <option value="Loan112">Loan112</option>
-              <option value="RupeeOnTime">RupeeOnTime</option>
-              <option value="ALL">All Entities</option>
-            </select>
+        <div id="admin-agent-list" class="grid gap-4">
+          <!-- Agents will be populated here by JavaScript -->
+        </div>
+      </div>
 
-            <label class="block text-sm font-semibold mb-2 ml-1">Select Report File (PDF, Excel, Image)</label>
-            <input type="file" id="admin-file-upload" class="block w-full text-sm text-slate-500
-              file:mr-4 file:py-3 file:px-6
-              file:rounded-full file:border-0
-              file:text-sm file:font-semibold
-              file:bg-indigo-100 file:text-indigo-700
-              hover:file:bg-indigo-200
-              dark:file:bg-slate-700 dark:file:text-white
-            " />
-          </div>
-          <button onclick="handleFileUpload()"
-            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">
-            Upload Report
+      <!-- Step 2: Quality Feedback Upload (Hidden initially) -->
+      <div id="quality-feedback-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📎</span>
+            Quality Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span>
+          </h2>
+          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Agent List
           </button>
         </div>
-        <p class="text-xs text-slate-500 mt-3 ml-2">* Files will be simulated in this demo environment.</p>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="text-sm text-slate-600 dark:text-slate-300">
+            <strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span>
+          </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Choose Quality Feedback File</label>
+          <input type="file" id="quality-feedback-file" accept="audio/*,image/*,application/pdf"
+            class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 dark:file:bg-slate-700 dark:file:text-white">
+        </div>
+
+        <!-- Overview Section -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Overview: What did the agent do?</label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="interaction-type" value="call" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+              <span class="text-lg">📞</span>
+              <span class="font-medium">Call</span>
+            </label>
+            <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="interaction-type" value="email" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+              <span class="text-lg">✉️</span>
+              <span class="font-medium">Email</span>
+            </label>
+            <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="interaction-type" value="chat" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+              <span class="text-lg">💬</span>
+              <span class="font-medium">Chat</span>
+            </label>
+          </div>
+          <textarea id="interaction-overview" rows="4" placeholder="Provide a detailed overview of the agent's interaction, including key points, customer response, and any notable behaviors..."
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
+        </div>
+
+        <button onclick="submitQualityFeedback()"
+          class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
+          Submit Quality Feedback
+        </button>
+      </div>
+
+      <!-- Step 3: Scoring Section (Hidden initially) -->
+      <div id="scoring-section" class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">🎯</span>
+            Performance Scoring for <span id="selected-agent-name-scoring" class="text-amber-600"></span>
+          </h2>
+          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Agent List
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-scoring" class="font-mono"></span></div>
+            <div><strong>Interaction Type:</strong> <span id="interaction-type-display"></span></div>
+          </div>
+          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            <strong>Overview:</strong> <span id="overview-display"></span>
+          </div>
+        </div>
+
+        <!-- Performance Score -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-4">Performance Score</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="100" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-emerald-600 text-xl">100</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Excellent Performance</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="0" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-red-600 text-xl">0</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Needs Improvement</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Fatal Error Checkbox -->
+        <div class="mb-6">
+          <label class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+            <input type="checkbox" id="fatal-error-checkbox" class="w-5 h-5 text-red-600 focus:ring-red-500">
+            <div>
+              <div class="font-semibold text-red-600">Fatal Error</div>
+              <div class="text-sm text-slate-600 dark:text-slate-300">Check if this was a critical error requiring immediate attention</div>
+            </div>
+          </label>
+        </div>
+
+        <button onclick="submitPerformanceScore()"
+          class="bg-amber-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-amber-700 transition shadow-lg shadow-amber-500/30">
+          Submit Performance Score
+        </button>
       </div>
 
       <!-- Manage Reports Section -->
@@ -1304,6 +1394,26 @@
         };
         localStorage.setItem('gojira_performance', JSON.stringify(db));
       }
+
+      static savePerformanceScore(performanceData) {
+        const scores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+        scores.unshift({
+          id: Date.now(),
+          ...performanceData
+        });
+        // Keep only last 50 scores to prevent storage bloat
+        if (scores.length > 50) scores.pop();
+        localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+
+        // Update the agent's current performance score
+        const currentPerf = this.getPerformance(performanceData.agentId) || {};
+        this.savePerformance(performanceData.agentId, {
+          score: performanceData.score,
+          isFatal: performanceData.isFatal,
+          lastReviewDate: new Date().toLocaleString(),
+          reviewerId: performanceData.reviewerId
+        });
+      }
     }
 
     // ADMIN & AGENT FUNCTIONS
@@ -1312,7 +1422,46 @@
       const entityContext = currentEntity || 'ALL'; // Fallback
       document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
 
-      // 2. Populate Reports Table
+      // 2. Populate Agent List
+      const agentListContainer = document.getElementById('admin-agent-list');
+
+      // Filter Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entityContext !== 'ALL') {
+        agents = agents.filter(u => u.entity === entityContext);
+      }
+
+      if (agents.length === 0) {
+        agentListContainer.innerHTML = '<div class="p-6 text-center text-slate-400">No agents found for this entity.</div>';
+      } else {
+        agentListContainer.innerHTML = agents.map(u => {
+          const perf = MockBackend.getPerformance(u.id);
+          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-red-500') : 'text-slate-300';
+          const scoreText = perf ? perf.score + '%' : 'Not Scored';
+
+          return `
+            <div onclick="selectAgentForReview('${u.id}')"
+                 class="cursor-pointer group bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all">
+               <div class="flex items-center justify-between">
+                  <div>
+                     <h4 class="font-bold text-slate-700 dark:text-slate-200 text-lg">${u.name}</h4>
+                     <p class="text-sm text-slate-500 font-mono">${u.id}</p>
+                     <p class="text-xs text-slate-400 mt-1">Entity: ${u.entity}</p>
+                  </div>
+                  <div class="text-right">
+                     <div class="font-black ${scoreClass} text-xl">${scoreText}</div>
+                     <div class="text-xs text-slate-400 uppercase">Current Score</div>
+                  </div>
+               </div>
+               <div class="mt-3 text-sm text-slate-600 dark:text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to start quality review process
+               </div>
+            </div>
+           `;
+        }).join('');
+      }
+
+      // 3. Populate Reports Table
       const reports = MockBackend.getReports();
       const reportsList = document.getElementById('admin-reports-list');
       if (reports.length === 0) {
@@ -1330,7 +1479,7 @@
         `).join('');
       }
 
-      // 3. Populate Comments Table
+      // 4. Populate Comments Table
       const comments = MockBackend.getComments();
       const commentsList = document.getElementById('admin-comments-list');
       if (comments.length === 0) {
@@ -1349,46 +1498,120 @@
       }
     }
 
-    function toggleAdminAgentSelection(id) {
-      // Toggle logic
-      if (selectedAgentForUpload && selectedAgentForUpload.id === id) {
-        // Deselect (Optional, user might prefer sticking)
-        // selectedAgentForUpload = null; 
-        // But usually we just switch.
-      } else {
-        selectedAgentForUpload = USER_DB.find(u => u.id === id);
-      }
+    // NEW WORKFLOW FUNCTIONS
+    let selectedAgentForReview = null;
 
-      renderAdminDashboard(); // Re-render list to show active state
-      updateUploadFormUI();
+    function selectAgentForReview(agentId) {
+      selectedAgentForReview = USER_DB.find(u => u.id === agentId);
+      if (selectedAgentForReview) {
+        // Hide agent list, show quality feedback section
+        document.getElementById('admin-agent-list-section').classList.add('hidden');
+        document.getElementById('quality-feedback-section').classList.remove('hidden');
+
+        // Set agent info in quality feedback section
+        document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
+        document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
+      }
     }
 
-    function updateUploadFormUI() {
-      const placeholder = document.getElementById('indiv-agent-selected');
-      const form = document.getElementById('indiv-upload-form');
+    function submitQualityFeedback() {
+      const fileInput = document.getElementById('quality-feedback-file');
+      const interactionType = document.querySelector('input[name="interaction-type"]:checked');
+      const overview = document.getElementById('interaction-overview').value.trim();
 
-      if (selectedAgentForUpload) {
-        placeholder.classList.add('hidden');
-        placeholder.classList.remove('flex');
-        form.classList.remove('hidden');
-
-        document.getElementById('selected-agent-name').innerText = selectedAgentForUpload.name;
-        document.getElementById('selected-agent-id').innerText = selectedAgentForUpload.id;
-
-        // Update current score badge
-        const perf = MockBackend.getPerformance(selectedAgentForUpload.id);
-        const badge = document.getElementById('current-score-badge');
-        if (perf) {
-          badge.innerHTML = `Current Score: <span class="${perf.score >= 90 ? 'text-emerald-600' : 'text-amber-600'}">${perf.score}%</span>`;
-        } else {
-          badge.innerHTML = `Current Score: <span class="text-slate-400">Not Scored</span>`;
-        }
-
-      } else {
-        placeholder.classList.remove('hidden');
-        placeholder.classList.add('flex');
-        form.classList.add('hidden');
+      if (!fileInput.files[0]) {
+        alert('Please select a quality feedback file.');
+        return;
       }
+
+      if (!interactionType) {
+        alert('Please select the interaction type.');
+        return;
+      }
+
+      if (!overview) {
+        alert('Please provide an overview of the agent\'s interaction.');
+        return;
+      }
+
+      // Store feedback data temporarily
+      const feedbackData = {
+        agentId: selectedAgentForReview.id,
+        file: fileInput.files[0],
+        interactionType: interactionType.value,
+        overview: overview,
+        timestamp: new Date().toISOString()
+      };
+
+      // Store in localStorage for now (could be enhanced with proper file handling)
+      localStorage.setItem('currentQualityFeedback', JSON.stringify({
+        ...feedbackData,
+        fileName: fileInput.files[0].name
+      }));
+
+      // Hide quality feedback, show scoring section
+      document.getElementById('quality-feedback-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.remove('hidden');
+
+      // Set agent info in scoring section
+      document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
+      document.getElementById('interaction-type-display').innerText = interactionType.value.charAt(0).toUpperCase() + interactionType.value.slice(1);
+      document.getElementById('overview-display').innerText = overview;
+    }
+
+    function submitPerformanceScore() {
+      const score = document.querySelector('input[name="performance-score"]:checked');
+      const isFatal = document.getElementById('fatal-error-checkbox').checked;
+
+      if (!score) {
+        alert('Please select a performance score.');
+        return;
+      }
+
+      const feedbackData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
+      if (!feedbackData) {
+        alert('No quality feedback data found. Please restart the process.');
+        return;
+      }
+
+      // Save the performance score
+      const performanceData = {
+        agentId: selectedAgentForReview.id,
+        score: parseInt(score.value),
+        isFatal: isFatal,
+        feedbackData: feedbackData,
+        timestamp: new Date().toISOString(),
+        reviewerId: currentUser.id
+      };
+
+      MockBackend.savePerformanceScore(performanceData);
+
+      // Clear temporary data
+      localStorage.removeItem('currentQualityFeedback');
+
+      // Reset workflow - hide scoring, show agent list
+      document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('admin-agent-list-section').classList.remove('hidden');
+
+      // Reset selected agent
+      selectedAgentForReview = null;
+
+      // Refresh the dashboard
+      renderAdminDashboard();
+
+      alert('Performance score submitted successfully!');
+    }
+
+    function cancelReviewProcess() {
+      // Clear any temporary data
+      localStorage.removeItem('currentQualityFeedback');
+      selectedAgentForReview = null;
+
+      // Reset to agent list view
+      document.getElementById('quality-feedback-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('admin-agent-list-section').classList.remove('hidden');
     }
 
     function calculateTotalScore() {
