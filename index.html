@@ -1012,7 +1012,7 @@
       <div id="admin-agent-list-container" class="hidden"></div>
 
       <!-- Step 1: Agent List -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
+      <div id="admin-agent-list-section" class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
           <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
           Select Agent for Quality Review
@@ -1022,12 +1022,12 @@
         </div>
       </div>
 
-      <!-- Step 2: Quality Feedback Upload (Hidden initially) -->
-      <div id="quality-feedback-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+      <!-- Step 2: File Selection (Hidden initially) -->
+      <div id="file-selection-section" class="hidden bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📎</span>
-            Quality Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span>
+            <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📁</span>
+            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span>
           </h2>
           <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to Agent List
@@ -1036,21 +1036,46 @@
 
         <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
           <div class="text-sm text-slate-600 dark:text-slate-300">
-            <strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span>
+            <strong>Agent ID:</strong> <span id="selected-agent-id-file" class="font-mono"></span>
           </div>
         </div>
 
         <!-- File Upload -->
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Choose Quality Feedback File</label>
+          <label class="block text-sm font-semibold mb-2">Select File for Quality Review</label>
           <input type="file" id="quality-feedback-file" accept="audio/*,image/*,application/pdf"
-            class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 dark:file:bg-slate-700 dark:file:text-white">
+            class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 dark:file:bg-slate-700 dark:file:text-white">
         </div>
 
-        <!-- Overview Section -->
+        <button onclick="proceedToFeedback()"
+          class="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+          Proceed to Add Feedback
+        </button>
+      </div>
+
+      <!-- Step 3: Feedback Form (Hidden initially) -->
+      <div id="feedback-form-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
+            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span>
+          </h2>
+          <button onclick="backToFileSelection()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to File Selection
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span></div>
+            <div><strong>File:</strong> <span id="selected-file-name" class="truncate"></span></div>
+          </div>
+        </div>
+
+        <!-- Interaction Type -->
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Overview: What did the agent do?</label>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <label class="block text-sm font-semibold mb-2">Interaction Type</label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
               <input type="radio" name="interaction-type" value="call" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
               <span class="text-lg">📞</span>
@@ -1067,35 +1092,41 @@
               <span class="font-medium">Chat</span>
             </label>
           </div>
-          <textarea id="interaction-overview" rows="4" placeholder="Provide a detailed overview of the agent's interaction, including key points, customer response, and any notable behaviors..."
+        </div>
+
+        <!-- Feedback and Observations -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Feedback and Observations</label>
+          <textarea id="feedback-observations" rows="6" placeholder="Provide detailed feedback and observations about the agent's performance in this interaction..."
             class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
         </div>
 
-        <button onclick="submitQualityFeedback()"
+        <button onclick="submitFeedbackAndProceed()"
           class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
-          Submit Quality Feedback
+          Proceed to Scoring
         </button>
       </div>
 
-      <!-- Step 3: Scoring Section (Hidden initially) -->
+      <!-- Step 4: Scoring Section (Hidden initially) -->
       <div id="scoring-section" class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">🎯</span>
             Performance Scoring for <span id="selected-agent-name-scoring" class="text-amber-600"></span>
           </h2>
-          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            ← Back to Agent List
+          <button onclick="backToFeedback()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Feedback
           </button>
         </div>
 
         <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
             <div><strong>Agent ID:</strong> <span id="selected-agent-id-scoring" class="font-mono"></span></div>
-            <div><strong>Interaction Type:</strong> <span id="interaction-type-display"></span></div>
+            <div><strong>Interaction:</strong> <span id="interaction-type-display"></span></div>
+            <div><strong>File:</strong> <span id="scoring-file-name" class="truncate"></span></div>
           </div>
           <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            <strong>Overview:</strong> <span id="overview-display"></span>
+            <strong>Feedback:</strong> <span id="feedback-display"></span>
           </div>
         </div>
 
@@ -1114,21 +1145,10 @@
               <input type="radio" name="performance-score" value="0" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
               <div>
                 <div class="font-bold text-red-600 text-xl">0</div>
-                <div class="text-sm text-slate-600 dark:text-slate-300">Needs Improvement</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Fatal Error</div>
               </div>
             </label>
           </div>
-        </div>
-
-        <!-- Fatal Error Checkbox -->
-        <div class="mb-6">
-          <label class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-            <input type="checkbox" id="fatal-error-checkbox" class="w-5 h-5 text-red-600 focus:ring-red-500">
-            <div>
-              <div class="font-semibold text-red-600">Fatal Error</div>
-              <div class="text-sm text-slate-600 dark:text-slate-300">Check if this was a critical error requiring immediate attention</div>
-            </div>
-          </label>
         </div>
 
         <button onclick="submitPerformanceScore()"
@@ -1500,69 +1520,96 @@
 
     // NEW WORKFLOW FUNCTIONS
     let selectedAgentForReview = null;
+    let selectedFileForReview = null;
 
     function selectAgentForReview(agentId) {
       selectedAgentForReview = USER_DB.find(u => u.id === agentId);
       if (selectedAgentForReview) {
-        // Hide agent list, show quality feedback section
+        // Hide agent list, show file selection section
         document.getElementById('admin-agent-list-section').classList.add('hidden');
-        document.getElementById('quality-feedback-section').classList.remove('hidden');
+        document.getElementById('file-selection-section').classList.remove('hidden');
 
-        // Set agent info in quality feedback section
-        document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
-        document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
+        // Set agent info in file selection section
+        document.getElementById('selected-agent-name-file').innerText = selectedAgentForReview.name;
+        document.getElementById('selected-agent-id-file').innerText = selectedAgentForReview.id;
       }
     }
 
-    function submitQualityFeedback() {
+    function proceedToFeedback() {
       const fileInput = document.getElementById('quality-feedback-file');
-      const interactionType = document.querySelector('input[name="interaction-type"]:checked');
-      const overview = document.getElementById('interaction-overview').value.trim();
 
       if (!fileInput.files[0]) {
-        alert('Please select a quality feedback file.');
+        alert('Please select a file for quality review.');
         return;
       }
+
+      selectedFileForReview = fileInput.files[0];
+
+      // Hide file selection, show feedback form
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
+
+      // Set agent and file info in feedback section
+      document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
+      document.getElementById('selected-file-name').innerText = selectedFileForReview.name;
+    }
+
+    function backToFileSelection() {
+      // Hide feedback form, show file selection
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.remove('hidden');
+    }
+
+    function submitFeedbackAndProceed() {
+      const interactionType = document.querySelector('input[name="interaction-type"]:checked');
+      const feedback = document.getElementById('feedback-observations').value.trim();
 
       if (!interactionType) {
         alert('Please select the interaction type.');
         return;
       }
 
-      if (!overview) {
-        alert('Please provide an overview of the agent\'s interaction.');
+      if (!feedback) {
+        alert('Please provide feedback and observations.');
         return;
       }
 
       // Store feedback data temporarily
       const feedbackData = {
         agentId: selectedAgentForReview.id,
-        file: fileInput.files[0],
+        file: selectedFileForReview,
         interactionType: interactionType.value,
-        overview: overview,
+        feedback: feedback,
         timestamp: new Date().toISOString()
       };
 
-      // Store in localStorage for now (could be enhanced with proper file handling)
+      // Store in localStorage for now
       localStorage.setItem('currentQualityFeedback', JSON.stringify({
         ...feedbackData,
-        fileName: fileInput.files[0].name
+        fileName: selectedFileForReview.name
       }));
 
-      // Hide quality feedback, show scoring section
-      document.getElementById('quality-feedback-section').classList.add('hidden');
+      // Hide feedback form, show scoring section
+      document.getElementById('feedback-form-section').classList.add('hidden');
       document.getElementById('scoring-section').classList.remove('hidden');
 
       // Set agent info in scoring section
       document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
       document.getElementById('interaction-type-display').innerText = interactionType.value.charAt(0).toUpperCase() + interactionType.value.slice(1);
-      document.getElementById('overview-display').innerText = overview;
+      document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
+      document.getElementById('feedback-display').innerText = feedback;
+    }
+
+    function backToFeedback() {
+      // Hide scoring, show feedback form
+      document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
     }
 
     function submitPerformanceScore() {
       const score = document.querySelector('input[name="performance-score"]:checked');
-      const isFatal = document.getElementById('fatal-error-checkbox').checked;
 
       if (!score) {
         alert('Please select a performance score.');
@@ -1571,7 +1618,7 @@
 
       const feedbackData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
       if (!feedbackData) {
-        alert('No quality feedback data found. Please restart the process.');
+        alert('No feedback data found. Please restart the process.');
         return;
       }
 
@@ -1579,7 +1626,7 @@
       const performanceData = {
         agentId: selectedAgentForReview.id,
         score: parseInt(score.value),
-        isFatal: isFatal,
+        isFatal: score.value === '0', // 0 score means fatal
         feedbackData: feedbackData,
         timestamp: new Date().toISOString(),
         reviewerId: currentUser.id
@@ -1594,8 +1641,9 @@
       document.getElementById('scoring-section').classList.add('hidden');
       document.getElementById('admin-agent-list-section').classList.remove('hidden');
 
-      // Reset selected agent
+      // Reset selected agent and file
       selectedAgentForReview = null;
+      selectedFileForReview = null;
 
       // Refresh the dashboard
       renderAdminDashboard();
@@ -1607,9 +1655,11 @@
       // Clear any temporary data
       localStorage.removeItem('currentQualityFeedback');
       selectedAgentForReview = null;
+      selectedFileForReview = null;
 
       // Reset to agent list view
-      document.getElementById('quality-feedback-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.add('hidden');
       document.getElementById('scoring-section').classList.add('hidden');
       document.getElementById('admin-agent-list-section').classList.remove('hidden');
     }
