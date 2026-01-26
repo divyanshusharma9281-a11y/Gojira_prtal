@@ -1963,6 +1963,36 @@
       document.getElementById('interaction-type-display').parentElement.classList.add('hidden');
       document.getElementById('scoring-file-name').innerText = existingData.fileName;
       document.getElementById('feedback-display').innerText = existingData.feedback;
+
+      // Update Submit Button State
+      const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+      const currentCount = pendingReviews.length;
+      const finalSubmitBtn = document.getElementById('final-submit-btn');
+      const addReviewBtn = document.getElementById('add-review-btn');
+
+      // We are working on the next review (currentCount + 1)
+      const potentialTotal = currentCount + 1;
+
+      if (potentialTotal >= 3) {
+        finalSubmitBtn.disabled = false;
+        finalSubmitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        finalSubmitBtn.innerHTML = `Submit Final Reviews (${potentialTotal})`;
+      } else {
+        finalSubmitBtn.disabled = true;
+        finalSubmitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        finalSubmitBtn.innerHTML = `Submit Final Reviews (Need ${3 - potentialTotal} more)`;
+      }
+
+      // Check max limit for Add More
+      if (potentialTotal >= 10) {
+        addReviewBtn.disabled = true;
+        addReviewBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        addReviewBtn.innerText = "Max Reviews Reached";
+      } else {
+        addReviewBtn.disabled = false;
+        addReviewBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        addReviewBtn.innerText = "Add more quality review";
+      }
     }
 
     function backToFeedback() {
