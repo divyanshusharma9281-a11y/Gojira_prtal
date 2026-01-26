@@ -1117,82 +1117,7 @@
       </div>
 
       <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
-      <div id="additional-feedback-section"
-        class="hidden bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">➕</span>
-            Additional Feedback for <span id="selected-agent-name-additional" class="text-purple-600"></span>
-          </h2>
-          <button onclick="backToFeedbackForm()"
-            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            ← Back to Primary Feedback
-          </button>
-        </div>
 
-        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300 mb-4">
-            <div><strong>Agent ID:</strong> <span id="selected-agent-id-additional" class="font-mono"></span></div>
-            <div><strong>Process:</strong> <span id="process-type-additional" class="font-medium"></span></div>
-            <!-- Hidden interaction type as per JS requirement -->
-            <div class="hidden"><strong>Interaction:</strong> <span id="interaction-type-additional"></span></div>
-          </div>
-          <div class="p-3 bg-slate-50 dark:bg-slate-600/50 rounded-lg">
-            <p class="text-xs text-slate-500 uppercase font-bold mb-1">Primary Feedback</p>
-            <p id="primary-feedback-display" class="text-slate-700 dark:text-slate-200 italic"></p>
-          </div>
-        </div>
-
-        <div class="mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <label class="block text-sm font-semibold">Additional Observations (<span
-                id="feedback-count">3</span>)</label>
-            <button onclick="addFeedbackItem()" id="add-feedback-btn"
-              class="text-purple-600 hover:text-purple-700 text-sm font-bold flex items-center gap-1">
-              + Add Item
-            </button>
-          </div>
-
-          <div id="additional-feedback-container">
-            <!-- Default 3 items will be here, JS might reset this anyway but let's provide initial structure -->
-            <div
-              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-sm font-medium">Feedback Item 1</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
-                  disabled>Remove</button>
-              </div>
-              <input type="text" placeholder="Enter additional feedback point..."
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-            </div>
-            <div
-              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-sm font-medium">Feedback Item 2</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
-                  disabled>Remove</button>
-              </div>
-              <input type="text" placeholder="Enter additional feedback point..."
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-            </div>
-            <div
-              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-sm font-medium">Feedback Item 3</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
-                  disabled>Remove</button>
-              </div>
-              <input type="text" placeholder="Enter additional feedback point..."
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-            </div>
-          </div>
-        </div>
-
-        <button onclick="submitAdditionalFeedback()"
-          class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-500/30">
-          Submit Additional Feedback
-        </button>
-      </div>
 
 
 
@@ -1770,7 +1695,6 @@
     function submitFeedbackAndProceed() {
       const feedback = document.getElementById('feedback-observations').value.trim();
 
-
       if (!feedback) {
         alert('Please provide feedback and observations.');
         return;
@@ -1781,7 +1705,6 @@
         agentId: selectedAgentForReview.id,
         file: selectedFileForReview,
         processType: selectedProcessType,
-        // interactionType: removed
         feedback: feedback,
         timestamp: new Date().toISOString()
       };
@@ -1792,177 +1715,17 @@
         fileName: selectedFileForReview.name
       }));
 
-      // Hide feedback form, show additional feedback section
+      // Hide feedback form, show scoring section
       document.getElementById('feedback-form-section').classList.add('hidden');
-      document.getElementById('additional-feedback-section').classList.remove('hidden');
-
-      // Set agent info in additional feedback section
-      document.getElementById('selected-agent-name-additional').innerText = selectedAgentForReview.name;
-      document.getElementById('selected-agent-id-additional').innerText = selectedAgentForReview.id;
-      document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
-      // Interaction Type removed
-      document.getElementById('interaction-type-additional').parentElement.classList.add('hidden'); // Hide the interaction type line
-      document.getElementById('primary-feedback-display').innerText = feedback;
-
-      // Initialize with 3 default feedback items
-      initializeAdditionalFeedback();
-    }
-
-    function initializeAdditionalFeedback() {
-      // The HTML already has 3 default feedback items
-      // Just update the count and ensure proper button states
-      updateFeedbackCount();
-
-      // Ensure the first 3 items have disabled remove buttons
-      const container = document.getElementById('additional-feedback-container');
-      const feedbackItems = container.querySelectorAll('.feedback-item');
-      feedbackItems.forEach((item, index) => {
-        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
-        if (index < 3) {
-          removeBtn.disabled = true;
-          removeBtn.classList.add('opacity-50');
-        } else {
-          removeBtn.disabled = false;
-          removeBtn.classList.remove('opacity-50');
-        }
-      });
-    }
-
-    function backToFeedbackForm() {
-      // Hide additional feedback, show feedback form
-      document.getElementById('additional-feedback-section').classList.add('hidden');
-      document.getElementById('feedback-form-section').classList.remove('hidden');
-    }
-
-    function addFeedbackItem() {
-      const container = document.getElementById('additional-feedback-container');
-      const feedbackItems = container.querySelectorAll('.feedback-item');
-      const count = feedbackItems.length;
-
-      if (count >= 10) {
-        alert('Maximum 10 feedback items allowed.');
-        return;
-      }
-
-      const newItem = document.createElement('div');
-      newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
-      newItem.innerHTML = `
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm font-medium">Feedback Item ${count + 1}</label>
-          <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
-        </div>
-        <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-      `;
-
-      container.appendChild(newItem);
-      updateFeedbackCount();
-
-      // Disable add button if at max
-      if (count + 1 >= 10) {
-        document.getElementById('add-feedback-btn').disabled = true;
-        document.getElementById('add-feedback-btn').classList.add('opacity-50', 'cursor-not-allowed');
-      }
-
-      // Update remove button states for all items
-      const allItems = container.querySelectorAll('.feedback-item');
-      allItems.forEach((item, index) => {
-        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
-        if (index < 3) {
-          removeBtn.disabled = true;
-          removeBtn.classList.add('opacity-50');
-        } else {
-          removeBtn.disabled = false;
-          removeBtn.classList.remove('opacity-50');
-        }
-      });
-    }
-
-    function removeFeedbackItem(button) {
-      const container = document.getElementById('additional-feedback-container');
-      const feedbackItems = container.querySelectorAll('.feedback-item');
-      const count = feedbackItems.length;
-
-      if (count <= 3) {
-        alert('Minimum 3 feedback items required.');
-        return;
-      }
-
-      button.closest('.feedback-item').remove();
-      updateFeedbackCount();
-
-      // Re-enable add button if below max
-      document.getElementById('add-feedback-btn').disabled = false;
-      document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
-
-      // Renumber remaining items and update remove button states
-      const remainingItems = container.querySelectorAll('.feedback-item');
-      remainingItems.forEach((item, index) => {
-        const label = item.querySelector('label');
-        label.textContent = `Feedback Item ${index + 1}`;
-
-        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
-        if (index < 3) {
-          removeBtn.disabled = true;
-          removeBtn.classList.add('opacity-50');
-        } else {
-          removeBtn.disabled = false;
-          removeBtn.classList.remove('opacity-50');
-        }
-      });
-    }
-
-    function updateFeedbackCount() {
-      const container = document.getElementById('additional-feedback-container');
-      const count = container.querySelectorAll('.feedback-item').length;
-      document.getElementById('feedback-count').textContent = count;
-    }
-
-    function submitAdditionalFeedback() {
-      const container = document.getElementById('additional-feedback-container');
-      const feedbackInputs = container.querySelectorAll('.feedback-item input');
-      const additionalFeedback = [];
-
-      // Validate minimum 3 items
-      if (feedbackInputs.length < 3) {
-        alert('Minimum 3 feedback items required.');
-        return;
-      }
-
-      // Collect feedback items
-      feedbackInputs.forEach(input => {
-        const value = input.value.trim();
-        if (value) {
-          additionalFeedback.push(value);
-        }
-      });
-
-      // Validate that we have at least 3 non-empty items
-      if (additionalFeedback.length < 3) {
-        alert('Please fill in at least 3 feedback items.');
-        return;
-      }
-
-      // Get existing feedback data and add additional feedback
-      const existingData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
-      existingData.additionalFeedback = additionalFeedback;
-
-      // Update localStorage
-      localStorage.setItem('currentQualityFeedback', JSON.stringify(existingData));
-
-      // Hide additional feedback, show scoring section
-      document.getElementById('additional-feedback-section').classList.add('hidden');
       document.getElementById('scoring-section').classList.remove('hidden');
 
       // Set agent info in scoring section
       document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
-      document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
-      // document.getElementById('interaction-type-display').innerText = existingData.interactionType... removed;
+      document.getElementById('process-type-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
+      document.getElementById('feedback-display').innerText = feedback;
       document.getElementById('interaction-type-display').parentElement.classList.add('hidden');
-      document.getElementById('scoring-file-name').innerText = existingData.fileName;
-      document.getElementById('feedback-display').innerText = existingData.feedback;
 
       // Update Submit Button State
       const pendingReviews = getPendingReviews(selectedAgentForReview.id);
@@ -2001,38 +1764,6 @@
       document.getElementById('feedback-form-section').classList.remove('hidden');
     }
 
-    function restoreAdditionalFeedback(feedbackItems) {
-      const container = document.getElementById('additional-feedback-container');
-      container.innerHTML = ''; // Clear existing
-
-      feedbackItems.forEach((item, index) => {
-        const newItem = document.createElement('div');
-        newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
-        const isDisabled = index < 3;
-        newItem.innerHTML = `
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item ${index + 1}</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm ${isDisabled ? 'opacity-50' : ''}" ${isDisabled ? 'disabled' : ''}>Remove</button>
-          </div>
-          <input type="text" value="${item}" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        `;
-
-        container.appendChild(newItem);
-      });
-
-      updateFeedbackCount();
-
-      // Update add button state
-      const count = feedbackItems.length;
-      const addBtn = document.getElementById('add-feedback-btn');
-      if (count >= 10) {
-        addBtn.disabled = true;
-        addBtn.classList.add('opacity-50', 'cursor-not-allowed');
-      } else {
-        addBtn.disabled = false;
-        addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    }
 
     function submitPerformanceScore(isFinal = false) {
       const score = document.querySelector('input[name="performance-score"]:checked');
@@ -2298,35 +2029,6 @@
 
       // Reset Feedback Form
       document.getElementById('feedback-observations').value = '';
-
-      // Reset Additional Feedback Section to default 3 items
-      const container = document.getElementById('additional-feedback-container');
-      container.innerHTML = `
-        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item 1</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
-          </div>
-          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        </div>
-        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item 2</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
-          </div>
-          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        </div>
-        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item 3</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
-          </div>
-          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        </div>
-      `;
-      updateFeedbackCount();
-      document.getElementById('add-feedback-btn').disabled = false;
-      document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
 
       // Reset Performance Score Radios
       const scoreRadios = document.getElementsByName('performance-score');
