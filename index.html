@@ -64,6 +64,15 @@
     .glow {
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
     }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -994,11 +1003,14 @@
   <!-- ADMIN DASHBOARD -->
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
-      <span class="font-bold text-xl text-indigo-600">Admin Dashboard (ADMIN/001)</span>
+      <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span id="admin-current-entity-name">ALL</span>)</span>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Hidden legacy container for compatibility -->
+      <div id="admin-agent-list-container" class="hidden"></div>
+
       <!-- Upload Section -->
       <div class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-indigo-100 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -1052,121 +1064,226 @@
             </thead>
             <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
               <!-- JS Populates this -->
-        </div>
-        <div class="flex-1">
-          <!-- Spacer or Stats -->
-        </div>
-      </div>
-
-      <!-- Step 2: Controls & Grid -->
-
-
-      <div id="bulk-manager-interface" class="hidden animate-fade-in">
-
-        <!-- Bulk Controls -->
-        <div
-          class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-100 dark:border-slate-600 mb-4 flex flex-wrap gap-4 items-end shadow-sm">
-          <div>
-            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Audit Score</label>
-            <select id="bulk-score"
-              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-emerald-600">
-              <option value="100">100%</option>
-              <option value="0">0%</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Fatal Errors</label>
-            <select id="bulk-errors"
-              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-red-500">
-              <option value="0">0</option>
-              <option value="1">1</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Compliance</label>
-            <select id="bulk-compliance"
-              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-blue-600">
-              <option value="100">100%</option>
-              <option value="0">0%</option>
-            </select>
-          </div>
-
-        </div>
-
-        <!-- Agent List -->
-        <div class="overflow-hidden rounded-2xl border border-emerald-100 dark:border-slate-600">
-          <table class="w-full text-left border-collapse bg-white dark:bg-slate-800">
-            <thead class="bg-emerald-50/50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-4 w-12 text-center">
-                  <input type="checkbox" onchange="toggleAllAgents(this)"
-                    class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
-                </th>
-                <th class="p-4"></th>
-                <th class="p-4"></th>
-                <th class="p-4 text-right"></th>
-              </tr>
-            </thead>
-            <tbody id="bulk-agent-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
             </tbody>
           </table>
         </div>
       </div>
 
-      <span>🎤</span> Call Recording
-      </label>
-      <input type="file" id="proof-audio" accept="audio/*"
-        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-    </div>
+      <!-- Individual Agent Upload Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">👤</span>
+          Individual Agent Performance
+        </h2>
 
-    <!-- Proof 2: Chat Transcript -->
-    <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-      <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-        <span>💬</span> Chat Transcript
-      </label>
-      <input type="file" id="proof-chat" accept="image/*,application/pdf"
-        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-    </div>
+        <!-- Agent Search -->
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl mb-6 border border-slate-200 dark:border-slate-700">
+          <label class="block text-sm font-semibold mb-2">Search Agent by Name or ID</label>
+          <input type="text" id="indiv-agent-search" oninput="handleAgentSearch(this.value)"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+          <div id="indiv-agent-results" class="mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg max-h-40 overflow-y-auto hidden"></div>
+        </div>
 
-    <!-- Proof 3: Email -->
-    <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-      <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-        <span>✉️</span> Email Proof
-      </label>
-      <input type="file" id="proof-email" accept="image/*,application/pdf"
-        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-    </div>
-    <button onclick="submitIndividualScore()"
-      class="mt-6 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
-      <span>Submit</span>
-    </button>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
+        <!-- Selected Agent Placeholder -->
+        <div id="indiv-agent-selected" class="hidden flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-600">
+          <div class="text-center">
+            <div class="text-4xl mb-2">👤</div>
+            <p class="text-slate-500">Select an agent to upload performance data</p>
+          </div>
+        </div>
 
-  <!-- Comments Section -->
-  <div>
+        <!-- Individual Upload Form -->
+        <div id="indiv-upload-form" class="hidden bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="mb-6 p-4 bg-emerald-50 dark:bg-slate-700 rounded-xl">
+            <h3 class="font-bold text-lg mb-2">Selected Agent</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">
+              <strong>Name:</strong> <span id="selected-agent-name">--</span><br>
+              <strong>ID:</strong> <span id="selected-agent-id">--</span><br>
+              <span id="current-score-badge">Current Score: Not Scored</span>
+            </p>
+          </div>
 
-    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-          <tr>
-            <th class="p-6"></th>
-            <th class="p-6"></th>
-            <th class="p-6"></th>
-            <th class="p-6 text-right"></th>
-          </tr>
-        </thead>
-        <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-          <!-- JS Populates this -->
-        </tbody>
-      </table>
+          <!-- Score Inputs -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Audit Score (%)</label>
+              <select id="indiv-score" onchange="calculateTotalScore()"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Select Score</option>
+                <option value="100">100%</option>
+                <option value="90">90%</option>
+                <option value="80">80%</option>
+                <option value="70">70%</option>
+                <option value="60">60%</option>
+                <option value="50">50%</option>
+                <option value="40">40%</option>
+                <option value="30">30%</option>
+                <option value="20">20%</option>
+                <option value="10">10%</option>
+                <option value="0">0%</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">Fatal Errors</label>
+              <select id="indiv-errors" onchange="calculateTotalScore()"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Select</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">Compliance (%)</label>
+              <select id="indiv-compliance" onchange="calculateTotalScore()"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Select Compliance</option>
+                <option value="100">100%</option>
+                <option value="0">0%</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Calculated Total -->
+          <div class="mb-6 p-4 bg-blue-50 dark:bg-slate-700 rounded-xl text-center">
+            <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Calculated Total Score</p>
+            <div id="calc-total-score" class="text-3xl font-black text-blue-600">--</div>
+          </div>
+
+          <!-- Proof Uploads -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <!-- Proof 1: Call Recording -->
+            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+              <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+                <span>🎤</span> Call Recording
+              </label>
+              <input type="file" id="proof-audio" accept="audio/*"
+                class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+            </div>
+
+            <!-- Proof 2: Chat Transcript -->
+            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+              <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+                <span>💬</span> Chat Transcript
+              </label>
+              <input type="file" id="proof-chat" accept="image/*,application/pdf"
+                class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+            </div>
+
+            <!-- Proof 3: Email -->
+            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+              <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+                <span>✉️</span> Email Proof
+              </label>
+              <input type="file" id="proof-email" accept="image/*,application/pdf"
+                class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+            </div>
+          </div>
+
+          <button onclick="submitIndividualScore()"
+            class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
+            <span>Submit Performance</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk Performance Manager -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📊</span>
+          Bulk Performance Manager
+        </h2>
+
+        <!-- Entity Selector -->
+        <div class="bg-purple-50 dark:bg-slate-800 p-6 rounded-3xl mb-6 border border-purple-100 dark:border-slate-700">
+          <label class="block text-sm font-semibold mb-2">Select Entity for Bulk Update</label>
+          <select id="bulk-entity-select" onchange="renderBulkAgentList()"
+            class="w-full px-4 py-3 rounded-xl border border-purple-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
+            <option value="">Choose Entity</option>
+            <option value="BharatLoan">BharatLoan</option>
+            <option value="Rupee112">Rupee112</option>
+            <option value="Loan112">Loan112</option>
+            <option value="RupeeOnTime">RupeeOnTime</option>
+          </select>
+        </div>
+
+        <div id="bulk-manager-interface" class="hidden animate-fade-in">
+          <!-- Bulk Controls -->
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-100 dark:border-slate-600 mb-4 flex flex-wrap gap-4 items-end shadow-sm">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Audit Score</label>
+              <select id="bulk-score"
+                class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-emerald-600">
+                <option value="100">100%</option>
+                <option value="0">0%</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Fatal Errors</label>
+              <select id="bulk-errors"
+                class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-red-500">
+                <option value="0">0</option>
+                <option value="1">1</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Compliance</label>
+              <select id="bulk-compliance"
+                class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-blue-600">
+                <option value="100">100%</option>
+                <option value="0">0%</option>
+              </select>
+            </div>
+            <button onclick="applyBulkUpdate()"
+              class="bg-emerald-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
+              Apply to Selected
+            </button>
+          </div>
+
+          <!-- Agent List -->
+          <div class="overflow-hidden rounded-2xl border border-emerald-100 dark:border-slate-600">
+            <table class="w-full text-left border-collapse bg-white dark:bg-slate-800">
+              <thead class="bg-emerald-50/50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-4 w-12 text-center">
+                    <input type="checkbox" onchange="toggleAllAgents(this)"
+                      class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                  </th>
+                  <th class="p-4">Agent Name</th>
+                  <th class="p-4">ID</th>
+                  <th class="p-4 text-right">Current Score</th>
+                </tr>
+              </thead>
+              <tbody id="bulk-agent-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+                <!-- JS Populates this -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
+          Agent Comments & Feedback
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">Comment</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-  </div>
   </div>
 
   <!-- LOGIN MODAL -->
@@ -1185,6 +1302,19 @@
         <button type="submit"
           class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
       </form>
+    </div>
+  </div>
+
+  <!-- ACCESS DENIED MODAL -->
+  <div id="access-denied-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="access-denied-title" class="text-2xl font-bold text-red-600">Access Denied</h2>
+        <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+      </div>
+      <p class="text-slate-600 dark:text-slate-400 mb-6">You do not have permission to access this entity. Please use the correct Employee ID for the selected entity.</p>
+      <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')"
+        class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition">Close</button>
     </div>
   </div>
 
@@ -1257,39 +1387,40 @@
       const entityContext = currentEntity || 'ALL'; // Fallback
       document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
 
-      // 2. Populate Agent List
-      const listContainer = document.getElementById('admin-agent-list-container');
-
-      // Filter Agents
-      let agents = USER_DB.filter(u => u.role === 'agent');
-      if (entityContext !== 'ALL') {
-        agents = agents.filter(u => u.entity === entityContext);
+      // 2. Populate Reports Table
+      const reports = MockBackend.getReports();
+      const reportsList = document.getElementById('admin-reports-list');
+      if (reports.length === 0) {
+        reportsList.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400">No reports uploaded yet.</td></tr>';
+      } else {
+        reportsList.innerHTML = reports.map(r => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${r.date}</td>
+            <td class="p-6">${r.name}</td>
+            <td class="p-6 text-right">
+              <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+              <button onclick="handleDeleteReport(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+            </td>
+          </tr>
+        `).join('');
       }
 
-      if (agents.length === 0) {
-        listContainer.innerHTML = '<div class="p-6 text-center text-slate-400">No agents found for this entity.</div>';
+      // 3. Populate Comments Table
+      const comments = MockBackend.getComments();
+      const commentsList = document.getElementById('admin-comments-list');
+      if (comments.length === 0) {
+        commentsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No comments yet.</td></tr>';
       } else {
-        listContainer.innerHTML = agents.map(u => {
-          const perf = MockBackend.getPerformance(u.id);
-          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-amber-500') : 'text-slate-300';
-          const scoreText = perf ? perf.score + '%' : 'N/A';
-          const isSelected = selectedAgentForUpload && selectedAgentForUpload.id === u.id;
-          const bgClass = isSelected ? 'bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500' : 'bg-white hover:bg-slate-50 border-slate-200';
-
-          return `
-            <div onclick="toggleAdminAgentSelection('${u.id}')" 
-                 class="cursor-pointer ${bgClass} p-4 rounded-2xl border transition-all mb-2 flex items-center justify-between group dark:bg-slate-700 dark:border-slate-600">
-               <div>
-                  <h4 class="font-bold text-slate-700 dark:text-slate-200">${u.name}</h4>
-                  <p class="text-xs text-slate-400 font-mono">${u.id}</p>
-               </div>
-               <div class="text-right">
-                  <div class="font-black ${scoreClass} text-lg">${scoreText}</div>
-                  <div class="text-[10px] text-slate-400 uppercase">Current</div>
-               </div>
-            </div>
-           `;
-        }).join('');
+        commentsList.innerHTML = comments.map(c => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${c.date}</td>
+            <td class="p-6">${USER_DB.find(u => u.id === c.agentId)?.name || c.agentId}</td>
+            <td class="p-6">${c.text}</td>
+            <td class="p-6 text-right">
+              <button onclick="handleDeleteComment(${c.id})" class="text-red-600 hover:text-red-800">Delete</button>
+            </td>
+          </tr>
+        `).join('');
       }
     }
 
@@ -1407,6 +1538,22 @@
         MockBackend.deleteComment(id);
         renderAdminDashboard(); // Refresh
       }
+    }
+
+    function clearSelectedAgent() {
+      selectedAgentForUpload = null;
+      document.getElementById('indiv-agent-search').value = '';
+      document.getElementById('indiv-agent-results').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.remove('flex');
+      document.getElementById('indiv-upload-form').classList.add('hidden');
+      document.getElementById('indiv-score').value = '';
+      document.getElementById('indiv-errors').value = '';
+      document.getElementById('indiv-compliance').value = '';
+      document.getElementById('calc-total-score').innerText = '--';
+      document.getElementById('proof-audio').value = '';
+      document.getElementById('proof-chat').value = '';
+      document.getElementById('proof-email').value = '';
     }
 
     function renderAgentDashboard() {
@@ -1700,6 +1847,7 @@
 
     let currentEntity = '';
     let currentUser = null;
+    let selectedAgentForUpload = null;
 
     const ENTITY_VIEW_MAP = {
       'view-bharatloan': 'BharatLoan',
@@ -1853,7 +2001,14 @@
       { id: 'R112/GG/25/725', name: 'Kusum sharma', role: 'agent', entity: 'Rupee112' },
       { id: 'RDA/GG/25/038', name: 'Nippi', role: 'agent', entity: 'Rupee112' },
       { id: 'R112/GG/23/168', name: 'Ruksar', role: 'agent', entity: 'Rupee112' },
-      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' }
+      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
+
+      // RUPEEONTIME AGENTS
+      { id: 'ROT/GG/25/001', name: 'Rahul Sharma', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/002', name: 'Priya Singh', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/003', name: 'Amit Kumar', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/004', name: 'Sneha Patel', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/005', name: 'Vikram Yadav', role: 'agent', entity: 'RupeeOnTime' }
     ];
 
     function submitLogin(event) {
