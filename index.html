@@ -1416,11 +1416,31 @@
         }
       }
 
-      static clearAllPerformanceData() {
-        // Clear all performance scores history
-        localStorage.removeItem('gojira_performance_scores');
-        // Clear all current performance records
-        localStorage.removeItem('gojira_performance');
+      static cleanupOldData() {
+        const scores = this.getPerformanceScores();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const recentScores = scores.filter(s => new Date(s.timestamp) > oneWeekAgo);
+
+        if (scores.length !== recentScores.length) {
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(recentScores));
+          console.log('Cleaned up old performance data.');
+
+          // Note: We might also need to update 'gojira_performance' (current status)
+          // But that's derived from the latest score. 
+          // If we delete all history for an agent, we should probably clear their current status too.
+          // Let's iterate through agents who might have lost all scores.
+          const agentsWithScores = new Set(recentScores.map(s => s.agentId));
+          const performanceDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+
+          Object.keys(performanceDb).forEach(agentId => {
+            if (!agentsWithScores.has(agentId)) {
+              delete performanceDb[agentId];
+            }
+          });
+          localStorage.setItem('gojira_performance', JSON.stringify(performanceDb));
+        }
       }
     }
 
@@ -2790,6 +2810,9 @@ Open attached proof?
     }
 
     window.onload = () => {
+      // Cleanup old data (older than 7 days)
+      MockBackend.cleanupOldData();
+
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
