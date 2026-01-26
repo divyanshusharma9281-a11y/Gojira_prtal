@@ -70,8 +70,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -1004,11 +1011,13 @@
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span id="admin-current-entity-name">ALL</span>)</span>
+        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span
+            id="admin-current-entity-name">ALL</span>)</span>
         <!-- Agent Selector -->
         <div class="flex items-center gap-2">
           <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Select Agent:</label>
-          <select id="agent-selector" onchange="onAgentSelected()" class="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+          <select id="agent-selector" onchange="onAgentSelected()"
+            class="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
             <option value="">Choose an agent...</option>
             <!-- Agents will be populated here by JavaScript -->
           </select>
@@ -1022,7 +1031,8 @@
       <div id="admin-agent-list-container" class="hidden"></div>
 
       <!-- Step 1: Agent List (Hidden initially) -->
-      <div id="admin-agent-list-section" class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
+      <div id="admin-agent-list-section"
+        class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
           <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
           Quality Review for <span id="selected-agent-display-name" class="text-blue-600"></span>
@@ -1033,13 +1043,16 @@
       </div>
 
       <!-- Step 2: File Selection (Hidden initially) -->
-      <div id="file-selection-section" class="hidden bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
+      <div id="file-selection-section"
+        class="hidden bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📁</span>
-            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span> (<span id="selected-process-type" class="text-green-600"></span>)
+            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span> (<span
+              id="selected-process-type" class="text-green-600"></span>)
           </h2>
-          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+          <button onclick="cancelReviewProcess()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to Agent List
           </button>
         </div>
@@ -1064,13 +1077,16 @@
       </div>
 
       <!-- Step 3: Feedback Form (Hidden initially) -->
-      <div id="feedback-form-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+      <div id="feedback-form-section"
+        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
-            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span> (<span id="selected-process-feedback" class="text-blue-600"></span>)
+            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span> (<span
+              id="selected-process-feedback" class="text-blue-600"></span>)
           </h2>
-          <button onclick="backToFileSelection()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+          <button onclick="backToFileSelection()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to File Selection
           </button>
         </div>
@@ -1078,37 +1094,19 @@
         <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
             <div><strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span></div>
-            <div><strong>Process:</strong> <span id="selected-process-feedback-display" class="font-medium"></span></div>
+            <div><strong>Process:</strong> <span id="selected-process-feedback-display" class="font-medium"></span>
+            </div>
             <div><strong>File:</strong> <span id="selected-file-name" class="truncate"></span></div>
           </div>
         </div>
 
-        <!-- Interaction Type -->
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Interaction Type</label>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="interaction-type" value="call" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-              <span class="text-lg">📞</span>
-              <span class="font-medium">Call</span>
-            </label>
-            <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="interaction-type" value="email" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-              <span class="text-lg">✉️</span>
-              <span class="font-medium">Email</span>
-            </label>
-            <label class="flex items-center gap-2 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="interaction-type" value="chat" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-              <span class="text-lg">💬</span>
-              <span class="font-medium">Chat</span>
-            </label>
-          </div>
-        </div>
+
 
         <!-- Feedback and Observations -->
         <div class="mb-6">
           <label class="block text-sm font-semibold mb-2">Feedback and Observations</label>
-          <textarea id="feedback-observations" rows="6" placeholder="Provide detailed feedback and observations about the agent's performance in this interaction..."
+          <textarea id="feedback-observations" rows="6"
+            placeholder="Provide detailed feedback and observations about the agent's performance in this interaction..."
             class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
         </div>
 
@@ -1119,13 +1117,15 @@
       </div>
 
       <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
-      <div id="additional-feedback-section" class="hidden bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+      <div id="additional-feedback-section"
+        class="hidden bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📝</span>
             Additional Feedback for <span id="selected-agent-name-additional" class="text-purple-600"></span>
           </h2>
-          <button onclick="backToFeedbackForm()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+          <button onclick="backToFeedbackForm()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to Feedback
           </button>
         </div>
@@ -1146,31 +1146,42 @@
           <label class="block text-sm font-semibold mb-4">Additional Feedback Items (3-10 required)</label>
           <div id="additional-feedback-container">
             <!-- Feedback items will be added here dynamically -->
-            <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div
+              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
               <div class="flex items-center justify-between mb-2">
                 <label class="text-sm font-medium">Feedback Item 1</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
+                  disabled>Remove</button>
               </div>
-              <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+              <input type="text" placeholder="Enter additional feedback point..."
+                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
             </div>
-            <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div
+              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
               <div class="flex items-center justify-between mb-2">
                 <label class="text-sm font-medium">Feedback Item 2</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
+                  disabled>Remove</button>
               </div>
-              <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+              <input type="text" placeholder="Enter additional feedback point..."
+                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
             </div>
-            <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div
+              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
               <div class="flex items-center justify-between mb-2">
                 <label class="text-sm font-medium">Feedback Item 3</label>
-                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
+                  disabled>Remove</button>
               </div>
-              <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+              <input type="text" placeholder="Enter additional feedback point..."
+                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
             </div>
           </div>
 
           <div class="flex gap-3 mb-4">
-            <button onclick="addFeedbackItem()" class="bg-purple-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-purple-600 transition text-sm" id="add-feedback-btn">
+            <button onclick="addFeedbackItem()"
+              class="bg-purple-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-purple-600 transition text-sm"
+              id="add-feedback-btn">
               + Add Feedback Item
             </button>
             <span class="text-sm text-slate-500 self-center">
@@ -1186,13 +1197,15 @@
       </div>
 
       <!-- Step 4: Scoring Section (Hidden initially) -->
-      <div id="scoring-section" class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
+      <div id="scoring-section"
+        class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">🎯</span>
             Performance Scoring for <span id="selected-agent-name-scoring" class="text-amber-600"></span>
           </h2>
-          <button onclick="backToFeedback()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+          <button onclick="backToFeedback()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to Feedback
           </button>
         </div>
@@ -1213,15 +1226,19 @@
         <div class="mb-6">
           <label class="block text-sm font-semibold mb-4">Performance Score</label>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="performance-score" value="100" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+            <label
+              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="100"
+                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
               <div>
                 <div class="font-bold text-emerald-600 text-xl">100</div>
                 <div class="text-sm text-slate-600 dark:text-slate-300">Excellent Performance</div>
               </div>
             </label>
-            <label class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="performance-score" value="0" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+            <label
+              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="0"
+                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
               <div>
                 <div class="font-bold text-red-600 text-xl">0</div>
                 <div class="text-sm text-slate-600 dark:text-slate-300">Fatal Error</div>
@@ -1230,10 +1247,17 @@
           </div>
         </div>
 
-        <button onclick="submitPerformanceScore()"
-          class="bg-amber-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-amber-700 transition shadow-lg shadow-amber-500/30">
-          Submit Performance Score
-        </button>
+        <div class="flex gap-4">
+          <button onclick="submitPerformanceScore(false)" id="add-review-btn"
+            class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+            Add more quality review
+          </button>
+
+          <button onclick="submitPerformanceScore(true)" id="final-submit-btn" disabled
+            class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30 opacity-50 cursor-not-allowed">
+            Submit Final Reviews
+          </button>
+        </div>
       </div>
 
       <!-- Manage Reports Section -->
@@ -1266,7 +1290,8 @@
           Manage Performance Reviews
         </h2>
         <div class="mb-4 flex justify-end">
-          <button onclick="resetAllPerformanceData()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
+          <button onclick="resetAllPerformanceData()"
+            class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
             Reset All Performance Data
           </button>
         </div>
@@ -1334,13 +1359,16 @@
   </div>
 
   <!-- ACCESS DENIED MODAL -->
-  <div id="access-denied-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div id="access-denied-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
       <div class="flex justify-between items-center mb-6">
         <h2 id="access-denied-title" class="text-2xl font-bold text-red-600">Access Denied</h2>
-        <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+        <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')"
+          class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
       </div>
-      <p class="text-slate-600 dark:text-slate-400 mb-6">You do not have permission to access this entity. Please use the correct Employee ID for the selected entity.</p>
+      <p class="text-slate-600 dark:text-slate-400 mb-6">You do not have permission to access this entity. Please use
+        the correct Employee ID for the selected entity.</p>
       <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')"
         class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition">Close</button>
     </div>
@@ -1538,7 +1566,7 @@
               <td class="p-6">${date}</td>
               <td class="p-6">${agentName}</td>
               <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
-              <td class="p-6">${r.feedbackData.interactionType}</td>
+              <td class="p-6">--</td>
               <td class="p-6">${r.feedbackData.fileName}</td>
               <td class="p-6 text-right">
                 <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
@@ -1740,13 +1768,8 @@
     }
 
     function submitFeedbackAndProceed() {
-      const interactionType = document.querySelector('input[name="interaction-type"]:checked');
       const feedback = document.getElementById('feedback-observations').value.trim();
 
-      if (!interactionType) {
-        alert('Please select the interaction type.');
-        return;
-      }
 
       if (!feedback) {
         alert('Please provide feedback and observations.');
@@ -1758,7 +1781,7 @@
         agentId: selectedAgentForReview.id,
         file: selectedFileForReview,
         processType: selectedProcessType,
-        interactionType: interactionType.value,
+        // interactionType: removed
         feedback: feedback,
         timestamp: new Date().toISOString()
       };
@@ -1777,7 +1800,9 @@
       document.getElementById('selected-agent-name-additional').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-additional').innerText = selectedAgentForReview.id;
       document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('interaction-type-additional').innerText = interactionType.value.charAt(0).toUpperCase() + interactionType.value.slice(1);
+      document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      // Interaction Type removed
+      document.getElementById('interaction-type-additional').parentElement.classList.add('hidden'); // Hide the interaction type line
       document.getElementById('primary-feedback-display').innerText = feedback;
 
       // Initialize with 3 default feedback items
@@ -1933,7 +1958,9 @@
       document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
       document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('interaction-type-display').innerText = existingData.interactionType.charAt(0).toUpperCase() + existingData.interactionType.slice(1);
+      document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
+      // document.getElementById('interaction-type-display').innerText = existingData.interactionType... removed;
+      document.getElementById('interaction-type-display').parentElement.classList.add('hidden');
       document.getElementById('scoring-file-name').innerText = existingData.fileName;
       document.getElementById('feedback-display').innerText = existingData.feedback;
     }
@@ -1983,7 +2010,7 @@
       }
     }
 
-    function submitPerformanceScore() {
+    function submitPerformanceScore(isFinal = false) {
       const score = document.querySelector('input[name="performance-score"]:checked');
 
       if (!score) {
@@ -2013,17 +2040,27 @@
       // Clear temporary data
       localStorage.removeItem('currentQualityFeedback');
 
-      // Check if agent now has 3+ reviews
+      // Check agent review count
       const pendingReviews = getPendingReviews(selectedAgentForReview.id);
-      if (pendingReviews.length >= 3) {
-        // Show final submission option
+
+      if (isFinal) {
+        if (pendingReviews.length < 3) {
+          alert(`Minimum 3 reviews required. Currently: ${pendingReviews.length}`);
+          return;
+        }
         showFinalSubmissionOption(selectedAgentForReview.id);
       } else {
-        // Continue with next review
-        alert(`Review ${pendingReviews.length} of 3 completed. Please conduct ${3 - pendingReviews.length} more review(s) for this agent.`);
+        // Add more review
+        if (pendingReviews.length >= 10) {
+          alert('Maximum 10 reviews reached. Please submit final.');
+          // Maybe force final?
+          showFinalSubmissionOption(selectedAgentForReview.id);
+          return;
+        }
 
         // Reset workflow for next review
         resetForNextReview();
+        alert(`Review saved. Total pending: ${pendingReviews.length}. You can add more or submit final.`);
       }
     }
 
