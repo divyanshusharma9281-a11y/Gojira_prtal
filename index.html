@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gojira TP | Training Portal</title>
 
   <!-- Tailwind -->
@@ -12,1072 +13,1896 @@
   </script>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700&display=swap"
+    rel="stylesheet">
 
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .app-view { display:none; min-height:100vh; }
-    .app-view.active { display:block; }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .app-view {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .app-view.active {
+      display: block;
+    }
+
     .hover-lift:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 30px -10px rgba(0,0,0,.15);
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, .15);
     }
+
     .faq-answer {
       max-height: 0;
       overflow: hidden;
       opacity: 0;
       transition: all 0.4s ease;
     }
+
     .faq-item.active .faq-answer {
       max-height: 1200px;
       opacity: 1;
       padding-top: 0.75rem;
     }
-    .tab-content { display: block; }
-    .hidden { display: none; }
-    .stylish { text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-    .glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+
+    .tab-content {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .stylish {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .glow {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-<!-- TOP NAV -->
-<nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-    <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
-      <div class="w-12 h-12 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition glow">G</div>
-      <span class="font-['Montserrat'] text-4xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 stylish">
-        Gojira TP
-      </span>
-    </div>
-
-    <div class="flex flex-col items-end gap-2">
-      <div class="flex items-center gap-2">
-        <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
-        <button onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
-          <span id="theme-icon">🌙</span>
-          <span id="theme-text">Dark</span>
-        </button>
+  <!-- TOP NAV -->
+  <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+      <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
+        <div
+          class="w-12 h-12 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition glow">
+          G</div>
+        <span
+          class="font-['Montserrat'] text-4xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 stylish">
+          Gojira TP
+        </span>
       </div>
 
-      <div id="search-bar" class="hidden">
-        <input id="search-input" type="text" oninput="performSearch(this.value)" placeholder="Search portal..." class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm w-64">
-        <div id="search-results" class="mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- HOME -->
-<div id="view-home" class="app-view active">
-  <main class="max-w-7xl mx-auto px-6 py-20 text-center">
-    <h1 class="text-5xl font-extrabold mb-6">
-      Welcome to
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-        Training Portal
-      </span>
-    </h1>
-
-    <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-16">
-      Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
-    </p>
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-      <div onclick="navigateTo('view-kb')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
-        <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
-        <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
-      </div>
-
-      <div onclick="navigateTo('view-entities')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
-        <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
-        <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
-      </div>
-
-      <div onclick="navigateTo('view-updates')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
-        <h2 class="text-2xl font-bold mb-2">New Updates</h2>
-        <p class="text-sm opacity-90">Latest system & policy logs.</p>
-      </div>
-
-      <div onclick="navigateTo('view-automations')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-emerald-500 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🤖</div>
-        <h2 class="text-2xl font-bold mb-2">Automations</h2>
-        <p class="text-sm opacity-90">Email & Play Store reply bots.</p>
-      </div>
-
-      <div onclick="navigateTo('view-resources')" class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-purple-600 text-white">
-        <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
-        <h2 class="text-2xl font-bold mb-2">Resources</h2>
-        <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- KNOWLEDGE BASE -->
-<div id="view-kb" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Knowledge Base</span>
-  </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
-    <div class="space-y-4">
-      <!-- 1 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not disbursed. Why?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">Loan disbursement may be pending due to:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Incomplete documentation</li>
-            <li>Bank account verification</li>
-            <li>Internal compliance or risk checks</li>
-          </ul>
-          <p class="mt-2 font-medium">Our team will assist you with the exact reason.</p>
+      <div class="flex flex-col items-end gap-2">
+        <div class="flex items-center gap-2">
+          <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
+          <button onclick="toggleTheme()"
+            class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Dark</span>
+          </button>
         </div>
-      </div>
 
-      <!-- 2 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. Can I increase my loan amount after sanction?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">Loan enhancement depends on below mentioned criteria but can be done while accepting the offer not post sanction:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Your credit profile</li>
-            <li>Repayment history</li>
-            <li>Internal eligibility checks</li>
-          </ul>
-          <p class="mt-2">You may reapply after closing or maintaining a good repayment track.</p>
-        </div>
-      </div>
-
-      <!-- 3 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">3. Why was my loan application rejected?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">Loan applications can be rejected due to:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Credit score or repayment history</li>
-            <li>Existing liabilities</li>
-            <li>Internal risk assessment</li>
-          </ul>
-          <p class="mt-2">Customer care can guide but cannot override system decisions.</p>
-        </div>
-      </div>
-
-      <!-- 4 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">4. How long does it take for repayment to reflect after payment?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Payments usually reflect within 24–48 working hours. Delays may occur due to bank processing or holidays.</p>
-        </div>
-      </div>
-
-      <!-- 5 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount calculated?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">Your payable amount includes:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Loan Amount</li>
-            <li>Interest calculated till the repayment date</li>
-            <li>Penalty (2% post repayment date where 1% is daily interest and 1% is penalty)</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 6 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">6. Will my credit score be affected if I delay payment?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>Yes. Any delay in repayment may negatively impact your CIBIL score, which can affect future loan or credit card approvals.</p>
-        </div>
-      </div>
-
-      <!-- 7 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">7. I have already shared a Promise to Pay (PTP). Why am I being called again?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-2">We may call to:</p>
-          <ul class="list-disc ml-6 space-y-1">
-            <li>Confirm your payment readiness</li>
-            <li>Check if funds have been arranged</li>
-            <li>Assist you in making the payment earlier, if possible</li>
-          </ul>
-          <p class="mt-2">This helps avoid further penalties or escalation.</p>
-        </div>
-      </div>
-
-      <!-- 8 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">8. Will I continue to receive calls after making the payment?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>No. Once the payment is successfully received and updated in our system, collection calls will stop.</p>
-          <p class="mt-2">If you still receive a call, please share the payment reference number with the agent.</p>
-        </div>
-      </div>
-
-      <!-- 9 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p>NBFC means Non-Banking Financial Company. It is a company that gives loans, but it is not a bank.</p>
-          <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
-            <p>🏦 <strong>Bank</strong> = savings account + loans</p>
-            <p>💰 <strong>NBFC</strong> = only loans</p>
-          </div>
-          <ul class="list-disc ml-6 mt-4 space-y-1">
-            <li>NBFCs give personal loans, business loans, etc.</li>
-            <li>They are approved by RBI</li>
-            <li>You cannot open a savings account in an NBFC</li>
-            <li>They are commonly used in instant loan apps</li>
-          </ul>
-          <p class="mt-3 text-sm italic">Example: If you take a quick loan from an app and get money fast, it is usually an NBFC, not a bank.</p>
-        </div>
-      </div>
-
-      <!-- 10 -->
-      <div class="faq-item border-b pb-4">
-        <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">10. What is an Account Aggregator?</button>
-        <div class="faq-answer text-slate-600 dark:text-slate-300">
-          <p class="mb-3">An Account Aggregator (AA) is a secure system that lets you share your bank details digitally with a lender only after your permission. It helps banks/NBFCs check your financial data online, without paperwork.</p>
-          <h4 class="font-bold mb-2">How it works:</h4>
-          <ol class="list-decimal ml-6 space-y-1 mb-4">
-            <li>You give consent</li>
-            <li>Your bank statement / financial data is shared securely</li>
-            <li>The lender checks your eligibility</li>
-            <li>Loan gets processed faster</li>
-          </ol>
-          <div class="grid grid-cols-2 gap-2 text-sm">
-            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">🔒 Safe & secure</div>
-            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">✅ RBI regulated</div>
-            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">❌ No data without consent</div>
-            <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
+        <div id="search-bar" class="hidden">
+          <input id="search-input" type="text" oninput="performSearch(this.value)" placeholder="Search portal..."
+            class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm w-64">
+          <div id="search-results"
+            class="mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           </div>
         </div>
       </div>
     </div>
+  </nav>
+
+  <!-- HOME -->
+  <div id="view-home" class="app-view active">
+    <main class="max-w-7xl mx-auto px-6 py-20 text-center">
+      <h1 class="text-5xl font-extrabold mb-6">
+        Welcome to
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+          Training Portal
+        </span>
+      </h1>
+
+      <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-12">
+        Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
+      </p>
+
+
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div onclick="navigateTo('view-kb')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
+          <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
+          <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
+        </div>
+
+        <div onclick="navigateTo('view-entities')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
+          <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
+          <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
+        </div>
+
+        <div onclick="navigateTo('view-updates')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
+          <h2 class="text-2xl font-bold mb-2">New Updates</h2>
+          <p class="text-sm opacity-90">Latest system & policy logs.</p>
+        </div>
+
+        <div onclick="navigateTo('view-resources')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-purple-600 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
+          <h2 class="text-2xl font-bold mb-2">Resources</h2>
+          <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
+        </div>
+      </div>
+    </main>
   </div>
-</div>
 
-<!-- BRAND ENTITIES -->
-<div id="view-entities" class="app-view">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Brand Entities</span>
-  </header>
+  <!-- KNOWLEDGE BASE -->
+  <div id="view-kb" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">Knowledge Base</span>
+    </header>
+    <div class="max-w-4xl mx-auto px-6 py-14">
+      <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
+      <div class="space-y-4">
+        <!-- 1 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not
+            disbursed. Why?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Loan disbursement may be pending due to:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Incomplete documentation</li>
+              <li>Bank account verification</li>
+              <li>Internal compliance or risk checks</li>
+            </ul>
+            <p class="mt-2 font-medium">Our team will assist you with the exact reason.</p>
+          </div>
+        </div>
 
-  <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-    <h1 class="text-3xl font-extrabold mb-12">Select an Entity to View Guidelines</h1>
+        <!-- 2 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. Can I increase my loan amount
+            after sanction?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Loan enhancement depends on below mentioned criteria but can be done while accepting the
+              offer not post sanction:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Your credit profile</li>
+              <li>Repayment history</li>
+              <li>Internal eligibility checks</li>
+            </ul>
+            <p class="mt-2">You may reapply after closing or maintaining a good repayment track.</p>
+          </div>
+        </div>
 
-    <div class="grid md:grid-cols-4 gap-8">
-      <div onclick="navigateTo('view-bharatloan')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white">
-        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">B</div>
-        <h3 class="font-bold text-lg">BharatLoan</h3>
-      </div>
+        <!-- 3 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">3. Why was my loan application
+            rejected?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Loan applications can be rejected due to:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Credit score or repayment history</li>
+              <li>Existing liabilities</li>
+              <li>Internal risk assessment</li>
+            </ul>
+            <p class="mt-2">Customer care can guide but cannot override system decisions.</p>
+          </div>
+        </div>
 
-      <div onclick="navigateTo('view-rupee112')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-green-500 to-red-600 text-white">
-        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">₹</div>
-        <h3 class="font-bold text-lg">Rupee112</h3>
-      </div>
+        <!-- 4 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">4. How long does it take for
+            repayment to reflect after payment?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>Payments usually reflect within 24–48 working hours. Delays may occur due to bank processing or holidays.
+            </p>
+          </div>
+        </div>
 
-      <div onclick="navigateTo('view-loan112')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-900 to-red-600 text-white">
-        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">L</div>
-        <h3 class="font-bold text-lg">Loan112</h3>
-      </div>
+        <!-- 5 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount
+            calculated?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Your payable amount includes:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Loan Amount</li>
+              <li>Interest calculated till the repayment date</li>
+              <li>Penalty (2% post repayment date where 1% is daily interest and 1% is penalty)</li>
+            </ul>
+          </div>
+        </div>
 
-      <div onclick="navigateTo('view-rupeeontime')" class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-purple-600 to-red-600 text-white">
-        <div class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">✔</div>
-        <h3 class="font-bold text-lg">RupeeOnTime</h3>
+        <!-- 6 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">6. Will my credit score be
+            affected if I delay payment?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>Yes. Any delay in repayment may negatively impact your CIBIL score, which can affect future loan or
+              credit card approvals.</p>
+          </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">7. I have already shared a
+            Promise to Pay (PTP). Why am I being called again?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">We may call to:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Confirm your payment readiness</li>
+              <li>Check if funds have been arranged</li>
+              <li>Assist you in making the payment earlier, if possible</li>
+            </ul>
+            <p class="mt-2">This helps avoid further penalties or escalation.</p>
+          </div>
+        </div>
+
+        <!-- 8 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">8. Will I continue to receive
+            calls after making the payment?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>No. Once the payment is successfully received and updated in our system, collection calls will stop.</p>
+            <p class="mt-2">If you still receive a call, please share the payment reference number with the agent.</p>
+          </div>
+        </div>
+
+        <!-- 9 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>NBFC means Non-Banking Financial Company. It is a company that gives loans, but it is not a bank.</p>
+            <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
+              <p>🏦 <strong>Bank</strong> = savings account + loans</p>
+              <p>💰 <strong>NBFC</strong> = only loans</p>
+            </div>
+            <ul class="list-disc ml-6 mt-4 space-y-1">
+              <li>NBFCs give personal loans, business loans, etc.</li>
+              <li>They are approved by RBI</li>
+              <li>You cannot open a savings account in an NBFC</li>
+              <li>They are commonly used in instant loan apps</li>
+            </ul>
+            <p class="mt-3 text-sm italic">Example: If you take a quick loan from an app and get money fast, it is
+              usually an NBFC, not a bank.</p>
+          </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">10. What is an Account
+            Aggregator?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-3">An Account Aggregator (AA) is a secure system that lets you share your bank details
+              digitally with a lender only after your permission. It helps banks/NBFCs check your financial data online,
+              without paperwork.</p>
+            <h4 class="font-bold mb-2">How it works:</h4>
+            <ol class="list-decimal ml-6 space-y-1 mb-4">
+              <li>You give consent</li>
+              <li>Your bank statement / financial data is shared securely</li>
+              <li>The lender checks your eligibility</li>
+              <li>Loan gets processed faster</li>
+            </ol>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">🔒 Safe & secure</div>
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">✅ RBI regulated</div>
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">❌ No data without consent</div>
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- UPDATES -->
-<div id="view-updates" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">System Updates</span>
-  </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
+  <!-- BRAND ENTITIES -->
+  <div id="view-entities" class="app-view">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">Brand Entities</span>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-14 text-center">
+      <h1 class="text-3xl font-extrabold mb-12">Select an Entity to View Guidelines</h1>
+
+      <div class="grid md:grid-cols-4 gap-8">
+        <div onclick="navigateTo('view-bharatloan')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            B</div>
+          <h3 class="font-bold text-lg">BharatLoan</h3>
+        </div>
+
+        <div onclick="navigateTo('view-rupee112')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-green-500 to-red-600 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            ₹</div>
+          <h3 class="font-bold text-lg">Rupee112</h3>
+        </div>
+
+        <div onclick="navigateTo('view-loan112')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-900 to-red-600 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            L</div>
+          <h3 class="font-bold text-lg">Loan112</h3>
+        </div>
+
+        <div onclick="navigateTo('view-rupeeontime')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-purple-600 to-red-600 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            ✔</div>
+          <h3 class="font-bold text-lg">RupeeOnTime</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATES -->
+  <div id="view-updates" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">System Updates</span>
+    </header>
+    <div class="max-w-4xl mx-auto px-6 py-14">
       <h2 class="text-3xl font-extrabold mb-8">Recent Policy Changes</h2>
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-          <div class="text-4xl mb-4">✨</div>
-          <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
-          <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
-      </div>
-  </div>
-</div>
-
-<!-- BHARATLOAN SPECIFIC VIEW -->
-<div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-red-600 to-blue-900 text-white relative">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to Entities</button>
-    <button onclick="toggleDropdown('')" class="text-white hover:text-blue-600">Support 📞</button>
-    <div id="support-dropdown" class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
-      <h4 class="font-bold mb-2">Contact Support</h4>
-      <p><strong>Call:</strong> 8282824644</p>
-      <p><strong>Email:</strong> care@bharatloan.com</p>
-    </div>
-  </header>
-
-  <div class="max-w-5xl mx-auto px-6 py-14">
-    <!-- Tabs -->
-    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-      <button onclick="showTab('guidelines')" id="tab-guidelines" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
-      <button onclick="showTab('tools')" id="tab-tools" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-    </div>
-
-    <!-- Guidelines Tab Content -->
-    <div id="content-guidelines" class="tab-content hidden">
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-        <div class="text-4xl mb-4">📋</div>
-        <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-        <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available here.</p>
-      </div>
-    </div>
-
-    <!-- Tools Tab Content -->
-    <div id="content-tools" class="tab-content">
-      <div class="grid gap-6">
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-              </p>
-            </div>
-            <a href="https://bharatloanfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
-            </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
-            </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
-            </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
-          </div>
-        </div>
+      <div
+        class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+        <div class="text-4xl mb-4">✨</div>
+        <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
+        <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
       </div>
     </div>
   </div>
-</div>
 
-<!-- UPDATES -->
-<div id="view-updates" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">System Updates</span>
-  </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
-      <h2 class="text-3xl font-extrabold mb-8">Recent Policy Changes</h2>
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-          <div class="text-4xl mb-4">✨</div>
-          <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
-          <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
+  <!-- BHARATLOAN SPECIFIC VIEW -->
+  <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-red-600 to-blue-900 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
+      <button onclick="toggleDropdown('')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 8282824644</p>
+        <p><strong>Email:</strong> care@bharatloan.com</p>
       </div>
-  </div>
-</div>
+    </header>
 
-<!-- AUTOMATIONS -->
-<div id="view-automations" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Automations</span>
-  </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-4xl font-extrabold mb-10">Automated Customer Support</h1>
-    <div class="space-y-6">
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center text-xl">📧</div>
-          <div>
-            <h3 class="text-xl font-bold">Email Automation</h3>
-            <p class="text-slate-600 dark:text-slate-300">Automatically replies to customer emails based on content and status.</p>
-          </div>
-        </div>
-        <p class="text-sm text-slate-500 mb-4">Run the email_automation.py script to start monitoring emails.</p>
-        <button onclick="alert('Run: python email_automation.py in terminal')" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition">How to Run</button>
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
+        <button onclick="showTab('tools')" id="tab-tools"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-green-600 text-white rounded-xl flex items-center justify-center text-xl">📱</div>
-          <div>
-            <h3 class="text-xl font-bold">Play Store Feedback Automation</h3>
-            <p class="text-slate-600 dark:text-slate-300">Automatically replies to Play Store reviews based on sentiment.</p>
-          </div>
-        </div>
-        <p class="text-sm text-slate-500 mb-4">Run the playstore_automation.py script to start monitoring reviews.</p>
-        <button onclick="alert('Run: python playstore_automation.py in terminal')" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">How to Run</button>
-      </div>
-
-      <div class="bg-amber-50 dark:bg-slate-800 p-6 rounded-3xl border border-amber-200 dark:border-slate-700">
-        <div class="text-4xl mb-4">⚠️</div>
-        <h3 class="text-xl font-bold mb-2">Important Notes</h3>
-        <ul class="list-disc ml-6 space-y-1 text-slate-600 dark:text-slate-300">
-          <li>Ensure all credentials and API keys are set up before running.</li>
-          <li>Monitor automated responses to avoid policy violations.</li>
-          <li>Customize reply messages in the scripts as needed.</li>
-          <li>Contact IT for Bharat Loan portal API integration.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- RESOURCES -->
-<div id="view-resources" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Resources</span>
-  </header>
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <div class="space-y-6">
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
-          <div>
-            <h3 class="text-xl font-bold">Customer Script Templates</h3>
-            <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
-          </div>
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
         </div>
       </div>
 
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer" onclick="navigateTo('view-checklist')">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-teal-600 text-white rounded-xl flex items-center justify-center text-xl">🎯</div>
-          <div>
-            <h3 class="text-xl font-bold">Quality Assurance Checklist</h3>
-            <p class="text-slate-600 dark:text-slate-300">Click to view entity checklists.</p>
+      <!-- Tools Tab Content -->
+      <div id="content-tools" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://bharatloanfintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- CHECKLIST VIEW -->
-<div id="view-checklist" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-resources')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Resources</button>
-    <span class="mx-auto font-bold">Quality Assurance Checklist</span>
-  </header>
-
-  <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-    <h1 class="text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 stylish">Quality Assurance Checklist</h1>
-
-    <ol class="text-left max-w-md mx-auto space-y-6 text-slate-700 dark:text-slate-300">
-      <li onclick="showLogin('BharatLoan')" class="cursor-pointer hover:text-blue-600 transition text-2xl font-bold p-4 rounded-2xl bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white hover-lift">1. BharatLoan</li>
-      <li onclick="showLogin('RupeeOnTime')" class="cursor-pointer hover:text-blue-600 transition text-2xl font-bold p-4 rounded-2xl bg-gradient-to-r from-purple-600 to-red-600 text-white hover-lift">2. RupeeOnTime</li>
-      <li onclick="showLogin('Rupee112')" class="cursor-pointer hover:text-blue-600 transition text-2xl font-bold p-4 rounded-2xl bg-gradient-to-r from-green-500 to-red-600 text-white hover-lift">3. Rupee112</li>
-      <li onclick="showLogin('Loan112')" class="cursor-pointer hover:text-blue-600 transition text-2xl font-bold p-4 rounded-2xl bg-gradient-to-r from-blue-900 to-red-600 text-white hover-lift">4. Loan112</li>
-    </ol>
-  </div>
-</div>
-
-<!-- RUPEE112 SPECIFIC VIEW -->
-<div id="view-rupee112" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-500 to-red-600 text-white relative">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to Entities</button>
-
-    <button onclick="toggleDropdown('rupee112')" class="text-white hover:text-blue-600">Support 📞</button>
-    <div id="support-dropdown-rupee112" class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-green-500 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
-      <h4 class="font-bold mb-2">Contact Support</h4>
-      <p><strong>Call:</strong> 9220644112</p>
-      <p><strong>Email:</strong> care@rupee112.com</p>
-    </div>
-  </header>
-
-  <div class="max-w-5xl mx-auto px-6 py-14">
-    <!-- Tabs -->
-    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-      <button onclick="showTab('guidelines')" id="tab-guidelines-rupee112" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
-      <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-    </div>
-
-    <!-- Guidelines Tab Content -->
-    <div id="content-guidelines-rupee112" class="tab-content hidden">
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-        <div class="text-4xl mb-4">📋</div>
-        <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-        <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available here.</p>
-      </div>
-    </div>
-
-    <!-- Tools Tab Content -->
-    <div id="content-tools-rupee112" class="tab-content">
-      <div class="grid gap-6">
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Rupee112 Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-              </p>
+  <!-- RESOURCES -->
+  <div id="view-resources" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">Resources</span>
+    </header>
+    <div class="max-w-4xl mx-auto px-6 py-14">
+      <div class="space-y-6">
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
+            <div>
+              <h3 class="text-xl font-bold">Customer Script Templates</h3>
+              <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
             </div>
-            <a href="https://rupee112fintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
           </div>
         </div>
 
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
+        <div
+          class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer"
+          onclick="navigateTo('view-checklist')">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-teal-600 text-white rounded-xl flex items-center justify-center text-xl">🎯</div>
+            <div>
+              <h3 class="text-xl font-bold">Quality Assurance Checklist</h3>
+              <p class="text-slate-600 dark:text-slate-300">Click to view entity checklists.</p>
             </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
-            </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@rupee112.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
-            </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- LOAN112 SPECIFIC VIEW -->
-<div id="view-loan112" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-900 to-red-600 text-white relative">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to Entities</button>
+  <!-- CHECKLIST VIEW -->
+  <div id="view-checklist" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-resources')" class="font-bold text-slate-500 hover:text-blue-600">← Back to
+        Resources</button>
+      <span class="mx-auto font-bold">Quality Assurance Checklist</span>
+    </header>
 
-    <button onclick="toggleDropdown('loan112')" class="text-white hover:text-blue-600">Support 📞</button>
-    <div id="support-dropdown-loan112" class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-blue-900 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
-      <h4 class="font-bold mb-2">Contact Support</h4>
-      <p><strong>Call:</strong> 9311912970</p>
-      <p><strong>Email:</strong> care@loan112.com</p>
-    </div>
-  </header>
+    <div class="max-w-6xl mx-auto px-6 py-14 text-center">
+      <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
 
-  <div class="max-w-5xl mx-auto px-6 py-14">
-    <!-- Tabs -->
-    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-      <button onclick="showTab('guidelines')" id="tab-guidelines-loan112" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
-      <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-    </div>
-
-    <!-- Guidelines Tab Content -->
-    <div id="content-guidelines-loan112" class="tab-content hidden">
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-        <div class="text-4xl mb-4">📋</div>
-        <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-        <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available here.</p>
-      </div>
-    </div>
-
-    <!-- Tools Tab Content -->
-    <div id="content-tools-loan112" class="tab-content">
-      <div class="grid gap-6">
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-              </p>
-            </div>
-            <a href="https://loan112fintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
-            </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
-            </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
-            </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- RUPEEONTIME SPECIFIC VIEW -->
-<div id="view-rupeeontime" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-purple-600 to-red-600 text-white relative">
-    <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to Entities</button>
-
-    <button onclick="toggleDropdown('rupeeontime')" class="text-white hover:text-blue-600">Support 📞</button>
-    <div id="support-dropdown-rupeeontime" class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-purple-600 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
-      <h4 class="font-bold mb-2">Contact Support</h4>
-      <p><strong>Call:</strong> 9220912304</p>
-      <p><strong>Email:</strong> care@rupeeontime.com</p>
-    </div>
-  </header>
-
-  <div class="max-w-5xl mx-auto px-6 py-14">
-    <!-- Tabs -->
-    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-      <button onclick="showTab('guidelines')" id="tab-guidelines-rupeeontime" class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
-      <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime" class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-    </div>
-
-    <!-- Guidelines Tab Content -->
-    <div id="content-guidelines-rupeeontime" class="tab-content hidden">
-      <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-        <div class="text-4xl mb-4">📋</div>
-        <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-        <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available here.</p>
-      </div>
-    </div>
-
-    <!-- Tools Tab Content -->
-    <div id="content-tools-rupeeontime" class="tab-content">
-      <div class="grid gap-6">
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">RupeeOnTime Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or Email.
-              </p>
-            </div>
-            <a href="https://rotfintech.com/" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
-            </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open WOCOM ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
-            </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login Chat ↗</a>
-          </div>
-        </div>
-
-        <div class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@rupeeontime.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
-            </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail ↗</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PERFORMANCE VIEW -->
-<div id="view-performance" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">← Back to Checklist</button>
-    <span class="mx-auto font-bold">Quality Performance</span>
-  </header>
-
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-3xl font-extrabold mb-8">Quality Assurance Performance</h1>
-
-    <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-      <h2 class="text-xl font-bold mb-4">Agent Performance</h2>
-      <ol class="space-y-2">
-        <li>1. Divyansh</li>
-        <ul class="ml-6 space-y-1">
-          <li>First week score</li>
-          <li>Audit: 5</li>
-          <li>Fatal: 0</li>
-          <li>100: 5</li>
-        </ul>
+      <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
+        <li onclick="showLogin('BharatLoan')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">B</span>
+          1. BharatLoan
+        </li>
+        <li onclick="showLogin('RupeeOnTime')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">✔</span>
+          2. RupeeOnTime
+        </li>
+        <li onclick="showLogin('Rupee112')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-800 text-white shadow-lg hover:shadow-emerald-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">₹</span>
+          3. Rupee112
+        </li>
+        <li onclick="showLogin('Loan112')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-900 text-white shadow-lg hover:shadow-indigo-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">L</span>
+          4. Loan112
+        </li>
       </ol>
     </div>
   </div>
-</div>
 
-<!-- ADMIN UPLOAD VIEW -->
-<div id="view-admin-upload" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Admin Upload</span>
-  </header>
+  <!-- RUPEE112 SPECIFIC VIEW -->
+  <div id="view-rupee112" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-500 to-red-600 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
 
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <h1 class="text-3xl font-extrabold mb-8">Upload Quality Reports</h1>
-
-    <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-6">
-      <input type="file" id="file-input" multiple accept=".xlsx,.xls,.png,.jpg,.jpeg,.pdf" class="mb-4">
-      <button onclick="handleUpload()" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Upload Files</button>
-      <div id="upload-status" class="mt-4"></div>
-    </div>
-
-    <button onclick="navigateTo('view-agent-reports')" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">View Reports & Comments</button>
-  </div>
-</div>
-
-<!-- AGENT REPORTS VIEW -->
-<div id="view-agent-reports" class="app-view bg-white dark:bg-slate-900">
-  <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-    <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-    <span class="mx-auto font-bold">Quality Reports</span>
-  </header>
-
-  <div class="max-w-4xl mx-auto px-6 py-14">
-    <div id="reports-list" class="space-y-4"></div>
-  </div>
-</div>
-
-<!-- LOGIN MODAL -->
-<div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
-    <div class="flex justify-between items-center mb-6">
-      <h2 id="login-title" class="text-2xl font-bold">Login</h2>
-      <button onclick="hideLogin()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
-    </div>
-    <form onsubmit="submitLogin(event)">
-      <div class="mb-6">
-        <label class="block text-sm font-medium mb-2">Employee ID</label>
-        <input id="empid" type="text" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+      <button onclick="toggleDropdown('rupee112')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown-rupee112"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-green-500 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 9220644112</p>
+        <p><strong>Email:</strong> care@rupee112.com</p>
       </div>
-      <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
-    </form>
-  </div>
-</div>
+    </header>
 
-<script>
-const searchData = [
-  { name: 'Knowledge Base', id: 'view-kb' },
-  { name: 'Brand Entities', id: 'view-entities' },
-  { name: 'New Updates', id: 'view-updates' },
-  { name: 'Automations', id: 'view-automations' },
-  { name: 'Resources', id: 'view-resources' },
-  { name: 'BharatLoan', id: 'view-bharatloan' },
-  { name: 'Rupee112', id: 'view-rupee112' },
-  { name: 'Loan112', id: 'view-loan112' },
-  { name: 'RupeeOnTime', id: 'view-rupeeontime' },
-  { name: 'Quality Assurance Checklist', id: 'view-checklist' },
-  { name: 'BharatLoan Portal', id: 'view-bharatloan' },
-  { name: 'Rupee112 Portal', id: 'view-rupee112' },
-  { name: 'Loan112 Portal', id: 'view-loan112' },
-  { name: 'RupeeOnTime Portal', id: 'view-rupeeontime' },
-  { name: 'WOCOM 365', id: 'view-bharatloan' },
-  { name: 'Yellow Ai', id: 'view-bharatloan' },
-  { name: 'Outlook', id: 'view-bharatloan' },
-  // Add more for other entities if needed
-];
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines-rupee112"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
+        <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
 
-let currentEntity = '';
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-rupee112" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
+        </div>
+      </div>
 
-function navigateTo(id){
-  document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  // Close search after navigation
-  document.getElementById('search-bar').classList.add('hidden');
-  document.getElementById('search-input').value = '';
-  document.getElementById('search-results').innerHTML = '';
-  // Load reports if navigating to agent reports
-  if (id === 'view-agent-reports') {
-    loadReports();
-  }
-}
+      <!-- Tools Tab Content -->
+      <div id="content-tools-rupee112" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Rupee112 Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://rupee112fintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
 
-function toggleFaq(btn){
-  btn.parentElement.classList.toggle('active');
-}
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
 
-function showTab(tab, entity = ''){
-  const prefix = entity ? '-' + entity : '';
-  // Hide all tab contents
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-  // Remove active from all tabs
-  const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}` : '#tab-guidelines, #tab-tools';
-  document.querySelectorAll(tabSelectors).forEach(btn => {
-    btn.classList.remove('text-blue-600', 'border-blue-600');
-    btn.classList.add('text-slate-500', 'border-transparent');
-  });
-  // Show selected tab content
-  document.getElementById('content-' + tab + prefix).classList.remove('hidden');
-  // Activate selected tab
-  document.getElementById('tab-' + tab + prefix).classList.add('text-blue-600', 'border-blue-600');
-  document.getElementById('tab-' + tab + prefix).classList.remove('text-slate-500', 'border-transparent');
-}
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
 
-function toggleTheme(){
-  const html = document.documentElement;
-  const icon = document.getElementById('theme-icon');
-  const text = document.getElementById('theme-text');
-
-  if(html.classList.contains('dark')){
-    html.classList.remove('dark');
-    icon.innerText = '🌙';
-    text.innerText = 'Dark';
-    localStorage.setItem('theme','light');
-  } else {
-    html.classList.add('dark');
-    icon.innerText = '☀️';
-    text.innerText = 'Light';
-    localStorage.setItem('theme','dark');
-  }
-}
-
-function toggleDropdown(entity) {
-  const dropdown = document.getElementById('support-dropdown' + (entity ? '-' + entity : ''));
-  dropdown.classList.toggle('hidden');
-}
-
-function toggleSearch() {
-  const bar = document.getElementById('search-bar');
-  bar.classList.toggle('hidden');
-  if (!bar.classList.contains('hidden')) {
-    document.getElementById('search-input').focus();
-  } else {
-    document.getElementById('search-input').value = '';
-    document.getElementById('search-results').innerHTML = '';
-  }
-}
-
-function performSearch(query) {
-  const resultsDiv = document.getElementById('search-results');
-  if (!query.trim()) {
-    resultsDiv.innerHTML = '';
-    return;
-  }
-  const filtered = searchData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
-  resultsDiv.innerHTML = filtered.map(item => `<div onclick="navigateTo('${item.id}')" class="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">${item.name}</div>`).join('');
-}
-
-function showLogin(entity) {
-  currentEntity = entity;
-  document.getElementById('login-title').innerText = `Login to ${entity}`;
-  document.getElementById('login-modal').classList.remove('hidden');
-}
-
-function hideLogin() {
-  document.getElementById('login-modal').classList.add('hidden');
-  document.getElementById('empid').value = '';
-}
-
-let currentUser = '';
-
-function submitLogin(event) {
-  event.preventDefault();
-  const empId = document.getElementById('empid').value.trim().toUpperCase();
-  if (empId === 'BL/GG/25/1135') {
-    alert('Admin login successful!');
-    currentUser = 'admin';
-    hideLogin();
-    navigateTo('view-admin-upload');
-  } else if (empId === 'BL/GG/704') {
-    alert('Agent login successful!');
-    currentUser = 'agent';
-    hideLogin();
-    navigateTo('view-agent-reports');
-  } else {
-    alert('Invalid Employee ID. Please try again.');
-  }
-}
-
-function handleUpload() {
-  const files = document.getElementById('file-input').files;
-  if (files.length === 0) {
-    document.getElementById('upload-status').innerText = 'No files selected.';
-    return;
-  }
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  for (let file of files) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        reports.push({
-          name: file.name,
-          type: file.type,
-          data: e.target.result,
-          comments: []
-        });
-        localStorage.setItem('qualityReports', JSON.stringify(reports));
-        document.getElementById('upload-status').innerText = 'Files uploaded successfully!';
-      } catch (error) {
-        document.getElementById('upload-status').innerText = 'Error uploading file. File may be too large for local storage.';
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function loadReports() {
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  const list = document.getElementById('reports-list');
-  if (reports.length === 0) {
-    list.innerHTML = '<p class="text-center text-slate-500 dark:text-slate-400">No quality reports available. Please check back later or contact your supervisor.</p>';
-  } else {
-    const headline = '<h1 class="text-3xl font-extrabold mb-8">Uploaded Quality Reports</h1>';
-    list.innerHTML = headline + reports.map((report, index) => {
-      let content = '';
-      if (report.type.startsWith('image/')) {
-        content = `<img src="${report.data}" alt="${report.name}" class="max-w-full h-auto rounded">`;
-      } else if (report.type === 'application/pdf') {
-        content = `<embed src="${report.data}" type="application/pdf" width="100%" height="600px">`;
-      } else {
-        content = `<p>File type not directly viewable. Download below.</p>`;
-      }
-      let commentsHtml = report.comments.map(comment => `<p class="text-sm text-slate-600 dark:text-slate-400">- ${comment}</p>`).join('');
-      let addCommentHtml = '';
-      if (currentUser === 'agent' && report.comments.length === 0) {
-        addCommentHtml = `
-          <textarea id="comment-${index}" placeholder="Add your comment..." class="w-full p-2 mt-2 border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700"></textarea>
-          <button onclick="addComment(${index})" class="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700">Add Comment</button>
-        `;
-      }
-      let deleteHtml = '';
-      if (currentUser === 'admin') {
-        deleteHtml = `<button onclick="deleteReport(${index})" class="mt-2 bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">Delete Report</button>`;
-      }
-      return `
-        <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-4">
-          <h3 class="font-bold mb-2">${report.name}</h3>
-          ${content}
-          <a href="${report.data}" download="${report.name}" class="text-blue-600 hover:text-blue-700 mt-2 inline-block">Download</a>
-          ${deleteHtml}
-          <div class="mt-4">
-            <h4 class="font-semibold">Comments:</h4>
-            ${commentsHtml}
-            ${addCommentHtml}
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@rupee112.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
           </div>
         </div>
-      `;
-    }).join('');
-  }
-  // Automatically remove comments after admin views them
-  if (currentUser === 'admin') {
-    reports.forEach(report => report.comments = []);
-    localStorage.setItem('qualityReports', JSON.stringify(reports));
-  }
-}
+      </div>
+    </div>
+  </div>
 
-function deleteReport(index) {
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  reports.splice(index, 1);
-  localStorage.setItem('qualityReports', JSON.stringify(reports));
-  loadReports();
-}
+  <!-- LOAN112 SPECIFIC VIEW -->
+  <div id="view-loan112" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-900 to-red-600 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
 
-function startReview() {
-  localStorage.setItem('reviewStarted', 'true');
-  loadReports();
-}
+      <button onclick="toggleDropdown('loan112')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown-loan112"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-blue-900 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 9311912970</p>
+        <p><strong>Email:</strong> care@loan112.com</p>
+      </div>
+    </header>
 
-function addComment(index) {
-  const commentText = document.getElementById(`comment-${index}`).value.trim();
-  if (!commentText) return;
-  const reports = JSON.parse(localStorage.getItem('qualityReports') || '[]');
-  if (reports[index]) {
-    reports[index].comments.push(commentText);
-    localStorage.setItem('qualityReports', JSON.stringify(reports));
-    loadReports(); // Reload to show new comment
-  }
-}
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines-loan112"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
+        <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
 
-window.onload = () => {
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme === 'dark') {
-    document.documentElement.classList.add('dark');
-    document.getElementById('theme-icon').innerText = '☀️';
-    document.getElementById('theme-text').innerText = 'Light';
-  }
-}
-</script>
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-loan112" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
+        </div>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div id="content-tools-loan112" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://loan112fintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RUPEEONTIME SPECIFIC VIEW -->
+  <div id="view-rupeeontime" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-purple-600 to-red-600 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
+
+      <button onclick="toggleDropdown('rupeeontime')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown-rupeeontime"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-purple-600 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 9220912304</p>
+        <p><strong>Email:</strong> care@rupeeontime.com</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines-rupeeontime"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
+        <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
+
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-rupeeontime" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
+        </div>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div id="content-tools-rupeeontime" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">RupeeOnTime Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://rotfintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@rupeeontime.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE VIEW (AGENT DASHBOARD) -->
+  <div id="view-performance" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">←
+          Back</button>
+        <span id="agent-dashboard-title" class="font-bold text-xl">Agent Dashboard</span>
+      </div>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+
+      <!-- Welcome Banner -->
+      <div class="mb-12 p-8 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl">
+        <h1 class="text-3xl font-extrabold mb-2">Hello, <span id="agent-name-display">Agent</span> 👋</h1>
+        <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
+
+        <!-- Weekly Performance Tab/Card -->
+        <div onclick="openAgentPerformanceModal()"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
+            <span class="text-9xl">📈</span>
+          </div>
+
+          <div
+            class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-indigo-600">
+            🎯
+          </div>
+
+          <h3 class="text-2xl font-bold mb-2">Weekly Performance</h3>
+          <p class="text-slate-500 text-sm mb-6">Review your audit scores, compliance stats, and proofs.</p>
+
+          <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
+            <span>View Details</span>
+            <span>→</span>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT PERFORMANCE MODAL -->
+  <div id="agent-performance-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col animate-scale-up">
+
+      <!-- Modal Header -->
+      <div
+        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 z-10">
+        <div>
+          <h2 class="text-2xl font-extrabold flex items-center gap-2">
+            <span>📊</span> Performance Review
+          </h2>
+          <p class="text-xs text-slate-500 font-mono mt-1" id="modal-agent-id">ID: --</p>
+        </div>
+        <button onclick="closeAgentPerformanceModal()"
+          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+
+      <!-- Modal Content (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-8">
+
+        <div id="perf-content-loaded" class="space-y-10">
+
+          <!-- Score Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
+              <div id="modal-total-score" class="text-4xl font-black text-indigo-600">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">No. of audits</p>
+              <div id="modal-audit-score" class="text-2xl font-bold text-slate-700 dark:text-slate-200">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal Errors</p>
+              <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Compliance</p>
+              <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
+            </div>
+          </div>
+
+          <!-- Proofs Section -->
+          <div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📎</span>
+              Attached Proofs
+            </h3>
+            <div id="modal-proofs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Comment Section -->
+          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-bold mb-4">💬 Submit Feedback to Admin</h3>
+            <textarea id="agent-comment-input" rows="3"
+              class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition mb-4"
+              placeholder="Write your comments regarding this review..."></textarea>
+            <button onclick="handleCommentSubmit()"
+              class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Send
+              Comment</button>
+          </div>
+
+        </div>
+
+        <!-- Empty State -->
+        <div id="perf-content-empty"
+          class="hidden h-full flex flex-col items-center justify-center text-center opacity-50 py-20">
+          <div class="text-6xl mb-4">📭</div>
+          <h3 class="text-xl font-bold">No performance review available yet.</h3>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <span class="font-bold text-xl text-indigo-600">Admin Dashboard (ADMIN/001)</span>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Upload Section -->
+      <div class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-indigo-100 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📂</span>
+          Upload Quality Reports
+        </h2>
+        <div class="flex gap-4 items-end">
+          <div class="flex-1">
+            <label class="block text-sm font-semibold mb-2 ml-1">Target Entity</label>
+            <select id="admin-upload-entity"
+              class="w-full px-4 py-3 rounded-xl border border-indigo-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none mb-4">
+              <option value="BharatLoan">BharatLoan</option>
+              <option value="Rupee112">Rupee112</option>
+              <option value="Loan112">Loan112</option>
+              <option value="RupeeOnTime">RupeeOnTime</option>
+              <option value="ALL">All Entities</option>
+            </select>
+
+            <label class="block text-sm font-semibold mb-2 ml-1">Select Report File (PDF, Excel, Image)</label>
+            <input type="file" id="admin-file-upload" class="block w-full text-sm text-slate-500
+              file:mr-4 file:py-3 file:px-6
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-indigo-100 file:text-indigo-700
+              hover:file:bg-indigo-200
+              dark:file:bg-slate-700 dark:file:text-white
+            " />
+          </div>
+          <button onclick="handleFileUpload()"
+            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">
+            Upload Report
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mt-3 ml-2">* Files will be simulated in this demo environment.</p>
+      </div>
+
+      <!-- Manage Reports Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
+          Manage Uploaded Reports
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">File Name</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+        </div>
+        <div class="flex-1">
+          <!-- Spacer or Stats -->
+        </div>
+      </div>
+
+      <!-- Step 2: Controls & Grid -->
+
+
+      <div id="bulk-manager-interface" class="hidden animate-fade-in">
+
+        <!-- Bulk Controls -->
+        <div
+          class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-100 dark:border-slate-600 mb-4 flex flex-wrap gap-4 items-end shadow-sm">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Audit Score</label>
+            <select id="bulk-score"
+              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-emerald-600">
+              <option value="100">100%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Fatal Errors</label>
+            <select id="bulk-errors"
+              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-red-500">
+              <option value="0">0</option>
+              <option value="1">1</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Compliance</label>
+            <select id="bulk-compliance"
+              class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-bold text-blue-600">
+              <option value="100">100%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Agent List -->
+        <div class="overflow-hidden rounded-2xl border border-emerald-100 dark:border-slate-600">
+          <table class="w-full text-left border-collapse bg-white dark:bg-slate-800">
+            <thead class="bg-emerald-50/50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-4 w-12 text-center">
+                  <input type="checkbox" onchange="toggleAllAgents(this)"
+                    class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                </th>
+                <th class="p-4"></th>
+                <th class="p-4"></th>
+                <th class="p-4 text-right"></th>
+              </tr>
+            </thead>
+            <tbody id="bulk-agent-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <span>🎤</span> Call Recording
+      </label>
+      <input type="file" id="proof-audio" accept="audio/*"
+        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+    </div>
+
+    <!-- Proof 2: Chat Transcript -->
+    <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+      <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+        <span>💬</span> Chat Transcript
+      </label>
+      <input type="file" id="proof-chat" accept="image/*,application/pdf"
+        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+    </div>
+
+    <!-- Proof 3: Email -->
+    <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+      <label class="block text-sm font-bold mb-2 flex items-center gap-2">
+        <span>✉️</span> Email Proof
+      </label>
+      <input type="file" id="proof-email" accept="image/*,application/pdf"
+        class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
+    </div>
+    <button onclick="submitIndividualScore()"
+      class="mt-6 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
+      <span>Submit</span>
+    </button>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div>
+
+    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+          <tr>
+            <th class="p-6"></th>
+            <th class="p-6"></th>
+            <th class="p-6"></th>
+            <th class="p-6 text-right"></th>
+          </tr>
+        </thead>
+        <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+          <!-- JS Populates this -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="login-title" class="text-2xl font-bold">Login</h2>
+        <button onclick="hideLogin()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+      </div>
+      <form onsubmit="submitLogin(event)">
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Employee ID</label>
+          <input id="empid" type="text" required
+            class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+        </div>
+        <button type="submit"
+          class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // MOCK BACKEND
+    class MockBackend {
+      static getReports() {
+        return JSON.parse(localStorage.getItem('gojira_reports') || '[]');
+      }
+
+      static addReport(file, content) {
+        const reports = this.getReports();
+        reports.unshift({
+          id: Date.now(),
+          name: file.name,
+          type: file.type || 'Unknown',
+          date: new Date().toLocaleString(),
+          uploader: 'Admin',
+          content: content // Store Base64 string
+        });
+        // Limit storage to prevent quota exceeded (keep last 5)
+        if (reports.length > 5) reports.pop();
+        localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
+
+      static getComments() {
+        return JSON.parse(localStorage.getItem('gojira_comments') || '[]');
+      }
+
+      static addComment(text, agentId) {
+        const comments = this.getComments();
+        comments.unshift({
+          id: Date.now(),
+          text,
+          agentId,
+          date: new Date().toLocaleString()
+        });
+        localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+
+      static deleteComment(id) {
+        const comments = this.getComments().filter(c => c.id != id);
+        localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+
+      static deleteReport(id) {
+        const reports = this.getReports().filter(r => r.id != id);
+        localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
+
+      // PERFORMANCE DATA
+      static getPerformance(agentId) {
+        const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+        return db[agentId] || null;
+      }
+
+      static savePerformance(agentId, data) {
+        const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+        db[agentId] = {
+          ...data,
+          lastUpdated: new Date().toLocaleString()
+        };
+        localStorage.setItem('gojira_performance', JSON.stringify(db));
+      }
+    }
+
+    // ADMIN & AGENT FUNCTIONS
+    function renderAdminDashboard() {
+      // 1. Set Entity Header
+      const entityContext = currentEntity || 'ALL'; // Fallback
+      document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
+
+      // 2. Populate Agent List
+      const listContainer = document.getElementById('admin-agent-list-container');
+
+      // Filter Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entityContext !== 'ALL') {
+        agents = agents.filter(u => u.entity === entityContext);
+      }
+
+      if (agents.length === 0) {
+        listContainer.innerHTML = '<div class="p-6 text-center text-slate-400">No agents found for this entity.</div>';
+      } else {
+        listContainer.innerHTML = agents.map(u => {
+          const perf = MockBackend.getPerformance(u.id);
+          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-amber-500') : 'text-slate-300';
+          const scoreText = perf ? perf.score + '%' : 'N/A';
+          const isSelected = selectedAgentForUpload && selectedAgentForUpload.id === u.id;
+          const bgClass = isSelected ? 'bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500' : 'bg-white hover:bg-slate-50 border-slate-200';
+
+          return `
+            <div onclick="toggleAdminAgentSelection('${u.id}')" 
+                 class="cursor-pointer ${bgClass} p-4 rounded-2xl border transition-all mb-2 flex items-center justify-between group dark:bg-slate-700 dark:border-slate-600">
+               <div>
+                  <h4 class="font-bold text-slate-700 dark:text-slate-200">${u.name}</h4>
+                  <p class="text-xs text-slate-400 font-mono">${u.id}</p>
+               </div>
+               <div class="text-right">
+                  <div class="font-black ${scoreClass} text-lg">${scoreText}</div>
+                  <div class="text-[10px] text-slate-400 uppercase">Current</div>
+               </div>
+            </div>
+           `;
+        }).join('');
+      }
+    }
+
+    function toggleAdminAgentSelection(id) {
+      // Toggle logic
+      if (selectedAgentForUpload && selectedAgentForUpload.id === id) {
+        // Deselect (Optional, user might prefer sticking)
+        // selectedAgentForUpload = null; 
+        // But usually we just switch.
+      } else {
+        selectedAgentForUpload = USER_DB.find(u => u.id === id);
+      }
+
+      renderAdminDashboard(); // Re-render list to show active state
+      updateUploadFormUI();
+    }
+
+    function updateUploadFormUI() {
+      const placeholder = document.getElementById('indiv-agent-selected');
+      const form = document.getElementById('indiv-upload-form');
+
+      if (selectedAgentForUpload) {
+        placeholder.classList.add('hidden');
+        placeholder.classList.remove('flex');
+        form.classList.remove('hidden');
+
+        document.getElementById('selected-agent-name').innerText = selectedAgentForUpload.name;
+        document.getElementById('selected-agent-id').innerText = selectedAgentForUpload.id;
+
+        // Update current score badge
+        const perf = MockBackend.getPerformance(selectedAgentForUpload.id);
+        const badge = document.getElementById('current-score-badge');
+        if (perf) {
+          badge.innerHTML = `Current Score: <span class="${perf.score >= 90 ? 'text-emerald-600' : 'text-amber-600'}">${perf.score}%</span>`;
+        } else {
+          badge.innerHTML = `Current Score: <span class="text-slate-400">Not Scored</span>`;
+        }
+
+      } else {
+        placeholder.classList.remove('hidden');
+        placeholder.classList.add('flex');
+        form.classList.add('hidden');
+      }
+    }
+
+    function calculateTotalScore() {
+      const audit = parseInt(document.getElementById('indiv-score').value) || 0;
+      const errors = parseInt(document.getElementById('indiv-errors').value);
+      const compliance = parseInt(document.getElementById('indiv-compliance').value) || 0;
+
+      const display = document.getElementById('calc-total-score');
+
+      // Logic: 
+      // If Fatal Error (1) -> Score 0
+      // Else -> Average of Audit & Compliance? Or just Audit?
+      // User said "choose the score 0 and hundred... automatically fetch total"
+      // Let's assume strict compliance.
+
+      let total = 0;
+
+      if (document.getElementById('indiv-errors').value === "") {
+        display.innerText = "--";
+        return;
+      }
+
+      if (errors === 1) {
+        total = 0;
+      } else {
+        // If no fatal errors
+        // Using simple average for now, standard QA math
+        total = (audit + compliance) / 2;
+      }
+
+      display.innerText = total + "%";
+      if (total === 100) display.className = "text-2xl font-black text-emerald-500";
+      else if (total === 0) display.className = "text-2xl font-black text-red-500";
+      else display.className = "text-2xl font-black text-indigo-600";
+    }
+
+    function handleFileUpload() {
+      const fileInput = document.getElementById('admin-file-upload');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+
+        // Read file content
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const content = e.target.result;
+          try {
+            MockBackend.addReport(file, content);
+            alert(`Successfully uploaded "${file.name}"`);
+            renderAdminDashboard(); // Refresh UI
+          } catch (err) {
+            alert('Upload failed: File might be too large for browser storage.');
+            console.error(err);
+          }
+        };
+        reader.readAsDataURL(file);
+
+        fileInput.value = ''; // Reset
+      } else {
+        alert('Please select a file first.');
+      }
+    }
+
+    function handleDeleteReport(id) {
+      if (confirm('Are you sure you want to delete this report? It will be removed for all agents.')) {
+        MockBackend.deleteReport(id);
+        renderAdminDashboard(); // Refresh
+      }
+    }
+
+    function handleDeleteComment(id) {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        MockBackend.deleteComment(id);
+        renderAdminDashboard(); // Refresh
+      }
+    }
+
+    function renderAgentDashboard() {
+      if (currentUser) {
+        document.getElementById('agent-name-display').innerText = currentUser.name;
+      }
+    }
+
+    function openAgentPerformanceModal() {
+      if (!currentUser) return;
+      const modal = document.getElementById('agent-performance-modal');
+      const contentLoaded = document.getElementById('perf-content-loaded');
+      const contentEmpty = document.getElementById('perf-content-empty');
+
+      document.getElementById('modal-agent-id').innerText = `ID: ${currentUser.id}`;
+      modal.classList.remove('hidden');
+
+      const perfData = MockBackend.getPerformance(currentUser.id);
+
+      if (perfData) {
+        contentLoaded.classList.remove('hidden');
+        contentEmpty.classList.add('hidden');
+
+        // Populate Scores
+        document.getElementById('modal-audit-score').innerText = perfData.score;
+        document.getElementById('modal-fatal-errors').innerText = perfData.errors;
+        document.getElementById('modal-compliance').innerText = perfData.compliance === '100' ? '100%' : '0%';
+
+        // Calculate Total if not saved, or use saved logic. 
+        // Since we save specific fields, let's re-calculate display total or assume Audit is main.
+        // User said "Total Quality Score... automatically fetch".
+        // In Admin calc we did: If Fatal=1 -> 0, else (Audit+Comp)/2. Let's replicate or use saved.
+        // We should ideally save the Total. But for now re-calc.
+        let total = 0;
+        const audit = parseInt(perfData.score) || 0;
+        const comp = parseInt(perfData.compliance) || 0;
+        const errors = parseInt(perfData.errors) || 0;
+
+        if (errors === 1) total = 0;
+        else total = (audit + comp) / 2;
+
+        document.getElementById('modal-total-score').innerText = total + '%';
+
+        // Populate Proofs
+        const proofsList = document.getElementById('modal-proofs-list');
+        if (perfData.proofs && perfData.proofs.length > 0) {
+          proofsList.innerHTML = perfData.proofs.map(p => `
+                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+                   <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
+                      <div>
+                         <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
+                         <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
+                      </div>
+                   </div>
+                   <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
+                </div>
+             `).join('');
+        } else {
+          proofsList.innerHTML = '<p class="col-span-2 text-center text-slate-400 italic">No proofs attached.</p>';
+        }
+
+      } else {
+        contentLoaded.classList.add('hidden');
+        contentEmpty.classList.remove('hidden');
+      }
+    }
+
+    function closeAgentPerformanceModal() {
+      document.getElementById('agent-performance-modal').classList.add('hidden');
+    }
+
+    // BULK PERFORMANCE MANAGER
+    function renderBulkAgentList() {
+      const entity = document.getElementById('bulk-entity-select').value;
+      const listContainer = document.getElementById('bulk-agent-list');
+      const interfaceDiv = document.getElementById('bulk-manager-interface');
+
+      if (!entity) {
+        interfaceDiv.classList.add('hidden');
+        return;
+      }
+
+      // Filter Agents by Entity
+      const agents = USER_DB.filter(u => u.entity === entity && u.role === 'agent');
+
+      if (agents.length === 0) {
+        listContainer.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No agents found for this entity.</td></tr>';
+      } else {
+        listContainer.innerHTML = agents.map(user => {
+          const perf = MockBackend.getPerformance(user.id);
+          const scoreDisplay = perf ?
+            `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-bold">${perf.score}%</span>` :
+            `<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded text-xs">--</span>`;
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+              <td class="p-4 text-center">
+                <input type="checkbox" value="${user.id}" class="agent-checkbox w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+              </td>
+              <td class="p-4 font-bold text-slate-700 dark:text-slate-300">${user.name}</td>
+              <td class="p-4 text-sm text-slate-500 font-mono">${user.id}</td>
+              <td class="p-4 text-right">${scoreDisplay}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+      interfaceDiv.classList.remove('hidden');
+    }
+
+    function toggleAllAgents(source) {
+      const checkboxes = document.querySelectorAll('.agent-checkbox');
+      checkboxes.forEach(cb => cb.checked = source.checked);
+    }
+
+    function applyBulkUpdate() {
+      const checkboxes = document.querySelectorAll('.agent-checkbox:checked');
+      if (checkboxes.length === 0) return alert('Please select at least one agent.');
+
+      const score = document.getElementById('bulk-score').value;
+      const errors = document.getElementById('bulk-errors').value;
+      const compliance = document.getElementById('bulk-compliance').value;
+
+      if (!confirm(`Update performance for ${checkboxes.length} agents?\nScore: ${score}%, Errors: ${errors}, Comp: ${compliance}`)) return;
+
+      checkboxes.forEach(cb => {
+        MockBackend.savePerformance(cb.value, { score, errors, compliance });
+      });
+
+      alert('Bulk update completed successfully! 🚀');
+      renderBulkAgentList(); // Refresh list to show new scores
+    }
+
+    function openReport(content, type) {
+      const win = window.open();
+      if (win) {
+        if (type.startsWith('image/')) {
+          win.document.write(`<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:#f0f0f0;"><img src="${content}" style="max-width:100%;max-height:100%;box-shadow:0 0 20px rgba(0,0,0,0.1);"></div>`);
+        } else if (type === 'application/pdf') {
+          win.document.write(`<embed width="100%" height="100%" src="${content}" type="application/pdf">`);
+        } else {
+          // Fallback for other types
+          win.document.write(`<h2 style="font-family:sans-serif;text-align:center;padding:20px;">Preview not available for this file type. Please download to view.</h2><div style="text-align:center;"><a href="${content}" download="file" style="padding:10px 20px;background:#3b82f6;color:white;text-decoration:none;border-radius:5px;">Download File</a></div>`);
+        }
+        win.document.title = "View Report";
+        win.document.close(); // Important for loading
+      } else {
+        alert('Pop-up blocked! Please allow pop-ups for this site to view reports.');
+      }
+    }
+
+    function handleCommentSubmit() {
+      const input = document.getElementById('agent-comment-input');
+      const text = input.value.trim();
+
+      if (!text) return alert('Please write a comment first.');
+      if (!currentUser) return alert('You must be logged in.');
+
+      MockBackend.addComment(text, currentUser.id);
+      alert('Feedback sent to Admin successfully!');
+      input.value = '';
+    }
+
+    function logout() {
+      currentUser = null;
+      navigateTo('view-home');
+    }
+
+
+
+    function handleAgentSearch(query) {
+      const resultsDiv = document.getElementById('indiv-agent-results');
+      if (!query || query.length < 2) {
+        resultsDiv.classList.add('hidden');
+        return;
+      }
+
+      const matched = USER_DB.filter(u =>
+        u.role === 'agent' &&
+        (u.name.toLowerCase().includes(query.toLowerCase()) || u.id.toLowerCase().includes(query.toLowerCase()))
+      );
+
+      if (matched.length === 0) {
+        resultsDiv.innerHTML = '<div class="p-4 text-sm text-slate-500 italic">No agents found</div>';
+      } else {
+        resultsDiv.innerHTML = matched.map(u => `
+          <div onclick="selectAgent('${u.id}')" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-50 dark:border-slate-700 last:border-0">
+             <div class="font-bold text-slate-700 dark:text-slate-200">${u.name}</div>
+             <div class="text-xs text-slate-500 font-mono">${u.id} • ${u.entity}</div>
+          </div>
+        `).join('');
+      }
+      resultsDiv.classList.remove('hidden');
+    }
+
+    function selectAgent(id) {
+      selectedAgentForUpload = USER_DB.find(u => u.id === id);
+      if (!selectedAgentForUpload) return;
+
+      // Update UI
+      document.getElementById('indiv-agent-search').value = '';
+      document.getElementById('indiv-agent-results').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.remove('hidden');
+      document.getElementById('indiv-agent-selected').classList.add('flex');
+      document.getElementById('indiv-upload-form').classList.remove('hidden');
+
+      document.getElementById('selected-agent-name').innerText = selectedAgentForUpload.name;
+      document.getElementById('selected-agent-id').innerText = selectedAgentForUpload.id;
+
+      // Search Input hidden or disabled
+      document.getElementById('indiv-agent-search').parentElement.parentElement.classList.add('hidden');
+    }
+
+
+
+    async function submitIndividualScore() {
+      if (!selectedAgentForUpload) return alert('No agent selected.');
+
+      const score = document.getElementById('indiv-score').value;
+      const errors = document.getElementById('indiv-errors').value;
+      const compliance = document.getElementById('indiv-compliance').value;
+
+      if (!score || !errors) return alert('Please enter Score and Errors.');
+
+      // Handle File Uploads
+      const proofs = [];
+      const files = [
+        { id: 'proof-audio', name: 'Call Recording', icon: '🎤' },
+        { id: 'proof-chat', name: 'Chat Transcript', icon: '💬' },
+        { id: 'proof-email', name: 'Email Proof', icon: '✉️' }
+      ];
+
+      try {
+        for (const f of files) {
+          const input = document.getElementById(f.id);
+          if (input.files.length > 0) {
+            const file = input.files[0];
+            const content = await readFileAsBase64(file);
+            proofs.push({
+              name: f.name + ` (${file.name})`,
+              icon: f.icon,
+              type: file.type,
+              content: content
+            });
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        return alert('Error processing files. Please try again.');
+      }
+
+      // Save
+      MockBackend.savePerformance(selectedAgentForUpload.id, {
+        score,
+        errors,
+        compliance,
+        proofs
+      });
+
+      alert(`Performance updated for ${selectedAgentForUpload.name} successfully!`);
+      clearSelectedAgent();
+    }
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    const searchData = [
+      { name: 'Knowledge Base', id: 'view-kb' },
+      { name: 'Brand Entities', id: 'view-entities' },
+      { name: 'New Updates', id: 'view-updates' },
+      { name: 'Resources', id: 'view-resources' },
+      { name: 'BharatLoan', id: 'view-bharatloan' },
+      { name: 'Rupee112', id: 'view-rupee112' },
+      { name: 'Loan112', id: 'view-loan112' },
+      { name: 'RupeeOnTime', id: 'view-rupeeontime' },
+      { name: 'Quality Assurance Checklist', id: 'view-checklist' },
+      { name: 'BharatLoan Portal', id: 'view-bharatloan' },
+      { name: 'Rupee112 Portal', id: 'view-rupee112' },
+      { name: 'Loan112 Portal', id: 'view-loan112' },
+      { name: 'RupeeOnTime Portal', id: 'view-rupeeontime' },
+      { name: 'WOCOM 365', id: 'view-bharatloan' },
+      { name: 'Yellow Ai', id: 'view-bharatloan' },
+      { name: 'Outlook', id: 'view-bharatloan' },
+    ];
+
+    let currentEntity = '';
+    let currentUser = null;
+
+    const ENTITY_VIEW_MAP = {
+      'view-bharatloan': 'BharatLoan',
+      'view-rupee112': 'Rupee112',
+      'view-loan112': 'Loan112',
+      'view-rupeeontime': 'RupeeOnTime'
+    };
+
+    function navigateTo(id) {
+      // CHECK ACCESS PERMISSION
+      if (currentUser) {
+        if (currentUser.entity !== 'ALL') {
+          const targetEntity = ENTITY_VIEW_MAP[id];
+          if (targetEntity && targetEntity !== currentUser.entity) {
+
+            // Dynamic check: Update modal text to ensure it matches requirement
+            const modalTitle = document.getElementById('access-denied-title');
+            if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
+
+            // Show Access Denied Modal
+            document.getElementById('access-denied-modal').classList.remove('hidden');
+            return; // STOP NAVIGATION
+          }
+        }
+      }
+
+      document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Close search after navigation
+      document.getElementById('search-bar').classList.add('hidden');
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '';
+    }
+
+    function toggleFaq(btn) {
+      btn.parentElement.classList.toggle('active');
+    }
+
+    function showTab(tab, entity = '') {
+      const prefix = entity ? '-' + entity : '';
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      // Remove active from all tabs
+      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}` : '#tab-guidelines, #tab-tools';
+      document.querySelectorAll(tabSelectors).forEach(btn => {
+        btn.classList.remove('text-blue-600', 'border-blue-600');
+        btn.classList.add('text-slate-500', 'border-transparent');
+      });
+      // Show selected tab content
+      document.getElementById('content-' + tab + prefix).classList.remove('hidden');
+      // Activate selected tab
+      document.getElementById('tab-' + tab + prefix).classList.add('text-blue-600', 'border-blue-600');
+      document.getElementById('tab-' + tab + prefix).classList.remove('text-slate-500', 'border-transparent');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      const text = document.getElementById('theme-text');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.innerText = '🌙';
+        text.innerText = 'Dark';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        icon.innerText = '☀️';
+        text.innerText = 'Light';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    function toggleDropdown(entity) {
+      const dropdown = document.getElementById('support-dropdown' + (entity ? '-' + entity : ''));
+      dropdown.classList.toggle('hidden');
+    }
+
+    function toggleSearch() {
+      const bar = document.getElementById('search-bar');
+      bar.classList.toggle('hidden');
+      if (!bar.classList.contains('hidden')) {
+        document.getElementById('search-input').focus();
+      } else {
+        document.getElementById('search-input').value = '';
+        document.getElementById('search-results').innerHTML = '';
+      }
+    }
+
+    function performSearch(query) {
+      const resultsDiv = document.getElementById('search-results');
+      if (!query.trim()) {
+        resultsDiv.innerHTML = '';
+        return;
+      }
+      const filtered = searchData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+      resultsDiv.innerHTML = filtered.map(item => `<div onclick="navigateTo('${item.id}')" class="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">${item.name}</div>`).join('');
+    }
+
+    function showLogin(entity) {
+      currentEntity = entity;
+      document.getElementById('login-title').innerText = `Login to ${entity}`;
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    function hideLogin() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('empid').value = '';
+    }
+
+    // USER DATABASE
+    const USER_DB = [
+      { id: 'ADMIN/001', name: 'Administrator', role: 'admin', entity: 'ALL' },
+      { id: 'BL/GG/25/703', name: 'SHARAD ADHIKARI', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/704', name: 'DIVYANSHU SHARMA', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/705', name: 'AYUSHMAN TIBREWAL', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1189', name: 'Khushi Kumari', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/712', name: 'AKSHAY NAGIA', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1021', name: 'Chitresh Kumar', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1022', name: 'Akshat', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1055', name: 'KAJAL', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1134', name: 'Isha', role: 'agent', entity: 'BharatLoan' },
+
+      { id: 'BL/GG/25/1240', name: 'KUNDAN KUMAR', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1338', name: 'MOHIT KUMAR', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/26/042', name: 'MOHD. KAIF', role: 'agent', entity: 'BharatLoan' },
+
+
+      // LOAN112 AGENTS
+      { id: 'L112/GG/25/021', name: 'RITU YADAV', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/047', name: 'Hari Kishan', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/022', name: 'ADITYA SINGH', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/015', name: 'Kunal Kukreti', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/086', name: 'Joba', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/026', name: 'AMAAN KHAN', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/087', name: 'Ajit', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/046', name: 'Avinash', role: 'agent', entity: 'Loan112' },
+
+      // RUPEE112 AGENTS
+      { id: 'R112/GG/25/710', name: 'Priya Kumari', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/24/410', name: 'CHANDAN PANDAY', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/24/432', name: 'SHEETAL SINGH', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/623', name: 'GUNJAN', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/707', name: 'Dunna Vishal', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/754', name: 'Nishu Yadav', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/724', name: 'Aryan', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/732', name: 'Ansh Rai', role: 'agent', entity: 'Rupee112' },
+      { id: 'RDA/GG/25/006', name: 'Ashish Rawat', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/24/478', name: 'KOMAL', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/725', name: 'Kusum sharma', role: 'agent', entity: 'Rupee112' },
+      { id: 'RDA/GG/25/038', name: 'Nippi', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/23/168', name: 'Ruksar', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' }
+    ];
+
+    function submitLogin(event) {
+      event.preventDefault();
+      const empId = document.getElementById('empid').value.trim();
+
+      const user = USER_DB.find(u => u.id === empId);
+
+      if (user) {
+        // STRICT ENTITY CHECK
+        if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
+          // Show Access Denied Modal using the updated title ID
+          const modalTitle = document.getElementById('access-denied-title');
+          if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
+
+          hideLogin();
+          document.getElementById('access-denied-modal').classList.remove('hidden');
+          return;
+        }
+
+        currentUser = user;
+
+        if (user.role === 'admin') {
+          renderAdminDashboard();
+          navigateTo('view-admin');
+        } else {
+          // Update Title
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome, ${user.name}`;
+
+          renderAgentDashboard();
+          navigateTo('view-performance');
+        }
+        hideLogin();
+      } else {
+        alert('Invalid Employee ID. Please check your credentials.');
+      }
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').innerText = '☀️';
+        document.getElementById('theme-text').innerText = 'Light';
+      }
+    }
+  </script>
 
 </body>
+
 </html>
