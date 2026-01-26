@@ -1037,7 +1037,7 @@
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📁</span>
-            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span>
+            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span> (<span id="selected-process-type" class="text-green-600"></span>)
           </h2>
           <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to Agent List
@@ -1068,7 +1068,7 @@
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
-            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span>
+            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span> (<span id="selected-process-feedback" class="text-blue-600"></span>)
           </h2>
           <button onclick="backToFileSelection()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
             ← Back to File Selection
@@ -1076,8 +1076,9 @@
         </div>
 
         <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
             <div><strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="selected-process-feedback-display" class="font-medium"></span></div>
             <div><strong>File:</strong> <span id="selected-file-name" class="truncate"></span></div>
           </div>
         </div>
@@ -1130,8 +1131,9 @@
         </div>
 
         <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
             <div><strong>Agent ID:</strong> <span id="selected-agent-id-additional" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="process-type-additional"></span></div>
             <div><strong>Interaction:</strong> <span id="interaction-type-additional"></span></div>
           </div>
           <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
@@ -1196,8 +1198,9 @@
         </div>
 
         <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-slate-600 dark:text-slate-300">
             <div><strong>Agent ID:</strong> <span id="selected-agent-id-scoring" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="process-type-display"></span></div>
             <div><strong>Interaction:</strong> <span id="interaction-type-display"></span></div>
             <div><strong>File:</strong> <span id="scoring-file-name" class="truncate"></span></div>
           </div>
@@ -1568,6 +1571,7 @@
     // NEW WORKFLOW FUNCTIONS
     let selectedAgentForReview = null;
     let selectedFileForReview = null;
+    let selectedProcessType = null;
 
     function onAgentSelected() {
       const agentSelector = document.getElementById('agent-selector');
@@ -1617,8 +1621,26 @@
                      <div class="text-xs text-slate-400 uppercase">Current Score</div>
                   </div>
                </div>
+
+               <!-- Process Selection -->
+               <div class="mb-4">
+                 <label class="block text-sm font-semibold mb-3">Select Process Type</label>
+                 <div class="grid grid-cols-2 gap-3">
+                   <button onclick="selectProcessType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center" id="voice-btn">
+                     <div class="text-2xl mb-1">📞</div>
+                     <div class="font-medium">Voice</div>
+                     <div class="text-xs text-slate-500">Phone calls</div>
+                   </button>
+                   <button onclick="selectProcessType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center" id="non-voice-btn">
+                     <div class="text-2xl mb-1">💬</div>
+                     <div class="font-medium">Non-Voice</div>
+                     <div class="text-xs text-slate-500">Chat/Email</div>
+                   </button>
+                 </div>
+               </div>
+
                <div class="flex gap-3">
-                  <button onclick="${buttonAction}" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">
+                  <button onclick="startQualityReview()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn" disabled>
                      ${buttonText}
                   </button>
                   <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
@@ -1636,8 +1658,33 @@
       }
     }
 
+    function selectProcessType(processType) {
+      selectedProcessType = processType;
+
+      // Update button styles to show selection
+      const voiceBtn = document.getElementById('voice-btn');
+      const nonVoiceBtn = document.getElementById('non-voice-btn');
+      const startBtn = document.getElementById('start-review-btn');
+
+      if (processType === 'voice') {
+        voiceBtn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        voiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        nonVoiceBtn.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        nonVoiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      } else {
+        nonVoiceBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        nonVoiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        voiceBtn.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        voiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      }
+
+      // Enable start review button
+      startBtn.disabled = false;
+      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
     function startQualityReview() {
-      if (selectedAgentForReview) {
+      if (selectedAgentForReview && selectedProcessType) {
         // Hide agent details, show file selection section
         document.getElementById('admin-agent-list-section').classList.add('hidden');
         document.getElementById('file-selection-section').classList.remove('hidden');
@@ -1645,6 +1692,7 @@
         // Set agent info in file selection section
         document.getElementById('selected-agent-name-file').innerText = selectedAgentForReview.name;
         document.getElementById('selected-agent-id-file').innerText = selectedAgentForReview.id;
+        document.getElementById('selected-process-type').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
       }
     }
 
@@ -1659,6 +1707,7 @@
       // Clear selections
       selectedAgentForReview = null;
       selectedFileForReview = null;
+      selectedProcessType = null;
       localStorage.removeItem('currentQualityFeedback');
     }
 
@@ -1679,6 +1728,8 @@
       // Set agent and file info in feedback section
       document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
+      document.getElementById('selected-process-feedback').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('selected-process-feedback-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
       document.getElementById('selected-file-name').innerText = selectedFileForReview.name;
     }
 
@@ -1706,6 +1757,7 @@
       const feedbackData = {
         agentId: selectedAgentForReview.id,
         file: selectedFileForReview,
+        processType: selectedProcessType,
         interactionType: interactionType.value,
         feedback: feedback,
         timestamp: new Date().toISOString()
@@ -1724,6 +1776,7 @@
       // Set agent info in additional feedback section
       document.getElementById('selected-agent-name-additional').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-additional').innerText = selectedAgentForReview.id;
+      document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
       document.getElementById('interaction-type-additional').innerText = interactionType.value.charAt(0).toUpperCase() + interactionType.value.slice(1);
       document.getElementById('primary-feedback-display').innerText = feedback;
 
@@ -1879,6 +1932,7 @@
       // Set agent info in scoring section
       document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
+      document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
       document.getElementById('interaction-type-display').innerText = existingData.interactionType.charAt(0).toUpperCase() + existingData.interactionType.slice(1);
       document.getElementById('scoring-file-name').innerText = existingData.fileName;
       document.getElementById('feedback-display').innerText = existingData.feedback;
@@ -2024,7 +2078,7 @@
             <span class="text-sm text-slate-500">${new Date(review.timestamp).toLocaleDateString()}</span>
           </div>
           <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            File: ${review.fileName} | Score: ${review.score}/100
+            Process: ${review.processType === 'voice' ? 'Voice' : 'Non-Voice'} | File: ${review.fileName} | Score: ${review.score}/100
           </div>
         `;
         reviewSummary.appendChild(reviewDiv);
