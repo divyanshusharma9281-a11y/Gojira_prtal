@@ -1113,6 +1113,72 @@
 
         <button onclick="submitFeedbackAndProceed()"
           class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
+          Proceed to Additional Feedback
+        </button>
+      </div>
+
+      <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
+      <div id="additional-feedback-section" class="hidden bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📝</span>
+            Additional Feedback for <span id="selected-agent-name-additional" class="text-purple-600"></span>
+          </h2>
+          <button onclick="backToFeedbackForm()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Feedback
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-additional" class="font-mono"></span></div>
+            <div><strong>Interaction:</strong> <span id="interaction-type-additional"></span></div>
+          </div>
+          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            <strong>Primary Feedback:</strong> <span id="primary-feedback-display"></span>
+          </div>
+        </div>
+
+        <!-- Additional Feedback Items -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-4">Additional Feedback Items (3-10 required)</label>
+          <div id="additional-feedback-container">
+            <!-- Feedback items will be added here dynamically -->
+            <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Feedback Item 1</label>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+              </div>
+              <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+            </div>
+            <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Feedback Item 2</label>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+              </div>
+              <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+            </div>
+            <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Feedback Item 3</label>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+              </div>
+              <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+            </div>
+          </div>
+
+          <div class="flex gap-3 mb-4">
+            <button onclick="addFeedbackItem()" class="bg-purple-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-purple-600 transition text-sm" id="add-feedback-btn">
+              + Add Feedback Item
+            </button>
+            <span class="text-sm text-slate-500 self-center">
+              Items: <span id="feedback-count">3</span>/10
+            </span>
+          </div>
+        </div>
+
+        <button onclick="submitAdditionalFeedback()"
+          class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-500/30">
           Proceed to Scoring
         </button>
       </div>
@@ -1217,123 +1283,6 @@
               <!-- JS Populates this -->
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <!-- Individual Agent Upload Section -->
-      <div class="mb-12">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">👤</span>
-          Individual Agent Performance
-        </h2>
-
-        <!-- Agent Search -->
-        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl mb-6 border border-slate-200 dark:border-slate-700">
-          <label class="block text-sm font-semibold mb-2">Search Agent by Name or ID</label>
-          <input type="text" id="indiv-agent-search" oninput="handleAgentSearch(this.value)"
-            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-          <div id="indiv-agent-results" class="mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg max-h-40 overflow-y-auto hidden"></div>
-        </div>
-
-        <!-- Selected Agent Placeholder -->
-        <div id="indiv-agent-selected" class="hidden flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-600">
-          <div class="text-center">
-            <div class="text-4xl mb-2">👤</div>
-            <p class="text-slate-500">Select an agent to upload performance data</p>
-          </div>
-        </div>
-
-        <!-- Individual Upload Form -->
-        <div id="indiv-upload-form" class="hidden bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-          <div class="mb-6 p-4 bg-emerald-50 dark:bg-slate-700 rounded-xl">
-            <h3 class="font-bold text-lg mb-2">Selected Agent</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300">
-              <strong>Name:</strong> <span id="selected-agent-name">--</span><br>
-              <strong>ID:</strong> <span id="selected-agent-id">--</span><br>
-              <span id="current-score-badge">Current Score: Not Scored</span>
-            </p>
-          </div>
-
-          <!-- Score Inputs -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div>
-              <label class="block text-sm font-semibold mb-2">Audit Score (%)</label>
-              <select id="indiv-score" onchange="calculateTotalScore()"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-                <option value="">Select Score</option>
-                <option value="100">100%</option>
-                <option value="90">90%</option>
-                <option value="80">80%</option>
-                <option value="70">70%</option>
-                <option value="60">60%</option>
-                <option value="50">50%</option>
-                <option value="40">40%</option>
-                <option value="30">30%</option>
-                <option value="20">20%</option>
-                <option value="10">10%</option>
-                <option value="0">0%</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2">Fatal Errors</label>
-              <select id="indiv-errors" onchange="calculateTotalScore()"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-                <option value="">Select</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2">Compliance (%)</label>
-              <select id="indiv-compliance" onchange="calculateTotalScore()"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none">
-                <option value="">Select Compliance</option>
-                <option value="100">100%</option>
-                <option value="0">0%</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Calculated Total -->
-          <div class="mb-6 p-4 bg-blue-50 dark:bg-slate-700 rounded-xl text-center">
-            <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Calculated Total Score</p>
-            <div id="calc-total-score" class="text-3xl font-black text-blue-600">--</div>
-          </div>
-
-          <!-- Proof Uploads -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <!-- Proof 1: Call Recording -->
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-              <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-                <span>🎤</span> Call Recording
-              </label>
-              <input type="file" id="proof-audio" accept="audio/*"
-                class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-            </div>
-
-            <!-- Proof 2: Chat Transcript -->
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-              <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-                <span>💬</span> Chat Transcript
-              </label>
-              <input type="file" id="proof-chat" accept="image/*,application/pdf"
-                class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-            </div>
-
-            <!-- Proof 3: Email -->
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-              <label class="block text-sm font-bold mb-2 flex items-center gap-2">
-                <span>✉️</span> Email Proof
-              </label>
-              <input type="file" id="proof-email" accept="image/*,application/pdf"
-                class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:bg-slate-100 dark:file:bg-slate-600 file:text-slate-700 dark:file:text-white file:border-0 hover:file:bg-slate-200">
-            </div>
-          </div>
-
-          <button onclick="submitIndividualScore()"
-            class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30 text-lg flex justify-center items-center gap-2">
-            <span>Submit Performance</span>
-          </button>
         </div>
       </div>
 
@@ -1540,10 +1489,12 @@
       // Add agent options
       agents.forEach(agent => {
         const perf = MockBackend.getPerformance(agent.id);
+        const pendingReviews = getPendingReviews(agent.id);
+        const reviewProgress = pendingReviews.length > 0 ? ` (${pendingReviews.length}/3 reviews)` : '';
         const scoreText = perf ? `${perf.score}%` : 'Not Scored';
         const option = document.createElement('option');
         option.value = agent.id;
-        option.textContent = `${agent.name} (${agent.id}) - ${scoreText}`;
+        option.textContent = `${agent.name} (${agent.id}) - ${scoreText}${reviewProgress}`;
         agentSelector.appendChild(option);
       });
 
@@ -1632,8 +1583,25 @@
           // Populate agent details
           const agentListContainer = document.getElementById('admin-agent-list');
           const perf = MockBackend.getPerformance(selectedAgentForReview.id);
+          const pendingReviews = getPendingReviews(selectedAgentForReview.id);
           const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-red-500') : 'text-slate-300';
           const scoreText = perf ? perf.score + '%' : 'Not Scored';
+
+          const reviewStatus = pendingReviews.length === 0
+            ? 'No reviews in progress'
+            : pendingReviews.length >= 3
+              ? 'Ready for final submission'
+              : `${pendingReviews.length}/3 reviews completed`;
+
+          const buttonText = pendingReviews.length >= 3
+            ? 'Complete Final Submission'
+            : pendingReviews.length === 0
+              ? 'Start Quality Review'
+              : `Continue Review (${pendingReviews.length}/3)`;
+
+          const buttonAction = pendingReviews.length >= 3
+            ? 'showFinalSubmissionOptionForSelectedAgent()'
+            : 'startQualityReview()';
 
           agentListContainer.innerHTML = `
             <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
@@ -1642,6 +1610,7 @@
                      <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
                      <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
                      <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
+                     <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
                   </div>
                   <div class="text-right">
                      <div class="font-black ${scoreClass} text-2xl">${scoreText}</div>
@@ -1649,8 +1618,8 @@
                   </div>
                </div>
                <div class="flex gap-3">
-                  <button onclick="startQualityReview()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">
-                     Start Quality Review
+                  <button onclick="${buttonAction}" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">
+                     ${buttonText}
                   </button>
                   <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
                      Clear Selection
@@ -1748,22 +1717,216 @@
         fileName: selectedFileForReview.name
       }));
 
-      // Hide feedback form, show scoring section
+      // Hide feedback form, show additional feedback section
       document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('additional-feedback-section').classList.remove('hidden');
+
+      // Set agent info in additional feedback section
+      document.getElementById('selected-agent-name-additional').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-additional').innerText = selectedAgentForReview.id;
+      document.getElementById('interaction-type-additional').innerText = interactionType.value.charAt(0).toUpperCase() + interactionType.value.slice(1);
+      document.getElementById('primary-feedback-display').innerText = feedback;
+
+      // Initialize with 3 default feedback items
+      initializeAdditionalFeedback();
+    }
+
+    function initializeAdditionalFeedback() {
+      // The HTML already has 3 default feedback items
+      // Just update the count and ensure proper button states
+      updateFeedbackCount();
+
+      // Ensure the first 3 items have disabled remove buttons
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackItems = container.querySelectorAll('.feedback-item');
+      feedbackItems.forEach((item, index) => {
+        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
+        if (index < 3) {
+          removeBtn.disabled = true;
+          removeBtn.classList.add('opacity-50');
+        } else {
+          removeBtn.disabled = false;
+          removeBtn.classList.remove('opacity-50');
+        }
+      });
+    }
+
+    function backToFeedbackForm() {
+      // Hide additional feedback, show feedback form
+      document.getElementById('additional-feedback-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
+    }
+
+    function addFeedbackItem() {
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackItems = container.querySelectorAll('.feedback-item');
+      const count = feedbackItems.length;
+
+      if (count >= 10) {
+        alert('Maximum 10 feedback items allowed.');
+        return;
+      }
+
+      const newItem = document.createElement('div');
+      newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
+      newItem.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm font-medium">Feedback Item ${count + 1}</label>
+          <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+        </div>
+        <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+      `;
+
+      container.appendChild(newItem);
+      updateFeedbackCount();
+
+      // Disable add button if at max
+      if (count + 1 >= 10) {
+        document.getElementById('add-feedback-btn').disabled = true;
+        document.getElementById('add-feedback-btn').classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Update remove button states for all items
+      const allItems = container.querySelectorAll('.feedback-item');
+      allItems.forEach((item, index) => {
+        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
+        if (index < 3) {
+          removeBtn.disabled = true;
+          removeBtn.classList.add('opacity-50');
+        } else {
+          removeBtn.disabled = false;
+          removeBtn.classList.remove('opacity-50');
+        }
+      });
+    }
+
+    function removeFeedbackItem(button) {
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackItems = container.querySelectorAll('.feedback-item');
+      const count = feedbackItems.length;
+
+      if (count <= 3) {
+        alert('Minimum 3 feedback items required.');
+        return;
+      }
+
+      button.closest('.feedback-item').remove();
+      updateFeedbackCount();
+
+      // Re-enable add button if below max
+      document.getElementById('add-feedback-btn').disabled = false;
+      document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+      // Renumber remaining items and update remove button states
+      const remainingItems = container.querySelectorAll('.feedback-item');
+      remainingItems.forEach((item, index) => {
+        const label = item.querySelector('label');
+        label.textContent = `Feedback Item ${index + 1}`;
+
+        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
+        if (index < 3) {
+          removeBtn.disabled = true;
+          removeBtn.classList.add('opacity-50');
+        } else {
+          removeBtn.disabled = false;
+          removeBtn.classList.remove('opacity-50');
+        }
+      });
+    }
+
+    function updateFeedbackCount() {
+      const container = document.getElementById('additional-feedback-container');
+      const count = container.querySelectorAll('.feedback-item').length;
+      document.getElementById('feedback-count').textContent = count;
+    }
+
+    function submitAdditionalFeedback() {
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackInputs = container.querySelectorAll('.feedback-item input');
+      const additionalFeedback = [];
+
+      // Validate minimum 3 items
+      if (feedbackInputs.length < 3) {
+        alert('Minimum 3 feedback items required.');
+        return;
+      }
+
+      // Collect feedback items
+      feedbackInputs.forEach(input => {
+        const value = input.value.trim();
+        if (value) {
+          additionalFeedback.push(value);
+        }
+      });
+
+      // Validate that we have at least 3 non-empty items
+      if (additionalFeedback.length < 3) {
+        alert('Please fill in at least 3 feedback items.');
+        return;
+      }
+
+      // Get existing feedback data and add additional feedback
+      const existingData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
+      existingData.additionalFeedback = additionalFeedback;
+
+      // Update localStorage
+      localStorage.setItem('currentQualityFeedback', JSON.stringify(existingData));
+
+      // Hide additional feedback, show scoring section
+      document.getElementById('additional-feedback-section').classList.add('hidden');
       document.getElementById('scoring-section').classList.remove('hidden');
 
       // Set agent info in scoring section
       document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
-      document.getElementById('interaction-type-display').innerText = interactionType.value.charAt(0).toUpperCase() + interactionType.value.slice(1);
-      document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
-      document.getElementById('feedback-display').innerText = feedback;
+      document.getElementById('interaction-type-display').innerText = existingData.interactionType.charAt(0).toUpperCase() + existingData.interactionType.slice(1);
+      document.getElementById('scoring-file-name').innerText = existingData.fileName;
+      document.getElementById('feedback-display').innerText = existingData.feedback;
     }
 
     function backToFeedback() {
-      // Hide scoring, show feedback form
+      // Hide scoring, show additional feedback section
       document.getElementById('scoring-section').classList.add('hidden');
-      document.getElementById('feedback-form-section').classList.remove('hidden');
+      document.getElementById('additional-feedback-section').classList.remove('hidden');
+
+      // Restore additional feedback data
+      const feedbackData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
+      if (feedbackData && feedbackData.additionalFeedback) {
+        restoreAdditionalFeedback(feedbackData.additionalFeedback);
+      }
+    }
+
+    function restoreAdditionalFeedback(feedbackItems) {
+      const container = document.getElementById('additional-feedback-container');
+      container.innerHTML = ''; // Clear existing
+
+      feedbackItems.forEach((item, index) => {
+        const newItem = document.createElement('div');
+        newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
+        const isDisabled = index < 3;
+        newItem.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item ${index + 1}</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm ${isDisabled ? 'opacity-50' : ''}" ${isDisabled ? 'disabled' : ''}>Remove</button>
+          </div>
+          <input type="text" value="${item}" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        `;
+
+        container.appendChild(newItem);
+      });
+
+      updateFeedbackCount();
+
+      // Update add button state
+      const count = feedbackItems.length;
+      const addBtn = document.getElementById('add-feedback-btn');
+      if (count >= 10) {
+        addBtn.disabled = true;
+        addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        addBtn.disabled = false;
+        addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
     }
 
     function submitPerformanceScore() {
@@ -1780,52 +1943,242 @@
         return;
       }
 
-      // Save the performance score
-      const performanceData = {
+      // Save this review to pending reviews for the agent
+      const reviewData = {
         agentId: selectedAgentForReview.id,
         score: parseInt(score.value),
-        isFatal: score.value === '0', // 0 score means fatal
+        isFatal: score.value === '0',
         feedbackData: feedbackData,
+        timestamp: new Date().toISOString(),
+        reviewerId: currentUser.id,
+        fileName: feedbackData.fileName
+      };
+
+      savePendingReview(reviewData);
+
+      // Clear temporary data
+      localStorage.removeItem('currentQualityFeedback');
+
+      // Check if agent now has 3+ reviews
+      const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+      if (pendingReviews.length >= 3) {
+        // Show final submission option
+        showFinalSubmissionOption(selectedAgentForReview.id);
+      } else {
+        // Continue with next review
+        alert(`Review ${pendingReviews.length} of 3 completed. Please conduct ${3 - pendingReviews.length} more review(s) for this agent.`);
+
+        // Reset workflow for next review
+        resetForNextReview();
+      }
+    }
+
+    function savePendingReview(reviewData) {
+      const pendingReviews = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      if (!pendingReviews[reviewData.agentId]) {
+        pendingReviews[reviewData.agentId] = [];
+      }
+      pendingReviews[reviewData.agentId].push(reviewData);
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(pendingReviews));
+    }
+
+    function getPendingReviews(agentId) {
+      const pendingReviews = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      return pendingReviews[agentId] || [];
+    }
+
+    function showFinalSubmissionOption(agentId) {
+      const pendingReviews = getPendingReviews(agentId);
+      const agent = USER_DB.find(u => u.id === agentId);
+
+      // Hide current workflow sections
+      document.getElementById('scoring-section').classList.add('hidden');
+
+      // Show final submission section
+      const finalSection = document.getElementById('final-submission-section');
+      if (!finalSection) {
+        // Create the final submission section
+        createFinalSubmissionSection();
+      }
+
+      document.getElementById('final-submission-section').classList.remove('hidden');
+
+      // Populate final submission data
+      document.getElementById('final-agent-name').innerText = agent.name;
+      document.getElementById('final-agent-id').innerText = agent.id;
+
+      // Calculate average score
+      const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
+      const averageScore = Math.round(totalScore / pendingReviews.length);
+      document.getElementById('final-average-score').innerText = averageScore;
+
+      // Show review summary
+      const reviewSummary = document.getElementById('final-review-summary');
+      reviewSummary.innerHTML = '';
+      pendingReviews.forEach((review, index) => {
+        const reviewDiv = document.createElement('div');
+        reviewDiv.className = 'p-3 bg-slate-50 dark:bg-slate-700 rounded-lg mb-2';
+        reviewDiv.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-medium">Review ${index + 1}</span>
+            <span class="text-sm text-slate-500">${new Date(review.timestamp).toLocaleDateString()}</span>
+          </div>
+          <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+            File: ${review.fileName} | Score: ${review.score}/100
+          </div>
+        `;
+        reviewSummary.appendChild(reviewDiv);
+      });
+    }
+
+    function createFinalSubmissionSection() {
+      const section = document.createElement('div');
+      section.id = 'final-submission-section';
+      section.className = 'hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700';
+
+      section.innerHTML = `
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-green-600 text-white rounded-lg p-2 text-xl">✅</span>
+            Final Performance Submission for <span id="final-agent-name" class="text-green-600"></span>
+          </h2>
+          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            Cancel Process
+          </button>
+        </div>
+
+        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="final-agent-id" class="font-mono"></span></div>
+            <div><strong>Average Score:</strong> <span id="final-average-score" class="font-bold text-green-600"></span>/100</div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-4">Review Summary (3 Reviews Completed)</h3>
+          <div id="final-review-summary" class="space-y-2">
+            <!-- Review summaries will be populated here -->
+          </div>
+        </div>
+
+        <div class="mb-6 p-4 bg-yellow-50 dark:bg-slate-700 rounded-xl border border-yellow-200 dark:border-slate-600">
+          <p class="text-sm text-yellow-800 dark:text-yellow-200">
+            <strong>Note:</strong> This will calculate the final performance score based on the average of all 3 reviews and update the agent's performance record.
+          </p>
+        </div>
+
+        <button onclick="submitFinalPerformanceScore()"
+          class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30">
+          Submit Final Performance Score
+        </button>
+      `;
+
+      // Insert after the scoring section
+      const scoringSection = document.getElementById('scoring-section');
+      scoringSection.parentNode.insertBefore(section, scoringSection.nextSibling);
+    }
+
+    function submitFinalPerformanceScore() {
+      const agentId = document.getElementById('final-agent-id').innerText;
+      const pendingReviews = getPendingReviews(agentId);
+
+      if (pendingReviews.length < 3) {
+        alert('Minimum 3 reviews required before final submission.');
+        return;
+      }
+
+      // Calculate final score (average of all reviews)
+      const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
+      const finalScore = Math.round(totalScore / pendingReviews.length);
+
+      // Check if any review was fatal (score = 0)
+      const hasFatal = pendingReviews.some(review => review.isFatal);
+
+      // Save the final performance score
+      const performanceData = {
+        agentId: agentId,
+        score: finalScore,
+        isFatal: hasFatal,
+        feedbackData: { reviews: pendingReviews }, // Store all reviews
         timestamp: new Date().toISOString(),
         reviewerId: currentUser.id
       };
 
       MockBackend.savePerformanceScore(performanceData);
 
-      // Clear temporary data
-      localStorage.removeItem('currentQualityFeedback');
+      // Clear pending reviews for this agent
+      const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      delete allPending[agentId];
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(allPending));
 
-      // Reset workflow - hide all sections and reset to agent selection
-      document.getElementById('scoring-section').classList.add('hidden');
+      // Reset workflow
+      document.getElementById('final-submission-section').classList.add('hidden');
       document.getElementById('admin-agent-list-section').classList.add('hidden');
 
-      // Reset selected agent and file
+      // Reset selections
       selectedAgentForReview = null;
       selectedFileForReview = null;
-
-      // Reset agent selector
       document.getElementById('agent-selector').value = '';
 
-      // Refresh the dashboard to update agent scores in dropdown
+      // Refresh dashboard
       renderAdminDashboard();
 
-      alert('Performance score submitted successfully!');
+      alert(`Final performance score (${finalScore}/100) submitted successfully for agent!`);
+    }
+
+    function showFinalSubmissionOptionForSelectedAgent() {
+      if (selectedAgentForReview) {
+        showFinalSubmissionOption(selectedAgentForReview.id);
+      }
     }
 
     function cancelReviewProcess() {
       // Clear any temporary data
       localStorage.removeItem('currentQualityFeedback');
+
+      // If there's a selected agent with pending reviews, ask if they want to clear them
+      if (selectedAgentForReview) {
+        const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+        if (pendingReviews.length > 0) {
+          const clearPending = confirm(`This agent has ${pendingReviews.length} pending review(s). Do you want to clear all pending reviews for this agent?`);
+          if (clearPending) {
+            const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+            delete allPending[selectedAgentForReview.id];
+            localStorage.setItem('pending_agent_reviews', JSON.stringify(allPending));
+          }
+        }
+      }
+
       selectedAgentForReview = null;
       selectedFileForReview = null;
 
       // Reset to agent selection view (hide all workflow sections)
       document.getElementById('file-selection-section').classList.add('hidden');
       document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('additional-feedback-section').classList.add('hidden');
       document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('final-submission-section').classList.add('hidden');
       document.getElementById('admin-agent-list-section').classList.add('hidden');
 
       // Reset agent selector
       document.getElementById('agent-selector').value = '';
+
+      // Refresh dashboard to update agent statuses
+      renderAdminDashboard();
+    }
+
+    function resetForNextReview() {
+      // Hide scoring section
+      document.getElementById('scoring-section').classList.add('hidden');
+
+      // Reset to file selection for next review
+      document.getElementById('file-selection-section').classList.remove('hidden');
+
+      // Clear file selection
+      selectedFileForReview = null;
+      document.getElementById('file-input').value = '';
+      document.getElementById('selected-file-name').innerText = 'No file selected';
+      document.getElementById('proceed-to-feedback-btn').disabled = true;
     }
 
     function calculateTotalScore() {
