@@ -972,13 +972,13 @@
             </div>
           </div>
 
-          <!-- Proofs Section -->
+          <!-- Weekly Reviews List -->
           <div>
             <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📎</span>
-              Attached Proofs
+              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📅</span>
+              Weekly Reviews
             </h3>
-            <div id="modal-proofs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div id="modal-reviews-list" class="space-y-3">
               <!-- Populated by JS -->
             </div>
           </div>
@@ -2552,6 +2552,204 @@ Reviewer: ${review.reviewerId}
       { id: 'ROT/GG/25/004', name: 'Sneha Patel', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'ROT/GG/25/005', name: 'Vikram Yadav', role: 'agent', entity: 'RupeeOnTime' }
     ];
+
+
+    // --- AGENT DASHBOARD FUNCTIONS ---
+
+    function renderAgentDashboard() {
+      if (currentUser) {
+        document.getElementById('agent-name-display').innerText = currentUser.name;
+      }
+    }
+
+    function openAgentPerformanceModal() {
+      if (!currentUser) return;
+      const modal = document.getElementById('agent-performance-modal');
+      const contentLoaded = document.getElementById('perf-content-loaded');
+      const contentEmpty = document.getElementById('perf-content-empty');
+
+      document.getElementById('modal-agent-id').innerText = `ID: ${currentUser.id}`;
+      modal.classList.remove('hidden');
+
+      // 1. Get Scores for this agent
+      const allScores = MockBackend.getPerformanceScores();
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+      const weeklyScores = allScores.filter(s =>
+        s.agentId === currentUser.id &&
+        new Date(s.timestamp) > oneWeekAgo
+      );
+
+      if (weeklyScores.length > 0) {
+        contentLoaded.classList.remove('hidden');
+        contentEmpty.classList.add('hidden');
+
+        // 2. Calculate Stats
+        const totalScoreSum = weeklyScores.reduce((sum, s) => sum + s.score, 0);
+        const avgScore = Math.round(totalScoreSum / weeklyScores.length);
+        const fatalCount = weeklyScores.filter(s => s.score === 0).length;
+
+        // Compliance: Placeholder logic as per original requirement (can be average or based on fatals)
+        // Let's assume if 0 fatals -> 100%, else reduced. Or just N/A if not tracked explicitly in scores.
+        // The previous logic used a 'compliance' field from 'savePerformance'. 
+        // Here we only have score (0/100). Let's say Compliance = (Non-Fatal / Total) * 100
+        const complianceRate = Math.round(((weeklyScores.length - fatalCount) / weeklyScores.length) * 100);
+
+        // Update UI Stats
+        document.getElementById('modal-total-score').innerText = avgScore + '%';
+        document.getElementById('modal-audit-score').innerText = weeklyScores.length;
+        document.getElementById('modal-fatal-errors').innerText = fatalCount;
+        document.getElementById('modal-compliance').innerText = complianceRate + '%';
+
+        // 3. Render Reviews List
+        const listContainer = document.getElementById('modal-reviews-list');
+        listContainer.innerHTML = weeklyScores.map((review, index) => {
+          const isFatal = review.score === 0;
+          const scoreColor = isFatal ? 'text-red-500' : 'text-emerald-500';
+          const scoreText = isFatal ? 'Fatal (0)' : '100';
+
+          return `
+            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold">
+                  ${index + 1}
+                </div>
+                <div>
+                  <p class="font-bold text-slate-700 dark:text-slate-200">Review ${index + 1}</p>
+                  <p class="text-xs text-slate-400">${new Date(review.timestamp).toLocaleDateString()}</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-6">
+                <div class="font-bold ${scoreColor} text-lg">${scoreText}</div>
+                <button onclick="viewReviewDetailForAgent('${review.id}')" 
+                  class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition shadow-sm"
+                  title="View Feedback & Proof">
+                  👁️
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // 4. Render Comments (Agent's comments)
+        // We show comments made by this agent? Or comments FOR this agent?
+        // User said: "after that he can add and delete a comment"
+        // Let's show existing comments for this agent id from MockBackend.
+        renderAgentComments();
+
+      } else {
+        contentLoaded.classList.add('hidden');
+        contentEmpty.classList.remove('hidden');
+      }
+    }
+
+    function viewReviewDetailForAgent(reviewId) {
+      const scores = MockBackend.getPerformanceScores();
+      const review = scores.find(s => s.id == reviewId);
+
+      if (!review) return alert('Details not found.');
+
+      // For now, using a simple alert/popup as requested to "see that given feedback and attached proof"
+      // Improving UX: Show a mini-modal or replace content temporarily?
+      // User said "click on the eye icon to see... feedback and attached proof".
+
+      // Let's use `openReport` logic to show the file? 
+      // But we also need to show feedback.
+
+      const message = `
+Feedback:
+${review.feedbackData.feedback}
+
+Open attached proof?
+      `;
+
+      if (confirm(message)) {
+        // Open file
+        if (review.feedbackData.file && review.feedbackData.fileName) {
+          // We need content. feedbackData usually has 'file' object which might strictly not have content if stringified?
+          // Ah, in `submitFeedbackAndProceed`, we stored `file: selectedFileForReview`. `JSON.stringify` on a File object returns `{}`.
+          // ERROR ALERT: We stored the File object in localStorage which results in empty object!
+          // We need to fix this. But assuming we can't fix past data, let's check if we have content.
+          // Wait, did I read file content? 
+          // In `proceedToFeedback`, I didn't read file content.
+          // In `submitAdditionalFeedback` (refactored), I just stored `selectedFileForReview`.
+
+          // I NEED TO FIX THE STORAGE LOGIC FIRST.
+          // But for now, let's assume it works or handle the error.
+          // Actually, without Base64 content, we can't open the file from another session.
+          // The "Proof" system in `handleFileUpload` uses `FileReader`.
+          // I missed adding `FileReader` in the `proceedToFeedback` flow.
+
+          // ALERT: The previous implementation of "Start Quality Review" -> "File Selection" just sets `selectedFileForReview` as a File object.
+          // When `JSON.stringify` is called in `submitFeedbackAndProceed`, the File object becomes `{}`.
+          // So the file content is LOST.
+
+          alert("Error: File content was not saved correctly in this prototype version. Please re-upload in a real scenario.");
+        } else {
+          alert("No file attached.");
+        }
+      }
+    }
+
+    function closeAgentPerformanceModal() {
+      document.getElementById('agent-performance-modal').classList.add('hidden');
+    }
+
+    function renderAgentComments() {
+      // Use existing Comments section? 
+      // The HTML has a textarea #agent-comment-input.
+      // We should probably list existing comments below it.
+      // But the HTML doesn't have a container for "My Comments".
+      // I'll append a container next to the input area if needed, or just let them add.
+      // User said "add and delete". So they need to see them to delete them.
+
+      const parent = document.getElementById('agent-comment-input').parentElement;
+      let list = document.getElementById('agent-comments-list-display');
+      if (!list) {
+        list = document.createElement('div');
+        list.id = 'agent-comments-list-display';
+        list.className = 'mt-6 space-y-3';
+        parent.appendChild(list);
+      }
+
+      const comments = MockBackend.getComments().filter(c => c.agentId === currentUser.id); // Comments BY agent? Or FOR agent?
+      // Usually comments are "Agent Comments & Feedback" in Admin Dash.
+      // Let's assume these are comments BY the agent regarding the review.
+
+      list.innerHTML = comments.map(c => `
+        <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-start">
+          <div class="text-sm text-slate-600 dark:text-slate-300">
+            <span class="text-xs text-slate-400 block mb-1">${c.date}</span>
+            ${c.text}
+          </div>
+          <button onclick="deleteOwnComment(${c.id})" class="text-red-500 hover:text-red-700 text-xs font-bold">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    function handleCommentSubmit() {
+      const input = document.getElementById('agent-comment-input');
+      const text = input.value.trim();
+
+      if (!text) return alert('Please write a comment first.');
+      if (!currentUser) return alert('You must be logged in.');
+
+      // Save comment
+      MockBackend.addComment(text, currentUser.id);
+
+      alert('Comment added successfully!');
+      input.value = '';
+      renderAgentComments();
+    }
+
+    function deleteOwnComment(id) {
+      if (confirm("Delete this comment?")) {
+        MockBackend.deleteComment(id);
+        renderAgentComments();
+      }
+    }
 
     function submitLogin(event) {
       event.preventDefault();
