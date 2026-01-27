@@ -101,7 +101,8 @@
       <div class="flex flex-col items-end gap-2">
         <div class="flex items-center gap-2">
           <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
-          <button onclick="showLogin('ALL')" class="text-slate-500 hover:text-blue-600 text-sm font-semibold px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 transition">Login</button>
+          <button onclick="showLogin('ALL')"
+            class="text-slate-500 hover:text-blue-600 text-sm font-semibold px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 transition">Login</button>
           <button onclick="toggleTheme()"
             class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
             <span id="theme-icon">🌙</span>
@@ -409,7 +410,9 @@
       <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-8">
         <h2 class="text-xl font-bold mb-4">Upload Proofs for Agents</h2>
         <input type="file" id="admin-file-upload" multiple class="mb-4">
-        <button onclick="handleAdminFileUpload()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload Files</button>
+        <button onclick="handleAdminFileUpload()"
+          class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload
+          Files</button>
       </div>
 
       <!-- Uploaded Files List -->
@@ -1005,7 +1008,7 @@
       </div>
 
       <!-- Dashboard Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-8">
+      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
 
         <!-- Weekly Performance Tab/Card -->
         <div onclick="openAgentPerformanceModal()"
@@ -1024,27 +1027,6 @@
 
           <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
             <span>View Details</span>
-            <span>→</span>
-          </div>
-        </div>
-
-        <!-- Proofs from Admin -->
-        <div onclick="openAgentProofsModal()"
-          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
-            <span class="text-9xl">📄</span>
-          </div>
-
-          <div
-            class="w-16 h-16 rounded-2xl bg-green-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-green-600">
-            📎
-          </div>
-
-          <h3 class="text-2xl font-bold mb-2">Proofs from Admin</h3>
-          <p class="text-slate-500 text-sm mb-6">View proofs and documents uploaded by the admin.</p>
-
-          <div class="flex items-center gap-2 text-green-600 font-bold group-hover:gap-4 transition-all">
-            <span>View Proofs</span>
             <span>→</span>
           </div>
         </div>
@@ -2226,15 +2208,36 @@
         // Add more review
         if (pendingReviews.length >= 10) {
           alert('Maximum 10 reviews reached. Please submit final.');
-          // Maybe force final?
+          // Force final submission option
           showFinalSubmissionOption(selectedAgentForReview.id);
           return;
         }
 
         // Reset workflow for next review
         resetForNextReview();
-        alert(`Review saved. Total pending: ${pendingReviews.length}. You can add more or submit final.`);
+
+        // Calculate remaining required
+        const remaining = 3 - pendingReviews.length;
+        if (remaining > 0) {
+          alert(`Review saved. Total pending: ${pendingReviews.length}. You need ${remaining} more reviews to submit.`);
+        } else {
+          alert(`Review saved. Total pending: ${pendingReviews.length}. You can add more (up to 10) or submit final.`);
+        }
       }
+    }
+
+    function resetForNextReview() {
+      // Clear file selection and feedback form
+      selectedFileForReview = null;
+      document.getElementById('quality-feedback-file').value = '';
+      document.getElementById('feedback-observations').value = '';
+      document.querySelectorAll('input[name="performance-score"]').forEach(el => el.checked = false);
+
+      // Reset UI state to start
+      document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.remove('hidden');
+
+      // Update counts in buttons if visible? No, UI resets to file selection
     }
 
     function savePendingReview(reviewData) {
@@ -2380,7 +2383,11 @@
         score: finalAverage,
         isFatal: pendingReviews.some(r => r.isFatal),
         lastReviewDate: new Date().toLocaleString(),
-        reviewerId: currentUser.id
+        reviewerId: currentUser.id,
+        // Save aggregate stats for easy dashboard access
+        totalAudits: pendingReviews.length,
+        fatalCount: pendingReviews.filter(r => r.score === 0).length,
+        perfectCount: pendingReviews.filter(r => r.score === 100).length
       });
 
       // Clear pending reviews for this agent
@@ -2400,7 +2407,7 @@
       // Refresh dashboard
       renderAdminDashboard();
 
-      alert(`Final reviews submitted successfully! Average Score: ${finalAverage}/100.`);
+      alert('Final performance score submitted successfully!');
     }
 
     function showFinalSubmissionOptionForSelectedAgent() {
