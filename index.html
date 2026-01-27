@@ -101,8 +101,6 @@
       <div class="flex flex-col items-end gap-2">
         <div class="flex items-center gap-2">
           <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
-          <button onclick="showLogin('ALL')"
-            class="text-slate-500 hover:text-blue-600 text-sm font-semibold px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 transition">Login</button>
           <button onclick="toggleTheme()"
             class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
             <span id="theme-icon">🌙</span>
@@ -163,6 +161,7 @@
           class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-purple-600 text-white">
           <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
           <h2 class="text-2xl font-bold mb-2">Resources</h2>
+          <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
         </div>
       </div>
     </main>
@@ -393,38 +392,6 @@
     </div>
   </div>
 
-  <!-- ADMIN DASHBOARD -->
-  <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
-    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
-      <div class="flex items-center gap-4">
-        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-        <span class="font-bold text-xl">Admin Dashboard</span>
-      </div>
-      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
-    </header>
-
-    <div class="max-w-6xl mx-auto px-6 py-10">
-      <h1 class="text-3xl font-extrabold mb-8">Admin Panel</h1>
-
-      <!-- File Upload Section -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-8">
-        <h2 class="text-xl font-bold mb-4">Upload Proofs for Agents</h2>
-        <input type="file" id="admin-file-upload" multiple class="mb-4">
-        <button onclick="handleAdminFileUpload()"
-          class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload
-          Files</button>
-      </div>
-
-      <!-- Uploaded Files List -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <h2 class="text-xl font-bold mb-4">Uploaded Proofs</h2>
-        <div id="admin-reports-list" class="space-y-4">
-          <!-- Files will be listed here -->
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- BHARATLOAN SPECIFIC VIEW -->
   <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
     <header
@@ -443,10 +410,22 @@
     <div class="max-w-5xl mx-auto px-6 py-14">
       <!-- Tabs -->
       <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
         <button onclick="showTab('tools')" id="tab-tools"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
+        </div>
+      </div>
 
       <!-- Tools Tab Content -->
       <div id="content-tools" class="tab-content">
@@ -524,137 +503,12 @@
     </header>
     <div class="max-w-4xl mx-auto px-6 py-14">
       <div class="space-y-6">
-        <div
-          class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer"
-          onclick="toggleScriptTemplate()">
-          <div class="flex items-center justify-between gap-4 mb-4">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄
-              </div>
-              <div>
-                <h3 class="text-xl font-bold">Guidelines</h3>
-                <p class="text-slate-600 dark:text-slate-300">guidelines</p>
-              </div>
-            </div>
-            <span id="customer-script-toggle" class="text-slate-500 text-lg">▼</span>
-          </div>
-
-          <div id="customer-script-body"
-            class="hidden mt-4 space-y-4 text-sm text-slate-700 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
-            <p><strong>Brands:</strong> Bharat Loan | Loan 112 | Rupee 112 | Rupee On Time</p>
-
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
             <div>
-              <p class="font-bold text-indigo-600">1. Payment-Related Queries</p>
-              <p class="font-semibold">A. Payment Done but Not Reflecting on Portal</p>
-              <p><strong>Internal Action:</strong></p>
-              <ul class="list-disc ml-5 space-y-1">
-                <li>Ask: "Could you please confirm the exact amount paid?"</li>
-                <li>Verify: Confirm the amount match.</li>
-                <li>Escalate: Email the concerned team AND update the WhatsApp group.</li>
-                <li>Compulsory: Mention the confirmed payment amount in the WhatsApp group.</li>
-              </ul>
-              <p class="font-semibold mt-2">B. Payment Done and Reflecting on Portal (Verification Pending)</p>
-              <p class="italic">Agent Script: "We have received your payment of ₹[Amount]. Your payment is currently
-                under verification and will be updated within 24 hours (maximum)."</p>
-            </div>
-
-            <div>
-              <p class="font-bold text-indigo-600">2. Application-Related Queries</p>
-              <p class="font-semibold">A. Application Incomplete (Status: Lead, Partial, eKYC Pending, etc.)</p>
-              <p class="italic">Agent Script: "Your application is currently in process. Kindly complete the remaining
-                steps 100% through the [Brand Name] application. If you are facing any issues, please visit our website
-                or contact us at care@[brand].com and try again after some time."</p>
-              <p class="italic mt-1">If customer asks about processing time: "There is a maximum processing time of 24
-                hours after successful completion of your application. Once completed, a credit manager will be assigned
-                and will contact you within 24 hours."</p>
-              <p class="text-red-500 text-xs font-semibold mt-1">Strict Rule: Do not promise a 24h callback until the
-                application is 100% complete.</p>
-              <p class="font-semibold mt-2">B. Application Submitted Successfully (Reference Number Generated)</p>
-              <p class="italic">Agent Script: "Your application has been submitted successfully. Our team will contact
-                you within 24 hours."</p>
-              <p class="font-semibold mt-2">C. Repeat Customer (Bank Statement Required/100% Applied)</p>
-              <p class="italic">Agent Script: "Since you are an existing customer, your application status is in
-                process. Kindly wait while a credit manager is assigned. They will contact you within 24 hours."</p>
-            </div>
-
-            <div>
-              <p class="font-bold text-indigo-600">3. Credit Manager-Related Queries</p>
-              <table
-                class="w-full text-left text-xs border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
-                <thead class="bg-slate-100 dark:bg-slate-800">
-                  <tr>
-                    <th class="p-2">Frequency</th>
-                    <th class="p-2">Agent Action</th>
-                    <th class="p-2">Script</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="border-t border-slate-200 dark:border-slate-700">
-                    <td class="p-2">1st Time</td>
-                    <td class="p-2">Highlight/Escalate concern to team.</td>
-                    <td class="p-2">"We are escalating this; the team will contact you within 24 hours."</td>
-                  </tr>
-                  <tr class="border-t border-slate-200 dark:border-slate-700">
-                    <td class="p-2">2nd Time (Same Day)</td>
-                    <td class="p-2">Verify previous escalation log.</td>
-                    <td class="p-2">"An executive has already escalated the issue; the team will contact you within 24
-                      hours."</td>
-                  </tr>
-                  <tr class="border-t border-slate-200 dark:border-slate-700">
-                    <td class="p-2">3rd Time+</td>
-                    <td class="p-2">Tag your Manager in the escalation.</td>
-                    <td class="p-2">"We have prioritized this with senior management. Please wait for the 24h window."
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div>
-              <p class="font-bold text-indigo-600">4. Collections (Extensions, Waivers, Settlement)</p>
-              <p class="font-semibold">A. Extension Requests (Medical Reasons)</p>
-              <p class="italic">Agent Script: "We do not have the authority to grant extensions. Your case has been
-                forwarded to the collection team. If payment is not made on time, it may impact your CIBIL score, and a
-                charge of 2% per day (1% interest + 1% penalty) will apply. If you have a medical issue, please share
-                valid medical documents at care@[brand].com. Our email team will review and respond within 24 hours."
-              </p>
-              <p class="font-semibold mt-2">B. Penalty Waiver & Settlement</p>
-              <p>Ask: "May I know the reason for the waiver/settlement request?"</p>
-              <p class="italic">Script: "We do not have the authority to approve penalty waivers or settlements. Please
-                email care@[brand].com with valid reasons and supporting evidence. Your concern will be escalated, and
-                the team will update you within 24 hours."</p>
-            </div>
-
-            <div>
-              <p class="font-bold text-indigo-600">5. Disbursement-Related Queries</p>
-              <p class="font-semibold">A. Amount Not Credited (Disbursement Shown)</p>
-              <ul class="list-disc ml-5 space-y-1">
-                <li>If &lt; 48 Hours: Tell the customer to wait. Do not escalate.</li>
-                <li>If &gt; 48 Hours: Request the customer’s bank statement via email for verification. Raise the
-                  concern.</li>
-              </ul>
-              <p class="font-semibold mt-2">B. Loan Cancellation After Disbursement</p>
-              <p>Action: Immediately update the Refund Tracker under the sheet "Cancel After Disbursement." Ensure all
-                details are accurate.</p>
-            </div>
-
-            <div>
-              <p class="font-bold text-indigo-600">6. Refund-Related Queries</p>
-              <p>Ask: "Could you please confirm the refund amount you are expecting?"</p>
-              <p>Action: Raise to the email team.</p>
-              <p>Timeline: Inform the customer it takes 7–10 working days.</p>
-            </div>
-
-            <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 p-4 rounded-xl">
-              <p class="font-bold text-blue-600">📧 Email Team Mandatory Rules</p>
-              <ul class="list-disc ml-5 space-y-1 mt-2">
-                <li>DO NOT use "Sir" or "Ma'am."</li>
-                <li>DO greet the customer by their First Name.</li>
-              </ul>
-              <p class="mt-3 font-semibold">Format for Payment Confirmation:</p>
-              <p class="whitespace-pre-line text-sm mt-1">Dear [Customer Name],\n\nThis is to confirm that we have
-                received your payment as per the details below:\nLoan Number: {{Loan Number}}\nAmount Paid:
-                {{Amount}}\nDate of Payment: {{Payment Date}}</p>
+              <h3 class="text-xl font-bold">Customer Script Templates</h3>
+              <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
             </div>
           </div>
         </div>
@@ -727,12 +581,24 @@
     </header>
 
     <div class="max-w-5xl mx-auto px-6 py-14">
-      <!-- Tabs Removed. Only Tools content shown by default -->
+      <!-- Tabs -->
       <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-        <button class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+        <button onclick="showTab('guidelines')" id="tab-guidelines-rupee112"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
+        <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
-      <!-- Tools Tab Content -->
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-rupee112" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
+        </div>
+      </div>
 
       <!-- Tools Tab Content -->
       <div id="content-tools-rupee112" class="tab-content">
@@ -821,79 +687,89 @@
     <div class="max-w-5xl mx-auto px-6 py-14">
       <!-- Tabs -->
       <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines-loan112"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
         <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
-      <!-- Guidelines Tab Content REMOVED -->
-    </div>
-
-    <!-- Tools Tab Content -->
-    <div id="content-tools-loan112" class="tab-content">
-      <div class="grid gap-6">
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-loan112" class="tab-content hidden">
         <div
-          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
-                Email.
-              </p>
-            </div>
-            <a href="https://loan112fintech.com/" target="_blank"
-              class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
-              ↗</a>
-          </div>
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
         </div>
+      </div>
 
-        <div
-          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Telephony integration, lead management, and communication logging.
-              </p>
+      <!-- Tools Tab Content -->
+      <div id="content-tools-loan112" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://loan112fintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
             </div>
-            <a href="https://cpaas.wocom365.com/" target="_blank"
-              class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
-              WOCOM ↗</a>
           </div>
-        </div>
 
-        <div
-          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Handle real-time customer chats efficiently through the AI-powered cloud platform.
-              </p>
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
             </div>
-            <a href="https://cloud.yellow.ai/auth/login" target="_blank"
-              class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
-              Chat ↗</a>
           </div>
-        </div>
 
-        <div
-          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
-              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Review customer emails and attachments. Standard channel for ticketing and complex queries.
-              </p>
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
             </div>
-            <a href="https://outlook.office.com/mail/" target="_blank"
-              class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
-              ↗</a>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 
   <!-- RUPEEONTIME SPECIFIC VIEW -->
@@ -915,10 +791,22 @@
     <div class="max-w-5xl mx-auto px-6 py-14">
       <!-- Tabs -->
       <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines')" id="tab-guidelines-rupeeontime"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Guidelines</button>
         <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-rupeeontime" class="tab-content hidden">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
+          <p class="text-slate-600 dark:text-slate-400">Brand guidelines and operational procedures will be available
+            here.</p>
+        </div>
+      </div>
 
       <!-- Tools Tab Content -->
       <div id="content-tools-rupeeontime" class="tab-content">
@@ -1007,13 +895,32 @@
         <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
       </div>
 
-      <!-- View Performance Button -->
-      <div class="text-center">
-        <button onclick="openAgentPerformanceModal()" class="bg-indigo-600 text-white font-bold py-4 px-8 rounded-2xl hover:bg-indigo-700 transition shadow-lg text-lg">
-          📊 View My Performance
-        </button>
-      </div>
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
 
+        <!-- Weekly Performance Tab/Card -->
+        <div onclick="openAgentPerformanceModal()"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
+            <span class="text-9xl">📈</span>
+          </div>
+
+          <div
+            class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-indigo-600">
+            🎯
+          </div>
+
+          <h3 class="text-2xl font-bold mb-2">Weekly Performance</h3>
+          <p class="text-slate-500 text-sm mb-6">Review your audit scores, compliance stats, and proofs.</p>
+
+          <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
+            <span>View Details</span>
+            <span>→</span>
+          </div>
+        </div>
+
+
+      </div>
     </div>
   </div>
 
@@ -1055,23 +962,23 @@
             </div>
             <div
               class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal</p>
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal Errors</p>
               <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
             </div>
             <div
               class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-              <p class="text-xs font-bold uppercase text-slate-400 mb-2">100</p>
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Compliance</p>
               <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
             </div>
           </div>
 
-          <!-- Weekly Reviews List -->
+          <!-- Proofs Section -->
           <div>
             <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📅</span>
-              Weekly Reviews
+              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📎</span>
+              Attached Proofs
             </h3>
-            <div id="modal-reviews-list" class="space-y-3">
+            <div id="modal-proofs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Populated by JS -->
             </div>
           </div>
@@ -1100,61 +1007,333 @@
     </div>
   </div>
 
-  <!-- AGENT PROOFS MODAL -->
-  <div id="agent-proofs-modal"
-    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div
-      class="bg-white dark:bg-slate-900 w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col animate-scale-up">
-
-      <!-- Modal Header -->
-      <div
-        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 z-10">
-        <div>
-          <h2 class="text-2xl font-extrabold flex items-center gap-2">
-            <span>📎</span> Proofs from Admin
-          </h2>
-          <p class="text-xs text-slate-500 font-mono mt-1">Documents and proofs uploaded by the admin</p>
-        </div>
-        <button onclick="closeAgentProofsModal()"
-          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
-      </div>
-
-      <!-- Modal Content (Scrollable) -->
-      <div class="flex-1 overflow-y-auto p-8">
-        <div id="agent-proofs-content" class="space-y-6">
-          <!-- Proofs will be populated here -->
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ADMIN DASHBOARD -->
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-        <span class="font-bold text-xl">Admin Dashboard</span>
+        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span
+            id="admin-current-entity-name">ALL</span>)</span>
+        <!-- Agent Selector -->
+        <div class="flex items-center gap-2">
+          <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Select Agent:</label>
+          <select id="agent-selector" onchange="onAgentSelected()"
+            class="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="">Choose an agent...</option>
+            <!-- Agents will be populated here by JavaScript -->
+          </select>
+        </div>
       </div>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
-      <h1 class="text-3xl font-extrabold mb-8">Admin Panel</h1>
+      <!-- Hidden legacy container for compatibility -->
+      <div id="admin-agent-list-container" class="hidden"></div>
 
-      <!-- File Upload Section -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-8">
-        <h2 class="text-xl font-bold mb-4">Upload Proofs for Agents</h2>
-        <input type="file" id="admin-file-upload" multiple class="mb-4">
-        <button onclick="handleAdminFileUpload()"
-          class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload
-          Files</button>
+      <!-- Step 1: Agent List (Hidden initially) -->
+      <div id="admin-agent-list-section"
+        class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
+          Quality Review for <span id="selected-agent-display-name" class="text-blue-600"></span>
+        </h2>
+        <div id="admin-agent-list" class="grid gap-4">
+          <!-- Agent details will be shown here -->
+        </div>
       </div>
 
-      <!-- Uploaded Files List -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <h2 class="text-xl font-bold mb-4">Uploaded Proofs</h2>
-        <div id="admin-reports-list" class="space-y-4">
-          <!-- Files will be listed here -->
+      <!-- Step 2: File Selection (Hidden initially) -->
+      <div id="file-selection-section"
+        class="hidden bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📁</span>
+            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span> (<span
+              id="selected-process-type" class="text-green-600"></span>)
+          </h2>
+          <button onclick="cancelReviewProcess()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Agent List
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="text-sm text-slate-600 dark:text-slate-300">
+            <strong>Agent ID:</strong> <span id="selected-agent-id-file" class="font-mono"></span>
+          </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Select File for Quality Review</label>
+          <input type="file" id="quality-feedback-file" accept="audio/*,image/*,application/pdf"
+            class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 dark:file:bg-slate-700 dark:file:text-white">
+        </div>
+
+        <button onclick="proceedToFeedback()"
+          class="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+          Proceed to Add Feedback
+        </button>
+      </div>
+
+      <!-- Step 3: Feedback Form (Hidden initially) -->
+      <div id="feedback-form-section"
+        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
+            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span> (<span
+              id="selected-process-feedback" class="text-blue-600"></span>)
+          </h2>
+          <button onclick="backToFileSelection()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to File Selection
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="selected-process-feedback-display" class="font-medium"></span>
+            </div>
+            <div><strong>File:</strong> <span id="selected-file-name" class="truncate"></span></div>
+          </div>
+        </div>
+
+
+
+        <!-- Feedback and Observations -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Feedback and Observations</label>
+          <textarea id="feedback-observations" rows="6"
+            placeholder="Provide detailed feedback and observations about the agent's performance in this interaction..."
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
+        </div>
+
+        <button onclick="submitFeedbackAndProceed()"
+          class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
+          Proceed to Scoring
+        </button>
+      </div>
+
+      <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
+      <div id="additional-feedback-section"
+        class="hidden bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">➕</span>
+            Additional Feedback for <span id="selected-agent-name-additional" class="text-purple-600"></span>
+          </h2>
+          <button onclick="backToFeedbackForm()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Primary Feedback
+          </button>
+        </div>
+
+        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300 mb-4">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-additional" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="process-type-additional" class="font-medium"></span></div>
+            <!-- Hidden interaction type as per JS requirement -->
+            <div class="hidden"><strong>Interaction:</strong> <span id="interaction-type-additional"></span></div>
+          </div>
+          <div class="p-3 bg-slate-50 dark:bg-slate-600/50 rounded-lg">
+            <p class="text-xs text-slate-500 uppercase font-bold mb-1">Primary Feedback</p>
+            <p id="primary-feedback-display" class="text-slate-700 dark:text-slate-200 italic"></p>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <label class="block text-sm font-semibold">Additional Observations (<span
+                id="feedback-count">3</span>)</label>
+            <button onclick="addFeedbackItem()" id="add-feedback-btn"
+              class="text-purple-600 hover:text-purple-700 text-sm font-bold flex items-center gap-1">
+              + Add Item
+            </button>
+          </div>
+
+          <div id="additional-feedback-container">
+            <!-- Default 3 items will be here, JS might reset this anyway but let's provide initial structure -->
+            <div
+              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Feedback Item 1</label>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
+                  disabled>Remove</button>
+              </div>
+              <input type="text" placeholder="Enter additional feedback point..."
+                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+            </div>
+            <div
+              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Feedback Item 2</label>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
+                  disabled>Remove</button>
+              </div>
+              <input type="text" placeholder="Enter additional feedback point..."
+                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+            </div>
+            <div
+              class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Feedback Item 3</label>
+                <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50"
+                  disabled>Remove</button>
+              </div>
+              <input type="text" placeholder="Enter additional feedback point..."
+                class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <button onclick="submitAdditionalFeedback()"
+          class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-500/30">
+          Submit Additional Feedback
+        </button>
+      </div>
+
+
+
+      <!-- Step 4: Scoring Section (Hidden initially) -->
+      <div id="scoring-section"
+        class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">🎯</span>
+            Performance Scoring for <span id="selected-agent-name-scoring" class="text-amber-600"></span>
+          </h2>
+          <button onclick="backToFeedback()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Feedback
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-scoring" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="process-type-display"></span></div>
+            <div><strong>Interaction:</strong> <span id="interaction-type-display"></span></div>
+            <div><strong>File:</strong> <span id="scoring-file-name" class="truncate"></span></div>
+          </div>
+          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            <strong>Feedback:</strong> <span id="feedback-display"></span>
+          </div>
+        </div>
+
+        <!-- Performance Score -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-4">Performance Score</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label
+              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="100"
+                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-emerald-600 text-xl">100</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Excellent Performance</div>
+              </div>
+            </label>
+            <label
+              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="0"
+                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-red-600 text-xl">0</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Fatal Error</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button onclick="submitPerformanceScore(false)" id="add-review-btn"
+            class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+            Add more quality review
+          </button>
+
+          <button onclick="submitPerformanceScore(true)" id="final-submit-btn" disabled
+            class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30 opacity-50 cursor-not-allowed">
+            Submit Final Reviews
+          </button>
+        </div>
+      </div>
+
+      <!-- Manage Reports Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
+          Manage Uploaded Reports
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">File Name</th>
+                <th class="p-6">Type</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Manage Performance Reviews Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-red-600 text-white rounded-lg p-2 text-xl">🗑️</span>
+          Manage Performance Reviews
+        </h2>
+        <div class="mb-4 flex justify-end">
+          <button onclick="resetAllPerformanceData()"
+            class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
+            Reset All Performance Data
+          </button>
+        </div>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">Score</th>
+                <th class="p-6">Interaction</th>
+                <th class="p-6">File</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
+          Agent Comments & Feedback
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">Comment</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1195,195 +1374,7 @@
     </div>
   </div>
 
-  <!-- EDIT REVIEW MODAL -->
-  <div id="edit-review-modal"
-    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl p-8">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Edit Review</h2>
-        <button onclick="closeEditModal()" class="text-slate-500 hover:text-red-500 font-bold text-xl">&times;</button>
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-bold mb-2">Observation/Feedback</label>
-        <textarea id="edit-feedback-input" rows="4"
-          class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-      </div>
-
-      <div class="mb-6">
-        <label class="block text-sm font-bold mb-2">Score</label>
-        <div class="flex gap-4">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="edit-score" value="100" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-            <span class="font-bold text-emerald-600">100 (Pass)</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="edit-score" value="0" class="w-4 h-4 text-red-600 focus:ring-red-500">
-            <span class="font-bold text-red-600">0 (Fatal)</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="flex gap-4">
-        <button onclick="saveEditedReview()"
-          class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">Save
-          Changes</button>
-        <button onclick="closeEditModal()"
-          class="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-3 rounded-xl hover:bg-slate-300 dark:hover:bg-slate-700 transition">Cancel</button>
-      </div>
-      <input type="hidden" id="edit-review-id">
-    </div>
-  </div>
-
-  <!-- VIEW REVIEW MODAL -->
-  <div id="view-review-modal"
-    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div
-      class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-      <!-- Header -->
-      <div
-        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
-        <div>
-          <h2 class="text-2xl font-extrabold flex items-center gap-2">
-            <span>👁️</span> Review Details
-          </h2>
-          <p class="text-xs text-slate-500 font-mono mt-1" id="view-modal-agent-id">--</p>
-        </div>
-        <button onclick="closeViewModal()"
-          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
-      </div>
-
-      <!-- Content -->
-      <div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Left: Details -->
-        <div class="space-y-6">
-          <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-            <div class="text-xs font-bold uppercase text-slate-400 mb-1">Score</div>
-            <div id="view-modal-score" class="text-3xl font-black">--</div>
-          </div>
-
-          <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-            <div class="text-xs font-bold uppercase text-slate-400 mb-1">Observation/Feedback</div>
-            <p id="view-modal-feedback" class="text-slate-700 dark:text-slate-300 italic">--</p>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <div class="text-xs font-bold uppercase text-slate-400 mb-1">Process</div>
-              <div id="view-modal-process" class="font-medium">--</div>
-            </div>
-            <div>
-              <div class="text-xs font-bold uppercase text-slate-400 mb-1">Review Date</div>
-              <div id="view-modal-date" class="font-medium">--</div>
-            </div>
-            <div>
-              <div class="text-xs font-bold uppercase text-slate-400 mb-1">File Name</div>
-              <div id="view-modal-filename" class="font-mono text-xs truncate">--</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: File Preview -->
-        <div
-          class="flex flex-col h-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
-          <div id="view-modal-preview-container" class="flex-1 flex items-center justify-center p-4">
-            <!-- Preview Content Injected Here -->
-            <p class="text-slate-400 text-sm">Loading preview...</p>
-          </div>
-          <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition">
-            <a id="view-modal-download-link" href="#" download
-              class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg hover:bg-blue-700">Download</a>
-          </div>
-        </div>
-      </div>
-
-  <!-- VIEW AUDIT MODAL -->
-  <div id="view-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 id="view-modal-title" class="text-2xl font-extrabold">Audit Report Details</h2>
-        <button onclick="closeViewModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
-      </div>
-      <div class="flex-1 overflow-y-auto p-8">
-        <div id="view-modal-content">
-          <!-- Content will be populated by JS -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- EDIT AUDIT MODAL -->
-  <div id="edit-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 id="edit-modal-title" class="text-2xl font-extrabold">Edit Audit Report</h2>
-        <button onclick="closeEditModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
-      </div>
-      <div class="flex-1 overflow-y-auto p-8">
-        <div id="edit-modal-content">
-          <!-- Content will be populated by JS -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AGENT VIEW AUDIT ITEM MODAL -->
-
-
   <script>
-    // --- IndexedDB Handler for Large Files ---
-    class FileDB {
-      static get dbName() { return 'GojiraFilesDB'; }
-      static get storeName() { return 'files'; }
-
-      static async open() {
-        return new Promise((resolve, reject) => {
-          const request = indexedDB.open(this.dbName, 1);
-          request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains(this.storeName)) {
-              db.createObjectStore(this.storeName, { keyPath: 'id' });
-            }
-          };
-          request.onsuccess = (event) => resolve(event.target.result);
-          request.onerror = (event) => reject(event.target.error);
-        });
-      }
-
-      static async saveFile(id, content) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction([this.storeName], 'readwrite');
-          const store = transaction.objectStore(this.storeName);
-          const request = store.put({ id, content, timestamp: Date.now() });
-          request.onsuccess = () => resolve();
-          request.onerror = (e) => reject(e.target.error);
-        });
-      }
-
-      static async getFile(id) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction([this.storeName], 'readonly');
-          const store = transaction.objectStore(this.storeName);
-          const request = store.get(id);
-          request.onsuccess = (e) => resolve(e.target.result ? e.target.result.content : null);
-          request.onerror = (e) => reject(e.target.error);
-        });
-      }
-
-      static async deleteFile(id) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction([this.storeName], 'readwrite');
-          const store = transaction.objectStore(this.storeName);
-          const request = store.delete(id);
-          request.onsuccess = () => resolve();
-          request.onerror = (e) => reject(e.target.error);
-        });
-      }
-    }
-
     // MOCK BACKEND
     class MockBackend {
       static getReports() {
@@ -1394,7 +1385,6 @@
         const reports = this.getReports();
         reports.unshift({
           id: Date.now(),
-          timestamp: new Date().toISOString(),
           name: file.name,
           type: file.type || 'Unknown',
           date: new Date().toLocaleString(),
@@ -1414,7 +1404,6 @@
         const comments = this.getComments();
         comments.unshift({
           id: Date.now(),
-          timestamp: new Date().toISOString(),
           text,
           agentId,
           date: new Date().toLocaleString()
@@ -1432,18 +1421,6 @@
         localStorage.setItem('gojira_reports', JSON.stringify(reports));
       }
 
-      static deleteAllReports() {
-        localStorage.removeItem('gojira_reports');
-      }
-
-      static deleteAllComments() {
-        localStorage.removeItem('gojira_comments');
-      }
-
-      static deleteAllPerformanceScores() {
-        localStorage.removeItem('gojira_performance_scores');
-      }
-
       // PERFORMANCE DATA
       static getPerformance(agentId) {
         const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
@@ -1459,51 +1436,18 @@
         localStorage.setItem('gojira_performance', JSON.stringify(db));
       }
 
-      static addPerformanceHistory(performanceData) {
+      static savePerformanceScore(performanceData) {
         const scores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
         scores.unshift({
-          id: Date.now() + Math.floor(Math.random() * 1000), // Ensure unique ID
+          id: Date.now(),
           ...performanceData
         });
-
-        // Strict limit to avoid QuotaExceededError with Base64 files
-        // A single file can be 2MB+. LocalStorage is ~5MB. 
-        // We can only keep very few full records.
-        if (scores.length > 15) scores.pop(); // aggressive pruning
-
-        try {
-          localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
-        } catch (e) {
-          if (e.name === 'QuotaExceededError' || e.code === 22) {
-            alert("Storage Full! Cannot save new review history with files. Oldest data will be removed.");
-
-            // Fallback: Prune aggressively
-            // Remove the one we just added to try saving it after pruning others
-            scores.shift();
-
-            // Remove oldest 3
-            scores.splice(scores.length - 3, 3);
-
-            // Try adding again
-            try {
-              scores.unshift({
-                id: Date.now() + Math.floor(Math.random() * 1000),
-                ...performanceData
-              });
-              localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
-            } catch (retryErr) {
-              console.error("Critical Storage Error", retryErr);
-              alert("Critical Storage Error: Could not save review even after pruning. Browser storage is full. Review saved without history.");
-            }
-          }
-        }
-      }
-
-      static savePerformanceScore(performanceData) {
-        // Legacy wrapper: saves history AND updates status
-        this.addPerformanceHistory(performanceData);
+        // Keep only last 50 scores to prevent storage bloat
+        if (scores.length > 50) scores.pop();
+        localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
 
         // Update the agent's current performance score
+        const currentPerf = this.getPerformance(performanceData.agentId) || {};
         this.savePerformance(performanceData.agentId, {
           score: performanceData.score,
           isFatal: performanceData.isFatal,
@@ -1524,104 +1468,501 @@
           // Remove the score
           const updatedScores = scores.filter(s => s.id != scoreId);
           localStorage.setItem('gojira_performance_scores', JSON.stringify(updatedScores));
-        }
-      }
 
-      static updatePerformanceScore(id, updates) {
-        const scores = this.getPerformanceScores();
-        const index = scores.findIndex(s => s.id == id);
-        if (index !== -1) {
-          scores[index].score = updates.score;
-          scores[index].isFatal = updates.isFatal;
-          if (scores[index].feedbackData) {
-            scores[index].feedbackData.feedback = updates.feedback;
+          // Check if this was the agent's most recent score
+          const agentScores = updatedScores.filter(s => s.agentId === scoreToDelete.agentId);
+          if (agentScores.length === 0) {
+            // No more scores for this agent, remove their performance record
+            const performanceDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+            delete performanceDb[scoreToDelete.agentId];
+            localStorage.setItem('gojira_performance', JSON.stringify(performanceDb));
+          } else {
+            // Update with the most recent remaining score
+            const latestScore = agentScores.reduce((latest, current) =>
+              new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
+            );
+            this.savePerformance(scoreToDelete.agentId, {
+              score: latestScore.score,
+              isFatal: latestScore.isFatal,
+              lastReviewDate: new Date(latestScore.timestamp).toLocaleString(),
+              reviewerId: latestScore.reviewerId
+            });
           }
-          localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
-        }
-      }
-
-      static cleanupOldData() {
-        // Keep only last 7 days of data across tables
-        const scores = this.getPerformanceScores();
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-        const recentScores = scores.filter(s => new Date(s.timestamp) > oneWeekAgo);
-
-        if (scores.length !== recentScores.length) {
-          localStorage.setItem('gojira_performance_scores', JSON.stringify(recentScores));
-          console.log('Cleaned up old performance data.');
-
-          // Note: We might also need to update 'gojira_performance' (current status)
-          // But that's derived from the latest score. 
-          // If we delete all history for an agent, we should probably clear their current status too.
-          const agentsWithScores = new Set(recentScores.map(s => s.agentId));
-          const performanceDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
-
-          Object.keys(performanceDb).forEach(agentId => {
-            if (!agentsWithScores.has(agentId)) {
-              delete performanceDb[agentId];
-            }
-          });
-          localStorage.setItem('gojira_performance', JSON.stringify(performanceDb));
-        }
-
-        // Cleanup comments (keep 7 days)
-        const comments = this.getComments();
-        const recentComments = comments.filter(c => new Date(c.timestamp) > oneWeekAgo);
-
-        if (comments.length !== recentComments.length) {
-          localStorage.setItem('gojira_comments', JSON.stringify(recentComments));
-          console.log('Cleaned up old comments.');
         }
       }
 
       static clearAllPerformanceData() {
-        // Clears everything admin typically wants to reset
-        localStorage.removeItem('pending_agent_reviews');
+        // Clear all performance scores history
+        localStorage.removeItem('gojira_performance_scores');
+        // Clear all current performance records
         localStorage.removeItem('gojira_performance');
-        this.deleteAllPerformanceScores();
       }
     }
 
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
+      // 1. Set Entity Header
+      const entityContext = currentEntity || 'ALL'; // Fallback
+      document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
+
+      // 2. Populate Agent Selector Dropdown
+      const agentSelector = document.getElementById('agent-selector');
+
+      // Filter Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entityContext !== 'ALL') {
+        agents = agents.filter(u => u.entity === entityContext);
+      }
+
+      // Clear existing options except the first one
+      agentSelector.innerHTML = '<option value="">Choose an agent...</option>';
+
+      // Add agent options
+      agents.forEach(agent => {
+        const perf = MockBackend.getPerformance(agent.id);
+        const pendingReviews = getPendingReviews(agent.id);
+        const reviewProgress = pendingReviews.length > 0 ? ` (${pendingReviews.length}/3 reviews)` : '';
+        const scoreText = perf ? `${perf.score}%` : 'Not Scored';
+        const option = document.createElement('option');
+        option.value = agent.id;
+        option.textContent = `${agent.name} (${agent.id}) - ${scoreText}${reviewProgress}`;
+        agentSelector.appendChild(option);
+      });
+
+      // 3. Populate Reports Table
       const reports = MockBackend.getReports();
       const reportsList = document.getElementById('admin-reports-list');
-
       if (reports.length === 0) {
-        reportsList.innerHTML = '<p class="text-slate-500 text-center py-4">No files uploaded yet.</p>';
+        reportsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No reports uploaded yet.</td></tr>';
       } else {
-        reportsList.innerHTML = reports.map(report => {
-          const agent = USER_DB.find(u => u.id === report.agentId);
-          const agentName = agent ? agent.name : report.agentId;
-          const date = new Date(report.timestamp).toLocaleString();
+        reportsList.innerHTML = reports.map(r => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${r.date}</td>
+            <td class="p-6">${r.name}</td>
+            <td class="p-6">${r.type || 'Unknown'}</td>
+            <td class="p-6 text-right">
+              <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+              <button onclick="handleDeleteReport(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 4. Populate Performance Reviews Table
+      const reviews = MockBackend.getPerformanceScores();
+      const reviewsList = document.getElementById('admin-reviews-list');
+      if (reviews.length === 0) {
+        reviewsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No performance reviews yet.</td></tr>';
+      } else {
+        reviewsList.innerHTML = reviews.map(r => {
+          const agent = USER_DB.find(u => u.id === r.agentId);
+          const agentName = agent ? agent.name : r.agentId;
+          const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
+          const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
+          const date = new Date(r.timestamp).toLocaleString();
 
           return `
-            <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">📄</div>
-                <div>
-                  <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${report.fileName}</p>
-                  <p class="text-[10px] text-slate-400 uppercase">${date} • ${agentName}</p>
-                </div>
-              </div>
-              <div class="flex gap-2">
-                <button onclick="openReport('${report.content}', '${report.type}')" class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-100 transition">View 👁️</button>
-                <button onclick="handleDeleteReport('${report.id}')" class="bg-red-50 dark:bg-red-900/30 text-red-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition">Delete 🗑️</button>
-              </div>
-            </div>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6">${date}</td>
+              <td class="p-6">${agentName}</td>
+              <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
+              <td class="p-6">--</td>
+              <td class="p-6">${r.feedbackData.fileName}</td>
+              <td class="p-6 text-right">
+                <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+              </td>
+            </tr>
           `;
         }).join('');
       }
+
+      // 5. Populate Comments Table
+      const comments = MockBackend.getComments();
+      const commentsList = document.getElementById('admin-comments-list');
+      if (comments.length === 0) {
+        commentsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No comments yet.</td></tr>';
+      } else {
+        commentsList.innerHTML = comments.map(c => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${c.date}</td>
+            <td class="p-6">${USER_DB.find(u => u.id === c.agentId)?.name || c.agentId}</td>
+            <td class="p-6">${c.text}</td>
+            <td class="p-6 text-right">
+              <button onclick="handleDeleteComment(${c.id})" class="text-red-600 hover:text-red-800">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
     }
 
+    // NEW WORKFLOW FUNCTIONS
+    let selectedAgentForReview = null;
+    let selectedFileForReview = null;
+    let selectedProcessType = null;
 
+    function onAgentSelected() {
+      const agentSelector = document.getElementById('agent-selector');
+      const selectedAgentId = agentSelector.value;
+
+      if (selectedAgentId) {
+        selectedAgentForReview = USER_DB.find(u => u.id === selectedAgentId);
+        if (selectedAgentForReview) {
+          // Show agent details section and populate it
+          document.getElementById('admin-agent-list-section').classList.remove('hidden');
+          document.getElementById('selected-agent-display-name').innerText = selectedAgentForReview.name;
+
+          // Populate agent details
+          const agentListContainer = document.getElementById('admin-agent-list');
+          const perf = MockBackend.getPerformance(selectedAgentForReview.id);
+          const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-red-500') : 'text-slate-300';
+          const scoreText = perf ? perf.score + '%' : 'Not Scored';
+
+          const reviewStatus = pendingReviews.length === 0
+            ? 'No reviews in progress'
+            : pendingReviews.length >= 3
+              ? 'Ready for final submission'
+              : `${pendingReviews.length}/3 reviews completed`;
+
+          const buttonText = pendingReviews.length >= 3
+            ? 'Complete Final Submission'
+            : pendingReviews.length === 0
+              ? 'Start Quality Review'
+              : `Continue Review (${pendingReviews.length}/3)`;
+
+          const buttonAction = pendingReviews.length >= 3
+            ? 'showFinalSubmissionOptionForSelectedAgent()'
+            : 'startQualityReview()';
+
+          agentListContainer.innerHTML = `
+            <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
+               <div class="flex items-center justify-between mb-4">
+                  <div>
+                     <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
+                     <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
+                     <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
+                     <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
+                  </div>
+                  <div class="text-right">
+                     <div class="font-black ${scoreClass} text-2xl">${scoreText}</div>
+                     <div class="text-xs text-slate-400 uppercase">Current Score</div>
+                  </div>
+               </div>
+
+               <!-- Process Selection -->
+               <div class="mb-4">
+                 <label class="block text-sm font-semibold mb-3">Select Process Type</label>
+                 <div class="grid grid-cols-2 gap-3">
+                   <button onclick="selectProcessType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center" id="voice-btn">
+                     <div class="text-2xl mb-1">📞</div>
+                     <div class="font-medium">Voice</div>
+                     <div class="text-xs text-slate-500">Phone calls</div>
+                   </button>
+                   <button onclick="selectProcessType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center" id="non-voice-btn">
+                     <div class="text-2xl mb-1">💬</div>
+                     <div class="font-medium">Non-Voice</div>
+                     <div class="text-xs text-slate-500">Chat/Email</div>
+                   </button>
+                 </div>
+               </div>
+
+               <div class="flex gap-3">
+                  <button onclick="startQualityReview()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn" disabled>
+                     ${buttonText}
+                  </button>
+                  <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
+                     Clear Selection
+                  </button>
+               </div>
+            </div>
+          `;
+        }
+      } else {
+        // Hide agent details section if no agent selected
+        document.getElementById('admin-agent-list-section').classList.add('hidden');
+        selectedAgentForReview = null;
+        clearAgentSelection();
+      }
+    }
+
+    function selectProcessType(processType) {
+      selectedProcessType = processType;
+
+      // Update button styles to show selection
+      const voiceBtn = document.getElementById('voice-btn');
+      const nonVoiceBtn = document.getElementById('non-voice-btn');
+      const startBtn = document.getElementById('start-review-btn');
+
+      if (processType === 'voice') {
+        voiceBtn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        voiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        nonVoiceBtn.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        nonVoiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      } else {
+        nonVoiceBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        nonVoiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        voiceBtn.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        voiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      }
+
+      // Enable start review button
+      startBtn.disabled = false;
+      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    function startQualityReview() {
+      if (selectedAgentForReview && selectedProcessType) {
+        // Hide agent details, show file selection section
+        document.getElementById('admin-agent-list-section').classList.add('hidden');
+        document.getElementById('file-selection-section').classList.remove('hidden');
+
+        // Set agent info in file selection section
+        document.getElementById('selected-agent-name-file').innerText = selectedAgentForReview.name;
+        document.getElementById('selected-agent-id-file').innerText = selectedAgentForReview.id;
+        document.getElementById('selected-process-type').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      }
+    }
+
+    function clearAgentSelection() {
+      // Reset agent selector
+      document.getElementById('agent-selector').value = '';
+      // Hide all workflow sections
+      document.getElementById('admin-agent-list-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.add('hidden');
+      // Clear selections
+      selectedAgentForReview = null;
+      selectedFileForReview = null;
+      selectedProcessType = null;
+      localStorage.removeItem('currentQualityFeedback');
+    }
+
+    function proceedToFeedback() {
+      const fileInput = document.getElementById('quality-feedback-file');
+
+      if (!fileInput.files[0]) {
+        alert('Please select a file for quality review.');
+        return;
+      }
+
+      selectedFileForReview = fileInput.files[0];
+
+      // Hide file selection, show feedback form
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
+
+      // Set agent and file info in feedback section
+      document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
+      document.getElementById('selected-process-feedback').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('selected-process-feedback-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('selected-file-name').innerText = selectedFileForReview.name;
+    }
+
+    function backToFileSelection() {
+      // Hide feedback form, show file selection
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.remove('hidden');
+    }
+
+    function submitFeedbackAndProceed() {
+      const feedback = document.getElementById('feedback-observations').value.trim();
+
+
+      if (!feedback) {
+        alert('Please provide feedback and observations.');
+        return;
+      }
+
+      // Store feedback data temporarily
+      const feedbackData = {
+        agentId: selectedAgentForReview.id,
+        file: selectedFileForReview,
+        processType: selectedProcessType,
+        // interactionType: removed
+        feedback: feedback,
+        timestamp: new Date().toISOString()
+      };
+
+      // Store in localStorage for now
+      localStorage.setItem('currentQualityFeedback', JSON.stringify({
+        ...feedbackData,
+        fileName: selectedFileForReview.name
+      }));
+
+      // Hide feedback form, show additional feedback section
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('additional-feedback-section').classList.remove('hidden');
+
+      // Set agent info in additional feedback section
+      document.getElementById('selected-agent-name-additional').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-additional').innerText = selectedAgentForReview.id;
+      document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('process-type-additional').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      // Interaction Type removed
+      document.getElementById('interaction-type-additional').parentElement.classList.add('hidden'); // Hide the interaction type line
+      document.getElementById('primary-feedback-display').innerText = feedback;
+
+      // Initialize with 3 default feedback items
+      initializeAdditionalFeedback();
+    }
+
+    function initializeAdditionalFeedback() {
+      // The HTML already has 3 default feedback items
+      // Just update the count and ensure proper button states
+      updateFeedbackCount();
+
+      // Ensure the first 3 items have disabled remove buttons
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackItems = container.querySelectorAll('.feedback-item');
+      feedbackItems.forEach((item, index) => {
+        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
+        if (index < 3) {
+          removeBtn.disabled = true;
+          removeBtn.classList.add('opacity-50');
+        } else {
+          removeBtn.disabled = false;
+          removeBtn.classList.remove('opacity-50');
+        }
+      });
+    }
+
+    function backToFeedbackForm() {
+      // Hide additional feedback, show feedback form
+      document.getElementById('additional-feedback-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
+    }
+
+    function addFeedbackItem() {
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackItems = container.querySelectorAll('.feedback-item');
+      const count = feedbackItems.length;
+
+      if (count >= 10) {
+        alert('Maximum 10 feedback items allowed.');
+        return;
+      }
+
+      const newItem = document.createElement('div');
+      newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
+      newItem.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm font-medium">Feedback Item ${count + 1}</label>
+          <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+        </div>
+        <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+      `;
+
+      container.appendChild(newItem);
+      updateFeedbackCount();
+
+      // Disable add button if at max
+      if (count + 1 >= 10) {
+        document.getElementById('add-feedback-btn').disabled = true;
+        document.getElementById('add-feedback-btn').classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Update remove button states for all items
+      const allItems = container.querySelectorAll('.feedback-item');
+      allItems.forEach((item, index) => {
+        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
+        if (index < 3) {
+          removeBtn.disabled = true;
+          removeBtn.classList.add('opacity-50');
+        } else {
+          removeBtn.disabled = false;
+          removeBtn.classList.remove('opacity-50');
+        }
+      });
+    }
+
+    function removeFeedbackItem(button) {
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackItems = container.querySelectorAll('.feedback-item');
+      const count = feedbackItems.length;
+
+      if (count <= 3) {
+        alert('Minimum 3 feedback items required.');
+        return;
+      }
+
+      button.closest('.feedback-item').remove();
+      updateFeedbackCount();
+
+      // Re-enable add button if below max
+      document.getElementById('add-feedback-btn').disabled = false;
+      document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+      // Renumber remaining items and update remove button states
+      const remainingItems = container.querySelectorAll('.feedback-item');
+      remainingItems.forEach((item, index) => {
+        const label = item.querySelector('label');
+        label.textContent = `Feedback Item ${index + 1}`;
+
+        const removeBtn = item.querySelector('button[onclick*="removeFeedbackItem"]');
+        if (index < 3) {
+          removeBtn.disabled = true;
+          removeBtn.classList.add('opacity-50');
+        } else {
+          removeBtn.disabled = false;
+          removeBtn.classList.remove('opacity-50');
+        }
+      });
+    }
+
+    function updateFeedbackCount() {
+      const container = document.getElementById('additional-feedback-container');
+      const count = container.querySelectorAll('.feedback-item').length;
+      document.getElementById('feedback-count').textContent = count;
+    }
+
+    function submitAdditionalFeedback() {
+      const container = document.getElementById('additional-feedback-container');
+      const feedbackInputs = container.querySelectorAll('.feedback-item input');
+      const additionalFeedback = [];
+
+      // Validate minimum 3 items
+      if (feedbackInputs.length < 3) {
+        alert('Minimum 3 feedback items required.');
+        return;
+      }
+
+      // Collect feedback items
+      feedbackInputs.forEach(input => {
+        const value = input.value.trim();
+        if (value) {
+          additionalFeedback.push(value);
+        }
+      });
+
+      // Validate that we have at least 3 non-empty items
+      if (additionalFeedback.length < 3) {
+        alert('Please fill in at least 3 feedback items.');
+        return;
+      }
+
+      // Get existing feedback data and add additional feedback
+      const existingData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
+      existingData.additionalFeedback = additionalFeedback;
+
+      // Update localStorage
+      localStorage.setItem('currentQualityFeedback', JSON.stringify(existingData));
+
+      // Hide additional feedback, show scoring section
+      document.getElementById('additional-feedback-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.remove('hidden');
+
+      // Set agent info in scoring section
+      document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
-      document.getElementById('process-type-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
-      document.getElementById('feedback-display').innerText = feedback;
+      document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('process-type-display').innerText = existingData.processType === 'voice' ? 'Voice' : 'Non-Voice';
+      // document.getElementById('interaction-type-display').innerText = existingData.interactionType... removed;
       document.getElementById('interaction-type-display').parentElement.classList.add('hidden');
+      document.getElementById('scoring-file-name').innerText = existingData.fileName;
+      document.getElementById('feedback-display').innerText = existingData.feedback;
 
       // Update Submit Button State
       const pendingReviews = getPendingReviews(selectedAgentForReview.id);
@@ -1660,6 +2001,38 @@
       document.getElementById('feedback-form-section').classList.remove('hidden');
     }
 
+    function restoreAdditionalFeedback(feedbackItems) {
+      const container = document.getElementById('additional-feedback-container');
+      container.innerHTML = ''; // Clear existing
+
+      feedbackItems.forEach((item, index) => {
+        const newItem = document.createElement('div');
+        newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
+        const isDisabled = index < 3;
+        newItem.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item ${index + 1}</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm ${isDisabled ? 'opacity-50' : ''}" ${isDisabled ? 'disabled' : ''}>Remove</button>
+          </div>
+          <input type="text" value="${item}" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        `;
+
+        container.appendChild(newItem);
+      });
+
+      updateFeedbackCount();
+
+      // Update add button state
+      const count = feedbackItems.length;
+      const addBtn = document.getElementById('add-feedback-btn');
+      if (count >= 10) {
+        addBtn.disabled = true;
+        addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        addBtn.disabled = false;
+        addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
 
     function submitPerformanceScore(isFinal = false) {
       const score = document.querySelector('input[name="performance-score"]:checked');
@@ -1704,36 +2077,15 @@
         // Add more review
         if (pendingReviews.length >= 10) {
           alert('Maximum 10 reviews reached. Please submit final.');
-          // Force final submission option
+          // Maybe force final?
           showFinalSubmissionOption(selectedAgentForReview.id);
           return;
         }
 
         // Reset workflow for next review
         resetForNextReview();
-
-        // Calculate remaining required
-        const remaining = 3 - pendingReviews.length;
-        if (remaining > 0) {
-          alert(`Review saved. Total pending: ${pendingReviews.length}. You need ${remaining} more reviews to submit.`);
-        } else {
-          alert(`Review saved. Total pending: ${pendingReviews.length}. You can add more (up to 10) or submit final.`);
-        }
+        alert(`Review saved. Total pending: ${pendingReviews.length}. You can add more or submit final.`);
       }
-    }
-
-    function resetForNextReview() {
-      // Clear file selection and feedback form
-      selectedFileForReview = null;
-      document.getElementById('quality-feedback-file').value = '';
-      document.getElementById('feedback-observations').value = '';
-      document.querySelectorAll('input[name="performance-score"]').forEach(el => el.checked = false);
-
-      // Reset UI state to start
-      document.getElementById('scoring-section').classList.add('hidden');
-      document.getElementById('file-selection-section').classList.remove('hidden');
-
-      // Update counts in buttons if visible? No, UI resets to file selection
     }
 
     function savePendingReview(reviewData) {
@@ -1850,41 +2202,24 @@
         return;
       }
 
-      // Calculate final average for the Agent's profile status
+      // Calculate final score (average of all reviews)
       const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
-      const finalAverage = Math.round(totalScore / pendingReviews.length);
+      const finalScore = Math.round(totalScore / pendingReviews.length);
 
-      // Loop through EACH pending review and save it individually to history
-      // This ensures they appear as 3 separate rows in "Manage Uploaded Reports"
-      pendingReviews.forEach(review => {
-        const reviewEntry = {
-          agentId: review.agentId,
-          score: review.score,
-          isFatal: review.isFatal,
-          feedbackData: review.feedbackData, // Contains fileName, interactionType, feedback text, file reference
-          timestamp: new Date().toISOString(),
-          reviewerId: currentUser.id,
-          fileName: review.fileName // Ensure fileName is at top level too for easy access
-        };
+      // Check if any review was fatal (score = 0)
+      const hasFatal = pendingReviews.some(review => review.isFatal);
 
-        // Save to backend (History + Update Status)
-        // Note: The status will be overwritten 3 times, ending with the last one. 
-        // We might want to explicitly set the "Average" as the status AFTER.
-        MockBackend.savePerformanceScore(reviewEntry);
-      });
+      // Save the final performance score
+      const performanceData = {
+        agentId: agentId,
+        score: finalScore,
+        isFatal: hasFatal,
+        feedbackData: { reviews: pendingReviews }, // Store all reviews
+        timestamp: new Date().toISOString(),
+        reviewerId: currentUser.id
+      };
 
-      // Explicitly update the Agent's "Current Performance" to be the Average
-      // (This doesn't affect the history list, just the "Score%" shown next to agent name in dropdowns)
-      MockBackend.savePerformance(agentId, {
-        score: finalAverage,
-        isFatal: pendingReviews.some(r => r.isFatal),
-        lastReviewDate: new Date().toLocaleString(),
-        reviewerId: currentUser.id,
-        // Save aggregate stats for easy dashboard access
-        totalAudits: pendingReviews.length,
-        fatalCount: pendingReviews.filter(r => r.score === 0).length,
-        perfectCount: pendingReviews.filter(r => r.score === 100).length
-      });
+      MockBackend.savePerformanceScore(performanceData);
 
       // Clear pending reviews for this agent
       const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
@@ -1903,7 +2238,7 @@
       // Refresh dashboard
       renderAdminDashboard();
 
-      alert('Final performance score submitted successfully!');
+      alert(`Final performance score (${finalScore}/100) submitted successfully for agent!`);
     }
 
     function showFinalSubmissionOptionForSelectedAgent() {
@@ -1964,6 +2299,35 @@
       // Reset Feedback Form
       document.getElementById('feedback-observations').value = '';
 
+      // Reset Additional Feedback Section to default 3 items
+      const container = document.getElementById('additional-feedback-container');
+      container.innerHTML = `
+        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item 1</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item 2</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item 3</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+      `;
+      updateFeedbackCount();
+      document.getElementById('add-feedback-btn').disabled = false;
+      document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
       // Reset Performance Score Radios
       const scoreRadios = document.getElementsByName('performance-score');
       scoreRadios.forEach(radio => radio.checked = false);
@@ -2003,39 +2367,7 @@
       else display.className = "text-2xl font-black text-indigo-600";
     }
 
-    function recalculateAgentStats(agentId) {
-      const allScores = MockBackend.getPerformanceScores();
-      const agentReviews = allScores.filter(r => r.agentId === agentId);
-
-      if (agentReviews.length === 0) {
-        // Reset to defaults if no reviews left
-        MockBackend.savePerformance(agentId, {
-          score: 0,
-          isFatal: false,
-          lastReviewDate: 'N/A',
-          reviewerId: null,
-          totalAudits: 0,
-          fatalCount: 0,
-          perfectCount: 0
-        });
-        return;
-      }
-
-      const totalScore = agentReviews.reduce((sum, r) => sum + r.score, 0);
-      const averageScore = Math.round(totalScore / agentReviews.length);
-
-      MockBackend.savePerformance(agentId, {
-        score: averageScore,
-        isFatal: agentReviews.some(r => r.isFatal),
-        lastReviewDate: new Date().toLocaleString(),
-        reviewerId: currentUser.id,
-        totalAudits: agentReviews.length,
-        fatalCount: agentReviews.filter(r => r.score === 0).length,
-        perfectCount: agentReviews.filter(r => r.score === 100).length
-      });
-    }
-
-    function handleAdminFileUpload() {
+    function handleFileUpload() {
       const fileInput = document.getElementById('admin-file-upload');
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -2068,169 +2400,36 @@
       }
     }
 
-    function handleDeleteReview(id) {
-      if (confirm('Are you sure you want to delete this performance review?')) {
-        MockBackend.deletePerformanceScore(id);
-        renderAdminDashboard();
+    function handleDeleteComment(id) {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        MockBackend.deleteComment(id);
+        renderAdminDashboard(); // Refresh
       }
     }
 
-    function deleteAllReviews() {
-      if (!confirm('Delete ALL performance reviews? This cannot be undone.')) return;
-      MockBackend.deleteAllPerformanceScores();
-      // Also clear current performance status so dropdown reflects "Not Scored"
-      localStorage.removeItem('gojira_performance');
-      renderAdminDashboard();
-    }
-
-    function deleteAllComments() {
-      if (!confirm('Delete ALL comments? This cannot be undone.')) return;
-      MockBackend.deleteAllComments();
-      renderAdminDashboard();
-    }
-
-    function cleanupOldAdminData() {
-      MockBackend.cleanupOldData();
-      renderAdminDashboard();
-      alert('Old data cleaned (kept last 7 days).');
-    }
-
-    let currentEditingReviewId = null;
-
-    function editReview(id) {
-      const scores = MockBackend.getPerformanceScores();
-      const review = scores.find(s => s.id == id);
-      if (!review) return alert('Review not found');
-
-      currentEditingReviewId = id;
-      document.getElementById('edit-review-id').value = id;
-      document.getElementById('edit-feedback-input').value = review.feedbackData.feedback;
-
-      const scoreRadios = document.getElementsByName('edit-score');
-      scoreRadios.forEach(r => {
-        if (parseInt(r.value) === review.score) r.checked = true;
-      });
-
-      document.getElementById('edit-review-modal').classList.remove('hidden');
-    }
-
-    function closeEditModal() {
-      document.getElementById('edit-review-modal').classList.add('hidden');
-      currentEditingReviewId = null;
-    }
-
-    function saveEditedReview() {
-      if (!currentEditingReviewId) return;
-
-      const newFeedback = document.getElementById('edit-feedback-input').value;
-      const selectedScoreRadio = document.querySelector('input[name="edit-score"]:checked');
-
-      if (!selectedScoreRadio) return alert('Please select a score');
-
-      const newScore = parseInt(selectedScoreRadio.value);
-      const isFatal = newScore === 0;
-
-      MockBackend.updatePerformanceScore(currentEditingReviewId, {
-        score: newScore,
-        isFatal: isFatal,
-        feedback: newFeedback
-      });
-
-      alert('Review updated successfully');
-      closeEditModal();
-      renderAdminDashboard();
-    }
-
-    async function viewReviewDetails(reviewId) {
+    function viewReviewDetails(reviewId) {
       const reviews = MockBackend.getPerformanceScores();
       const review = reviews.find(r => r.id == reviewId);
 
-      if (!review) return alert('Review details not found.');
+      if (review) {
+        const agent = USER_DB.find(u => u.id === review.agentId);
+        const agentName = agent ? agent.name : review.agentId;
+        const date = new Date(review.timestamp).toLocaleString();
 
-      const agent = USER_DB.find(u => u.id === review.agentId);
-      const agentName = agent ? agent.name : review.agentId;
-      const date = new Date(review.timestamp).toLocaleString();
-      const scoreClass = review.score === 100 ? 'text-emerald-500' : 'text-red-500';
-      const scoreText = review.score === 0 ? '0 (Fatal Error)' : '100 (Pass)';
+        const details = `
+Review Details:
+- Date: ${date}
+- Agent: ${agentName} (${review.agentId})
+- Score: ${review.score === 0 ? '0 (Fatal Error)' : review.score}
+- Interaction Type: ${review.feedbackData.interactionType}
+- File: ${review.feedbackData.fileName}
+- Feedback: ${review.feedbackData.feedback}
 
-      // Populate Modal Fields
-      document.getElementById('view-modal-agent-id').innerText = `${agentName} (${review.agentId})`;
-      document.getElementById('view-modal-score').className = `text-3xl font-black ${scoreClass}`;
-      document.getElementById('view-modal-score').innerText = scoreText;
-      document.getElementById('view-modal-feedback').innerText = review.feedbackData.feedback || 'No feedback provided.';
-      document.getElementById('view-modal-date').innerText = date;
-      const processType = (review.feedbackData && review.feedbackData.processType) ? review.feedbackData.processType : 'N/A';
-      document.getElementById('view-modal-process').innerText = processType === 'voice' ? 'Voice Call' : 'Non-Voice (Chat/Email)';
+Reviewer: ${review.reviewerId}
+        `;
 
-      const fileName = (review.feedbackData && review.fileName) ? review.fileName : 'N/A';
-      document.getElementById('view-modal-filename').innerText = fileName;
-
-      // Setup Actions
-      document.getElementById('view-modal-edit-btn').onclick = () => { closeViewModal(); editReview(reviewId); };
-      document.getElementById('view-modal-delete-btn').onclick = () => { if (confirm('Delete this review?')) { MockBackend.deletePerformanceScore(reviewId); closeViewModal(); renderAdminDashboard(); } };
-
-      // Handle File Content
-      const previewContainer = document.getElementById('view-modal-preview-container');
-      const downloadLink = document.getElementById('view-modal-download-link');
-      previewContainer.innerHTML = '<div class="animate-pulse flex space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div></div>'; // Loading Spinner
-
-      try {
-        let content = null;
-        let type = 'application/octet-stream';
-
-        // Check where content is stored
-        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.fileId) {
-          // Fetch from IndexedDB
-          content = await FileDB.getFile(review.feedbackData.file.fileId);
-          type = review.feedbackData.file.type;
-        } else if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
-          // Legislative fallback (if stored directly)
-          content = review.feedbackData.file.content;
-          type = review.feedbackData.file.type;
-        }
-
-        if (content) {
-          downloadLink.href = content;
-          downloadLink.download = fileName;
-
-          if (type.startsWith('image/')) {
-            previewContainer.innerHTML = `<img src="${content}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">`;
-          } else if (type.startsWith('audio/')) {
-            previewContainer.innerHTML = `
-                    <div class="text-center w-full">
-                        <div class="text-4xl mb-4">🎵</div>
-                        <audio controls src="${content}" class="w-full"></audio>
-                    </div>`;
-          } else if (type === 'application/pdf') {
-            previewContainer.innerHTML = `<iframe src="${content}" class="w-full h-full rounded-lg border-0"></iframe>`;
-          } else {
-            previewContainer.innerHTML = `
-                    <div class="text-center">
-                        <div class="text-4xl mb-2">📄</div>
-                        <p class="text-sm font-bold">File Preview Not Available</p>
-                        <p class="text-xs text-slate-500">Please download to view</p>
-                    </div>`;
-          }
-        } else {
-          previewContainer.innerHTML = `
-                <div class="text-center text-slate-400">
-                    <div class="text-4xl mb-2">⚠️</div>
-                    <p>File content not found or expired.</p>
-                </div>`;
-          downloadLink.classList.add('hidden');
-        }
-
-      } catch (e) {
-        console.error("Error loading file", e);
-        previewContainer.innerHTML = `<p class="text-red-500 text-sm">Error loading file.</p>`;
+        alert(details);
       }
-
-      document.getElementById('view-review-modal').classList.remove('hidden');
-    }
-
-    function closeViewModal() {
-      document.getElementById('view-review-modal').classList.add('hidden');
-      document.getElementById('view-modal-preview-container').innerHTML = ''; // Clear memory
     }
 
     function resetAllPerformanceData() {
@@ -2278,115 +2477,43 @@
         contentLoaded.classList.remove('hidden');
         contentEmpty.classList.add('hidden');
 
-        // Populate Scores from Saved Stats (or recalculate if needed/missing)
-        let auditCount = perfData.totalAudits !== undefined ? perfData.totalAudits : 0;
-        let fatalCount = perfData.fatalCount !== undefined ? perfData.fatalCount : 0;
-        let perfectCount = perfData.perfectCount !== undefined ? perfData.perfectCount : 0;
-        let totalScore = perfData.score || 0;
+        // Populate Scores
+        document.getElementById('modal-audit-score').innerText = perfData.score;
+        document.getElementById('modal-fatal-errors').innerText = perfData.errors;
+        document.getElementById('modal-compliance').innerText = perfData.compliance === '100' ? '100%' : '0%';
 
-        // If stats are missing (legacy data), recalculate
-        if (perfData.totalAudits === undefined) {
-          const allScores = MockBackend.getPerformanceScores();
-          const agentReviews = allScores.filter(r => r.agentId === currentUser.id);
-          auditCount = agentReviews.length;
-          fatalCount = agentReviews.filter(r => r.score === 0).length;
-          perfectCount = agentReviews.filter(r => r.score === 100).length;
-          // If audits exist, calculate average
-          if (auditCount > 0) {
-            const reviewSum = agentReviews.reduce((sum, r) => sum + r.score, 0);
-            totalScore = Math.round(reviewSum / auditCount);
-          }
-        }
+        // Calculate Total if not saved, or use saved logic. 
+        // Since we save specific fields, let's re-calculate display total or assume Audit is main.
+        // User said "Total Quality Score... automatically fetch".
+        // In Admin calc we did: If Fatal=1 -> 0, else (Audit+Comp)/2. Let's replicate or use saved.
+        // We should ideally save the Total. But for now re-calc.
+        let total = 0;
+        const audit = parseInt(perfData.score) || 0;
+        const comp = parseInt(perfData.compliance) || 0;
+        const errors = parseInt(perfData.errors) || 0;
 
-        document.getElementById('modal-audit-score').innerText = auditCount;
-        document.getElementById('modal-fatal-errors').innerText = fatalCount;
-        document.getElementById('modal-compliance').innerText = perfectCount; // Using compliance block for 100 count
-        document.getElementById('modal-total-score').innerText = totalScore + '%';
+        if (errors === 1) total = 0;
+        else total = (audit + comp) / 2;
 
-        // Populate Reviews
-        const reviewsList = document.getElementById('modal-reviews-list');
-        const allScores = MockBackend.getPerformanceScores();
-        const agentReviews = allScores.filter(r => r.agentId === currentUser.id);
+        document.getElementById('modal-total-score').innerText = total + '%';
 
-        if (reviewsList) {
-          if (agentReviews.length > 0) {
-            reviewsList.innerHTML = agentReviews.map((r, index) => {
-              // Use feedbackData.file.type for display logic if needed
-              // For now just show "File"
-              const hasFile = r.feedbackData && r.feedbackData.fileName;
-              return `
-                  <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 mb-2">
-                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full ${r.isFatal ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'} flex items-center justify-center font-bold text-lg">${index + 1}</div>
-                        <div>
-                           <p class="font-bold text-sm text-slate-700 dark:text-slate-200">Score: ${r.score}</p>
-                           <p class="text-[10px] text-slate-400 uppercase">${new Date(r.timestamp).toLocaleDateString()}</p>
-                        </div>
-                        <div class="ml-4 hidden sm:block">
-                           <p class="text-xs text-slate-500 truncate max-w-[150px]">${hasFile ? '📎 ' + r.feedbackData.fileName : 'No File'}</p>
-                        </div>
-                     </div>
-                     <button onclick="viewReviewDetailForAgent(${r.id})" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
-                  </div>
-               `;
-            }).join('');
-          } else {
-            reviewsList.innerHTML = '<p class="text-center text-slate-400 italic py-4">No reviews found.</p>';
-          }
-        }
-
-        // Populate Proofs (Aggregate from reviews if perfData.proofs is missing/empty)
+        // Populate Proofs
         const proofsList = document.getElementById('modal-proofs-list');
-        if (proofsList) {
-          let proofsHtml = '';
-
-          if (perfData.proofs && perfData.proofs.length > 0) {
-            // Use Legacy/Direct Proofs
-            proofsHtml = perfData.proofs.map(p => `
-                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 mb-2">
+        if (perfData.proofs && perfData.proofs.length > 0) {
+          proofsList.innerHTML = perfData.proofs.map(p => `
+                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon || '📄'}</div>
+                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
                       <div>
                          <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
-                         <p class="text-[10px] text-slate-400 uppercase">${(p.type || '').split('/')[1] || 'FILE'}</p>
+                         <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
                       </div>
                    </div>
                    <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
                 </div>
-              `).join('');
-          } else if (agentReviews.length > 0) {
-            // Aggregate from reviews
-            const uniqueFiles = [];
-            agentReviews.forEach(r => {
-              if (r.feedbackData && r.feedbackData.file && (r.feedbackData.file.content || r.feedbackData.file.fileId)) {
-                // Avoid duplicates if needed, but reviews are unique events
-                uniqueFiles.push({
-                  name: r.fileName || r.feedbackData.fileName || `Review File`,
-                  timestamp: r.timestamp,
-                  type: r.feedbackData.file.type,
-                  reviewId: r.id,
-                  // Use viewReviewDetailForAgent to open
-                });
-              }
-            });
-
-            if (uniqueFiles.length > 0) {
-              proofsHtml = uniqueFiles.map(p => `
-                   <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 mb-2">
-                      <div class="flex items-center gap-3">
-                         <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">📎</div>
-                         <div>
-                            <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
-                            <p class="text-[10px] text-slate-400 uppercase">${new Date(p.timestamp).toLocaleDateString()}</p>
-                         </div>
-                      </div>
-                      <button onclick="viewReviewDetailForAgent(${p.reviewId})" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
-                   </div>
-                 `).join('');
-            }
-          }
-
-          proofsList.innerHTML = proofsHtml || '<p class="col-span-2 text-center text-slate-400 italic py-4">No proofs attached.</p>';
+             `).join('');
+        } else {
+          proofsList.innerHTML = '<p class="col-span-2 text-center text-slate-400 italic">No proofs attached.</p>';
         }
 
       } else {
@@ -2433,119 +2560,6 @@
     function logout() {
       currentUser = null;
       navigateTo('view-home');
-    }
-
-    function openAgentProofsModal() {
-      const modal = document.getElementById('agent-proofs-modal');
-      const content = document.getElementById('agent-proofs-content');
-
-      // Get all performance scores for the current agent
-      const allScores = MockBackend.getPerformanceScores();
-      const agentScores = allScores.filter(s => s.agentId === currentUser.id);
-
-      // Collect unique files from reviews
-      const proofs = [];
-      agentScores.forEach(review => {
-        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
-          proofs.push({
-            name: review.feedbackData.fileName || `Review File (${review.id})`,
-            type: review.feedbackData.file.type,
-            content: review.feedbackData.file.content,
-            date: new Date(review.timestamp).toLocaleString(),
-            reviewId: review.id
-          });
-        }
-      });
-
-      if (proofs.length === 0) {
-        content.innerHTML = '<div class="text-center text-slate-400 py-20"><div class="text-4xl mb-4">📭</div><h3 class="text-xl font-bold">No proofs attached to your reviews yet.</h3></div>';
-      } else {
-        content.innerHTML = proofs.map(p => `
-          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center justify-between gap-4">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">${p.name}</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm">From review on ${p.date}</p>
-                <p class="text-slate-500 text-xs mt-1">Type: ${p.type}</p>
-              </div>
-              <button onclick="openReport('${p.content}', '${p.type}')" class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition">View Proof</button>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      modal.classList.remove('hidden');
-    }
-
-    function closeAgentProofsModal() {
-      document.getElementById('agent-proofs-modal').classList.add('hidden');
-    }
-
-    async function viewReviewDetailForAgent(reviewId) {
-      const reviews = MockBackend.getPerformanceScores();
-      const review = reviews.find(r => r.id == reviewId);
-
-      if (!review) return alert('Review details not found.');
-
-      // Allow agent to view their own review
-      if (currentUser && review.agentId !== currentUser.id) return alert('Unauthorized access.');
-
-      const scoreClass = review.score === 100 ? 'text-emerald-500' : 'text-red-500';
-      const scoreText = review.score === 0 ? '0 (Fatal Error)' : '100 (Pass)';
-
-      // Reuse the View Modal but HIDE Admin Actions
-      document.getElementById('view-modal-agent-id').innerText = `Your Review`;
-      document.getElementById('view-modal-score').className = `text-3xl font-black ${scoreClass}`;
-      document.getElementById('view-modal-score').innerText = scoreText;
-      document.getElementById('view-modal-feedback').innerText = review.feedbackData.feedback || 'No feedback provided.';
-      document.getElementById('view-modal-date').innerText = new Date(review.timestamp).toLocaleString();
-      document.getElementById('view-modal-process').innerText = (review.feedbackData && review.feedbackData.processType) ? review.feedbackData.processType : 'N/A';
-      document.getElementById('view-modal-filename').innerText = (review.feedbackData && review.fileName) ? review.fileName : 'N/A';
-
-      // Hide Admin Actions
-      document.getElementById('view-modal-edit-btn').classList.add('hidden');
-      document.getElementById('view-modal-delete-btn').classList.add('hidden');
-
-      // File Content Logic (Same as Admin)
-      const previewContainer = document.getElementById('view-modal-preview-container');
-      const downloadLink = document.getElementById('view-modal-download-link');
-      previewContainer.innerHTML = '<div class="animate-pulse flex space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div></div>';
-
-      try {
-        let content = null;
-        let type = 'application/octet-stream';
-        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.fileId) {
-          content = await FileDB.getFile(review.feedbackData.file.fileId);
-          type = review.feedbackData.file.type;
-        } else if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
-          content = review.feedbackData.file.content;
-          type = review.feedbackData.file.type;
-        }
-
-        if (content) {
-          downloadLink.href = content;
-          downloadLink.download = review.fileName || 'download';
-          downloadLink.classList.remove('hidden');
-
-          if (type.startsWith('image/')) {
-            previewContainer.innerHTML = `<img src="${content}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">`;
-          } else if (type.startsWith('audio/')) {
-            previewContainer.innerHTML = `<audio controls src="${content}" class="w-full"></audio>`;
-          } else if (type === 'application/pdf') {
-            previewContainer.innerHTML = `<iframe src="${content}" class="w-full h-full rounded-lg border-0"></iframe>`;
-          } else {
-            previewContainer.innerHTML = `<div class="text-center"><p>File available for download.</p></div>`;
-          }
-        } else {
-          previewContainer.innerHTML = '<p class="text-slate-400">No file content.</p>';
-          downloadLink.classList.add('hidden');
-        }
-      } catch (e) {
-        console.error(e);
-        previewContainer.innerHTML = '<p class="text-red-500">Error loading file.</p>';
-      }
-
-      document.getElementById('view-review-modal').classList.remove('hidden');
     }
 
 
@@ -2707,14 +2721,6 @@
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
-
-      // Render content for specific views
-      if (id === 'view-admin' && currentUser && currentUser.role === 'admin') {
-        renderAdminDashboard();
-      }
-      if (id === 'view-performance' && currentUser && currentUser.role === 'agent') {
-        renderAgentDashboard();
-      }
     }
 
     function toggleFaq(btn) {
@@ -2770,14 +2776,6 @@
         document.getElementById('search-input').value = '';
         document.getElementById('search-results').innerHTML = '';
       }
-    }
-
-    function toggleScriptTemplate() {
-      const body = document.getElementById('customer-script-body');
-      const toggle = document.getElementById('customer-script-toggle');
-      if (!body || !toggle) return;
-      body.classList.toggle('hidden');
-      toggle.innerText = body.classList.contains('hidden') ? '▼' : '▲';
     }
 
     function performSearch(query) {
@@ -2853,242 +2851,6 @@
       { id: 'ROT/GG/25/005', name: 'Vikram Yadav', role: 'agent', entity: 'RupeeOnTime' }
     ];
 
-
-    // --- AGENT DASHBOARD FUNCTIONS ---
-
-    function renderAgentDashboard() {
-      if (currentUser) {
-        document.getElementById('agent-name-display').innerText = currentUser.name;
-      }
-    }
-
-    function openAgentPerformanceModal() {
-      if (!currentUser) return;
-      const modal = document.getElementById('agent-performance-modal');
-      const contentLoaded = document.getElementById('perf-content-loaded');
-      const contentEmpty = document.getElementById('perf-content-empty');
-
-      document.getElementById('modal-agent-id').innerText = `ID: ${currentUser.id}`;
-      modal.classList.remove('hidden');
-
-      // 1. Get Scores for this agent
-      const allScores = MockBackend.getPerformanceScores();
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-      const weeklyScores = allScores.filter(s =>
-        s.agentId === currentUser.id &&
-        new Date(s.timestamp) > oneWeekAgo
-      );
-
-      if (weeklyScores.length > 0) {
-        contentLoaded.classList.remove('hidden');
-        contentEmpty.classList.add('hidden');
-
-        // 2. Calculate Stats
-        const totalScoreSum = weeklyScores.reduce((sum, s) => sum + s.score, 0);
-        const avgScore = Math.round(totalScoreSum / weeklyScores.length);
-        const fatalCount = weeklyScores.filter(s => s.score === 0).length;
-        const passCount = weeklyScores.filter(s => s.score === 100).length;
-
-        // Update UI Stats
-        document.getElementById('modal-total-score').innerText = avgScore + '%';
-        document.getElementById('modal-audit-score').innerText = weeklyScores.length;
-        document.getElementById('modal-fatal-errors').innerText = fatalCount;
-        document.getElementById('modal-compliance').innerText = passCount;
-
-        // 3. Render Reviews List
-        const listContainer = document.getElementById('modal-reviews-list');
-        listContainer.innerHTML = weeklyScores.map((review, index) => {
-          const isFatal = review.score === 0;
-          const scoreColor = isFatal ? 'text-red-500' : 'text-emerald-500';
-          const scoreText = isFatal ? 'Fatal (0)' : '100';
-
-          return `
-            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold">
-                  ${index + 1}
-                </div>
-                <div>
-                  <p class="font-bold text-slate-700 dark:text-slate-200">Review ${index + 1}</p>
-                  <p class="text-xs text-slate-400">${new Date(review.timestamp).toLocaleDateString()}</p>
-                </div>
-              </div>
-              
-              <div class="flex items-center gap-6">
-                <div class="font-bold ${scoreColor} text-lg">${scoreText}</div>
-                <button onclick="viewReviewDetailForAgent('${review.id}')" 
-                  class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition shadow-sm"
-                  title="View Feedback & Proof">
-                  👁️
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        // 4. Render Comments (Agent's comments)
-        // We show comments made by this agent? Or comments FOR this agent?
-        // User said: "after that he can add and delete a comment"
-        // Let's show existing comments for this agent id from MockBackend.
-        renderAgentComments();
-
-      } else {
-        contentLoaded.classList.add('hidden');
-        contentEmpty.classList.remove('hidden');
-      }
-    }
-
-    function viewReviewDetailForAgent(reviewId) {
-      const scores = MockBackend.getPerformanceScores();
-      const review = scores.find(s => s.id == reviewId);
-
-      if (!review) return alert('Details not found.');
-
-      const message = `
-Feedback:
-${review.feedbackData.feedback}
-
-Open attached proof?
-      `;
-
-      if (confirm(message)) {
-        if (review.feedbackData.file && review.feedbackData.file.content) {
-          openReport(review.feedbackData.file.content, review.feedbackData.file.type);
-        } else {
-          // Debug info for user
-          let reason = "Unknown error";
-          if (!review.feedbackData) reason = "No feedback data object.";
-          else if (!review.feedbackData.file) reason = "No file attached to this review.";
-          else if (!review.feedbackData.file.content) reason = "File attached but content is empty (Storage Quota Exceeded).";
-
-          alert(`Cannot open proof: ${reason}. Please ask Admin to re-upload with a smaller file.`);
-        }
-      }
-    }
-
-    // --- HELPER FUNCTIONS (ADMIN & AGENT) ---
-
-    function openReport(content, type) {
-      const win = window.open();
-      if (type.startsWith('image/')) {
-        win.document.write(`<img src="${content}" style="max-width:100%">`);
-      } else if (type === 'application/pdf') {
-        win.document.write(`<iframe src="${content}" width="100%" height="100%"></iframe>`);
-      } else if (type.startsWith('audio/')) {
-        win.document.write(`<audio controls src="${content}"></audio>`);
-      } else {
-        // Fallback for text or other downloads
-        win.document.write(`<a href="${content}" download="report">Download File</a>`);
-      }
-    }
-
-    function handleDeleteReport(id) {
-      if (confirm('Are you sure you want to delete this report?')) {
-        MockBackend.deleteReport(id);
-        renderAdminDashboard();
-      }
-    }
-
-    function handleDeleteReview(id) {
-      if (confirm('Are you sure you want to delete this performance review?')) {
-        MockBackend.deletePerformanceScore(id);
-        renderAdminDashboard();
-      }
-    }
-
-    function handleDeleteComment(id) {
-      if (confirm('Are you sure you want to delete this comment?')) {
-        MockBackend.deleteComment(id);
-        renderAdminDashboard();
-      }
-    }
-
-    async function viewReviewDetails(reviewId) {
-      // For Admin mainly
-      const scores = MockBackend.getPerformanceScores();
-      const review = scores.find(s => s.id == reviewId);
-      if (review) {
-        let msg = `Agent: ${review.agentId}\nScore: ${review.score}\nFeedback: ${review.feedbackData.feedback || 'N/A'}`;
-        if (confirm(msg + "\n\nOpen Proof?")) {
-          if (review.feedbackData.file) {
-            let content = review.feedbackData.file.content;
-            if (!content && review.feedbackData.file.fileId) {
-              try { content = await FileDB.getFile(review.feedbackData.file.fileId); } catch (e) { }
-            }
-
-            if (content) {
-              openReport(content, review.feedbackData.file.type);
-            } else {
-              alert('No proof attached or file content missing.');
-            }
-          } else {
-            alert('No proof attached.');
-          }
-        }
-      }
-    }
-
-
-    function closeAgentPerformanceModal() {
-      document.getElementById('agent-performance-modal').classList.add('hidden');
-    }
-
-    function renderAgentComments() {
-      // Use existing Comments section? 
-      // The HTML has a textarea #agent-comment-input.
-      // We should probably list existing comments below it.
-      // But the HTML doesn't have a container for "My Comments".
-      // I'll append a container next to the input area if needed, or just let them add.
-      // User said "add and delete". So they need to see them to delete them.
-
-      const parent = document.getElementById('agent-comment-input').parentElement;
-      let list = document.getElementById('agent-comments-list-display');
-      if (!list) {
-        list = document.createElement('div');
-        list.id = 'agent-comments-list-display';
-        list.className = 'mt-6 space-y-3';
-        parent.appendChild(list);
-      }
-
-      const comments = MockBackend.getComments().filter(c => c.agentId === currentUser.id); // Comments BY agent? Or FOR agent?
-      // Usually comments are "Agent Comments & Feedback" in Admin Dash.
-      // Let's assume these are comments BY the agent regarding the review.
-
-      list.innerHTML = comments.map(c => `
-        <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-start">
-          <div class="text-sm text-slate-600 dark:text-slate-300">
-            <span class="text-xs text-slate-400 block mb-1">${c.date}</span>
-            ${c.text}
-          </div>
-          <button onclick="deleteOwnComment(${c.id})" class="text-red-500 hover:text-red-700 text-xs font-bold">Delete</button>
-        </div>
-      `).join('');
-    }
-
-    function handleCommentSubmit() {
-      const input = document.getElementById('agent-comment-input');
-      const text = input.value.trim();
-
-      if (!text) return alert('Please write a comment first.');
-      if (!currentUser) return alert('You must be logged in.');
-
-      // Save comment
-      MockBackend.addComment(text, currentUser.id);
-
-      alert('Comment added successfully!');
-      input.value = '';
-      renderAgentComments();
-    }
-
-    function deleteOwnComment(id) {
-      if (confirm("Delete this comment?")) {
-        MockBackend.deleteComment(id);
-        renderAgentComments();
-      }
-    }
-
     function submitLogin(event) {
       event.preventDefault();
       const empId = document.getElementById('empid').value.trim();
@@ -3110,8 +2872,8 @@ Open attached proof?
         currentUser = user;
 
         if (user.role === 'admin') {
-          // Always cleanup old (7 days) before showing admin dashboard
-          MockBackend.cleanupOldData();
+          // Clear all existing performance data for fresh start
+          MockBackend.clearAllPerformanceData();
           renderAdminDashboard();
           navigateTo('view-admin');
         } else {
@@ -3129,9 +2891,6 @@ Open attached proof?
     }
 
     window.onload = () => {
-      // Cleanup old data (older than 7 days)
-      MockBackend.cleanupOldData();
-
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
