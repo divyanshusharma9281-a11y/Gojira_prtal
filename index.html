@@ -1007,31 +1007,64 @@
         <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
       </div>
 
-      <!-- Dashboard Grid -->
-      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
+      <!-- Performance Stats -->
+      <div id="perf-content-loaded" class="space-y-10">
 
-        <!-- Weekly Performance Tab/Card -->
-        <div onclick="openAgentPerformanceModal()"
-          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
-            <span class="text-9xl">📈</span>
-          </div>
-
+        <!-- Score Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div
-            class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-indigo-600">
-            🎯
+            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+            <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
+            <div id="modal-total-score" class="text-4xl font-black text-indigo-600">--</div>
           </div>
-
-          <h3 class="text-2xl font-bold mb-2">Weekly Performance</h3>
-          <p class="text-slate-500 text-sm mb-6">Review your audit scores, compliance stats, and proofs.</p>
-
-          <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
-            <span>View Details</span>
-            <span>→</span>
+          <div
+            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+            <p class="text-xs font-bold uppercase text-slate-400 mb-2">No. of audits</p>
+            <div id="modal-audit-score" class="text-2xl font-bold text-slate-700 dark:text-slate-200">--</div>
+          </div>
+          <div
+            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+            <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal</p>
+            <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
+          </div>
+          <div
+            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+            <p class="text-xs font-bold uppercase text-slate-400 mb-2">100</p>
+            <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
           </div>
         </div>
 
+        <!-- Weekly Reviews List -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📅</span>
+            Weekly Reviews
+          </h3>
+          <div id="modal-reviews-list" class="space-y-3">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Comment Section -->
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-lg font-bold mb-4">💬 Submit Feedback to Admin</h3>
+          <textarea id="agent-comment-input" rows="3"
+            class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition mb-4"
+            placeholder="Write your comments regarding this review..."></textarea>
+          <button onclick="handleCommentSubmit()"
+            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Send
+            Comment</button>
+        </div>
+
       </div>
+
+      <!-- Empty State -->
+      <div id="perf-content-empty"
+        class="hidden h-full flex flex-col items-center justify-center text-center opacity-50 py-20">
+        <div class="text-6xl mb-4">📭</div>
+        <h3 class="text-xl font-bold">No performance review available yet.</h3>
+      </div>
+
     </div>
   </div>
 
@@ -2829,6 +2862,72 @@
     function renderAgentDashboard() {
       if (currentUser) {
         document.getElementById('agent-name-display').innerText = currentUser.name;
+
+        // Populate performance data
+        const modal = document.getElementById('perf-content-loaded');
+        const contentEmpty = document.getElementById('perf-content-empty');
+
+        // 1. Get Scores for this agent
+        const allScores = MockBackend.getPerformanceScores();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const weeklyScores = allScores.filter(s =>
+          s.agentId === currentUser.id &&
+          new Date(s.timestamp) > oneWeekAgo
+        );
+
+        if (weeklyScores.length > 0) {
+          modal.classList.remove('hidden');
+          contentEmpty.classList.add('hidden');
+
+          // 2. Calculate Stats
+          const totalScoreSum = weeklyScores.reduce((sum, s) => sum + s.score, 0);
+          const avgScore = Math.round(totalScoreSum / weeklyScores.length);
+          const fatalCount = weeklyScores.filter(s => s.score === 0).length;
+          const passCount = weeklyScores.filter(s => s.score === 100).length;
+
+          // Update UI Stats
+          document.getElementById('modal-total-score').innerText = avgScore + '%';
+          document.getElementById('modal-audit-score').innerText = weeklyScores.length;
+          document.getElementById('modal-fatal-errors').innerText = fatalCount;
+          document.getElementById('modal-compliance').innerText = passCount;
+
+          // 3. Render Reviews List
+          const listContainer = document.getElementById('modal-reviews-list');
+          listContainer.innerHTML = weeklyScores.map((review, index) => {
+            const isFatal = review.score === 0;
+            const scoreColor = isFatal ? 'text-red-500' : 'text-emerald-500';
+            const scoreText = isFatal ? 'Fatal (0)' : '100';
+
+            return `
+              <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold">
+                    ${index + 1}
+                  </div>
+                  <div>
+                    <p class="font-bold text-slate-700 dark:text-slate-200">Review ${index + 1}</p>
+                    <p class="text-xs text-slate-400">${new Date(review.timestamp).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                  <div class="font-bold ${scoreColor} text-lg">${scoreText}</div>
+                  <button onclick="viewReviewDetailForAgent('${review.id}')" 
+                    class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition shadow-sm"
+                    title="View Feedback & Proof">
+                    👁️
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+        } else {
+          modal.classList.add('hidden');
+          contentEmpty.classList.remove('hidden');
+        }
       }
     }
 
