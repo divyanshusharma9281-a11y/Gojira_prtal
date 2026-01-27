@@ -1076,14 +1076,14 @@
       <form onsubmit="submitLogin(event)">
         <div class="mb-6">
           <label class="block text-sm font-medium mb-2">Employee ID</label>
-          <input id="empid" type="text" required
+          <input id="empid" type="text" required onchange="checkLoginType()"
             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
         </div>
 
-        <!-- Entity Selection for Admin -->
-        <div id="admin-login-entity-section" class="hidden mb-6">
+        <!-- Entity Selection Section (for both Admin and Agent) -->
+        <div id="login-entity-section" class="mb-6">
           <label class="block text-sm font-medium mb-2">Select Entity</label>
-          <select id="admin-login-entity"
+          <select id="login-entity"
             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
             <option value="">Choose Entity...</option>
             <option value="BharatLoan">BharatLoan</option>
@@ -2530,26 +2530,33 @@ Reviewer: ${review.reviewerId}
     }
 
     function showLogin(entity) {
-      // Check if an employee ID is entered - if it's admin, show entity selector
-      const empIdInput = document.getElementById('empid');
-      const user = USER_DB.find(u => u.id === empIdInput.value.trim());
+      currentEntity = entity;
+      document.getElementById('login-title').innerText = `Login to ${entity}`;
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('login-entity').value = entity;
+      document.getElementById('empid').value = '';
+    }
+
+    function checkLoginType() {
+      const empId = document.getElementById('empid').value.trim();
+      const user = USER_DB.find(u => u.id === empId);
+      const entitySelect = document.getElementById('login-entity');
       
       if (user && user.role === 'admin') {
+        // For admin, allow them to select any entity
         document.getElementById('login-title').innerText = 'Admin Login - Select Entity';
-        document.getElementById('admin-login-entity-section').classList.remove('hidden');
-        currentEntity = '';
+        entitySelect.disabled = false;
+        entitySelect.value = ''; // Clear selection to force choice
       } else {
-        currentEntity = entity;
-        document.getElementById('login-title').innerText = `Login to ${entity}`;
-        document.getElementById('admin-login-entity-section').classList.add('hidden');
+        // For agents, lock to the selected entity
+        entitySelect.disabled = true;
       }
-      
-      document.getElementById('login-modal').classList.remove('hidden');
     }
 
     function hideLogin() {
       document.getElementById('login-modal').classList.add('hidden');
       document.getElementById('empid').value = '';
+      document.getElementById('login-entity').value = '';
     }
 
     // USER DATABASE
@@ -2607,13 +2614,13 @@ Reviewer: ${review.reviewerId}
     function submitLogin(event) {
       event.preventDefault();
       const empId = document.getElementById('empid').value.trim();
+      const selectedEntity = document.getElementById('login-entity').value.trim();
 
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
         // For admin, require entity selection
         if (user.role === 'admin') {
-          const selectedEntity = document.getElementById('admin-login-entity').value;
           if (!selectedEntity) {
             alert('Please select an entity');
             return;
@@ -2625,7 +2632,7 @@ Reviewer: ${review.reviewerId}
           hideLogin();
         } else {
           // For agents, check entity match
-          if (currentEntity && user.entity !== currentEntity) {
+          if (selectedEntity && user.entity !== selectedEntity) {
             const modalTitle = document.getElementById('access-denied-title');
             if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
             hideLogin();
@@ -2641,6 +2648,8 @@ Reviewer: ${review.reviewerId}
         }
       } else {
         alert('Invalid Employee ID. Please check your credentials.');
+      }
+    }
       }
     }
 
