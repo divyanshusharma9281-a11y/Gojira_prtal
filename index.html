@@ -144,7 +144,8 @@
         </div>
 
         <div onclick="navigateTo('view-entities')"
-          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white" style="pointer-events: auto;">
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white"
+          style="pointer-events: auto;">
           <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
           <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
           <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
@@ -158,7 +159,8 @@
         </div>
 
         <div onclick="navigateTo('view-resources')"
-          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-purple-600 text-white" style="pointer-events: auto;">
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-purple-600 text-white"
+          style="pointer-events: auto;">
           <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
           <h2 class="text-2xl font-bold mb-2">Resources</h2>
           <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
@@ -418,10 +420,12 @@
 
       <!-- Guidelines Tab Content -->
       <div id="content-guidelines" class="tab-content hidden">
-        <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
           <div class="text-4xl mb-4">📋</div>
           <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available shortly.</p>
+          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available
+            shortly.</p>
         </div>
       </div>
 
@@ -589,10 +593,12 @@
 
       <!-- Guidelines Tab Content -->
       <div id="content-guidelines-rupee112" class="tab-content hidden">
-        <div class="bg-green-50 dark:bg-slate-800 p-8 rounded-3xl border border-green-100 dark:border-slate-700 text-center">
+        <div
+          class="bg-green-50 dark:bg-slate-800 p-8 rounded-3xl border border-green-100 dark:border-slate-700 text-center">
           <div class="text-4xl mb-4">📋</div>
           <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available shortly.</p>
+          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available
+            shortly.</p>
         </div>
       </div>
 
@@ -691,10 +697,12 @@
 
       <!-- Guidelines Tab Content -->
       <div id="content-guidelines-loan112" class="tab-content hidden">
-        <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+        <div
+          class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
           <div class="text-4xl mb-4">📋</div>
           <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available shortly.</p>
+          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available
+            shortly.</p>
         </div>
       </div>
 
@@ -793,10 +801,12 @@
 
       <!-- Guidelines Tab Content -->
       <div id="content-guidelines-rupeeontime" class="tab-content hidden">
-        <div class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl border border-purple-100 dark:border-slate-700 text-center">
+        <div
+          class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl border border-purple-100 dark:border-slate-700 text-center">
           <div class="text-4xl mb-4">📋</div>
           <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available shortly.</p>
+          <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be available
+            shortly.</p>
         </div>
       </div>
 
@@ -1003,7 +1013,8 @@
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <span class="font-bold text-xl text-indigo-600">Admin Dashboard - <span id="admin-entity-display">--</span></span>
+        <span class="font-bold text-xl text-indigo-600">Admin Dashboard - <span
+            id="admin-entity-display">--</span></span>
       </div>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
@@ -1028,14 +1039,15 @@
       </div>
 
       <!-- Section 2: Quality Review Form (Hidden initially) -->
-      <div id="admin-quality-form-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+      <div id="admin-quality-form-section"
+        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
             Quality Review - <span id="admin-review-agent-display" class="text-emerald-600"></span>
           </h2>
-          <button onclick="adminCancelReview()"
-            class="text-slate-500 hover:text-slate-700 text-sm font-medium">← Back</button>
+          <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
+            Back</button>
         </div>
 
         <div id="admin-review-items-container" class="space-y-6">
@@ -2585,7 +2597,7 @@ Reviewer: ${review.reviewerId}
       const empId = document.getElementById('empid').value.trim();
       const user = USER_DB.find(u => u.id === empId);
       const entitySelect = document.getElementById('login-entity');
-      
+
       if (user && user.role === 'admin') {
         // For admin, allow them to select any entity
         document.getElementById('login-title').innerText = 'Admin Login - Select Entity';
@@ -2683,7 +2695,7 @@ Reviewer: ${review.reviewerId}
             document.getElementById('access-denied-modal').classList.remove('hidden');
             return;
           }
-          
+
           currentUser = user;
           const titleSpan = document.getElementById('agent-dashboard-title');
           if (titleSpan) titleSpan.innerText = `Welcome, ${user.name}`;
@@ -2692,8 +2704,6 @@ Reviewer: ${review.reviewerId}
         }
       } else {
         alert('Invalid Employee ID. Please check your credentials.');
-      }
-    }
       }
     }
 
@@ -2715,10 +2725,10 @@ Reviewer: ${review.reviewerId}
     function adminLoadAgents() {
       // Display current entity
       document.getElementById('admin-entity-display').textContent = adminCurrentEntity;
-      
+
       const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === adminCurrentEntity);
       const agentsList = document.getElementById('admin-agents-list');
-      
+
       agentsList.innerHTML = agents.map(agent => `
         <button onclick="adminSelectAgent('${agent.id}', '${agent.name}')" 
           class="admin-agent-btn p-4 rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 transition text-left"
@@ -2732,7 +2742,7 @@ Reviewer: ${review.reviewerId}
     function adminSelectAgent(agentId, agentName) {
       adminCurrentAgent = agentId;
       adminCurrentAgentName = agentName;
-      
+
       // Highlight selected agent
       document.querySelectorAll('.admin-agent-btn').forEach(btn => {
         btn.classList.remove('border-blue-500', 'bg-blue-100', 'dark:bg-slate-500');
@@ -2740,7 +2750,7 @@ Reviewer: ${review.reviewerId}
           btn.classList.add('border-blue-500', 'bg-blue-100', 'dark:bg-slate-500');
         }
       });
-      
+
       // Enable start button
       document.getElementById('admin-start-review-btn').disabled = false;
       document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
@@ -2751,11 +2761,11 @@ Reviewer: ${review.reviewerId}
         alert('Please select an agent');
         return;
       }
-      
+
       adminReviewItems = [];
       document.getElementById('admin-quality-form-section').classList.remove('hidden');
       document.getElementById('admin-review-agent-display').textContent = adminCurrentAgentName;
-      
+
       // Add first item
       adminAddReviewItem();
     }
@@ -2780,7 +2790,7 @@ Reviewer: ${review.reviewerId}
 
       const itemIndex = adminReviewItems.length + 1;
       const container = document.getElementById('admin-review-items-container');
-      
+
       const itemHtml = `
         <div class="admin-review-item bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600">
           <div class="flex items-center justify-between mb-4">
@@ -2825,10 +2835,10 @@ Reviewer: ${review.reviewerId}
           </div>
         </div>
       `;
-      
+
       container.insertAdjacentHTML('beforeend', itemHtml);
       adminReviewItems.push({ file: null, observation: '', score: null });
-      
+
       // Update button states
       adminUpdateReviewButtons();
     }
@@ -2843,7 +2853,7 @@ Reviewer: ${review.reviewerId}
     function adminOnFileSelected(index) {
       const fileInput = document.querySelector(`input[data-item-index="${index}"]`);
       const file = fileInput.files[0];
-      
+
       if (file) {
         if (file.size > 20 * 1024 * 1024) {
           alert('File size exceeds 20MB limit');
@@ -2859,12 +2869,12 @@ Reviewer: ${review.reviewerId}
       const count = adminReviewItems.length;
       const addBtn = document.getElementById('admin-add-review-btn');
       const finalBtn = document.getElementById('admin-final-submit-btn');
-      
+
       // Disable add button if max reached
       addBtn.disabled = count >= 10;
       addBtn.classList.toggle('opacity-50', count >= 10);
       addBtn.classList.toggle('cursor-not-allowed', count >= 10);
-      
+
       // Enable final submit if min reached
       const allComplete = count >= 3 && adminReviewItems.every(item => item.file && item.observation && item.score !== null);
       finalBtn.disabled = !allComplete;
@@ -2879,7 +2889,7 @@ Reviewer: ${review.reviewerId}
         const fileInput = item.querySelector('.review-file-input');
         const observation = item.querySelector('.review-observation').value;
         const score = item.querySelector('.review-score:checked')?.value;
-        
+
         if (fileInput.files[0]) {
           adminReviewItems[index] = {
             file: fileInput.files[0],
@@ -2888,17 +2898,17 @@ Reviewer: ${review.reviewerId}
           };
         }
       });
-      
+
       // Validate
       if (adminReviewItems.length < 3) {
         alert('Minimum 3 reviews required');
         return;
       }
-      
+
       // Save to localStorage
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const now = new Date();
-      
+
       adminReviewItems.forEach(item => {
         if (item.file) {
           reviews.push({
@@ -2913,9 +2923,9 @@ Reviewer: ${review.reviewerId}
           });
         }
       });
-      
+
       localStorage.setItem('adminReviews', JSON.stringify(reviews));
-      
+
       alert('Quality reviews submitted successfully!');
       adminCancelReview();
       adminLoadReviewsList();
@@ -2924,12 +2934,12 @@ Reviewer: ${review.reviewerId}
     function adminLoadReviewsList() {
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const tbody = document.getElementById('admin-reviews-list');
-      
+
       // Remove expired reviews
       const now = new Date();
       const filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
       localStorage.setItem('adminReviews', JSON.stringify(filtered));
-      
+
       tbody.innerHTML = filtered.map((review, idx) => `
         <tr>
           <td class="p-6">${review.date}</td>
@@ -2970,7 +2980,7 @@ Reviewer: ${review.reviewerId}
     function adminLoadFeedbackList() {
       const comments = JSON.parse(localStorage.getItem('agentComments') || '[]');
       const tbody = document.getElementById('admin-feedback-list');
-      
+
       // Remove old feedback (older than 7 days)
       const now = new Date();
       const filtered = comments.filter(c => {
@@ -2980,7 +2990,7 @@ Reviewer: ${review.reviewerId}
         return diffDays < 7;
       });
       localStorage.setItem('agentComments', JSON.stringify(filtered));
-      
+
       tbody.innerHTML = filtered.map((comment, idx) => `
         <tr>
           <td class="p-6">${comment.date}</td>
@@ -3004,32 +3014,32 @@ Reviewer: ${review.reviewerId}
     function openAgentPerformanceModal() {
       const modal = document.getElementById('agent-performance-modal');
       const agentId = currentUser.id;
-      
+
       document.getElementById('modal-agent-id').textContent = `ID: ${agentId}`;
-      
+
       // Load reviews for this agent
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const agentReviews = reviews.filter(r => r.agentId === agentId);
-      
+
       if (agentReviews.length === 0) {
         document.getElementById('perf-content-loaded').classList.add('hidden');
         document.getElementById('perf-content-empty').classList.remove('hidden');
         modal.classList.remove('hidden');
         return;
       }
-      
+
       // Calculate stats
       const totalAudits = agentReviews.length;
       const fatalCount = agentReviews.filter(r => r.score === 0).length;
       const goodCount = agentReviews.filter(r => r.score === 100).length;
       const totalScore = (goodCount * 100) / totalAudits;
-      
+
       // Display stats
       document.getElementById('modal-audit-count').textContent = totalAudits;
       document.getElementById('modal-fatal-count').textContent = fatalCount;
       document.getElementById('modal-good-count').textContent = goodCount;
       document.getElementById('modal-total-score').textContent = totalScore.toFixed(0);
-      
+
       // Display reviews
       const reviewsList = document.getElementById('modal-reviews-list');
       reviewsList.innerHTML = agentReviews.map((review, idx) => `
@@ -3046,7 +3056,7 @@ Reviewer: ${review.reviewerId}
           <button onclick="agentViewReviewDetail(${idx})" class="text-blue-600 hover:text-blue-700 text-sm">👁️ View Details</button>
         </div>
       `).join('');
-      
+
       document.getElementById('perf-content-loaded').classList.remove('hidden');
       document.getElementById('perf-content-empty').classList.add('hidden');
       modal.classList.remove('hidden');
@@ -3057,19 +3067,19 @@ Reviewer: ${review.reviewerId}
       const agentId = currentUser.id;
       const agentReviews = reviews.filter(r => r.agentId === agentId);
       const review = agentReviews[index];
-      
+
       alert(`📋 Review Detail\n\nFile: ${review.fileName}\nScore: ${review.score}\nObservation:\n${review.observation}`);
     }
 
     function agentSubmitComment() {
       const textarea = document.getElementById('agent-comment-input');
       const comment = textarea.value.trim();
-      
+
       if (!comment) {
         alert('Please enter a comment');
         return;
       }
-      
+
       let comments = JSON.parse(localStorage.getItem('agentComments') || '[]');
       comments.push({
         date: new Date().toLocaleDateString(),
@@ -3077,7 +3087,7 @@ Reviewer: ${review.reviewerId}
         agentName: currentUser.name,
         comment: comment
       });
-      
+
       localStorage.setItem('agentComments', JSON.stringify(comments));
       textarea.value = '';
       alert('Your feedback has been sent to admin!');
@@ -3089,7 +3099,7 @@ Reviewer: ${review.reviewerId}
     }
 
     // Load reviews on page load
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
       adminLoadReviewsList();
       adminLoadFeedbackList();
     });
