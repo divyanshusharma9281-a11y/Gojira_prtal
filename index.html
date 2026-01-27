@@ -2670,8 +2670,15 @@ Reviewer: ${review.reviewerId}
           }
 
           currentUser = user;
+
+          // Update Header Title
           const titleSpan = document.getElementById('agent-dashboard-title');
-          if (titleSpan) titleSpan.innerText = `Welcome, ${user.name}`;
+          if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+
+          // Update Banner Name
+          const bannerName = document.getElementById('agent-name-display');
+          if (bannerName) bannerName.innerText = user.name;
+
           navigateTo('view-performance');
           hideLogin();
         }
