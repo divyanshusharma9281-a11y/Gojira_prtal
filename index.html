@@ -617,12 +617,114 @@
     </header>
     <div class="max-w-4xl mx-auto px-6 py-14">
       <div class="space-y-6">
-        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer"
+          onclick="toggleScriptTemplate()">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
+              <div>
+                <h3 class="text-xl font-bold">Customer Script Templates</h3>
+                <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
+              </div>
+            </div>
+            <span id="customer-script-toggle" class="text-slate-500 text-lg">▼</span>
+          </div>
+
+          <div id="customer-script-body"
+            class="hidden mt-4 space-y-4 text-sm text-slate-700 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+            <p><strong>Brands:</strong> Bharat Loan | Loan 112 | Rupee 112 | Rupee On Time</p>
+
             <div>
-              <h3 class="text-xl font-bold">Customer Script Templates</h3>
-              <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
+              <p class="font-bold text-indigo-600">1. Payment-Related Queries</p>
+              <p class="font-semibold">A. Payment Done but Not Reflecting on Portal</p>
+              <p><strong>Internal Action:</strong></p>
+              <ul class="list-disc ml-5 space-y-1">
+                <li>Ask: "Could you please confirm the exact amount paid?"</li>
+                <li>Verify: Confirm the amount match.</li>
+                <li>Escalate: Email the concerned team AND update the WhatsApp group.</li>
+                <li>Compulsory: Mention the confirmed payment amount in the WhatsApp group.</li>
+              </ul>
+              <p class="font-semibold mt-2">B. Payment Done and Reflecting on Portal (Verification Pending)</p>
+              <p class="italic">Agent Script: "We have received your payment of ₹[Amount]. Your payment is currently under verification and will be updated within 24 hours (maximum)."</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">2. Application-Related Queries</p>
+              <p class="font-semibold">A. Application Incomplete (Status: Lead, Partial, eKYC Pending, etc.)</p>
+              <p class="italic">Agent Script: "Your application is currently in process. Kindly complete the remaining steps 100% through the [Brand Name] application. If you are facing any issues, please visit our website or contact us at care@[brand].com and try again after some time."</p>
+              <p class="italic mt-1">If customer asks about processing time: "There is a maximum processing time of 24 hours after successful completion of your application. Once completed, a credit manager will be assigned and will contact you within 24 hours."</p>
+              <p class="text-red-500 text-xs font-semibold mt-1">Strict Rule: Do not promise a 24h callback until the application is 100% complete.</p>
+              <p class="font-semibold mt-2">B. Application Submitted Successfully (Reference Number Generated)</p>
+              <p class="italic">Agent Script: "Your application has been submitted successfully. Our team will contact you within 24 hours."</p>
+              <p class="font-semibold mt-2">C. Repeat Customer (Bank Statement Required/100% Applied)</p>
+              <p class="italic">Agent Script: "Since you are an existing customer, your application status is in process. Kindly wait while a credit manager is assigned. They will contact you within 24 hours."</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">3. Credit Manager-Related Queries</p>
+              <table class="w-full text-left text-xs border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <thead class="bg-slate-100 dark:bg-slate-800">
+                  <tr>
+                    <th class="p-2">Frequency</th>
+                    <th class="p-2">Agent Action</th>
+                    <th class="p-2">Script</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-t border-slate-200 dark:border-slate-700">
+                    <td class="p-2">1st Time</td>
+                    <td class="p-2">Highlight/Escalate concern to team.</td>
+                    <td class="p-2">"We are escalating this; the team will contact you within 24 hours."</td>
+                  </tr>
+                  <tr class="border-t border-slate-200 dark:border-slate-700">
+                    <td class="p-2">2nd Time (Same Day)</td>
+                    <td class="p-2">Verify previous escalation log.</td>
+                    <td class="p-2">"An executive has already escalated the issue; the team will contact you within 24 hours."</td>
+                  </tr>
+                  <tr class="border-t border-slate-200 dark:border-slate-700">
+                    <td class="p-2">3rd Time+</td>
+                    <td class="p-2">Tag your Manager in the escalation.</td>
+                    <td class="p-2">"We have prioritized this with senior management. Please wait for the 24h window."</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">4. Collections (Extensions, Waivers, Settlement)</p>
+              <p class="font-semibold">A. Extension Requests (Medical Reasons)</p>
+              <p class="italic">Agent Script: "We do not have the authority to grant extensions. Your case has been forwarded to the collection team. If payment is not made on time, it may impact your CIBIL score, and a charge of 2% per day (1% interest + 1% penalty) will apply. If you have a medical issue, please share valid medical documents at care@[brand].com. Our email team will review and respond within 24 hours."</p>
+              <p class="font-semibold mt-2">B. Penalty Waiver & Settlement</p>
+              <p>Ask: "May I know the reason for the waiver/settlement request?"</p>
+              <p class="italic">Script: "We do not have the authority to approve penalty waivers or settlements. Please email care@[brand].com with valid reasons and supporting evidence. Your concern will be escalated, and the team will update you within 24 hours."</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">5. Disbursement-Related Queries</p>
+              <p class="font-semibold">A. Amount Not Credited (Disbursement Shown)</p>
+              <ul class="list-disc ml-5 space-y-1">
+                <li>If &lt; 48 Hours: Tell the customer to wait. Do not escalate.</li>
+                <li>If &gt; 48 Hours: Request the customer’s bank statement via email for verification. Raise the concern.</li>
+              </ul>
+              <p class="font-semibold mt-2">B. Loan Cancellation After Disbursement</p>
+              <p>Action: Immediately update the Refund Tracker under the sheet "Cancel After Disbursement." Ensure all details are accurate.</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">6. Refund-Related Queries</p>
+              <p>Ask: "Could you please confirm the refund amount you are expecting?"</p>
+              <p>Action: Raise to the email team.</p>
+              <p>Timeline: Inform the customer it takes 7–10 working days.</p>
+            </div>
+
+            <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 p-4 rounded-xl">
+              <p class="font-bold text-blue-600">📧 Email Team Mandatory Rules</p>
+              <ul class="list-disc ml-5 space-y-1 mt-2">
+                <li>DO NOT use "Sir" or "Ma'am."</li>
+                <li>DO greet the customer by their First Name.</li>
+              </ul>
+              <p class="mt-3 font-semibold">Format for Payment Confirmation:</p>
+              <p class="whitespace-pre-line text-sm mt-1">Dear [Customer Name],\n\nThis is to confirm that we have received your payment as per the details below:\nLoan Number: {{Loan Number}}\nAmount Paid: {{Amount}}\nDate of Payment: {{Payment Date}}</p>
             </div>
           </div>
         </div>
@@ -3337,6 +3439,14 @@
         document.getElementById('search-input').value = '';
         document.getElementById('search-results').innerHTML = '';
       }
+    }
+
+    function toggleScriptTemplate() {
+      const body = document.getElementById('customer-script-body');
+      const toggle = document.getElementById('customer-script-toggle');
+      if (!body || !toggle) return;
+      body.classList.toggle('hidden');
+      toggle.innerText = body.classList.contains('hidden') ? '▼' : '▲';
     }
 
     function performSearch(query) {
