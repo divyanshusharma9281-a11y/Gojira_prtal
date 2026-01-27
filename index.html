@@ -1745,6 +1745,3905 @@
 
       <!-- Manage Uploaded Reports & Reviews Section -->
       <div class="mb-12">
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
+            Manage Uploaded Reports (Performance Reviews)
+          </h2>
+          <div class="flex items-center gap-2">
+            <button onclick="cleanupOldAdminData()"
+              class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-700 transition text-sm">
+              Clean Old (7 days)
+            </button>
+            <button onclick="deleteAllReviews()"
+              class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
+              Delete All Reviews
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">Type</th>
+                <th class="p-6">Score</th>
+                <th class="p-6">File</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div>
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
+            Agent Comments & Feedback
+          </h2>
+          <button onclick="deleteAllComments()"
+            class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
+            Delete All Comments
+          </button>
+        </div>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">Comment</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="login-title" class="text-2xl font-bold">Login</h2>
+        <button onclick="hideLogin()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+      </div>
+      <form onsubmit="submitLogin(event)">
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Employee ID</label>
+          <input id="empid" type="text" required
+            class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+        </div>
+        <button type="submit"
+          class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ACCESS DENIED MODAL -->
+  <div id="access-denied-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="access-denied-title" class="text-2xl font-bold text-red-600">Access Denied</h2>
+        <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')"
+          class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+      </div>
+      <p class="text-slate-600 dark:text-slate-400 mb-6">You do not have permission to access this entity. Please use
+        the correct Employee ID for the selected entity.</p>
+      <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')"
+        class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition">Close</button>
+    </div>
+  </div>
+
+  <!-- EDIT REVIEW MODAL -->
+  <div id="edit-review-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Edit Review</h2>
+        <button onclick="closeEditModal()" class="text-slate-500 hover:text-red-500 font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Observation/Feedback</label>
+        <textarea id="edit-feedback-input" rows="4"
+          class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-bold mb-2">Score</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="edit-score" value="100" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+            <span class="font-bold text-emerald-600">100 (Pass)</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="edit-score" value="0" class="w-4 h-4 text-red-600 focus:ring-red-500">
+            <span class="font-bold text-red-600">0 (Fatal)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <button onclick="saveEditedReview()"
+          class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">Save
+          Changes</button>
+        <button onclick="closeEditModal()"
+          class="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-3 rounded-xl hover:bg-slate-300 dark:hover:bg-slate-700 transition">Cancel</button>
+      </div>
+      <input type="hidden" id="edit-review-id">
+    </div>
+  </div>
+
+  <!-- VIEW REVIEW MODAL -->
+  <div id="view-review-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div
+        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
+        <div>
+          <h2 class="text-2xl font-extrabold flex items-center gap-2">
+            <span>👁️</span> Review Details
+          </h2>
+          <p class="text-xs text-slate-500 font-mono mt-1" id="view-modal-agent-id">--</p>
+        </div>
+        <button onclick="closeViewModal()"
+          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Left: Details -->
+        <div class="space-y-6">
+          <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+            <div class="text-xs font-bold uppercase text-slate-400 mb-1">Score</div>
+            <div id="view-modal-score" class="text-3xl font-black">--</div>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+            <div class="text-xs font-bold uppercase text-slate-400 mb-1">Observation/Feedback</div>
+            <p id="view-modal-feedback" class="text-slate-700 dark:text-slate-300 italic">--</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400 mb-1">Process</div>
+              <div id="view-modal-process" class="font-medium">--</div>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400 mb-1">Review Date</div>
+              <div id="view-modal-date" class="font-medium">--</div>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400 mb-1">File Name</div>
+              <div id="view-modal-filename" class="font-mono text-xs truncate">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: File Preview -->
+        <div
+          class="flex flex-col h-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
+          <div id="view-modal-preview-container" class="flex-1 flex items-center justify-center p-4">
+            <!-- Preview Content Injected Here -->
+            <p class="text-slate-400 text-sm">Loading preview...</p>
+          </div>
+          <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition">
+            <a id="view-modal-download-link" href="#" download
+              class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg hover:bg-blue-700">Download</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div
+        class="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-800/50">
+        <button id="view-modal-edit-btn" onclick=""
+          class="px-6 py-2 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-xl font-bold transition">Edit
+          Review</button>
+        <button id="view-modal-delete-btn" onclick=""
+          class="px-6 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-bold transition">Delete
+          Review</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- IndexedDB Handler for Large Files ---
+    class FileDB {
+      static get dbName() { return 'GojiraFilesDB'; }
+      static get storeName() { return 'files'; }
+
+      static async open() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(this.dbName, 1);
+          request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(this.storeName)) {
+              db.createObjectStore(this.storeName, { keyPath: 'id' });
+            }
+          };
+          request.onsuccess = (event) => resolve(event.target.result);
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+
+      static async saveFile(id, content) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction([this.storeName], 'readwrite');
+          const store = transaction.objectStore(this.storeName);
+          const request = store.put({ id, content, timestamp: Date.now() });
+          request.onsuccess = () => resolve();
+          request.onerror = (e) => reject(e.target.error);
+        });
+      }
+
+      static async getFile(id) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction([this.storeName], 'readonly');
+          const store = transaction.objectStore(this.storeName);
+          const request = store.get(id);
+          request.onsuccess = (e) => resolve(e.target.result ? e.target.result.content : null);
+          request.onerror = (e) => reject(e.target.error);
+        });
+      }
+
+      static async deleteFile(id) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction([this.storeName], 'readwrite');
+          const store = transaction.objectStore(this.storeName);
+          const request = store.delete(id);
+          request.onsuccess = () => resolve();
+          request.onerror = (e) => reject(e.target.error);
+        });
+      }
+    }
+
+    // MOCK BACKEND
+    class MockBackend {
+      static getReports() {
+        return JSON.parse(localStorage.getItem('gojira_reports') || '[]');
+      }
+
+      static addReport(file, content) {
+        const reports = this.getReports();
+        reports.unshift({
+          id: Date.now(),
+          timestamp: new Date().toISOString(),
+          name: file.name,
+          type: file.type || 'Unknown',
+          date: new Date().toLocaleString(),
+          uploader: 'Admin',
+          content: content // Store Base64 string
+        });
+        // Limit storage to prevent quota exceeded (keep last 5)
+        if (reports.length > 5) reports.pop();
+        localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
+
+      static getComments() {
+        return JSON.parse(localStorage.getItem('gojira_comments') || '[]');
+      }
+
+      static addComment(text, agentId) {
+        const comments = this.getComments();
+        comments.unshift({
+          id: Date.now(),
+          timestamp: new Date().toISOString(),
+          text,
+          agentId,
+          date: new Date().toLocaleString()
+        });
+        localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+
+      static deleteComment(id) {
+        const comments = this.getComments().filter(c => c.id != id);
+        localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+
+      static deleteReport(id) {
+        const reports = this.getReports().filter(r => r.id != id);
+        localStorage.setItem('gojira_reports', JSON.stringify(reports));
+      }
+
+      static deleteAllReports() {
+        localStorage.removeItem('gojira_reports');
+      }
+
+      static deleteAllComments() {
+        localStorage.removeItem('gojira_comments');
+      }
+
+      static deleteAllPerformanceScores() {
+        localStorage.removeItem('gojira_performance_scores');
+      }
+
+      // PERFORMANCE DATA
+      static getPerformance(agentId) {
+        const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+        return db[agentId] || null;
+      }
+
+      static savePerformance(agentId, data) {
+        const db = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+        db[agentId] = {
+          ...data,
+          lastUpdated: new Date().toLocaleString()
+        };
+        localStorage.setItem('gojira_performance', JSON.stringify(db));
+      }
+
+      static addPerformanceHistory(performanceData) {
+        const scores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+        scores.unshift({
+          id: Date.now() + Math.floor(Math.random() * 1000), // Ensure unique ID
+          ...performanceData
+        });
+
+        // Strict limit to avoid QuotaExceededError with Base64 files
+        // A single file can be 2MB+. LocalStorage is ~5MB. 
+        // We can only keep very few full records.
+        if (scores.length > 15) scores.pop(); // aggressive pruning
+
+        try {
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+        } catch (e) {
+          if (e.name === 'QuotaExceededError' || e.code === 22) {
+            alert("Storage Full! Cannot save new review history with files. Oldest data will be removed.");
+
+            // Fallback: Prune aggressively
+            // Remove the one we just added to try saving it after pruning others
+            scores.shift();
+
+            // Remove oldest 3
+            scores.splice(scores.length - 3, 3);
+
+            // Try adding again
+            try {
+              scores.unshift({
+                id: Date.now() + Math.floor(Math.random() * 1000),
+                ...performanceData
+              });
+              localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+            } catch (retryErr) {
+              console.error("Critical Storage Error", retryErr);
+              alert("Critical Storage Error: Could not save review even after pruning. Browser storage is full. Review saved without history.");
+            }
+          }
+        }
+      }
+
+      static savePerformanceScore(performanceData) {
+        // Legacy wrapper: saves history AND updates status
+        this.addPerformanceHistory(performanceData);
+
+        // Update the agent's current performance score
+        this.savePerformance(performanceData.agentId, {
+          score: performanceData.score,
+          isFatal: performanceData.isFatal,
+          lastReviewDate: new Date().toLocaleString(),
+          reviewerId: performanceData.reviewerId
+        });
+      }
+
+      static getPerformanceScores() {
+        return JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+      }
+
+      static deletePerformanceScore(scoreId) {
+        const scores = this.getPerformanceScores();
+        const scoreToDelete = scores.find(s => s.id == scoreId);
+
+        if (scoreToDelete) {
+          // Remove the score
+          const updatedScores = scores.filter(s => s.id != scoreId);
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(updatedScores));
+        }
+      }
+
+      static updatePerformanceScore(id, updates) {
+        const scores = this.getPerformanceScores();
+        const index = scores.findIndex(s => s.id == id);
+        if (index !== -1) {
+          scores[index].score = updates.score;
+          scores[index].isFatal = updates.isFatal;
+          if (scores[index].feedbackData) {
+            scores[index].feedbackData.feedback = updates.feedback;
+          }
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
+        }
+      }
+
+      static cleanupOldData() {
+        // Keep only last 7 days of data across tables
+        const scores = this.getPerformanceScores();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const recentScores = scores.filter(s => new Date(s.timestamp) > oneWeekAgo);
+
+        if (scores.length !== recentScores.length) {
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(recentScores));
+          console.log('Cleaned up old performance data.');
+
+          // Note: We might also need to update 'gojira_performance' (current status)
+          // But that's derived from the latest score. 
+          // If we delete all history for an agent, we should probably clear their current status too.
+          const agentsWithScores = new Set(recentScores.map(s => s.agentId));
+          const performanceDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+
+          Object.keys(performanceDb).forEach(agentId => {
+            if (!agentsWithScores.has(agentId)) {
+              delete performanceDb[agentId];
+            }
+          });
+          localStorage.setItem('gojira_performance', JSON.stringify(performanceDb));
+        }
+
+        // Cleanup comments (keep 7 days)
+        const comments = this.getComments();
+        const recentComments = comments.filter(c => {
+          const ts = c.timestamp || c.date;
+          return new Date(ts) > oneWeekAgo;
+        });
+        if (comments.length !== recentComments.length) {
+          localStorage.setItem('gojira_comments', JSON.stringify(recentComments));
+        }
+
+        // Cleanup reports (keep 7 days)
+        const reports = this.getReports();
+        const recentReports = reports.filter(r => {
+          const ts = r.timestamp || r.date;
+          return new Date(ts) > oneWeekAgo;
+        });
+        if (reports.length !== recentReports.length) {
+          localStorage.setItem('gojira_reports', JSON.stringify(recentReports));
+        }
+      }
+
+      static clearAllPerformanceData() {
+        // Clears everything admin typically wants to reset
+        localStorage.removeItem('pending_agent_reviews');
+        localStorage.removeItem('gojira_performance');
+        this.deleteAllPerformanceScores();
+      }
+    }
+
+    // ADMIN & AGENT FUNCTIONS
+    function renderAdminDashboard() {
+      // 1. Set Entity Header
+      const entityContext = currentEntity || 'ALL'; // Fallback
+      document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
+
+      // 2. Populate Agent Selector Dropdown
+      const agentSelector = document.getElementById('agent-selector');
+
+      // Filter Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entityContext !== 'ALL') {
+        agents = agents.filter(u => u.entity === entityContext);
+      }
+
+      // Clear existing options except the first one
+      agentSelector.innerHTML = '<option value="">Choose an agent...</option>';
+
+      // Add agent options
+      agents.forEach(agent => {
+        const perf = MockBackend.getPerformance(agent.id);
+        const pendingReviews = getPendingReviews(agent.id);
+        const reviewProgress = pendingReviews.length > 0 ? ` (${pendingReviews.length}/3 reviews)` : '';
+        const scoreText = perf ? `${perf.score}%` : 'Not Scored';
+        const option = document.createElement('option');
+        option.value = agent.id;
+        option.textContent = `${agent.name} (${agent.id}) - ${scoreText}${reviewProgress}`;
+        agentSelector.appendChild(option);
+      });
+
+      // 3. Populate Reports Table (Now consolidated with Reviews)
+      const reviews = MockBackend.getPerformanceScores();
+      const reportsList = document.getElementById('admin-reports-list');
+
+      if (reviews.length === 0) {
+        reportsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No reports/reviews found.</td></tr>';
+      } else {
+        reportsList.innerHTML = reviews.map(r => {
+          const agent = USER_DB.find(u => u.id === r.agentId);
+          const agentName = agent ? agent.name : r.agentId;
+          const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
+          const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
+          const date = new Date(r.timestamp).toLocaleString();
+          const fileName = (r.feedbackData && r.fileName) ? r.fileName : 'N/A';
+          const type = (r.feedbackData && r.feedbackData.processType) ? (r.feedbackData.processType === 'voice' ? 'Voice' : 'Non-Voice') : 'N/A';
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6 text-sm">${date}</td>
+              <td class="p-6 font-medium">${agentName}</td>
+              <td class="p-6 text-slate-500">${type}</td>
+              <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
+              <td class="p-6 text-xs font-mono text-slate-500 truncate max-w-[150px]">${fileName}</td>
+              <td class="p-6 text-right flex justify-end gap-2">
+                <button onclick="viewReviewDetails(${r.id})" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="View">👁️</button>
+                <button onclick="editReview(${r.id})" class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition" title="Edit">✏️</button>
+                <button onclick="handleDeleteReview(${r.id})" class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="Delete">🗑️</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 5. Populate Comments Table
+      const comments = MockBackend.getComments();
+      const commentsList = document.getElementById('admin-comments-list');
+      if (comments.length === 0) {
+        commentsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No comments yet.</td></tr>';
+      } else {
+        commentsList.innerHTML = comments.map(c => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${c.date}</td>
+            <td class="p-6">${USER_DB.find(u => u.id === c.agentId)?.name || c.agentId}</td>
+            <td class="p-6">${c.text}</td>
+            <td class="p-6 text-right">
+              <button onclick="handleDeleteComment(${c.id})" class="text-red-600 hover:text-red-800">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // NEW WORKFLOW FUNCTIONS
+    let selectedAgentForReview = null;
+    let selectedFileForReview = null;
+    let selectedProcessType = null;
+
+    function onAgentSelected() {
+      const agentSelector = document.getElementById('agent-selector');
+      const selectedAgentId = agentSelector.value;
+
+      if (selectedAgentId) {
+        selectedAgentForReview = USER_DB.find(u => u.id === selectedAgentId);
+        if (selectedAgentForReview) {
+          // Show agent details section and populate it
+          document.getElementById('admin-agent-list-section').classList.remove('hidden');
+          document.getElementById('selected-agent-display-name').innerText = selectedAgentForReview.name;
+
+          // Populate agent details
+          const agentListContainer = document.getElementById('admin-agent-list');
+          const perf = MockBackend.getPerformance(selectedAgentForReview.id);
+          const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-red-500') : 'text-slate-300';
+          const scoreText = perf ? perf.score + '%' : 'Not Scored';
+
+          const reviewStatus = pendingReviews.length === 0
+            ? 'No reviews in progress'
+            : pendingReviews.length >= 3
+              ? 'Ready for final submission'
+              : `${pendingReviews.length}/3 reviews completed`;
+
+          const buttonText = pendingReviews.length >= 3
+            ? 'Complete Final Submission'
+            : pendingReviews.length === 0
+              ? 'Start Quality Review'
+              : `Continue Review (${pendingReviews.length}/3)`;
+
+          const buttonAction = pendingReviews.length >= 3
+            ? 'showFinalSubmissionOptionForSelectedAgent()'
+            : 'startQualityReview()';
+
+          agentListContainer.innerHTML = `
+            <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
+               <div class="flex items-center justify-between mb-4">
+                  <div>
+                     <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
+                     <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
+                     <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
+                     <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
+                  </div>
+                  <div class="text-right">
+                     <div class="font-black ${scoreClass} text-2xl">${scoreText}</div>
+                     <div class="text-xs text-slate-400 uppercase">Current Score</div>
+                  </div>
+               </div>
+
+               <!-- Process Selection -->
+               <div class="mb-4">
+                 <label class="block text-sm font-semibold mb-3">Select Process Type</label>
+                 <div class="grid grid-cols-2 gap-3">
+                   <button onclick="selectProcessType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center" id="voice-btn">
+                     <div class="text-2xl mb-1">📞</div>
+                     <div class="font-medium">Voice</div>
+                     <div class="text-xs text-slate-500">Phone calls</div>
+                   </button>
+                   <button onclick="selectProcessType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center" id="non-voice-btn">
+                     <div class="text-2xl mb-1">💬</div>
+                     <div class="font-medium">Non-Voice</div>
+                     <div class="text-xs text-slate-500">Chat/Email</div>
+                   </button>
+                 </div>
+               </div>
+
+               <div class="flex gap-3">
+                  <button onclick="startQualityReview()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn" disabled>
+                     ${buttonText}
+                  </button>
+                  <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
+                     Clear Selection
+                  </button>
+               </div>
+            </div>
+          `;
+        }
+      } else {
+        // Hide agent details section if no agent selected
+        document.getElementById('admin-agent-list-section').classList.add('hidden');
+        selectedAgentForReview = null;
+        clearAgentSelection();
+      }
+    }
+
+    function selectProcessType(processType) {
+      selectedProcessType = processType;
+
+      // Update button styles to show selection
+      const voiceBtn = document.getElementById('voice-btn');
+      const nonVoiceBtn = document.getElementById('non-voice-btn');
+      const startBtn = document.getElementById('start-review-btn');
+
+      if (processType === 'voice') {
+        voiceBtn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        voiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        nonVoiceBtn.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        nonVoiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      } else {
+        nonVoiceBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        nonVoiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        voiceBtn.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        voiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      }
+
+      // Enable start review button
+      startBtn.disabled = false;
+      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    function startQualityReview() {
+      if (selectedAgentForReview && selectedProcessType) {
+        // Hide agent details, show file selection section
+        document.getElementById('admin-agent-list-section').classList.add('hidden');
+        document.getElementById('file-selection-section').classList.remove('hidden');
+
+        // Set agent info in file selection section
+        document.getElementById('selected-agent-name-file').innerText = selectedAgentForReview.name;
+        document.getElementById('selected-agent-id-file').innerText = selectedAgentForReview.id;
+        document.getElementById('selected-process-type').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      }
+    }
+
+    function clearAgentSelection() {
+      // Reset agent selector
+      document.getElementById('agent-selector').value = '';
+      // Hide all workflow sections
+      document.getElementById('admin-agent-list-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.add('hidden');
+      // Clear selections
+      selectedAgentForReview = null;
+      selectedFileForReview = null;
+      selectedProcessType = null;
+      localStorage.removeItem('currentQualityFeedback');
+    }
+
+    function proceedToFeedback() {
+      const fileInput = document.getElementById('quality-feedback-file');
+
+      if (!fileInput.files[0]) {
+        alert('Please select a file for quality review.');
+        return;
+      }
+
+      selectedFileForReview = fileInput.files[0];
+
+      // Hide file selection, show feedback form
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
+
+      // Set agent and file info in feedback section
+      document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
+      document.getElementById('selected-process-feedback').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('selected-process-feedback-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('selected-file-name').innerText = selectedFileForReview.name;
+    }
+
+    function backToFileSelection() {
+      // Hide feedback form, show file selection
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('file-selection-section').classList.remove('hidden');
+    }
+
+    async function submitFeedbackAndProceed() {
+      const feedback = document.getElementById('feedback-observations').value.trim();
+
+      if (!feedback) {
+        alert('Please provide feedback and observations.');
+        return;
+      }
+
+      // Convert file to Base64 and Save to DB
+      let fileData = null;
+      if (selectedFileForReview) {
+        try {
+          const content = await readFileAsBase64(selectedFileForReview);
+          const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+          // Save to IndexedDB
+          await FileDB.saveFile(fileId, content);
+          console.log('File saved to IndexedDB:', fileId);
+
+          fileData = {
+            fileId: fileId, // Reference ID
+            name: selectedFileForReview.name,
+            type: selectedFileForReview.type
+            // Content is NOT stored here to save localStorage space
+          };
+        } catch (e) {
+          console.error("File save error", e);
+          alert("Error saving file. Please try again.");
+          return;
+        }
+      }
+
+      // Store feedback data temporarily
+      const feedbackData = {
+        agentId: selectedAgentForReview.id,
+        file: fileData,
+        processType: selectedProcessType,
+        feedback: feedback,
+        timestamp: new Date().toISOString()
+      };
+
+      // Store in localStorage for now
+      localStorage.setItem('currentQualityFeedback', JSON.stringify({
+        ...feedbackData,
+        fileName: selectedFileForReview ? selectedFileForReview.name : 'No File'
+      }));
+
+      // Hide feedback form, show scoring section
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.remove('hidden');
+
+      // Set agent info in scoring section
+      document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
+      document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
+      document.getElementById('process-type-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
+      document.getElementById('feedback-display').innerText = feedback;
+      document.getElementById('interaction-type-display').parentElement.classList.add('hidden');
+
+      // Update Submit Button State
+      const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+      const currentCount = pendingReviews.length;
+      const finalSubmitBtn = document.getElementById('final-submit-btn');
+      const addReviewBtn = document.getElementById('add-review-btn');
+
+      // We are working on the next review (currentCount + 1)
+      const potentialTotal = currentCount + 1;
+
+      if (potentialTotal >= 3) {
+        finalSubmitBtn.disabled = false;
+        finalSubmitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        finalSubmitBtn.innerHTML = `Submit Final Reviews (${potentialTotal})`;
+      } else {
+        finalSubmitBtn.disabled = true;
+        finalSubmitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        finalSubmitBtn.innerHTML = `Submit Final Reviews (Need ${3 - potentialTotal} more)`;
+      }
+
+      // Check max limit for Add More
+      if (potentialTotal >= 10) {
+        addReviewBtn.disabled = true;
+        addReviewBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        addReviewBtn.innerText = "Max Reviews Reached";
+      } else {
+        addReviewBtn.disabled = false;
+        addReviewBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        addReviewBtn.innerText = "Add more quality review";
+      }
+    }
+
+    function backToFeedback() {
+      // Hide scoring, show feedback form
+      document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.remove('hidden');
+    }
+
+
+    function submitPerformanceScore(isFinal = false) {
+      const score = document.querySelector('input[name="performance-score"]:checked');
+
+      if (!score) {
+        alert('Please select a performance score.');
+        return;
+      }
+
+      const feedbackData = JSON.parse(localStorage.getItem('currentQualityFeedback'));
+      if (!feedbackData) {
+        alert('No feedback data found. Please restart the process.');
+        return;
+      }
+
+      // Save this review to pending reviews for the agent
+      const reviewData = {
+        agentId: selectedAgentForReview.id,
+        score: parseInt(score.value),
+        isFatal: score.value === '0',
+        feedbackData: feedbackData,
+        timestamp: new Date().toISOString(),
+        reviewerId: currentUser.id,
+        fileName: feedbackData.fileName
+      };
+
+      savePendingReview(reviewData);
+
+      // Clear temporary data
+      localStorage.removeItem('currentQualityFeedback');
+
+      // Check agent review count
+      const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+
+      if (isFinal) {
+        if (pendingReviews.length < 3) {
+          alert(`Minimum 3 reviews required. Currently: ${pendingReviews.length}`);
+          return;
+        }
+        showFinalSubmissionOption(selectedAgentForReview.id);
+      } else {
+        // Add more review
+        if (pendingReviews.length >= 10) {
+          alert('Maximum 10 reviews reached. Please submit final.');
+          // Maybe force final?
+          showFinalSubmissionOption(selectedAgentForReview.id);
+          return;
+        }
+
+        // Reset workflow for next review
+        resetForNextReview();
+        alert(`Review saved. Total pending: ${pendingReviews.length}. You can add more or submit final.`);
+      }
+    }
+
+    function savePendingReview(reviewData) {
+      const pendingReviews = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      if (!pendingReviews[reviewData.agentId]) {
+        pendingReviews[reviewData.agentId] = [];
+      }
+      pendingReviews[reviewData.agentId].push(reviewData);
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(pendingReviews));
+    }
+
+    function getPendingReviews(agentId) {
+      const pendingReviews = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      return pendingReviews[agentId] || [];
+    }
+
+    function showFinalSubmissionOption(agentId) {
+      const pendingReviews = getPendingReviews(agentId);
+      const agent = USER_DB.find(u => u.id === agentId);
+
+      // Hide current workflow sections
+      document.getElementById('scoring-section').classList.add('hidden');
+
+      // Show final submission section
+      const finalSection = document.getElementById('final-submission-section');
+      if (!finalSection) {
+        // Create the final submission section
+        createFinalSubmissionSection();
+      }
+
+      document.getElementById('final-submission-section').classList.remove('hidden');
+
+      // Populate final submission data
+      document.getElementById('final-agent-name').innerText = agent.name;
+      document.getElementById('final-agent-id').innerText = agent.id;
+
+      // Calculate average score
+      const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
+      const averageScore = Math.round(totalScore / pendingReviews.length);
+      document.getElementById('final-average-score').innerText = averageScore;
+
+      // Show review summary
+      const reviewSummary = document.getElementById('final-review-summary');
+      reviewSummary.innerHTML = '';
+      pendingReviews.forEach((review, index) => {
+        const reviewDiv = document.createElement('div');
+        reviewDiv.className = 'p-3 bg-slate-50 dark:bg-slate-700 rounded-lg mb-2';
+        reviewDiv.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-medium">Review ${index + 1}</span>
+            <span class="text-sm text-slate-500">${new Date(review.timestamp).toLocaleDateString()}</span>
+          </div>
+          <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+            Process: ${review.processType === 'voice' ? 'Voice' : 'Non-Voice'} | File: ${review.fileName} | Score: ${review.score}/100
+          </div>
+        `;
+        reviewSummary.appendChild(reviewDiv);
+      });
+    }
+
+    function createFinalSubmissionSection() {
+      const section = document.createElement('div');
+      section.id = 'final-submission-section';
+      section.className = 'hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700';
+
+      section.innerHTML = `
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-green-600 text-white rounded-lg p-2 text-xl">✅</span>
+            Final Performance Submission for <span id="final-agent-name" class="text-green-600"></span>
+          </h2>
+          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            Cancel Process
+          </button>
+        </div>
+
+        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="final-agent-id" class="font-mono"></span></div>
+            <div><strong>Average Score:</strong> <span id="final-average-score" class="font-bold text-green-600"></span>/100</div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-4">Review Summary (3 Reviews Completed)</h3>
+          <div id="final-review-summary" class="space-y-2">
+            <!-- Review summaries will be populated here -->
+          </div>
+        </div>
+
+        <div class="mb-6 p-4 bg-yellow-50 dark:bg-slate-700 rounded-xl border border-yellow-200 dark:border-slate-600">
+          <p class="text-sm text-yellow-800 dark:text-yellow-200">
+            <strong>Note:</strong> This will calculate the final performance score based on the average of all 3 reviews and update the agent's performance record.
+          </p>
+        </div>
+
+        <button onclick="submitFinalPerformanceScore()"
+          class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30">
+          Submit Final Performance Score
+        </button>
+      `;
+
+      // Insert after the scoring section
+      const scoringSection = document.getElementById('scoring-section');
+      scoringSection.parentNode.insertBefore(section, scoringSection.nextSibling);
+    }
+
+    function submitFinalPerformanceScore() {
+      const agentId = document.getElementById('final-agent-id').innerText;
+      const pendingReviews = getPendingReviews(agentId);
+
+      if (pendingReviews.length < 3) {
+        alert('Minimum 3 reviews required before final submission.');
+        return;
+      }
+
+      // Calculate final score (average of all reviews)
+      const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
+      const finalScore = Math.round(totalScore / pendingReviews.length);
+
+      // Check if any review was fatal (score = 0)
+      const hasFatal = pendingReviews.some(review => review.isFatal);
+
+      // Save the final performance score
+      const performanceData = {
+        agentId: agentId,
+        score: finalScore,
+        isFatal: hasFatal,
+        feedbackData: { reviews: pendingReviews }, // Store all reviews
+        timestamp: new Date().toISOString(),
+        reviewerId: currentUser.id
+      };
+
+      MockBackend.savePerformanceScore(performanceData);
+
+      // Clear pending reviews for this agent
+      const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      delete allPending[agentId];
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(allPending));
+
+      // Reset workflow
+      document.getElementById('final-submission-section').classList.add('hidden');
+      document.getElementById('admin-agent-list-section').classList.add('hidden');
+
+      // Reset selections
+      selectedAgentForReview = null;
+      selectedFileForReview = null;
+      document.getElementById('agent-selector').value = '';
+
+      // Refresh dashboard
+      renderAdminDashboard();
+
+      alert(`Final performance score (${finalScore}/100) submitted successfully for agent!`);
+    }
+
+    function showFinalSubmissionOptionForSelectedAgent() {
+      if (selectedAgentForReview) {
+        showFinalSubmissionOption(selectedAgentForReview.id);
+      }
+    }
+
+    function cancelReviewProcess() {
+      // Clear any temporary data
+      localStorage.removeItem('currentQualityFeedback');
+
+      // If there's a selected agent with pending reviews, ask if they want to clear them
+      if (selectedAgentForReview) {
+        const pendingReviews = getPendingReviews(selectedAgentForReview.id);
+        if (pendingReviews.length > 0) {
+          const clearPending = confirm(`This agent has ${pendingReviews.length} pending review(s). Do you want to clear all pending reviews for this agent?`);
+          if (clearPending) {
+            const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+            delete allPending[selectedAgentForReview.id];
+            localStorage.setItem('pending_agent_reviews', JSON.stringify(allPending));
+          }
+        }
+      }
+
+      selectedAgentForReview = null;
+      selectedFileForReview = null;
+
+      // Reset to agent selection view (hide all workflow sections)
+      document.getElementById('file-selection-section').classList.add('hidden');
+      document.getElementById('feedback-form-section').classList.add('hidden');
+      document.getElementById('additional-feedback-section').classList.add('hidden');
+      document.getElementById('scoring-section').classList.add('hidden');
+      document.getElementById('final-submission-section').classList.add('hidden');
+      document.getElementById('admin-agent-list-section').classList.add('hidden');
+
+      // Reset agent selector
+      document.getElementById('agent-selector').value = '';
+
+      // Refresh dashboard to update agent statuses
+      renderAdminDashboard();
+    }
+
+    function resetForNextReview() {
+      // Hide scoring section
+      document.getElementById('scoring-section').classList.add('hidden');
+
+      // Reset to file selection for next review
+      document.getElementById('file-selection-section').classList.remove('hidden');
+
+      // Clear file selection
+      selectedFileForReview = null;
+      const fileInput = document.getElementById('quality-feedback-file');
+      if (fileInput) fileInput.value = '';
+
+      document.getElementById('selected-file-name').innerText = 'No file selected';
+
+      // Reset Feedback Form
+      document.getElementById('feedback-observations').value = '';
+
+      // Reset Performance Score Radios
+      const scoreRadios = document.getElementsByName('performance-score');
+      scoreRadios.forEach(radio => radio.checked = false);
+    }
+
+    function calculateTotalScore() {
+      const audit = parseInt(document.getElementById('indiv-score').value) || 0;
+      const errors = parseInt(document.getElementById('indiv-errors').value);
+      const compliance = parseInt(document.getElementById('indiv-compliance').value) || 0;
+
+      const display = document.getElementById('calc-total-score');
+
+      // Logic: 
+      // If Fatal Error (1) -> Score 0
+      // Else -> Average of Audit & Compliance? Or just Audit?
+      // User said "choose the score 0 and hundred... automatically fetch total"
+      // Let's assume strict compliance.
+
+      let total = 0;
+
+      if (document.getElementById('indiv-errors').value === "") {
+        display.innerText = "--";
+        return;
+      }
+
+      if (errors === 1) {
+        total = 0;
+      } else {
+        // If no fatal errors
+        // Using simple average for now, standard QA math
+        total = (audit + compliance) / 2;
+      }
+
+      display.innerText = total + "%";
+      if (total === 100) display.className = "text-2xl font-black text-emerald-500";
+      else if (total === 0) display.className = "text-2xl font-black text-red-500";
+      else display.className = "text-2xl font-black text-indigo-600";
+      function createFinalSubmissionSection() {
+        const section = document.createElement('div');
+        section.id = 'final-submission-section';
+        section.className = 'hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700';
+
+        section.innerHTML = `
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-green-600 text-white rounded-lg p-2 text-xl">✅</span>
+            Final Performance Submission for <span id="final-agent-name" class="text-green-600"></span>
+          </h2>
+          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            Cancel Process
+          </button>
+        </div>
+
+        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="final-agent-id" class="font-mono"></span></div>
+            <div><strong>Average Score:</strong> <span id="final-average-score" class="font-bold text-green-600"></span>/100</div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-4">Review Summary (3 Reviews Completed)</h3>
+          <div id="final-review-summary" class="space-y-2">
+            <!-- Review summaries will be populated here -->
+          </div>
+        </div>
+
+        <div class="mb-6 p-4 bg-yellow-50 dark:bg-slate-700 rounded-xl border border-yellow-200 dark:border-slate-600">
+          <p class="text-sm text-yellow-800 dark:text-yellow-200">
+            <strong>Note:</strong> This will calculate the final performance score based on the average of all 3 reviews and update the agent's performance record. All individual reviews will be saved to history.
+          </p>
+        </div>
+
+        <button onclick="submitFinalPerformanceScore()"
+          class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30">
+          Submit Final Performance Score
+        </button>
+      `;
+
+        // Insert after the scoring section
+        const scoringSection = document.getElementById('scoring-section');
+        scoringSection.parentNode.insertBefore(section, scoringSection.nextSibling);
+      }
+
+      function submitFinalPerformanceScore() {
+        const agentId = document.getElementById('final-agent-id').innerText;
+        const pendingReviews = getPendingReviews(agentId);
+
+        if (pendingReviews.length < 3) {
+          alert('Minimum 3 reviews required before final submission.');
+          return;
+        }
+
+        // 1. Calculate final score (average of all reviews)
+        const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
+        const finalScore = Math.round(totalScore / pendingReviews.length);
+        const hasFatal = pendingReviews.some(review => review.isFatal);
+
+        // 2. Save EACH review to history individually
+        pendingReviews.forEach(review => {
+          MockBackend.addPerformanceHistory({
+            agentId: agentId,
+            score: review.score,
+            isFatal: review.isFatal,
+            feedbackData: review.feedbackData,
+            timestamp: review.timestamp, // Keep original timestamp
+            reviewerId: review.reviewerId
+          });
+        });
+
+        // 3. Update Agent's Current Status with Average Score
+        MockBackend.savePerformance(agentId, {
+          score: finalScore,
+          isFatal: hasFatal,
+          lastReviewDate: new Date().toLocaleString(),
+          reviewerId: currentUser.id
+        });
+
+        // 4. Cleanup
+        const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+        delete allPending[agentId];
+        localStorage.setItem('pending_agent_reviews', JSON.stringify(allPending));
+
+        // Reset workflow
+        document.getElementById('final-submission-section').classList.add('hidden');
+        document.getElementById('admin-agent-list-section').classList.add('hidden');
+
+        // Reset selections
+        selectedAgentForReview = null;
+        selectedFileForReview = null;
+        document.getElementById('agent-selector').value = '';
+
+        // Refresh dashboard
+        renderAdminDashboard();
+
+        alert(`Final performance score (${finalScore}/100) submitted successfully for agent! All ${pendingReviews.length} reviews saved.`);
+      }
+      const fileInput = document.getElementById('admin-file-upload');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+
+        // Read file content
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const content = e.target.result;
+          try {
+            MockBackend.addReport(file, content);
+            alert(`Successfully uploaded "${file.name}"`);
+            renderAdminDashboard(); // Refresh UI
+          } catch (err) {
+            alert('Upload failed: File might be too large for browser storage.');
+            console.error(err);
+          }
+        };
+        reader.readAsDataURL(file);
+
+        fileInput.value = ''; // Reset
+      } else {
+        alert('Please select a file first.');
+      }
+    }
+
+    function handleDeleteReport(id) {
+      if (confirm('Are you sure you want to delete this report? It will be removed for all agents.')) {
+        MockBackend.deleteReport(id);
+        renderAdminDashboard(); // Refresh
+      }
+    }
+
+    function handleDeleteReview(id) {
+      if (confirm('Are you sure you want to delete this performance review?')) {
+        MockBackend.deletePerformanceScore(id);
+        renderAdminDashboard();
+      }
+    }
+
+    function deleteAllReviews() {
+      if (!confirm('Delete ALL performance reviews? This cannot be undone.')) return;
+      MockBackend.deleteAllPerformanceScores();
+      // Also clear current performance status so dropdown reflects "Not Scored"
+      localStorage.removeItem('gojira_performance');
+      renderAdminDashboard();
+    }
+
+    function deleteAllComments() {
+      if (!confirm('Delete ALL comments? This cannot be undone.')) return;
+      MockBackend.deleteAllComments();
+      renderAdminDashboard();
+    }
+
+    function cleanupOldAdminData() {
+      MockBackend.cleanupOldData();
+      renderAdminDashboard();
+      alert('Old data cleaned (kept last 7 days).');
+    }
+
+    let currentEditingReviewId = null;
+
+    function editReview(id) {
+      const scores = MockBackend.getPerformanceScores();
+      const review = scores.find(s => s.id == id);
+      if (!review) return alert('Review not found');
+
+      currentEditingReviewId = id;
+      document.getElementById('edit-review-id').value = id;
+      document.getElementById('edit-feedback-input').value = review.feedbackData.feedback;
+
+      const scoreRadios = document.getElementsByName('edit-score');
+      scoreRadios.forEach(r => {
+        if (parseInt(r.value) === review.score) r.checked = true;
+      });
+
+      document.getElementById('edit-review-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-review-modal').classList.add('hidden');
+      currentEditingReviewId = null;
+    }
+
+    function saveEditedReview() {
+      if (!currentEditingReviewId) return;
+
+      const newFeedback = document.getElementById('edit-feedback-input').value;
+      const selectedScoreRadio = document.querySelector('input[name="edit-score"]:checked');
+
+      if (!selectedScoreRadio) return alert('Please select a score');
+
+      const newScore = parseInt(selectedScoreRadio.value);
+      const isFatal = newScore === 0;
+
+      MockBackend.updatePerformanceScore(currentEditingReviewId, {
+        score: newScore,
+        isFatal: isFatal,
+        feedback: newFeedback
+      });
+
+      alert('Review updated successfully');
+      closeEditModal();
+      renderAdminDashboard();
+    }
+
+    async function viewReviewDetails(reviewId) {
+      const reviews = MockBackend.getPerformanceScores();
+      const review = reviews.find(r => r.id == reviewId);
+
+      if (!review) return alert('Review details not found.');
+
+      const agent = USER_DB.find(u => u.id === review.agentId);
+      const agentName = agent ? agent.name : review.agentId;
+      const date = new Date(review.timestamp).toLocaleString();
+      const scoreClass = review.score === 100 ? 'text-emerald-500' : 'text-red-500';
+      const scoreText = review.score === 0 ? '0 (Fatal Error)' : '100 (Pass)';
+
+      // Populate Modal Fields
+      document.getElementById('view-modal-agent-id').innerText = `${agentName} (${review.agentId})`;
+      document.getElementById('view-modal-score').className = `text-3xl font-black ${scoreClass}`;
+      document.getElementById('view-modal-score').innerText = scoreText;
+      document.getElementById('view-modal-feedback').innerText = review.feedbackData.feedback || 'No feedback provided.';
+      document.getElementById('view-modal-date').innerText = date;
+      const processType = (review.feedbackData && review.feedbackData.processType) ? review.feedbackData.processType : 'N/A';
+      document.getElementById('view-modal-process').innerText = processType === 'voice' ? 'Voice Call' : 'Non-Voice (Chat/Email)';
+
+      const fileName = (review.feedbackData && review.fileName) ? review.fileName : 'N/A';
+      document.getElementById('view-modal-filename').innerText = fileName;
+
+      // Setup Actions
+      document.getElementById('view-modal-edit-btn').onclick = () => { closeViewModal(); editReview(reviewId); };
+      document.getElementById('view-modal-delete-btn').onclick = () => { if (confirm('Delete this review?')) { MockBackend.deletePerformanceScore(reviewId); closeViewModal(); renderAdminDashboard(); } };
+
+      // Handle File Content
+      const previewContainer = document.getElementById('view-modal-preview-container');
+      const downloadLink = document.getElementById('view-modal-download-link');
+      previewContainer.innerHTML = '<div class="animate-pulse flex space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div></div>'; // Loading Spinner
+
+      try {
+        let content = null;
+        let type = 'application/octet-stream';
+
+        // Check where content is stored
+        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.fileId) {
+          // Fetch from IndexedDB
+          content = await FileDB.getFile(review.feedbackData.file.fileId);
+          type = review.feedbackData.file.type;
+        } else if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
+          // Legislative fallback (if stored directly)
+          content = review.feedbackData.file.content;
+          type = review.feedbackData.file.type;
+        }
+
+        if (content) {
+          downloadLink.href = content;
+          downloadLink.download = fileName;
+
+          if (type.startsWith('image/')) {
+            previewContainer.innerHTML = `<img src="${content}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">`;
+          } else if (type.startsWith('audio/')) {
+            previewContainer.innerHTML = `
+                    <div class="text-center w-full">
+                        <div class="text-4xl mb-4">🎵</div>
+                        <audio controls src="${content}" class="w-full"></audio>
+                    </div>`;
+          } else if (type === 'application/pdf') {
+            previewContainer.innerHTML = `<iframe src="${content}" class="w-full h-full rounded-lg border-0"></iframe>`;
+          } else {
+            previewContainer.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">📄</div>
+                        <p class="text-sm font-bold">File Preview Not Available</p>
+                        <p class="text-xs text-slate-500">Please download to view</p>
+                    </div>`;
+          }
+        } else {
+          previewContainer.innerHTML = `
+                <div class="text-center text-slate-400">
+                    <div class="text-4xl mb-2">⚠️</div>
+                    <p>File content not found or expired.</p>
+                </div>`;
+          downloadLink.classList.add('hidden');
+        }
+
+      } catch (e) {
+        console.error("Error loading file", e);
+        previewContainer.innerHTML = `<p class="text-red-500 text-sm">Error loading file.</p>`;
+      }
+
+      document.getElementById('view-review-modal').classList.remove('hidden');
+    }
+
+    function closeViewModal() {
+      document.getElementById('view-review-modal').classList.add('hidden');
+      document.getElementById('view-modal-preview-container').innerHTML = ''; // Clear memory
+    }
+
+    function resetAllPerformanceData() {
+      if (confirm('Are you sure you want to reset ALL performance data? This will clear all reviews and scores for all agents. This action cannot be undone.')) {
+        MockBackend.clearAllPerformanceData();
+        renderAdminDashboard();
+        alert('All performance data has been reset. All agents now show as "Not Scored".');
+      }
+    }
+
+    function clearSelectedAgent() {
+      selectedAgentForUpload = null;
+      document.getElementById('indiv-agent-search').value = '';
+      document.getElementById('indiv-agent-results').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.remove('flex');
+      document.getElementById('indiv-upload-form').classList.add('hidden');
+      document.getElementById('indiv-score').value = '';
+      document.getElementById('indiv-errors').value = '';
+      document.getElementById('indiv-compliance').value = '';
+      document.getElementById('calc-total-score').innerText = '--';
+      document.getElementById('proof-audio').value = '';
+      document.getElementById('proof-chat').value = '';
+      document.getElementById('proof-email').value = '';
+    }
+
+    function renderAgentDashboard() {
+      if (currentUser) {
+        document.getElementById('agent-name-display').innerText = currentUser.name;
+      }
+    }
+
+    function openAgentPerformanceModal() {
+      if (!currentUser) return;
+      const modal = document.getElementById('agent-performance-modal');
+      const contentLoaded = document.getElementById('perf-content-loaded');
+      const contentEmpty = document.getElementById('perf-content-empty');
+
+      document.getElementById('modal-agent-id').innerText = `ID: ${currentUser.id}`;
+      modal.classList.remove('hidden');
+
+      const perfData = MockBackend.getPerformance(currentUser.id);
+
+      if (perfData) {
+        contentLoaded.classList.remove('hidden');
+        contentEmpty.classList.add('hidden');
+
+        // Populate Scores
+        document.getElementById('modal-audit-score').innerText = perfData.score;
+        document.getElementById('modal-fatal-errors').innerText = perfData.errors;
+        document.getElementById('modal-compliance').innerText = perfData.compliance === '100' ? '100%' : '0%';
+
+        // Calculate Total if not saved, or use saved logic. 
+        // Since we save specific fields, let's re-calculate display total or assume Audit is main.
+        // User said "Total Quality Score... automatically fetch".
+        // In Admin calc we did: If Fatal=1 -> 0, else (Audit+Comp)/2. Let's replicate or use saved.
+        // We should ideally save the Total. But for now re-calc.
+        let total = 0;
+        const audit = parseInt(perfData.score) || 0;
+        const comp = parseInt(perfData.compliance) || 0;
+        const errors = parseInt(perfData.errors) || 0;
+
+        if (errors === 1) total = 0;
+        else total = (audit + comp) / 2;
+
+        document.getElementById('modal-total-score').innerText = total + '%';
+
+        // Populate Proofs
+        const proofsList = document.getElementById('modal-proofs-list');
+        if (perfData.proofs && perfData.proofs.length > 0) {
+          proofsList.innerHTML = perfData.proofs.map(p => `
+                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+                   <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
+                      <div>
+                         <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
+                         <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
+                      </div>
+                   </div>
+                   <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
+                </div>
+             `).join('');
+        } else {
+          proofsList.innerHTML = '<p class="col-span-2 text-center text-slate-400 italic">No proofs attached.</p>';
+        }
+
+      } else {
+        contentLoaded.classList.add('hidden');
+        contentEmpty.classList.remove('hidden');
+      }
+    }
+
+    function closeAgentPerformanceModal() {
+      document.getElementById('agent-performance-modal').classList.add('hidden');
+    }
+
+    // BULK PERFORMANCE MANAGER
+    function openReport(content, type) {
+      const win = window.open();
+      if (win) {
+        if (type.startsWith('image/')) {
+          win.document.write(`<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:#f0f0f0;"><img src="${content}" style="max-width:100%;max-height:100%;box-shadow:0 0 20px rgba(0,0,0,0.1);"></div>`);
+        } else if (type === 'application/pdf') {
+          win.document.write(`<embed width="100%" height="100%" src="${content}" type="application/pdf">`);
+        } else {
+          // Fallback for other types
+          win.document.write(`<h2 style="font-family:sans-serif;text-align:center;padding:20px;">Preview not available for this file type. Please download to view.</h2><div style="text-align:center;"><a href="${content}" download="file" style="padding:10px 20px;background:#3b82f6;color:white;text-decoration:none;border-radius:5px;">Download File</a></div>`);
+        }
+        win.document.title = "View Report";
+        win.document.close(); // Important for loading
+      } else {
+        alert('Pop-up blocked! Please allow pop-ups for this site to view reports.');
+      }
+    }
+
+    function handleCommentSubmit() {
+      const input = document.getElementById('agent-comment-input');
+      const text = input.value.trim();
+
+      if (!text) return alert('Please write a comment first.');
+      if (!currentUser) return alert('You must be logged in.');
+
+      MockBackend.addComment(text, currentUser.id);
+      alert('Feedback sent to Admin successfully!');
+      input.value = '';
+    }
+
+    function logout() {
+      currentUser = null;
+      navigateTo('view-home');
+    }
+
+
+
+    function handleAgentSearch(query) {
+      const resultsDiv = document.getElementById('indiv-agent-results');
+      if (!query || query.length < 2) {
+        resultsDiv.classList.add('hidden');
+        return;
+      }
+
+      const matched = USER_DB.filter(u =>
+        u.role === 'agent' &&
+        (u.name.toLowerCase().includes(query.toLowerCase()) || u.id.toLowerCase().includes(query.toLowerCase()))
+      );
+
+      if (matched.length === 0) {
+        resultsDiv.innerHTML = '<div class="p-4 text-sm text-slate-500 italic">No agents found</div>';
+      } else {
+        resultsDiv.innerHTML = matched.map(u => `
+          <div onclick="selectAgent('${u.id}')" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-50 dark:border-slate-700 last:border-0">
+             <div class="font-bold text-slate-700 dark:text-slate-200">${u.name}</div>
+             <div class="text-xs text-slate-500 font-mono">${u.id} • ${u.entity}</div>
+          </div>
+        `).join('');
+      }
+      resultsDiv.classList.remove('hidden');
+    }
+
+    function selectAgent(id) {
+      selectedAgentForUpload = USER_DB.find(u => u.id === id);
+      if (!selectedAgentForUpload) return;
+
+      // Update UI
+      document.getElementById('indiv-agent-search').value = '';
+      document.getElementById('indiv-agent-results').classList.add('hidden');
+      document.getElementById('indiv-agent-selected').classList.remove('hidden');
+      document.getElementById('indiv-agent-selected').classList.add('flex');
+      document.getElementById('indiv-upload-form').classList.remove('hidden');
+
+      document.getElementById('selected-agent-name').innerText = selectedAgentForUpload.name;
+      document.getElementById('selected-agent-id').innerText = selectedAgentForUpload.id;
+
+      // Search Input hidden or disabled
+      document.getElementById('indiv-agent-search').parentElement.parentElement.classList.add('hidden');
+    }
+
+
+
+    async function submitIndividualScore() {
+      if (!selectedAgentForUpload) return alert('No agent selected.');
+
+      const score = document.getElementById('indiv-score').value;
+      const errors = document.getElementById('indiv-errors').value;
+      const compliance = document.getElementById('indiv-compliance').value;
+
+      if (!score || !errors) return alert('Please enter Score and Errors.');
+
+      // Handle File Uploads
+      const proofs = [];
+      const files = [
+        { id: 'proof-audio', name: 'Call Recording', icon: '🎤' },
+        { id: 'proof-chat', name: 'Chat Transcript', icon: '💬' },
+        { id: 'proof-email', name: 'Email Proof', icon: '✉️' }
+      ];
+
+      try {
+        for (const f of files) {
+          const input = document.getElementById(f.id);
+          if (input.files.length > 0) {
+            const file = input.files[0];
+            const content = await readFileAsBase64(file);
+            proofs.push({
+              name: f.name + ` (${file.name})`,
+              icon: f.icon,
+              type: file.type,
+              content: content
+            });
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        return alert('Error processing files. Please try again.');
+      }
+
+      // Save
+      MockBackend.savePerformance(selectedAgentForUpload.id, {
+        score,
+        errors,
+        compliance,
+        proofs
+      });
+
+      alert(`Performance updated for ${selectedAgentForUpload.name} successfully!`);
+      clearSelectedAgent();
+    }
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    const searchData = [
+      { name: 'Knowledge Base', id: 'view-kb' },
+      { name: 'Brand Entities', id: 'view-entities' },
+      { name: 'New Updates', id: 'view-updates' },
+      { name: 'Resources', id: 'view-resources' },
+      { name: 'BharatLoan', id: 'view-bharatloan' },
+      { name: 'Rupee112', id: 'view-rupee112' },
+      { name: 'Loan112', id: 'view-loan112' },
+      { name: 'RupeeOnTime', id: 'view-rupeeontime' },
+      { name: 'Quality Assurance Checklist', id: 'view-checklist' },
+      { name: 'BharatLoan Portal', id: 'view-bharatloan' },
+      { name: 'Rupee112 Portal', id: 'view-rupee112' },
+      { name: 'Loan112 Portal', id: 'view-loan112' },
+      { name: 'RupeeOnTime Portal', id: 'view-rupeeontime' },
+      { name: 'WOCOM 365', id: 'view-bharatloan' },
+      { name: 'Yellow Ai', id: 'view-bharatloan' },
+      { name: 'Outlook', id: 'view-bharatloan' },
+    ];
+
+    let currentEntity = '';
+    let currentUser = null;
+    let selectedAgentForUpload = null;
+
+    const ENTITY_VIEW_MAP = {
+      'view-bharatloan': 'BharatLoan',
+      'view-rupee112': 'Rupee112',
+      'view-loan112': 'Loan112',
+      'view-rupeeontime': 'RupeeOnTime'
+    };
+
+    function navigateTo(id) {
+      // CHECK ACCESS PERMISSION
+      if (currentUser) {
+        if (currentUser.entity !== 'ALL') {
+          const targetEntity = ENTITY_VIEW_MAP[id];
+          if (targetEntity && targetEntity !== currentUser.entity) {
+
+            // Dynamic check: Update modal text to ensure it matches requirement
+            const modalTitle = document.getElementById('access-denied-title');
+            if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
+
+            // Show Access Denied Modal
+            document.getElementById('access-denied-modal').classList.remove('hidden');
+            return; // STOP NAVIGATION
+          }
+        }
+      }
+
+      document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Close search after navigation
+      document.getElementById('search-bar').classList.add('hidden');
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '';
+    }
+
+    function toggleFaq(btn) {
+      btn.parentElement.classList.toggle('active');
+    }
+
+    function showTab(tab, entity = '') {
+      const prefix = entity ? '-' + entity : '';
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      // Remove active from all tabs
+      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}` : '#tab-guidelines, #tab-tools';
+      document.querySelectorAll(tabSelectors).forEach(btn => {
+        btn.classList.remove('text-blue-600', 'border-blue-600');
+        btn.classList.add('text-slate-500', 'border-transparent');
+      });
+      // Show selected tab content
+      document.getElementById('content-' + tab + prefix).classList.remove('hidden');
+      // Activate selected tab
+      document.getElementById('tab-' + tab + prefix).classList.add('text-blue-600', 'border-blue-600');
+      document.getElementById('tab-' + tab + prefix).classList.remove('text-slate-500', 'border-transparent');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      const text = document.getElementById('theme-text');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.innerText = '🌙';
+        text.innerText = 'Dark';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        icon.innerText = '☀️';
+        text.innerText = 'Light';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    function toggleDropdown(entity) {
+      const dropdown = document.getElementById('support-dropdown' + (entity ? '-' + entity : ''));
+      dropdown.classList.toggle('hidden');
+    }
+
+    function toggleSearch() {
+      const bar = document.getElementById('search-bar');
+      bar.classList.toggle('hidden');
+      if (!bar.classList.contains('hidden')) {
+        document.getElementById('search-input').focus();
+      } else {
+        document.getElementById('search-input').value = '';
+        document.getElementById('search-results').innerHTML = '';
+      }
+    }
+
+    function toggleScriptTemplate() {
+      const body = document.getElementById('customer-script-body');
+      const toggle = document.getElementById('customer-script-toggle');
+      if (!body || !toggle) return;
+      body.classList.toggle('hidden');
+      toggle.innerText = body.classList.contains('hidden') ? '▼' : '▲';
+    }
+
+    function performSearch(query) {
+      const resultsDiv = document.getElementById('search-results');
+      if (!query.trim()) {
+        resultsDiv.innerHTML = '';
+        return;
+      }
+      const filtered = searchData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+      resultsDiv.innerHTML = filtered.map(item => `<div onclick="navigateTo('${item.id}')" class="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">${item.name}</div>`).join('');
+    }
+
+    function showLogin(entity) {
+      currentEntity = entity;
+      document.getElementById('login-title').innerText = `Login to ${entity}`;
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    function hideLogin() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('empid').value = '';
+    }
+
+    // USER DATABASE
+    const USER_DB = [
+      { id: 'ADMIN/001', name: 'Administrator', role: 'admin', entity: 'ALL' },
+      { id: 'BL/GG/25/703', name: 'SHARAD ADHIKARI', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/704', name: 'DIVYANSHU SHARMA', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/705', name: 'AYUSHMAN TIBREWAL', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1189', name: 'Khushi Kumari', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/712', name: 'AKSHAY NAGIA', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1021', name: 'Chitresh Kumar', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1022', name: 'Akshat', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1055', name: 'KAJAL', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1134', name: 'Isha', role: 'agent', entity: 'BharatLoan' },
+
+      { id: 'BL/GG/25/1240', name: 'KUNDAN KUMAR', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/25/1338', name: 'MOHIT KUMAR', role: 'agent', entity: 'BharatLoan' },
+      { id: 'BL/GG/26/042', name: 'MOHD. KAIF', role: 'agent', entity: 'BharatLoan' },
+
+
+      // LOAN112 AGENTS
+      { id: 'L112/GG/25/021', name: 'RITU YADAV', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/047', name: 'Hari Kishan', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/022', name: 'ADITYA SINGH', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/015', name: 'Kunal Kukreti', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/086', name: 'Joba', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/026', name: 'AMAAN KHAN', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/087', name: 'Ajit', role: 'agent', entity: 'Loan112' },
+      { id: 'L112/GG/25/046', name: 'Avinash', role: 'agent', entity: 'Loan112' },
+
+      // RUPEE112 AGENTS
+      { id: 'R112/GG/25/710', name: 'Priya Kumari', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/24/410', name: 'CHANDAN PANDAY', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/24/432', name: 'SHEETAL SINGH', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/623', name: 'GUNJAN', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/707', name: 'Dunna Vishal', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/754', name: 'Nishu Yadav', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/724', name: 'Aryan', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/732', name: 'Ansh Rai', role: 'agent', entity: 'Rupee112' },
+      { id: 'RDA/GG/25/006', name: 'Ashish Rawat', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/24/478', name: 'KOMAL', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/725', name: 'Kusum sharma', role: 'agent', entity: 'Rupee112' },
+      { id: 'RDA/GG/25/038', name: 'Nippi', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/23/168', name: 'Ruksar', role: 'agent', entity: 'Rupee112' },
+      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
+
+      // RUPEEONTIME AGENTS
+      { id: 'ROT/GG/25/001', name: 'Rahul Sharma', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/002', name: 'Priya Singh', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/003', name: 'Amit Kumar', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/004', name: 'Sneha Patel', role: 'agent', entity: 'RupeeOnTime' },
+      { id: 'ROT/GG/25/005', name: 'Vikram Yadav', role: 'agent', entity: 'RupeeOnTime' }
+    ];
+
+
+    // --- AGENT DASHBOARD FUNCTIONS ---
+
+    function renderAgentDashboard() {
+      if (currentUser) {
+        document.getElementById('agent-name-display').innerText = currentUser.name;
+      }
+    }
+
+    function openAgentPerformanceModal() {
+      if (!currentUser) return;
+      const modal = document.getElementById('agent-performance-modal');
+      const contentLoaded = document.getElementById('perf-content-loaded');
+      const contentEmpty = document.getElementById('perf-content-empty');
+
+      document.getElementById('modal-agent-id').innerText = `ID: ${currentUser.id}`;
+      modal.classList.remove('hidden');
+
+      // 1. Get Scores for this agent
+      const allScores = MockBackend.getPerformanceScores();
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+      const weeklyScores = allScores.filter(s =>
+        s.agentId === currentUser.id &&
+        new Date(s.timestamp) > oneWeekAgo
+      );
+
+      if (weeklyScores.length > 0) {
+        contentLoaded.classList.remove('hidden');
+        contentEmpty.classList.add('hidden');
+
+        // 2. Calculate Stats
+        const totalScoreSum = weeklyScores.reduce((sum, s) => sum + s.score, 0);
+        const avgScore = Math.round(totalScoreSum / weeklyScores.length);
+        const fatalCount = weeklyScores.filter(s => s.score === 0).length;
+
+        // Compliance: Placeholder logic as per original requirement (can be average or based on fatals)
+        // Let's assume if 0 fatals -> 100%, else reduced. Or just N/A if not tracked explicitly in scores.
+        // The previous logic used a 'compliance' field from 'savePerformance'. 
+        // Here we only have score (0/100). Let's say Compliance = (Non-Fatal / Total) * 100
+        const complianceRate = Math.round(((weeklyScores.length - fatalCount) / weeklyScores.length) * 100);
+
+        // Update UI Stats
+        document.getElementById('modal-total-score').innerText = avgScore + '%';
+        document.getElementById('modal-audit-score').innerText = weeklyScores.length;
+        document.getElementById('modal-fatal-errors').innerText = fatalCount;
+        document.getElementById('modal-compliance').innerText = complianceRate + '%';
+
+        // 3. Render Reviews List
+        const listContainer = document.getElementById('modal-reviews-list');
+        listContainer.innerHTML = weeklyScores.map((review, index) => {
+          const isFatal = review.score === 0;
+          const scoreColor = isFatal ? 'text-red-500' : 'text-emerald-500';
+          const scoreText = isFatal ? 'Fatal (0)' : '100';
+
+          return `
+            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold">
+                  ${index + 1}
+                </div>
+                <div>
+                  <p class="font-bold text-slate-700 dark:text-slate-200">Review ${index + 1}</p>
+                  <p class="text-xs text-slate-400">${new Date(review.timestamp).toLocaleDateString()}</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-6">
+                <div class="font-bold ${scoreColor} text-lg">${scoreText}</div>
+                <button onclick="viewReviewDetailForAgent('${review.id}')" 
+                  class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition shadow-sm"
+                  title="View Feedback & Proof">
+                  👁️
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // 4. Render Comments (Agent's comments)
+        // We show comments made by this agent? Or comments FOR this agent?
+        // User said: "after that he can add and delete a comment"
+        // Let's show existing comments for this agent id from MockBackend.
+        renderAgentComments();
+
+      } else {
+        contentLoaded.classList.add('hidden');
+        contentEmpty.classList.remove('hidden');
+      }
+    }
+
+    function viewReviewDetailForAgent(reviewId) {
+      const scores = MockBackend.getPerformanceScores();
+      const review = scores.find(s => s.id == reviewId);
+
+      if (!review) return alert('Details not found.');
+
+      const message = `
+Feedback:
+${review.feedbackData.feedback}
+
+Open attached proof?
+      `;
+
+      if (confirm(message)) {
+        if (review.feedbackData.file && review.feedbackData.file.content) {
+          openReport(review.feedbackData.file.content, review.feedbackData.file.type);
+        } else {
+          // Debug info for user
+          let reason = "Unknown error";
+          if (!review.feedbackData) reason = "No feedback data object.";
+          else if (!review.feedbackData.file) reason = "No file attached to this review.";
+          else if (!review.feedbackData.file.content) reason = "File attached but content is empty (Storage Quota Exceeded).";
+
+          alert(`Cannot open proof: ${reason}. Please ask Admin to re-upload with a smaller file.`);
+        }
+      }
+    }
+
+    // --- HELPER FUNCTIONS (ADMIN & AGENT) ---
+
+    function openReport(content, type) {
+      const win = window.open();
+      if (type.startsWith('image/')) {
+        win.document.write(`<img src="${content}" style="max-width:100%">`);
+      } else if (type === 'application/pdf') {
+        win.document.write(`<iframe src="${content}" width="100%" height="100%"></iframe>`);
+      } else if (type.startsWith('audio/')) {
+        win.document.write(`<audio controls src="${content}"></audio>`);
+      } else {
+        // Fallback for text or other downloads
+        win.document.write(`<a href="${content}" download="report">Download File</a>`);
+      }
+    }
+
+    function handleDeleteReport(id) {
+      if (confirm('Are you sure you want to delete this report?')) {
+        MockBackend.deleteReport(id);
+        renderAdminDashboard();
+      }
+    }
+
+    function handleDeleteReview(id) {
+      if (confirm('Are you sure you want to delete this performance review?')) {
+        MockBackend.deletePerformanceScore(id);
+        renderAdminDashboard();
+      }
+    }
+
+    function handleDeleteComment(id) {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        MockBackend.deleteComment(id);
+        renderAdminDashboard();
+      }
+    }
+
+    async function viewReviewDetails(reviewId) {
+      // For Admin mainly
+      const scores = MockBackend.getPerformanceScores();
+      const review = scores.find(s => s.id == reviewId);
+      if (review) {
+        let msg = `Agent: ${review.agentId}\nScore: ${review.score}\nFeedback: ${review.feedbackData.feedback || 'N/A'}`;
+        if (confirm(msg + "\n\nOpen Proof?")) {
+          if (review.feedbackData.file) {
+            let content = review.feedbackData.file.content;
+            if (!content && review.feedbackData.file.fileId) {
+              try { content = await FileDB.getFile(review.feedbackData.file.fileId); } catch (e) { }
+            }
+
+            if (content) {
+              openReport(content, review.feedbackData.file.type);
+            } else {
+              alert('No proof attached or file content missing.');
+            }
+          } else {
+            alert('No proof attached.');
+          }
+        }
+      }
+    }
+
+
+    function closeAgentPerformanceModal() {
+      document.getElementById('agent-performance-modal').classList.add('hidden');
+    }
+
+    function renderAgentComments() {
+      // Use existing Comments section? 
+      // The HTML has a textarea #agent-comment-input.
+      // We should probably list existing comments below it.
+      // But the HTML doesn't have a container for "My Comments".
+      // I'll append a container next to the input area if needed, or just let them add.
+      // User said "add and delete". So they need to see them to delete them.
+
+      const parent = document.getElementById('agent-comment-input').parentElement;
+      let list = document.getElementById('agent-comments-list-display');
+      if (!list) {
+        list = document.createElement('div');
+        list.id = 'agent-comments-list-display';
+        list.className = 'mt-6 space-y-3';
+        parent.appendChild(list);
+      }
+
+      const comments = MockBackend.getComments().filter(c => c.agentId === currentUser.id); // Comments BY agent? Or FOR agent?
+      // Usually comments are "Agent Comments & Feedback" in Admin Dash.
+      // Let's assume these are comments BY the agent regarding the review.
+
+      list.innerHTML = comments.map(c => `
+        <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-start">
+          <div class="text-sm text-slate-600 dark:text-slate-300">
+            <span class="text-xs text-slate-400 block mb-1">${c.date}</span>
+            ${c.text}
+          </div>
+          <button onclick="deleteOwnComment(${c.id})" class="text-red-500 hover:text-red-700 text-xs font-bold">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    function handleCommentSubmit() {
+      const input = document.getElementById('agent-comment-input');
+      const text = input.value.trim();
+
+      if (!text) return alert('Please write a comment first.');
+      if (!currentUser) return alert('You must be logged in.');
+
+      // Save comment
+      MockBackend.addComment(text, currentUser.id);
+
+      alert('Comment added successfully!');
+      input.value = '';
+      renderAgentComments();
+    }
+
+    function deleteOwnComment(id) {
+      if (confirm("Delete this comment?")) {
+        MockBackend.deleteComment(id);
+        renderAgentComments();
+      }
+    }
+
+    function submitLogin(event) {
+      event.preventDefault();
+      const empId = document.getElementById('empid').value.trim();
+
+      const user = USER_DB.find(u => u.id === empId);
+
+      if (user) {
+        // STRICT ENTITY CHECK
+        if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
+          // Show Access Denied Modal using the updated title ID
+          const modalTitle = document.getElementById('access-denied-title');
+          if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
+
+          hideLogin();
+          document.getElementById('access-denied-modal').classList.remove('hidden');
+          return;
+        }
+
+        currentUser = user;
+
+        if (user.role === 'admin') {
+          // Always cleanup old (7 days) before showing admin dashboard
+          MockBackend.cleanupOldData();
+          renderAdminDashboard();
+          navigateTo('view-admin');
+        } else {
+          // Update Title
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome, ${user.name}`;
+
+          renderAgentDashboard();
+          navigateTo('view-performance');
+        }
+        hideLogin();
+      } else {
+        alert('Invalid Employee ID. Please check your credentials.');
+      }
+    }
+
+    window.onload = () => {
+      // Cleanup old data (older than 7 days)
+      MockBackend.cleanupOldData();
+
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').innerText = '☀️';
+        document.getElementById('theme-text').innerText = 'Light';
+      }
+    }
+  </script>
+
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gojira TP | Training Portal</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .app-view {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .app-view.active {
+      display: block;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, .15);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 1200px;
+      opacity: 1;
+      padding-top: 0.75rem;
+    }
+
+    .tab-content {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .stylish {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .glow {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+  <!-- TOP NAV -->
+  <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+      <div onclick="navigateTo('view-home')" class="flex items-center gap-3 cursor-pointer group">
+        <div
+          class="w-12 h-12 bg-slate-900 dark:bg-slate-700 rounded flex items-center justify-center text-white font-bold group-hover:bg-blue-600 transition glow">
+          G</div>
+        <span
+          class="font-['Montserrat'] text-4xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 stylish">
+          Gojira TP
+        </span>
+      </div>
+
+      <div class="flex flex-col items-end gap-2">
+        <div class="flex items-center gap-2">
+          <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
+          <button onclick="toggleTheme()"
+            class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Dark</span>
+          </button>
+        </div>
+
+        <div id="search-bar" class="hidden">
+          <input id="search-input" type="text" oninput="performSearch(this.value)" placeholder="Search portal..."
+            class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm w-64">
+          <div id="search-results"
+            class="mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HOME -->
+  <div id="view-home" class="app-view active">
+    <main class="max-w-7xl mx-auto px-6 py-20 text-center">
+      <h1 class="text-5xl font-extrabold mb-6">
+        Welcome to
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+          Training Portal
+        </span>
+      </h1>
+
+      <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-12">
+        Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
+      </p>
+
+
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div onclick="navigateTo('view-kb')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-blue-600 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📘</div>
+          <h2 class="text-2xl font-bold mb-2">Knowledge Base</h2>
+          <p class="text-sm opacity-90">Crucial FAQs and operational guidelines.</p>
+        </div>
+
+        <div onclick="navigateTo('view-entities')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-indigo-600 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
+          <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
+          <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
+        </div>
+
+        <div onclick="navigateTo('view-updates')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-amber-500 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📢</div>
+          <h2 class="text-2xl font-bold mb-2">New Updates</h2>
+          <p class="text-sm opacity-90">Latest system & policy logs.</p>
+        </div>
+
+        <div onclick="navigateTo('view-resources')"
+          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-purple-600 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
+          <h2 class="text-2xl font-bold mb-2">Resources</h2>
+          <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- KNOWLEDGE BASE -->
+  <div id="view-kb" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">Knowledge Base</span>
+    </header>
+    <div class="max-w-4xl mx-auto px-6 py-14">
+      <h1 class="text-4xl font-extrabold mb-10">Frequently Asked Questions</h1>
+      <div class="space-y-4">
+        <!-- 1 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">1. My loan is approved but not
+            disbursed. Why?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Loan disbursement may be pending due to:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Incomplete documentation</li>
+              <li>Bank account verification</li>
+              <li>Internal compliance or risk checks</li>
+            </ul>
+            <p class="mt-2 font-medium">Our team will assist you with the exact reason.</p>
+          </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">2. Can I increase my loan amount
+            after sanction?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Loan enhancement depends on below mentioned criteria but can be done while accepting the
+              offer not post sanction:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Your credit profile</li>
+              <li>Repayment history</li>
+              <li>Internal eligibility checks</li>
+            </ul>
+            <p class="mt-2">You may reapply after closing or maintaining a good repayment track.</p>
+          </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">3. Why was my loan application
+            rejected?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Loan applications can be rejected due to:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Credit score or repayment history</li>
+              <li>Existing liabilities</li>
+              <li>Internal risk assessment</li>
+            </ul>
+            <p class="mt-2">Customer care can guide but cannot override system decisions.</p>
+          </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">4. How long does it take for
+            repayment to reflect after payment?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>Payments usually reflect within 24–48 working hours. Delays may occur due to bank processing or holidays.
+            </p>
+          </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">5. How is my total payable amount
+            calculated?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">Your payable amount includes:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Loan Amount</li>
+              <li>Interest calculated till the repayment date</li>
+              <li>Penalty (2% post repayment date where 1% is daily interest and 1% is penalty)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">6. Will my credit score be
+            affected if I delay payment?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>Yes. Any delay in repayment may negatively impact your CIBIL score, which can affect future loan or
+              credit card approvals.</p>
+          </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">7. I have already shared a
+            Promise to Pay (PTP). Why am I being called again?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-2">We may call to:</p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>Confirm your payment readiness</li>
+              <li>Check if funds have been arranged</li>
+              <li>Assist you in making the payment earlier, if possible</li>
+            </ul>
+            <p class="mt-2">This helps avoid further penalties or escalation.</p>
+          </div>
+        </div>
+
+        <!-- 8 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">8. Will I continue to receive
+            calls after making the payment?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>No. Once the payment is successfully received and updated in our system, collection calls will stop.</p>
+            <p class="mt-2">If you still receive a call, please share the payment reference number with the agent.</p>
+          </div>
+        </div>
+
+        <!-- 9 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">9. What is NBFC?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p>NBFC means Non-Banking Financial Company. It is a company that gives loans, but it is not a bank.</p>
+            <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
+              <p>🏦 <strong>Bank</strong> = savings account + loans</p>
+              <p>💰 <strong>NBFC</strong> = only loans</p>
+            </div>
+            <ul class="list-disc ml-6 mt-4 space-y-1">
+              <li>NBFCs give personal loans, business loans, etc.</li>
+              <li>They are approved by RBI</li>
+              <li>You cannot open a savings account in an NBFC</li>
+              <li>They are commonly used in instant loan apps</li>
+            </ul>
+            <p class="mt-3 text-sm italic">Example: If you take a quick loan from an app and get money fast, it is
+              usually an NBFC, not a bank.</p>
+          </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="faq-item border-b pb-4">
+          <button onclick="toggleFaq(this)" class="w-full text-left font-bold text-lg">10. What is an Account
+            Aggregator?</button>
+          <div class="faq-answer text-slate-600 dark:text-slate-300">
+            <p class="mb-3">An Account Aggregator (AA) is a secure system that lets you share your bank details
+              digitally with a lender only after your permission. It helps banks/NBFCs check your financial data online,
+              without paperwork.</p>
+            <h4 class="font-bold mb-2">How it works:</h4>
+            <ol class="list-decimal ml-6 space-y-1 mb-4">
+              <li>You give consent</li>
+              <li>Your bank statement / financial data is shared securely</li>
+              <li>The lender checks your eligibility</li>
+              <li>Loan gets processed faster</li>
+            </ol>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">🔒 Safe & secure</div>
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">✅ RBI regulated</div>
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">❌ No data without consent</div>
+              <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRAND ENTITIES -->
+  <div id="view-entities" class="app-view">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">Brand Entities</span>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-14 text-center">
+      <h1 class="text-3xl font-extrabold mb-12">Select an Entity to View Guidelines</h1>
+
+      <div class="grid md:grid-cols-4 gap-8">
+        <div onclick="navigateTo('view-bharatloan')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            B</div>
+          <h3 class="font-bold text-lg">BharatLoan</h3>
+        </div>
+
+        <div onclick="navigateTo('view-rupee112')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-green-500 to-red-600 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            ₹</div>
+          <h3 class="font-bold text-lg">Rupee112</h3>
+        </div>
+
+        <div onclick="navigateTo('view-loan112')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-blue-900 to-red-600 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            L</div>
+          <h3 class="font-bold text-lg">Loan112</h3>
+        </div>
+
+        <div onclick="navigateTo('view-rupeeontime')"
+          class="relative p-8 rounded-3xl cursor-pointer hover-lift bg-gradient-to-r from-purple-600 to-red-600 text-white">
+          <div
+            class="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-2xl text-white">
+            ✔</div>
+          <h3 class="font-bold text-lg">RupeeOnTime</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATES -->
+  <div id="view-updates" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">System Updates</span>
+    </header>
+    <div class="max-w-4xl mx-auto px-6 py-14">
+      <h2 class="text-3xl font-extrabold mb-8">Recent Policy Changes</h2>
+      <div
+        class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
+        <div class="text-4xl mb-4">✨</div>
+        <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
+        <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BHARATLOAN SPECIFIC VIEW -->
+  <div id="view-bharatloan" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-red-600 to-blue-900 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
+      <button onclick="toggleDropdown('')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-blue-800 via-red-600 to-blue-900 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 8282824644</p>
+        <p><strong>Email:</strong> care@bharatloan.com</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines', 'bharatloan')" id="tab-guidelines-bharatloan"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Customer
+          Script Templates</button>
+        <button onclick="showTab('tools')" id="tab-tools"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
+
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-bharatloan" class="tab-content hidden">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="text-4xl">📜</div>
+            <div>
+              <h3 class="text-2xl font-bold">Customer Script Template & Mandatory Rules</h3>
+              <p class="text-slate-500 text-sm">Universal guidelines for all brands (Bharat Loan, Loan 112, etc.)</p>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <!-- Mandatory Rules -->
+            <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl border border-red-100 dark:border-red-800">
+              <h4 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
+                <span>⚠️</span> Mandatory Rules Highlighted
+              </h4>
+              <ul class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">48h Rule:</span>
+                  <span>Disbursement timeline must strictly be stated as "up to 48 hours". Never promise instant or
+                    same-day without verification.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Payment:</span>
+                  <span><strong>ALWAYS</strong> confirm payment receipt visually before proceeding. Do not rely on
+                    customer verbal confirmation.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Etiquette:</span>
+                  <span>Do NOT use "Sir/Ma'am". Use the customer's name (e.g., "Mr. Sharma").</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Tiered Escalation -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Tiered Credit Manager Logic</h4>
+              <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+                <table class="w-full text-sm text-left">
+                  <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+                    <tr>
+                      <th class="p-4">Escalation Level</th>
+                      <th class="p-4">Action Required</th>
+                      <th class="p-4">Manager Tagging</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold">1st Instance</td>
+                      <td class="p-4">Standard resolution attempt</td>
+                      <td class="p-4 text-slate-400">None</td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-amber-600">2nd Instance</td>
+                      <td class="p-4">Customer dissatisfied/repeat query</td>
+                      <td class="p-4">Tag <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Team
+                          Lead</span></td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-red-600">3rd Instance</td>
+                      <td class="p-4">Conflict/Escalation request</td>
+                      <td class="p-4">Tag <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Credit
+                          Manager</span> Immediately</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- App Response Logic -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
+                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Lead/Partial (Incomplete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Customer has not finished the form.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-blue-100 dark:border-slate-700 text-xs italic">
+                  "I can see you started the application but haven't completed the final step. Please upload [Document]
+                  to proceed."
+                </div>
+              </div>
+              <div
+                class="p-5 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">Submitted (Complete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Form is fully submitted.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-green-100 dark:border-slate-700 text-xs italic">
+                  "Your application is successfully submitted. It is currently under verification. Please wait for the
+                  update within 48 hours."
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Template -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Professional Email Template</h4>
+              <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl font-mono text-sm relative group">
+                <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copied!')"
+                  class="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition text-xs font-bold text-slate-500">Copy</button>
+                <div class="whitespace-pre-wrap">Subject: Application Status Update - [Application ID]
+
+                  Dear [Customer Name],
+
+                  Thank you for choosing [Brand Name].
+
+                  This is to confirm that we have received your application. It is currently being reviewed by our
+                  credit team.
+
+                  Timeline:
+                  - Initial Review: 24 Hours
+                  - Disbursement (if approved): Up to 48 Hours
+
+                  Please note that we will never ask for an OTP or PIN over the phone.
+
+                  Regards,
+                  [Agent Name]
+                  Support Team</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div id="content-tools" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">BharatLoan Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://bharatloanfintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@bharatloan.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESOURCES -->
+  <div id="view-resources" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+      <span class="mx-auto font-bold">Resources</span>
+    </header>
+    <div class="max-w-4xl mx-auto px-6 py-14">
+      <div class="space-y-6">
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer"
+          onclick="toggleScriptTemplate()">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
+              <div>
+                <h3 class="text-xl font-bold">Customer Script Templates</h3>
+                <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
+              </div>
+            </div>
+            <span id="customer-script-toggle" class="text-slate-500 text-lg">▼</span>
+          </div>
+
+          <div id="customer-script-body"
+            class="hidden mt-4 space-y-4 text-sm text-slate-700 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+            <p><strong>Brands:</strong> Bharat Loan | Loan 112 | Rupee 112 | Rupee On Time</p>
+
+            <div>
+              <p class="font-bold text-indigo-600">1. Payment-Related Queries</p>
+              <p class="font-semibold">A. Payment Done but Not Reflecting on Portal</p>
+              <p><strong>Internal Action:</strong></p>
+              <ul class="list-disc ml-5 space-y-1">
+                <li>Ask: "Could you please confirm the exact amount paid?"</li>
+                <li>Verify: Confirm the amount match.</li>
+                <li>Escalate: Email the concerned team AND update the WhatsApp group.</li>
+                <li>Compulsory: Mention the confirmed payment amount in the WhatsApp group.</li>
+              </ul>
+              <p class="font-semibold mt-2">B. Payment Done and Reflecting on Portal (Verification Pending)</p>
+              <p class="italic">Agent Script: "We have received your payment of ₹[Amount]. Your payment is currently under verification and will be updated within 24 hours (maximum)."</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">2. Application-Related Queries</p>
+              <p class="font-semibold">A. Application Incomplete (Status: Lead, Partial, eKYC Pending, etc.)</p>
+              <p class="italic">Agent Script: "Your application is currently in process. Kindly complete the remaining steps 100% through the [Brand Name] application. If you are facing any issues, please visit our website or contact us at care@[brand].com and try again after some time."</p>
+              <p class="italic mt-1">If customer asks about processing time: "There is a maximum processing time of 24 hours after successful completion of your application. Once completed, a credit manager will be assigned and will contact you within 24 hours."</p>
+              <p class="text-red-500 text-xs font-semibold mt-1">Strict Rule: Do not promise a 24h callback until the application is 100% complete.</p>
+              <p class="font-semibold mt-2">B. Application Submitted Successfully (Reference Number Generated)</p>
+              <p class="italic">Agent Script: "Your application has been submitted successfully. Our team will contact you within 24 hours."</p>
+              <p class="font-semibold mt-2">C. Repeat Customer (Bank Statement Required/100% Applied)</p>
+              <p class="italic">Agent Script: "Since you are an existing customer, your application status is in process. Kindly wait while a credit manager is assigned. They will contact you within 24 hours."</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">3. Credit Manager-Related Queries</p>
+              <table class="w-full text-left text-xs border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <thead class="bg-slate-100 dark:bg-slate-800">
+                  <tr>
+                    <th class="p-2">Frequency</th>
+                    <th class="p-2">Agent Action</th>
+                    <th class="p-2">Script</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-t border-slate-200 dark:border-slate-700">
+                    <td class="p-2">1st Time</td>
+                    <td class="p-2">Highlight/Escalate concern to team.</td>
+                    <td class="p-2">"We are escalating this; the team will contact you within 24 hours."</td>
+                  </tr>
+                  <tr class="border-t border-slate-200 dark:border-slate-700">
+                    <td class="p-2">2nd Time (Same Day)</td>
+                    <td class="p-2">Verify previous escalation log.</td>
+                    <td class="p-2">"An executive has already escalated the issue; the team will contact you within 24 hours."</td>
+                  </tr>
+                  <tr class="border-t border-slate-200 dark:border-slate-700">
+                    <td class="p-2">3rd Time+</td>
+                    <td class="p-2">Tag your Manager in the escalation.</td>
+                    <td class="p-2">"We have prioritized this with senior management. Please wait for the 24h window."</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">4. Collections (Extensions, Waivers, Settlement)</p>
+              <p class="font-semibold">A. Extension Requests (Medical Reasons)</p>
+              <p class="italic">Agent Script: "We do not have the authority to grant extensions. Your case has been forwarded to the collection team. If payment is not made on time, it may impact your CIBIL score, and a charge of 2% per day (1% interest + 1% penalty) will apply. If you have a medical issue, please share valid medical documents at care@[brand].com. Our email team will review and respond within 24 hours."</p>
+              <p class="font-semibold mt-2">B. Penalty Waiver & Settlement</p>
+              <p>Ask: "May I know the reason for the waiver/settlement request?"</p>
+              <p class="italic">Script: "We do not have the authority to approve penalty waivers or settlements. Please email care@[brand].com with valid reasons and supporting evidence. Your concern will be escalated, and the team will update you within 24 hours."</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">5. Disbursement-Related Queries</p>
+              <p class="font-semibold">A. Amount Not Credited (Disbursement Shown)</p>
+              <ul class="list-disc ml-5 space-y-1">
+                <li>If &lt; 48 Hours: Tell the customer to wait. Do not escalate.</li>
+                <li>If &gt; 48 Hours: Request the customer’s bank statement via email for verification. Raise the concern.</li>
+              </ul>
+              <p class="font-semibold mt-2">B. Loan Cancellation After Disbursement</p>
+              <p>Action: Immediately update the Refund Tracker under the sheet "Cancel After Disbursement." Ensure all details are accurate.</p>
+            </div>
+
+            <div>
+              <p class="font-bold text-indigo-600">6. Refund-Related Queries</p>
+              <p>Ask: "Could you please confirm the refund amount you are expecting?"</p>
+              <p>Action: Raise to the email team.</p>
+              <p>Timeline: Inform the customer it takes 7–10 working days.</p>
+            </div>
+
+            <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 p-4 rounded-xl">
+              <p class="font-bold text-blue-600">📧 Email Team Mandatory Rules</p>
+              <ul class="list-disc ml-5 space-y-1 mt-2">
+                <li>DO NOT use "Sir" or "Ma'am."</li>
+                <li>DO greet the customer by their First Name.</li>
+              </ul>
+              <p class="mt-3 font-semibold">Format for Payment Confirmation:</p>
+              <p class="whitespace-pre-line text-sm mt-1">Dear [Customer Name],\n\nThis is to confirm that we have received your payment as per the details below:\nLoan Number: {{Loan Number}}\nAmount Paid: {{Amount}}\nDate of Payment: {{Payment Date}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer"
+          onclick="navigateTo('view-checklist')">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-teal-600 text-white rounded-xl flex items-center justify-center text-xl">🎯</div>
+            <div>
+              <h3 class="text-xl font-bold">Quality Assurance Checklist</h3>
+              <p class="text-slate-600 dark:text-slate-300">Click to view entity checklists.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST VIEW -->
+  <div id="view-checklist" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
+      <button onclick="navigateTo('view-resources')" class="font-bold text-slate-500 hover:text-blue-600">← Back to
+        Resources</button>
+      <span class="mx-auto font-bold">Quality Assurance Checklist</span>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-14 text-center">
+      <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
+
+      <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
+        <li onclick="showLogin('BharatLoan')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">B</span>
+          1. BharatLoan
+        </li>
+        <li onclick="showLogin('RupeeOnTime')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">✔</span>
+          2. RupeeOnTime
+        </li>
+        <li onclick="showLogin('Rupee112')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-800 text-white shadow-lg hover:shadow-emerald-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">₹</span>
+          3. Rupee112
+        </li>
+        <li onclick="showLogin('Loan112')"
+          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-900 text-white shadow-lg hover:shadow-indigo-500/50 flex items-center gap-4">
+          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">L</span>
+          4. Loan112
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- RUPEE112 SPECIFIC VIEW -->
+  <div id="view-rupee112" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-500 to-red-600 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
+
+      <button onclick="toggleDropdown('rupee112')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown-rupee112"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-green-500 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 9220644112</p>
+        <p><strong>Email:</strong> care@rupee112.com</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines', 'rupee112')" id="tab-guidelines-rupee112"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Customer
+          Script Templates</button>
+        <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
+
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-rupee112" class="tab-content hidden">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="text-4xl">📜</div>
+            <div>
+              <h3 class="text-2xl font-bold">Customer Script Template & Mandatory Rules</h3>
+              <p class="text-slate-500 text-sm">Universal guidelines for all brands (Bharat Loan, Loan 112, etc.)</p>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <!-- Mandatory Rules -->
+            <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl border border-red-100 dark:border-red-800">
+              <h4 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
+                <span>⚠️</span> Mandatory Rules Highlighted
+              </h4>
+              <ul class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">48h Rule:</span>
+                  <span>Disbursement timeline must strictly be stated as "up to 48 hours". Never promise instant or
+                    same-day without verification.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Payment:</span>
+                  <span><strong>ALWAYS</strong> confirm payment receipt visually before proceeding. Do not rely on
+                    customer verbal confirmation.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Etiquette:</span>
+                  <span>Do NOT use "Sir/Ma'am". Use the customer's name (e.g., "Mr. Sharma").</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Tiered Escalation -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Tiered Credit Manager Logic</h4>
+              <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+                <table class="w-full text-sm text-left">
+                  <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+                    <tr>
+                      <th class="p-4">Escalation Level</th>
+                      <th class="p-4">Action Required</th>
+                      <th class="p-4">Manager Tagging</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold">1st Instance</td>
+                      <td class="p-4">Standard resolution attempt</td>
+                      <td class="p-4 text-slate-400">None</td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-amber-600">2nd Instance</td>
+                      <td class="p-4">Customer dissatisfied/repeat query</td>
+                      <td class="p-4">Tag <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Team
+                          Lead</span></td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-red-600">3rd Instance</td>
+                      <td class="p-4">Conflict/Escalation request</td>
+                      <td class="p-4">Tag <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Credit
+                          Manager</span> Immediately</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- App Response Logic -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
+                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Lead/Partial (Incomplete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Customer has not finished the form.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-blue-100 dark:border-slate-700 text-xs italic">
+                  "I can see you started the application but haven't completed the final step. Please upload [Document]
+                  to proceed."
+                </div>
+              </div>
+              <div
+                class="p-5 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">Submitted (Complete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Form is fully submitted.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-green-100 dark:border-slate-700 text-xs italic">
+                  "Your application is successfully submitted. It is currently under verification. Please wait for the
+                  update within 48 hours."
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Template -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Professional Email Template</h4>
+              <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl font-mono text-sm relative group">
+                <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copied!')"
+                  class="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition text-xs font-bold text-slate-500">Copy</button>
+                <div class="whitespace-pre-wrap">Subject: Application Status Update - [Application ID]
+
+                  Dear [Customer Name],
+
+                  Thank you for choosing [Brand Name].
+
+                  This is to confirm that we have received your application. It is currently being reviewed by our
+                  credit team.
+
+                  Timeline:
+                  - Initial Review: 24 Hours
+                  - Disbursement (if approved): Up to 48 Hours
+
+                  Please note that we will never ask for an OTP or PIN over the phone.
+
+                  Regards,
+                  [Agent Name]
+                  Support Team</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div id="content-tools-rupee112" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Rupee112 Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://rupee112fintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@rupee112.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOAN112 SPECIFIC VIEW -->
+  <div id="view-loan112" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-900 to-red-600 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
+
+      <button onclick="toggleDropdown('loan112')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown-loan112"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-blue-900 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 9311912970</p>
+        <p><strong>Email:</strong> care@loan112.com</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines', 'loan112')" id="tab-guidelines-loan112"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Customer
+          Script Templates</button>
+        <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
+
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-loan112" class="tab-content hidden">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="text-4xl">📜</div>
+            <div>
+              <h3 class="text-2xl font-bold">Customer Script Template & Mandatory Rules</h3>
+              <p class="text-slate-500 text-sm">Universal guidelines for all brands (Bharat Loan, Loan 112, etc.)</p>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <!-- Mandatory Rules -->
+            <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl border border-red-100 dark:border-red-800">
+              <h4 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
+                <span>⚠️</span> Mandatory Rules Highlighted
+              </h4>
+              <ul class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">48h Rule:</span>
+                  <span>Disbursement timeline must strictly be stated as "up to 48 hours". Never promise instant or
+                    same-day without verification.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Payment:</span>
+                  <span><strong>ALWAYS</strong> confirm payment receipt visually before proceeding. Do not rely on
+                    customer verbal confirmation.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Etiquette:</span>
+                  <span>Do NOT use "Sir/Ma'am". Use the customer's name (e.g., "Mr. Sharma").</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Tiered Escalation -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Tiered Credit Manager Logic</h4>
+              <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+                <table class="w-full text-sm text-left">
+                  <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+                    <tr>
+                      <th class="p-4">Escalation Level</th>
+                      <th class="p-4">Action Required</th>
+                      <th class="p-4">Manager Tagging</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold">1st Instance</td>
+                      <td class="p-4">Standard resolution attempt</td>
+                      <td class="p-4 text-slate-400">None</td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-amber-600">2nd Instance</td>
+                      <td class="p-4">Customer dissatisfied/repeat query</td>
+                      <td class="p-4">Tag <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Team
+                          Lead</span></td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-red-600">3rd Instance</td>
+                      <td class="p-4">Conflict/Escalation request</td>
+                      <td class="p-4">Tag <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Credit
+                          Manager</span> Immediately</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- App Response Logic -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
+                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Lead/Partial (Incomplete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Customer has not finished the form.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-blue-100 dark:border-slate-700 text-xs italic">
+                  "I can see you started the application but haven't completed the final step. Please upload [Document]
+                  to proceed."
+                </div>
+              </div>
+              <div
+                class="p-5 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">Submitted (Complete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Form is fully submitted.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-green-100 dark:border-slate-700 text-xs italic">
+                  "Your application is successfully submitted. It is currently under verification. Please wait for the
+                  update within 48 hours."
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Template -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Professional Email Template</h4>
+              <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl font-mono text-sm relative group">
+                <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copied!')"
+                  class="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition text-xs font-bold text-slate-500">Copy</button>
+                <div class="whitespace-pre-wrap">Subject: Application Status Update - [Application ID]
+
+                  Dear [Customer Name],
+
+                  Thank you for choosing [Brand Name].
+
+                  This is to confirm that we have received your application. It is currently being reviewed by our
+                  credit team.
+
+                  Timeline:
+                  - Initial Review: 24 Hours
+                  - Disbursement (if approved): Up to 48 Hours
+
+                  Please note that we will never ask for an OTP or PIN over the phone.
+
+                  Regards,
+                  [Agent Name]
+                  Support Team</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div id="content-tools-loan112" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://loan112fintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RUPEEONTIME SPECIFIC VIEW -->
+  <div id="view-rupeeontime" class="app-view bg-white dark:bg-slate-900">
+    <header
+      class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-purple-600 to-red-600 text-white relative">
+      <button onclick="navigateTo('view-entities')" class="font-bold text-white hover:text-blue-600">← Back to
+        Entities</button>
+
+      <button onclick="toggleDropdown('rupeeontime')" class="text-white hover:text-blue-600">Support 📞</button>
+      <div id="support-dropdown-rupeeontime"
+        class="hidden absolute top-full right-0 mt-2 bg-gradient-to-r from-purple-600 to-red-600 text-white border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-4 z-10">
+        <h4 class="font-bold mb-2">Contact Support</h4>
+        <p><strong>Call:</strong> 9220912304</p>
+        <p><strong>Email:</strong> care@rupeeontime.com</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+        <button onclick="showTab('guidelines', 'rupeeontime')" id="tab-guidelines-rupeeontime"
+          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Customer
+          Script Templates</button>
+        <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime"
+          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+      </div>
+
+      <!-- Guidelines Tab Content -->
+      <div id="content-guidelines-rupeeontime" class="tab-content hidden">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="text-4xl">📜</div>
+            <div>
+              <h3 class="text-2xl font-bold">Customer Script Template & Mandatory Rules</h3>
+              <p class="text-slate-500 text-sm">Universal guidelines for all brands (Bharat Loan, Loan 112, etc.)</p>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <!-- Mandatory Rules -->
+            <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl border border-red-100 dark:border-red-800">
+              <h4 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
+                <span>⚠️</span> Mandatory Rules Highlighted
+              </h4>
+              <ul class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">48h Rule:</span>
+                  <span>Disbursement timeline must strictly be stated as "up to 48 hours". Never promise instant or
+                    same-day without verification.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Payment:</span>
+                  <span><strong>ALWAYS</strong> confirm payment receipt visually before proceeding. Do not rely on
+                    customer verbal confirmation.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="font-bold text-red-500">Etiquette:</span>
+                  <span>Do NOT use "Sir/Ma'am". Use the customer's name (e.g., "Mr. Sharma").</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Tiered Escalation -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Tiered Credit Manager Logic</h4>
+              <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+                <table class="w-full text-sm text-left">
+                  <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+                    <tr>
+                      <th class="p-4">Escalation Level</th>
+                      <th class="p-4">Action Required</th>
+                      <th class="p-4">Manager Tagging</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold">1st Instance</td>
+                      <td class="p-4">Standard resolution attempt</td>
+                      <td class="p-4 text-slate-400">None</td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-amber-600">2nd Instance</td>
+                      <td class="p-4">Customer dissatisfied/repeat query</td>
+                      <td class="p-4">Tag <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Team
+                          Lead</span></td>
+                    </tr>
+                    <tr class="bg-white dark:bg-slate-800">
+                      <td class="p-4 font-bold text-red-600">3rd Instance</td>
+                      <td class="p-4">Conflict/Escalation request</td>
+                      <td class="p-4">Tag <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Credit
+                          Manager</span> Immediately</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- App Response Logic -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
+                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Lead/Partial (Incomplete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Customer has not finished the form.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-blue-100 dark:border-slate-700 text-xs italic">
+                  "I can see you started the application but haven't completed the final step. Please upload [Document]
+                  to proceed."
+                </div>
+              </div>
+              <div
+                class="p-5 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">Submitted (Complete)</h5>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Form is fully submitted.</p>
+                <div
+                  class="bg-white dark:bg-slate-800 p-3 rounded border border-green-100 dark:border-slate-700 text-xs italic">
+                  "Your application is successfully submitted. It is currently under verification. Please wait for the
+                  update within 48 hours."
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Template -->
+            <div>
+              <h4 class="text-lg font-bold mb-4">Professional Email Template</h4>
+              <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl font-mono text-sm relative group">
+                <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copied!')"
+                  class="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition text-xs font-bold text-slate-500">Copy</button>
+                <div class="whitespace-pre-wrap">Subject: Application Status Update - [Application ID]
+
+                  Dear [Customer Name],
+
+                  Thank you for choosing [Brand Name].
+
+                  This is to confirm that we have received your application. It is currently being reviewed by our
+                  credit team.
+
+                  Timeline:
+                  - Initial Review: 24 Hours
+                  - Disbursement (if approved): Up to 48 Hours
+
+                  Please note that we will never ask for an OTP or PIN over the phone.
+
+                  Regards,
+                  [Agent Name]
+                  Support Team</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div id="content-tools-rupeeontime" class="tab-content">
+        <div class="grid gap-6">
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">RupeeOnTime Portal and Search Module</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                  Email.
+                </p>
+              </div>
+              <a href="https://rotfintech.com/" target="_blank"
+                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Telephony integration, lead management, and communication logging.
+                </p>
+              </div>
+              <a href="https://cpaas.wocom365.com/" target="_blank"
+                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+                WOCOM ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
+                </p>
+              </div>
+              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+                Chat ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Outlook (Care@rupeeontime.com)</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
+                </p>
+              </div>
+              <a href="https://outlook.office.com/mail/" target="_blank"
+                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE VIEW (AGENT DASHBOARD) -->
+  <div id="view-performance" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="navigateTo('view-checklist')" class="font-bold text-slate-500 hover:text-blue-600">←
+          Back</button>
+        <span id="agent-dashboard-title" class="font-bold text-xl">Agent Dashboard</span>
+      </div>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+
+      <!-- Welcome Banner -->
+      <div class="mb-12 p-8 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl">
+        <h1 class="text-3xl font-extrabold mb-2">Hello, <span id="agent-name-display">Agent</span> 👋</h1>
+        <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
+
+        <!-- Weekly Performance Tab/Card -->
+        <div onclick="openAgentPerformanceModal()"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
+            <span class="text-9xl">📈</span>
+          </div>
+
+          <div
+            class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-indigo-600">
+            🎯
+          </div>
+
+          <h3 class="text-2xl font-bold mb-2">Weekly Performance</h3>
+          <p class="text-slate-500 text-sm mb-6">Review your audit scores, compliance stats, and proofs.</p>
+
+          <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
+            <span>View Details</span>
+            <span>→</span>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT PERFORMANCE MODAL -->
+  <div id="agent-performance-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col animate-scale-up">
+
+      <!-- Modal Header -->
+      <div
+        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 z-10">
+        <div>
+          <h2 class="text-2xl font-extrabold flex items-center gap-2">
+            <span>📊</span> Performance Review
+          </h2>
+          <p class="text-xs text-slate-500 font-mono mt-1" id="modal-agent-id">ID: --</p>
+        </div>
+        <button onclick="closeAgentPerformanceModal()"
+          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+
+      <!-- Modal Content (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-8">
+
+        <div id="perf-content-loaded" class="space-y-10">
+
+          <!-- Score Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
+              <div id="modal-total-score" class="text-4xl font-black text-indigo-600">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">No. of audits</p>
+              <div id="modal-audit-score" class="text-2xl font-bold text-slate-700 dark:text-slate-200">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal Errors</p>
+              <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
+            </div>
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Compliance</p>
+              <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
+            </div>
+          </div>
+
+          <!-- Weekly Reviews List -->
+          <div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+              <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📅</span>
+              Weekly Reviews
+            </h3>
+            <div id="modal-reviews-list" class="space-y-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Comment Section -->
+          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-bold mb-4">💬 Submit Feedback to Admin</h3>
+            <textarea id="agent-comment-input" rows="3"
+              class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition mb-4"
+              placeholder="Write your comments regarding this review..."></textarea>
+            <button onclick="handleCommentSubmit()"
+              class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Send
+              Comment</button>
+          </div>
+
+        </div>
+
+        <!-- Empty State -->
+        <div id="perf-content-empty"
+          class="hidden h-full flex flex-col items-center justify-center text-center opacity-50 py-20">
+          <div class="text-6xl mb-4">📭</div>
+          <h3 class="text-xl font-bold">No performance review available yet.</h3>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span
+            id="admin-current-entity-name">ALL</span>)</span>
+        <!-- Agent Selector -->
+        <div class="flex items-center gap-2">
+          <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Select Agent:</label>
+          <select id="agent-selector" onchange="onAgentSelected()"
+            class="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="">Choose an agent...</option>
+            <!-- Agents will be populated here by JavaScript -->
+          </select>
+        </div>
+      </div>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Hidden legacy container for compatibility -->
+      <div id="admin-agent-list-container" class="hidden"></div>
+
+      <!-- Step 1: Agent List (Hidden initially) -->
+      <div id="admin-agent-list-section"
+        class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
+          Quality Review for <span id="selected-agent-display-name" class="text-blue-600"></span>
+        </h2>
+        <div id="admin-agent-list" class="grid gap-4">
+          <!-- Agent details will be shown here -->
+        </div>
+      </div>
+
+      <!-- Step 2: File Selection (Hidden initially) -->
+      <div id="file-selection-section"
+        class="hidden bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📁</span>
+            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span> (<span
+              id="selected-process-type" class="text-green-600"></span>)
+          </h2>
+          <button onclick="cancelReviewProcess()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Agent List
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="text-sm text-slate-600 dark:text-slate-300">
+            <strong>Agent ID:</strong> <span id="selected-agent-id-file" class="font-mono"></span>
+          </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Select File for Quality Review</label>
+          <input type="file" id="quality-feedback-file" accept="audio/*,image/*,application/pdf"
+            class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 dark:file:bg-slate-700 dark:file:text-white">
+        </div>
+
+        <button onclick="proceedToFeedback()"
+          class="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+          Proceed to Add Feedback
+        </button>
+      </div>
+
+      <!-- Step 3: Feedback Form (Hidden initially) -->
+      <div id="feedback-form-section"
+        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
+            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span> (<span
+              id="selected-process-feedback" class="text-blue-600"></span>)
+          </h2>
+          <button onclick="backToFileSelection()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to File Selection
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="selected-process-feedback-display" class="font-medium"></span>
+            </div>
+            <div><strong>File:</strong> <span id="selected-file-name" class="truncate"></span></div>
+          </div>
+        </div>
+
+
+
+        <!-- Feedback and Observations -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2">Feedback and Observations</label>
+          <textarea id="feedback-observations" rows="6"
+            placeholder="Provide detailed feedback and observations about the agent's performance in this interaction..."
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
+        </div>
+
+        <button onclick="submitFeedbackAndProceed()"
+          class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
+          Proceed to Scoring
+        </button>
+      </div>
+
+      <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
+
+
+
+
+      <!-- Step 4: Scoring Section (Hidden initially) -->
+      <div id="scoring-section"
+        class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">🎯</span>
+            Performance Scoring for <span id="selected-agent-name-scoring" class="text-amber-600"></span>
+          </h2>
+          <button onclick="backToFeedback()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+            ← Back to Feedback
+          </button>
+        </div>
+
+        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>Agent ID:</strong> <span id="selected-agent-id-scoring" class="font-mono"></span></div>
+            <div><strong>Process:</strong> <span id="process-type-display"></span></div>
+            <div><strong>Interaction:</strong> <span id="interaction-type-display"></span></div>
+            <div><strong>File:</strong> <span id="scoring-file-name" class="truncate"></span></div>
+          </div>
+          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            <strong>Feedback:</strong> <span id="feedback-display"></span>
+          </div>
+        </div>
+
+        <!-- Performance Score -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-4">Performance Score</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label
+              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="100"
+                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-emerald-600 text-xl">100</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Excellent Performance</div>
+              </div>
+            </label>
+            <label
+              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
+              <input type="radio" name="performance-score" value="0"
+                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-red-600 text-xl">0</div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">Fatal Error</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button onclick="submitPerformanceScore(false)" id="add-review-btn"
+            class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+            Add more quality review
+          </button>
+
+          <button onclick="submitPerformanceScore(true)" id="final-submit-btn" disabled
+            class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30 opacity-50 cursor-not-allowed">
+            Submit Final Reviews
+          </button>
+        </div>
+      </div>
+
+      <!-- Manage Uploaded Reports & Reviews Section -->
+      <div class="mb-12">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
           <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
           Manage Uploaded Reports (Performance Reviews)
