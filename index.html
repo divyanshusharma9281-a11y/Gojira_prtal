@@ -1007,62 +1007,35 @@
         <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
       </div>
 
-      <!-- Performance Stats -->
-      <div id="perf-content-loaded" class="space-y-10">
-
-        <!-- Score Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div
-            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-            <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
-            <div id="modal-total-score" class="text-4xl font-black text-indigo-600">--</div>
-          </div>
-          <div
-            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-            <p class="text-xs font-bold uppercase text-slate-400 mb-2">No. of audits</p>
-            <div id="modal-audit-score" class="text-2xl font-bold text-slate-700 dark:text-slate-200">--</div>
-          </div>
-          <div
-            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-            <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal</p>
-            <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
-          </div>
-          <div
-            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-            <p class="text-xs font-bold uppercase text-slate-400 mb-2">100</p>
-            <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
-          </div>
+      <!-- Weekly Performance Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Audits</p>
+          <div id="agent-total-audits" class="text-4xl font-black text-indigo-600">--</div>
         </div>
-
-        <!-- Weekly Reviews List -->
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-            <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📅</span>
-            Weekly Reviews
-          </h3>
-          <div id="modal-reviews-list" class="space-y-3">
-            <!-- Populated by JS -->
-          </div>
+        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal</p>
+          <div id="agent-fatal-count" class="text-2xl font-bold text-red-500">--</div>
         </div>
-
-        <!-- Comment Section -->
-        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <h3 class="text-lg font-bold mb-4">💬 Submit Feedback to Admin</h3>
-          <textarea id="agent-comment-input" rows="3"
-            class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition mb-4"
-            placeholder="Write your comments regarding this review..."></textarea>
-          <button onclick="handleCommentSubmit()"
-            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Send
-            Comment</button>
+        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Non-Fatal</p>
+          <div id="agent-nonfatal-count" class="text-2xl font-bold text-green-500">--</div>
         </div>
-
+        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
+          <div id="agent-total-score" class="text-4xl font-black text-blue-600">--%</div>
+        </div>
       </div>
 
-      <!-- Empty State -->
-      <div id="perf-content-empty"
-        class="hidden h-full flex flex-col items-center justify-center text-center opacity-50 py-20">
-        <div class="text-6xl mb-4">📭</div>
-        <h3 class="text-xl font-bold">No performance review available yet.</h3>
+      <!-- Audit Details List -->
+      <div>
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📋</span>
+          Weekly Audit Details
+        </h3>
+        <div id="agent-audit-list" class="space-y-3">
+          <!-- Populated by JS -->
+        </div>
       </div>
 
     </div>
@@ -1183,8 +1156,7 @@
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span
-            id="admin-current-entity-name">ALL</span>)</span>
+        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span id="admin-current-entity-name">ALL</span>)</span>
         <!-- Agent Selector -->
         <div class="flex items-center gap-2">
           <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Select Agent:</label>
@@ -1199,224 +1171,76 @@
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
-      <!-- Hidden legacy container for compatibility -->
-      <div id="admin-agent-list-container" class="hidden"></div>
-
-      <!-- Step 1: Agent List (Hidden initially) -->
-      <div id="admin-agent-list-section"
-        class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
+      <!-- Create Audit Section (Hidden initially) -->
+      <div id="create-audit-section" class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
-          Quality Review for <span id="selected-agent-display-name" class="text-blue-600"></span>
+          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📝</span>
+          Create Audit for <span id="selected-agent-audit-name" class="text-blue-600"></span> (<span id="selected-agent-audit-id" class="text-slate-500"></span>)
         </h2>
-        <div id="admin-agent-list" class="grid gap-4">
-          <!-- Agent details will be shown here -->
-        </div>
-      </div>
 
-      <!-- Step 2: File Selection (Hidden initially) -->
-      <div id="file-selection-section"
-        class="hidden bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📁</span>
-            Choose File for <span id="selected-agent-name-file" class="text-blue-600"></span> (<span
-              id="selected-process-type" class="text-green-600"></span>)
-          </h2>
-          <button onclick="cancelReviewProcess()"
-            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            ← Back to Agent List
-          </button>
-        </div>
-
-        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="text-sm text-slate-600 dark:text-slate-300">
-            <strong>Agent ID:</strong> <span id="selected-agent-id-file" class="font-mono"></span>
-          </div>
-        </div>
-
-        <!-- File Upload -->
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Select File for Quality Review</label>
-          <input type="file" id="quality-feedback-file" accept="audio/*,image/*,application/pdf"
-            class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 dark:file:bg-slate-700 dark:file:text-white">
-        </div>
-
-        <button onclick="proceedToFeedback()"
-          class="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
-          Proceed to Add Feedback
-        </button>
-      </div>
-
-      <!-- Step 3: Feedback Form (Hidden initially) -->
-      <div id="feedback-form-section"
-        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
-            Add Feedback for <span id="selected-agent-name-feedback" class="text-emerald-600"></span> (<span
-              id="selected-process-feedback" class="text-blue-600"></span>)
-          </h2>
-          <button onclick="backToFileSelection()"
-            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            ← Back to File Selection
-          </button>
-        </div>
-
-        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div><strong>Agent ID:</strong> <span id="selected-agent-id-feedback" class="font-mono"></span></div>
-            <div><strong>Process:</strong> <span id="selected-process-feedback-display" class="font-medium"></span>
+        <!-- Add Audit Item Form -->
+        <div class="bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600 mb-6">
+          <h3 class="text-lg font-bold mb-4">Add Audit Item</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">File</label>
+              <input type="file" id="audit-file" accept="audio/*,image/*,application/pdf,.doc,.docx"
+                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 dark:file:bg-slate-600 dark:file:text-white">
             </div>
-            <div><strong>File:</strong> <span id="selected-file-name" class="truncate"></span></div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Score</label>
+              <select id="audit-score" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700">
+                <option value="">Select Score</option>
+                <option value="0">Fatal (0)</option>
+                <option value="100">Non-Fatal (100)</option>
+              </select>
+            </div>
           </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Observation</label>
+            <textarea id="audit-observation" rows="3" placeholder="Enter detailed observation..."
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 resize-none"></textarea>
+          </div>
+          <button onclick="addAuditItem()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Add Item</button>
         </div>
 
-
-
-        <!-- Feedback and Observations -->
+        <!-- Audit Items Preview -->
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Feedback and Observations</label>
-          <textarea id="feedback-observations" rows="6"
-            placeholder="Provide detailed feedback and observations about the agent's performance in this interaction..."
-            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
-        </div>
-
-        <button onclick="submitFeedbackAndProceed()"
-          class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/30">
-          Proceed to Scoring
-        </button>
-      </div>
-
-      <!-- Step 3.5: Additional Feedback Section (Hidden initially) -->
-
-
-
-
-      <!-- Step 4: Scoring Section (Hidden initially) -->
-      <div id="scoring-section"
-        class="hidden bg-amber-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-amber-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">🎯</span>
-            Performance Scoring for <span id="selected-agent-name-scoring" class="text-amber-600"></span>
-          </h2>
-          <button onclick="backToFeedback()"
-            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            ← Back to Feedback
-          </button>
-        </div>
-
-        <div class="mb-4 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div><strong>Agent ID:</strong> <span id="selected-agent-id-scoring" class="font-mono"></span></div>
-            <div><strong>Process:</strong> <span id="process-type-display"></span></div>
-            <div><strong>Interaction:</strong> <span id="interaction-type-display"></span></div>
-            <div><strong>File:</strong> <span id="scoring-file-name" class="truncate"></span></div>
-          </div>
-          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            <strong>Feedback:</strong> <span id="feedback-display"></span>
+          <h3 class="text-lg font-bold mb-4">Audit Items (<span id="audit-items-count">0</span>)</h3>
+          <div id="audit-items-preview" class="space-y-3">
+            <!-- Items will be added here -->
           </div>
         </div>
 
-        <!-- Performance Score -->
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-4">Performance Score</label>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label
-              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="performance-score" value="100"
-                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
-              <div>
-                <div class="font-bold text-emerald-600 text-xl">100</div>
-                <div class="text-sm text-slate-600 dark:text-slate-300">Excellent Performance</div>
-              </div>
-            </label>
-            <label
-              class="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600">
-              <input type="radio" name="performance-score" value="0"
-                class="w-5 h-5 text-amber-600 focus:ring-amber-500">
-              <div>
-                <div class="font-bold text-red-600 text-xl">0</div>
-                <div class="text-sm text-slate-600 dark:text-slate-300">Fatal Error</div>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <div class="flex gap-4">
-          <button onclick="submitPerformanceScore(false)" id="add-review-btn"
-            class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
-            Add more quality review
-          </button>
-
-          <button onclick="submitPerformanceScore(true)" id="final-submit-btn" disabled
-            class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30 opacity-50 cursor-not-allowed">
-            Submit Final Reviews
+        <!-- Final Submit Button -->
+        <div class="text-center">
+          <button id="final-submit-btn" onclick="finalSubmitAudit()" disabled
+            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition opacity-50 cursor-not-allowed">
+            Final Submit
           </button>
         </div>
       </div>
 
-      <!-- Manage Uploaded Reports & Reviews Section -->
+      <!-- Manage Feedback Section -->
       <div class="mb-12">
         <div class="flex items-center justify-between gap-4 mb-6">
           <h2 class="text-2xl font-bold flex items-center gap-3">
             <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
-            Manage Uploaded Reports (Performance Reviews)
+            Manage Feedback
           </h2>
-          <div class="flex items-center gap-2">
-            <button onclick="cleanupOldAdminData()"
-              class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-700 transition text-sm">
-              Clean Old (7 days)
-            </button>
-            <button onclick="deleteAllReviews()"
-              class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
-              Delete All Reviews
-            </button>
-          </div>
         </div>
         <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
           <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
             <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
               <tr>
-                <th class="p-6">Date</th>
                 <th class="p-6">Agent</th>
-                <th class="p-6">Type</th>
-                <th class="p-6">Score</th>
-                <th class="p-6">File</th>
-                <th class="p-6 text-right">Action</th>
+                <th class="p-6">Date</th>
+                <th class="p-6">Items</th>
+                <th class="p-6">Total Score</th>
+                <th class="p-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Comments Section -->
-      <div>
-        <div class="flex items-center justify-between gap-4 mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
-            Agent Comments & Feedback
-          </h2>
-          <button onclick="deleteAllComments()"
-            class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
-            Delete All Comments
-          </button>
-        </div>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-6">Date</th>
-                <th class="p-6">Agent</th>
-                <th class="p-6">Comment</th>
-                <th class="p-6 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
               <!-- JS Populates this -->
             </tbody>
           </table>
@@ -1562,15 +1386,47 @@
         </div>
       </div>
 
-      <!-- Footer Actions -->
-      <div
-        class="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-800/50">
-        <button id="view-modal-edit-btn" onclick=""
-          class="px-6 py-2 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-xl font-bold transition">Edit
-          Review</button>
-        <button id="view-modal-delete-btn" onclick=""
-          class="px-6 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-bold transition">Delete
-          Review</button>
+  <!-- VIEW AUDIT MODAL -->
+  <div id="view-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 id="view-modal-title" class="text-2xl font-extrabold">Audit Report Details</h2>
+        <button onclick="closeViewModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-8">
+        <div id="view-modal-content">
+          <!-- Content will be populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT AUDIT MODAL -->
+  <div id="edit-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 id="edit-modal-title" class="text-2xl font-extrabold">Edit Audit Report</h2>
+        <button onclick="closeEditModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-8">
+        <div id="edit-modal-content">
+          <!-- Content will be populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT VIEW AUDIT ITEM MODAL -->
+  <div id="agent-view-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 id="agent-view-modal-title" class="text-2xl font-extrabold">Audit Item Details</h2>
+        <button onclick="closeAgentViewModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-8">
+        <div id="agent-view-modal-content">
+          <!-- Content will be populated by JS -->
+        </div>
       </div>
     </div>
   </div>
@@ -1631,6 +1487,91 @@
 
     // MOCK BACKEND
     class MockBackend {
+      // AUDIT REPORTS
+      static getAuditReports() {
+        return JSON.parse(localStorage.getItem('gojira_audit_reports') || '[]');
+      }
+
+      static saveAuditReport(report) {
+        const reports = this.getAuditReports();
+        reports.push(report);
+        localStorage.setItem('gojira_audit_reports', JSON.stringify(reports));
+        return report.id;
+      }
+
+      static getAuditReportById(id) {
+        const reports = this.getAuditReports();
+        return reports.find(r => r.id === id);
+      }
+
+      static updateAuditReport(id, updates) {
+        const reports = this.getAuditReports();
+        const index = reports.findIndex(r => r.id === id);
+        if (index !== -1) {
+          reports[index] = { ...reports[index], ...updates };
+          localStorage.setItem('gojira_audit_reports', JSON.stringify(reports));
+        }
+      }
+
+      static deleteAuditReport(id) {
+        const reports = this.getAuditReports().filter(r => r.id !== id);
+        localStorage.setItem('gojira_audit_reports', JSON.stringify(reports));
+      }
+
+      // AUDIT ITEMS
+      static getAuditItems() {
+        return JSON.parse(localStorage.getItem('gojira_audit_items') || '[]');
+      }
+
+      static saveAuditItem(item) {
+        const items = this.getAuditItems();
+        items.push(item);
+        localStorage.setItem('gojira_audit_items', JSON.stringify(items));
+        return item.id;
+      }
+
+      static getAuditItemsByAuditId(auditId) {
+        const items = this.getAuditItems();
+        return items.filter(item => item.audit_id === auditId);
+      }
+
+      static updateAuditItem(id, updates) {
+        const items = this.getAuditItems();
+        const index = items.findIndex(item => item.id === id);
+        if (index !== -1) {
+          items[index] = { ...items[index], ...updates };
+          localStorage.setItem('gojira_audit_items', JSON.stringify(items));
+        }
+      }
+
+      static deleteAuditItem(id) {
+        const items = this.getAuditItems().filter(item => item.id !== id);
+        localStorage.setItem('gojira_audit_items', JSON.stringify(items));
+      }
+
+      // AGENT COMMENTS
+      static getAgentComments() {
+        return JSON.parse(localStorage.getItem('gojira_agent_comments') || '[]');
+      }
+
+      static saveAgentComment(comment) {
+        const comments = this.getAgentComments();
+        comments.push(comment);
+        localStorage.setItem('gojira_agent_comments', JSON.stringify(comments));
+        return comment.id;
+      }
+
+      static getCommentsByAuditItemId(auditItemId) {
+        const comments = this.getAgentComments();
+        return comments.filter(c => c.audit_item_id === auditItemId);
+      }
+
+      static deleteAgentComment(id) {
+        const comments = this.getAgentComments().filter(c => c.id !== id);
+        localStorage.setItem('gojira_agent_comments', JSON.stringify(comments));
+      }
+
+      // LEGACY METHODS (for backward compatibility)
       static getReports() {
         return JSON.parse(localStorage.getItem('gojira_reports') || '[]');
       }
@@ -1842,318 +1783,415 @@
 
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
-      // 1. Set Entity Header
-      const entityContext = currentEntity || 'ALL'; // Fallback
-      document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
+      // 1. Set Entity Header - Admin can only see their own entity
+      const adminUser = USER_DB.find(u => u.id === currentUser.id);
+      const entityContext = adminUser ? adminUser.entity : 'ALL';
+      document.getElementById('admin-current-entity-name').innerText = entityContext;
 
-      // 2. Populate Agent Selector Dropdown
+      // 2. Populate Agent Selector Dropdown - Only agents from admin's entity
       const agentSelector = document.getElementById('agent-selector');
+      const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entityContext);
 
-      // Filter Agents
-      let agents = USER_DB.filter(u => u.role === 'agent');
-      if (entityContext !== 'ALL') {
-        agents = agents.filter(u => u.entity === entityContext);
-      }
-
-      // Clear existing options except the first one
       agentSelector.innerHTML = '<option value="">Choose an agent...</option>';
-
-      // Add agent options
       agents.forEach(agent => {
-        const perf = MockBackend.getPerformance(agent.id);
-        const pendingReviews = getPendingReviews(agent.id);
-        const reviewProgress = pendingReviews.length > 0 ? ` (${pendingReviews.length}/3 reviews)` : '';
-        const scoreText = perf ? `${perf.score}%` : 'Not Scored';
         const option = document.createElement('option');
         option.value = agent.id;
-        option.textContent = `${agent.name} (${agent.id}) - ${scoreText}${reviewProgress}`;
+        option.textContent = `${agent.name} (${agent.id})`;
         agentSelector.appendChild(option);
       });
 
-      // 3. Populate Reports Table (Now consolidated with Reviews)
-      let reviews = MockBackend.getPerformanceScores();
-
-      // [BUG FIX] Filter reviews by entity IF not in ALL context
-      if (entityContext !== 'ALL') {
-        // Get IDs of agents belonging to this entity
-        const entityAgentIds = USER_DB.filter(u => u.entity === entityContext).map(u => u.id);
-        reviews = reviews.filter(r => entityAgentIds.includes(r.agentId));
-      }
-
+      // 3. Populate Manage Feedback Table
+      const auditReports = MockBackend.getAuditReports();
       const reportsList = document.getElementById('admin-reports-list');
 
-      if (reviews.length === 0) {
-        reportsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No reports/reviews found.</td></tr>';
+      if (auditReports.length === 0) {
+        reportsList.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-slate-400">No audit reports found.</td></tr>';
       } else {
-        reportsList.innerHTML = reviews.map(r => {
-          const agent = USER_DB.find(u => u.id === r.agentId);
-          const agentName = agent ? agent.name : r.agentId;
-          const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
-          const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
-          const date = new Date(r.timestamp).toLocaleString();
-          const fileName = (r.feedbackData && r.fileName) ? r.fileName : 'N/A';
-          const type = (r.feedbackData && r.feedbackData.processType) ? (r.feedbackData.processType === 'voice' ? 'Voice' : 'Non-Voice') : 'N/A';
+        reportsList.innerHTML = auditReports.map(report => {
+          const agent = USER_DB.find(u => u.id === report.agent_id);
+          const agentName = agent ? agent.name : report.agent_id;
+          const auditItems = MockBackend.getAuditItemsByAuditId(report.id);
+          const date = new Date(report.created_at).toLocaleString();
 
           return `
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6 text-sm">${agentName}</td>
               <td class="p-6 text-sm">${date}</td>
-              <td class="p-6 font-medium">${agentName}</td>
-              <td class="p-6 text-slate-500">${type}</td>
-              <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
-              <td class="p-6 text-xs font-mono text-slate-500 truncate max-w-[150px]">${fileName}</td>
+              <td class="p-6 text-sm">${auditItems.length}</td>
+              <td class="p-6 text-sm">${report.total_score}%</td>
               <td class="p-6 text-right flex justify-end gap-2">
-                <button onclick="viewReviewDetails(${r.id})" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="View">👁️</button>
-                <button onclick="editReview(${r.id})" class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition" title="Edit">✏️</button>
-                <button onclick="handleDeleteReview(${r.id})" class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="Delete">🗑️</button>
+                <button onclick="viewAuditReport('${report.id}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="View">👁️</button>
+                <button onclick="editAuditReport('${report.id}')" class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition" title="Edit">✏️</button>
+                <button onclick="deleteAuditReport('${report.id}')" class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="Delete">🗑️</button>
               </td>
             </tr>
           `;
         }).join('');
       }
-
-      // 5. Populate Comments Table
-      const comments = MockBackend.getComments();
-      const commentsList = document.getElementById('admin-comments-list');
-      if (comments.length === 0) {
-        commentsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No comments yet.</td></tr>';
-      } else {
-        commentsList.innerHTML = comments.map(c => `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-            <td class="p-6">${c.date}</td>
-            <td class="p-6">${USER_DB.find(u => u.id === c.agentId)?.name || c.agentId}</td>
-            <td class="p-6">${c.text}</td>
-            <td class="p-6 text-right">
-              <button onclick="handleDeleteComment(${c.id})" class="text-red-600 hover:text-red-800">Delete</button>
-            </td>
-          </tr>
-        `).join('');
-      }
     }
 
-    // NEW WORKFLOW FUNCTIONS
-    let selectedAgentForReview = null;
-    let selectedFileForReview = null;
-    let selectedProcessType = null;
+    // NEW AUDIT WORKFLOW FUNCTIONS
+    let selectedAgentForAudit = null;
+    let currentAuditItems = [];
 
     function onAgentSelected() {
       const agentSelector = document.getElementById('agent-selector');
       const selectedAgentId = agentSelector.value;
 
       if (selectedAgentId) {
-        selectedAgentForReview = USER_DB.find(u => u.id === selectedAgentId);
-        if (selectedAgentForReview) {
-          // Show agent details section and populate it
-          document.getElementById('admin-agent-list-section').classList.remove('hidden');
-          document.getElementById('selected-agent-display-name').innerText = selectedAgentForReview.name;
-
-          // Populate agent details
-          const agentListContainer = document.getElementById('admin-agent-list');
-          const perf = MockBackend.getPerformance(selectedAgentForReview.id);
-          const pendingReviews = getPendingReviews(selectedAgentForReview.id);
-          const scoreClass = perf ? (perf.score >= 90 ? 'text-emerald-500' : 'text-red-500') : 'text-slate-300';
-          const scoreText = perf ? perf.score + '%' : 'Not Scored';
-
-          const reviewStatus = pendingReviews.length === 0
-            ? 'No reviews in progress'
-            : pendingReviews.length >= 3
-              ? 'Ready for final submission'
-              : `${pendingReviews.length}/3 reviews completed`;
-
-          const buttonText = pendingReviews.length >= 3
-            ? 'Complete Final Submission'
-            : pendingReviews.length === 0
-              ? 'Start Quality Review'
-              : `Continue Review (${pendingReviews.length}/3)`;
-
-          const buttonAction = pendingReviews.length >= 3
-            ? 'showFinalSubmissionOptionForSelectedAgent()'
-            : 'startQualityReview()';
-
-          agentListContainer.innerHTML = `
-            <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
-               <div class="flex items-center justify-between mb-4">
-                  <div>
-                     <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
-                     <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
-                     <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
-                     <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
-                  </div>
-                  <div class="text-right">
-                     <div class="font-black ${scoreClass} text-2xl">${scoreText}</div>
-                     <div class="text-xs text-slate-400 uppercase">Current Score</div>
-                  </div>
-               </div>
-
-               <!-- Process Selection -->
-               <div class="mb-4">
-                 <label class="block text-sm font-semibold mb-3">Select Process Type</label>
-                 <div class="grid grid-cols-2 gap-3">
-                   <button onclick="selectProcessType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center" id="voice-btn">
-                     <div class="text-2xl mb-1">📞</div>
-                     <div class="font-medium">Voice</div>
-                     <div class="text-xs text-slate-500">Phone calls</div>
-                   </button>
-                   <button onclick="selectProcessType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center" id="non-voice-btn">
-                     <div class="text-2xl mb-1">💬</div>
-                     <div class="font-medium">Non-Voice</div>
-                     <div class="text-xs text-slate-500">Chat/Email</div>
-                   </button>
-                 </div>
-               </div>
-
-               <div class="flex gap-3">
-                  <button onclick="startQualityReview()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn" disabled>
-                     ${buttonText}
-                  </button>
-                  <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
-                     Clear Selection
-                  </button>
-               </div>
-            </div>
-          `;
-        }
+        selectedAgentForAudit = USER_DB.find(u => u.id === selectedAgentId);
+        // Show create audit section
+        document.getElementById('create-audit-section').classList.remove('hidden');
+        document.getElementById('selected-agent-audit-name').innerText = selectedAgentForAudit.name;
+        document.getElementById('selected-agent-audit-id').innerText = selectedAgentForAudit.id;
+        // Reset audit items
+        currentAuditItems = [];
+        updateAuditItemsPreview();
+        updateFinalSubmitButton();
       } else {
-        // Hide agent details section if no agent selected
-        document.getElementById('admin-agent-list-section').classList.add('hidden');
-        selectedAgentForReview = null;
-        clearAgentSelection();
+        document.getElementById('create-audit-section').classList.add('hidden');
+        selectedAgentForAudit = null;
+        currentAuditItems = [];
       }
     }
 
-    function selectProcessType(processType) {
-      selectedProcessType = processType;
+    function addAuditItem() {
+      const fileInput = document.getElementById('audit-file');
+      const observationInput = document.getElementById('audit-observation');
+      const scoreSelect = document.getElementById('audit-score');
 
-      // Update button styles to show selection
-      const voiceBtn = document.getElementById('voice-btn');
-      const nonVoiceBtn = document.getElementById('non-voice-btn');
-      const startBtn = document.getElementById('start-review-btn');
+      const file = fileInput.files[0];
+      const observation = observationInput.value.trim();
+      const score = parseInt(scoreSelect.value);
 
-      if (processType === 'voice') {
-        voiceBtn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
-        voiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
-        nonVoiceBtn.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-        nonVoiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
-      } else {
-        nonVoiceBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-        nonVoiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
-        voiceBtn.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
-        voiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+      // Validation
+      if (!file) {
+        alert('Please select a file.');
+        return;
       }
-
-      // Enable start review button
-      startBtn.disabled = false;
-      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-    }
-
-    function startQualityReview() {
-      if (selectedAgentForReview && selectedProcessType) {
-        // Hide agent details, show file selection section
-        document.getElementById('admin-agent-list-section').classList.add('hidden');
-        document.getElementById('file-selection-section').classList.remove('hidden');
-
-        // Set agent info in file selection section
-        document.getElementById('selected-agent-name-file').innerText = selectedAgentForReview.name;
-        document.getElementById('selected-agent-id-file').innerText = selectedAgentForReview.id;
-        document.getElementById('selected-process-type').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
+      if (!observation) {
+        alert('Please provide observation.');
+        return;
       }
-    }
-
-    function clearAgentSelection() {
-      // Reset agent selector
-      document.getElementById('agent-selector').value = '';
-      // Hide all workflow sections
-      document.getElementById('admin-agent-list-section').classList.add('hidden');
-      document.getElementById('file-selection-section').classList.add('hidden');
-      document.getElementById('feedback-form-section').classList.add('hidden');
-      document.getElementById('scoring-section').classList.add('hidden');
-      // Clear selections
-      selectedAgentForReview = null;
-      selectedFileForReview = null;
-      selectedProcessType = null;
-      localStorage.removeItem('currentQualityFeedback');
-    }
-
-    function proceedToFeedback() {
-      const fileInput = document.getElementById('quality-feedback-file');
-
-      if (!fileInput.files[0]) {
-        alert('Please select a file for quality review.');
+      if (isNaN(score)) {
+        alert('Please select a score.');
         return;
       }
 
-      selectedFileForReview = fileInput.files[0];
+      // Convert file to Base64 and save
+      readFileAsBase64(file).then(content => {
+        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        FileDB.saveFile(fileId, content);
 
-      // Hide file selection, show feedback form
-      document.getElementById('file-selection-section').classList.add('hidden');
-      document.getElementById('feedback-form-section').classList.remove('hidden');
+        const auditItem = {
+          id: Date.now().toString(),
+          file_url: fileId,
+          file_name: file.name,
+          observation_text: observation,
+          score: score,
+          created_at: new Date().toISOString()
+        };
 
-      // Set agent and file info in feedback section
-      document.getElementById('selected-agent-name-feedback').innerText = selectedAgentForReview.name;
-      document.getElementById('selected-agent-id-feedback').innerText = selectedAgentForReview.id;
-      document.getElementById('selected-process-feedback').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('selected-process-feedback-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
-      document.getElementById('selected-file-name').innerText = selectedFileForReview.name;
+        currentAuditItems.push(auditItem);
+
+        // Clear form
+        fileInput.value = '';
+        observationInput.value = '';
+        scoreSelect.value = '';
+
+        updateAuditItemsPreview();
+        updateFinalSubmitButton();
+      }).catch(err => {
+        console.error('File save error:', err);
+        alert('Error saving file. Please try again.');
+      });
     }
 
-    function backToFileSelection() {
-      // Hide feedback form, show file selection
-      document.getElementById('feedback-form-section').classList.add('hidden');
-      document.getElementById('file-selection-section').classList.remove('hidden');
-    }
+    function updateAuditItemsPreview() {
+      const container = document.getElementById('audit-items-preview');
+      const countElement = document.getElementById('audit-items-count');
+      if (countElement) countElement.innerText = currentAuditItems.length;
 
-    async function submitFeedbackAndProceed() {
-      const feedback = document.getElementById('feedback-observations').value.trim();
-
-      if (!feedback) {
-        alert('Please provide feedback and observations.');
+      if (currentAuditItems.length === 0) {
+        container.innerHTML = '<p class="text-slate-500 text-center py-4">No audit items added yet.</p>';
         return;
       }
 
-      // Convert file to Base64 and Save to DB
-      let fileData = null;
-      if (selectedFileForReview) {
-        try {
-          const content = await readFileAsBase64(selectedFileForReview);
-          const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      container.innerHTML = currentAuditItems.map((item, index) => `
+        <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg border">
+          <div class="flex justify-between items-start mb-2">
+            <div class="font-medium">Item ${index + 1}</div>
+            <button onclick="removeAuditItem(${index})" class="text-red-600 hover:text-red-800">Remove</button>
+          </div>
+          <div class="text-sm text-slate-600 dark:text-slate-300">
+            <div><strong>File:</strong> ${item.file_name}</div>
+            <div><strong>Observation:</strong> ${item.observation_text}</div>
+            <div><strong>Score:</strong> ${item.score === 0 ? 'Fatal (0)' : 'Non-Fatal (100)'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
 
-          // Save to IndexedDB
-          await FileDB.saveFile(fileId, content);
-          console.log('File saved to IndexedDB:', fileId);
+    function removeAuditItem(index) {
+      currentAuditItems.splice(index, 1);
+      updateAuditItemsPreview();
+      updateFinalSubmitButton();
+    }
 
-          fileData = {
-            fileId: fileId, // Reference ID
-            name: selectedFileForReview.name,
-            type: selectedFileForReview.type
-            // Content is NOT stored here to save localStorage space
-          };
-        } catch (e) {
-          console.error("File save error", e);
-          alert("Error saving file. Please try again.");
-          return;
+    function updateFinalSubmitButton() {
+      const submitBtn = document.getElementById('final-submit-btn');
+      const count = currentAuditItems.length;
+
+      if (count >= 3 && count <= 10) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerText = `Final Submit (${count} items)`;
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        if (count < 3) {
+          submitBtn.innerText = `Need ${3 - count} more items`;
+        } else {
+          submitBtn.innerText = 'Too many items (max 10)';
         }
       }
+    }
 
-      // Store feedback data temporarily
-      const feedbackData = {
-        agentId: selectedAgentForReview.id,
-        file: fileData,
-        processType: selectedProcessType,
-        feedback: feedback,
-        timestamp: new Date().toISOString()
+    function finalSubmitAudit() {
+      if (currentAuditItems.length < 3 || currentAuditItems.length > 10) {
+        alert('Audit must have 3-10 items.');
+        return;
+      }
+
+      // Calculate total score
+      const totalScore = Math.round((currentAuditItems.reduce((sum, item) => sum + item.score, 0) / (currentAuditItems.length * 100)) * 100);
+
+      // Create audit report
+      const auditReport = {
+        id: Date.now().toString(),
+        admin_id: currentUser.id,
+        agent_id: selectedAgentForAudit.id,
+        entity_id: selectedAgentForAudit.entity,
+        week: new Date().toISOString().split('T')[0], // Current date as week
+        total_score: totalScore,
+        created_at: new Date().toISOString()
       };
 
-      // Store in localStorage for now
-      localStorage.setItem('currentQualityFeedback', JSON.stringify({
-        ...feedbackData,
-        fileName: selectedFileForReview ? selectedFileForReview.name : 'No File'
-      }));
+      MockBackend.saveAuditReport(auditReport);
 
-      // Hide feedback form, show scoring section
-      document.getElementById('feedback-form-section').classList.add('hidden');
-      document.getElementById('scoring-section').classList.remove('hidden');
+      // Save audit items
+      currentAuditItems.forEach(item => {
+        const auditItem = {
+          ...item,
+          audit_id: auditReport.id
+        };
+        MockBackend.saveAuditItem(auditItem);
+      });
 
-      // Set agent info in scoring section
-      document.getElementById('selected-agent-name-scoring').innerText = selectedAgentForReview.name;
+      // Reset
+      selectedAgentForAudit = null;
+      currentAuditItems = [];
+      document.getElementById('agent-selector').value = '';
+      document.getElementById('create-audit-section').classList.add('hidden');
+
+      renderAdminDashboard();
+      alert('Audit submitted successfully!');
+    }
+
+    // MANAGE FEEDBACK FUNCTIONS
+    function viewAuditReport(auditId) {
+      const report = MockBackend.getAuditReportById(auditId);
+      const items = MockBackend.getAuditItemsByAuditId(auditId);
+      const agent = USER_DB.find(u => u.id === report.agent_id);
+
+      const modal = document.getElementById('view-modal');
+      document.getElementById('view-modal-title').innerText = `Audit Report - ${agent.name}`;
+      document.getElementById('view-modal-content').innerHTML = `
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div><strong>Agent:</strong> ${agent.name} (${agent.id})</div>
+            <div><strong>Date:</strong> ${new Date(report.created_at).toLocaleString()}</div>
+            <div><strong>Total Score:</strong> ${report.total_score}%</div>
+            <div><strong>Items:</strong> ${items.length}</div>
+          </div>
+          <div class="space-y-2">
+            ${items.map(item => `
+              <div class="border rounded p-3">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="font-medium">File: ${item.file_name}</div>
+                  <div class="text-sm ${item.score === 0 ? 'text-red-600' : 'text-green-600'}">
+                    Score: ${item.score === 0 ? 'Fatal (0)' : 'Non-Fatal (100)'}
+                  </div>
+                </div>
+                <div class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+                  <strong>Observation:</strong> ${item.observation_text}
+                </div>
+                <button onclick="viewFile('${item.file_url}')" class="text-blue-600 hover:text-blue-800 text-sm">View File</button>
+                <div class="mt-2">
+                  ${MockBackend.getCommentsByAuditItemId(item.id).map(comment => `
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-sm mt-1">
+                      <strong>Agent Comment:</strong> ${comment.comment_text}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+    }
+
+    function editAuditReport(auditId) {
+      // For simplicity, allow editing observations and scores
+      const report = MockBackend.getAuditReportById(auditId);
+      const items = MockBackend.getAuditItemsByAuditId(auditId);
+      const agent = USER_DB.find(u => u.id === report.agent_id);
+
+      // Open edit modal with form to modify items
+      const modal = document.getElementById('edit-modal');
+      document.getElementById('edit-modal-title').innerText = `Edit Audit Report - ${agent.name}`;
+      document.getElementById('edit-modal-content').innerHTML = `
+        <form id="edit-audit-form" class="space-y-4">
+          ${items.map((item, index) => `
+            <div class="border rounded p-3">
+              <div class="font-medium mb-2">Item ${index + 1}: ${item.file_name}</div>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-sm font-medium">Observation</label>
+                  <textarea name="observation_${item.id}" class="w-full p-2 border rounded" rows="2">${item.observation_text}</textarea>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium">Score</label>
+                  <select name="score_${item.id}" class="w-full p-2 border rounded">
+                    <option value="0" ${item.score === 0 ? 'selected' : ''}>Fatal (0)</option>
+                    <option value="100" ${item.score === 100 ? 'selected' : ''}>Non-Fatal (100)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+          <div class="flex gap-2">
+            <button type="button" onclick="saveAuditEdits('${auditId}')" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
+            <button type="button" onclick="closeEditModal()" class="bg-slate-500 text-white px-4 py-2 rounded">Cancel</button>
+          </div>
+        </form>
+      `;
+      modal.classList.remove('hidden');
+    }
+
+    function saveAuditEdits(auditId) {
+      const form = document.getElementById('edit-audit-form');
+      const formData = new FormData(form);
+      const items = MockBackend.getAuditItemsByAuditId(auditId);
+
+      items.forEach(item => {
+        const observation = formData.get(`observation_${item.id}`);
+        const score = parseInt(formData.get(`score_${item.id}`));
+        MockBackend.updateAuditItem(item.id, {
+          observation_text: observation,
+          score: score
+        });
+      });
+
+      // Recalculate total score
+      const updatedItems = MockBackend.getAuditItemsByAuditId(auditId);
+      const totalScore = Math.round((updatedItems.reduce((sum, item) => sum + item.score, 0) / (updatedItems.length * 100)) * 100);
+      MockBackend.updateAuditReport(auditId, { total_score: totalScore });
+
+      closeEditModal();
+      renderAdminDashboard();
+      alert('Audit updated successfully!');
+    }
+
+    function deleteAuditReport(auditId) {
+      if (confirm('Are you sure you want to delete this audit report? This will also delete all associated items.')) {
+        // Delete items first
+        const items = MockBackend.getAuditItemsByAuditId(auditId);
+        items.forEach(item => MockBackend.deleteAuditItem(item.id));
+
+        // Delete report
+        MockBackend.deleteAuditReport(auditId);
+
+        renderAdminDashboard();
+        alert('Audit report deleted successfully!');
+      }
+    }
+
+    function viewFile(fileId) {
+      FileDB.getFile(fileId).then(content => {
+        const blob = new Blob([content], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      }).catch(err => {
+        console.error('Error viewing file:', err);
+        alert('Error viewing file.');
+      });
+    }
+
+    function viewAuditItemForAgent(auditItemId) {
+      const auditItem = MockBackend.getAuditItems().find(item => item.id === auditItemId);
+      if (!auditItem) return;
+
+      const existingComments = MockBackend.getCommentsByAuditItemId(auditItemId);
+
+      const modal = document.getElementById('agent-view-modal');
+      document.getElementById('agent-view-modal-title').innerText = `Audit Item Details`;
+      document.getElementById('agent-view-modal-content').innerHTML = `
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div><strong>File:</strong> ${auditItem.file_name}</div>
+            <div><strong>Score:</strong> <span class="${auditItem.score === 0 ? 'text-red-600' : 'text-green-600'}">${auditItem.score === 0 ? 'Fatal (0)' : 'Non-Fatal (100)'}</span></div>
+          </div>
+          <div>
+            <strong>Observation:</strong>
+            <p class="mt-1 p-3 bg-slate-50 dark:bg-slate-700 rounded">${auditItem.observation_text}</p>
+          </div>
+          <div>
+            <button onclick="viewFile('${auditItem.file_url}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View File</button>
+          </div>
+          <div>
+            <strong>Add Comment:</strong>
+            <textarea id="agent-comment-text" class="w-full mt-2 p-3 border rounded" rows="3" placeholder="Enter your comment..."></textarea>
+            <button onclick="submitAgentComment('${auditItemId}')" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit Comment</button>
+          </div>
+          <div id="existing-comments">
+            ${existingComments.map(comment => `
+              <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded mt-2">
+                <strong>Your Comment:</strong> ${comment.comment_text}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+    }
+
+    function submitAgentComment(auditItemId) {
+      const commentText = document.getElementById('agent-comment-text').value.trim();
+      if (!commentText) {
+        alert('Please enter a comment.');
+        return;
+      }
+
+      const comment = {
+        id: Date.now().toString(),
+        audit_item_id: auditItemId,
+        agent_id: currentUser.id,
+        comment_text: commentText,
+        created_at: new Date().toISOString()
+      };
+
+      MockBackend.saveAgentComment(comment);
+
+      // Refresh the modal content
+      viewAuditItemForAgent(auditItemId);
+      document.getElementById('agent-comment-text').value = '';
+    }
+
+    function closeAgentViewModal() {
+      document.getElementById('agent-view-modal').classList.add('hidden');
+    }
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
       document.getElementById('process-type-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
       document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
@@ -2798,70 +2836,65 @@
       if (currentUser) {
         document.getElementById('agent-name-display').innerText = currentUser.name;
 
-        // Populate performance data
-        const modal = document.getElementById('perf-content-loaded');
-        const contentEmpty = document.getElementById('perf-content-empty');
+        // Get all audit items for this agent (from all audits)
+        const allAuditReports = MockBackend.getAuditReports().filter(r => r.agent_id === currentUser.id);
+        const allAuditItems = [];
+        allAuditReports.forEach(report => {
+          const items = MockBackend.getAuditItemsByAuditId(report.id);
+          allAuditItems.push(...items);
+        });
 
-        // 1. Get Scores for this agent
-        const allScores = MockBackend.getPerformanceScores();
+        // Filter for last 7 days
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const weeklyItems = allAuditItems.filter(item => new Date(item.created_at) > oneWeekAgo);
 
-        const weeklyScores = allScores.filter(s =>
-          s.agentId === currentUser.id &&
-          new Date(s.timestamp) > oneWeekAgo
-        );
+        // Calculate stats
+        const totalAudits = weeklyItems.length;
+        const fatalCount = weeklyItems.filter(item => item.score === 0).length;
+        const nonFatalCount = weeklyItems.filter(item => item.score === 100).length;
+        const totalScore = totalAudits > 0 ? Math.round((weeklyItems.reduce((sum, item) => sum + item.score, 0) / (totalAudits * 100)) * 100) : 0;
 
-        if (weeklyScores.length > 0) {
-          modal.classList.remove('hidden');
-          contentEmpty.classList.add('hidden');
+        // Update stats cards
+        document.getElementById('agent-total-audits').innerText = totalAudits;
+        document.getElementById('agent-fatal-count').innerText = fatalCount;
+        document.getElementById('agent-nonfatal-count').innerText = nonFatalCount;
+        document.getElementById('agent-total-score').innerText = totalScore + '%';
 
-          // 2. Calculate Stats
-          const totalScoreSum = weeklyScores.reduce((sum, s) => sum + s.score, 0);
-          const avgScore = Math.round(totalScoreSum / weeklyScores.length);
-          const fatalCount = weeklyScores.filter(s => s.score === 0).length;
-          const passCount = weeklyScores.filter(s => s.score === 100).length;
-
-          // Update UI Stats
-          document.getElementById('modal-total-score').innerText = avgScore + '%';
-          document.getElementById('modal-audit-score').innerText = weeklyScores.length;
-          document.getElementById('modal-fatal-errors').innerText = fatalCount;
-          document.getElementById('modal-compliance').innerText = passCount;
-
-          // 3. Render Reviews List
-          const listContainer = document.getElementById('modal-reviews-list');
-          listContainer.innerHTML = weeklyScores.map((review, index) => {
-            const isFatal = review.score === 0;
+        // Render audit details list
+        const listContainer = document.getElementById('agent-audit-list');
+        if (weeklyItems.length === 0) {
+          listContainer.innerHTML = '<p class="text-slate-500 text-center py-8">No audits found for this week.</p>';
+        } else {
+          listContainer.innerHTML = weeklyItems.map((item, index) => {
+            const isFatal = item.score === 0;
             const scoreColor = isFatal ? 'text-red-500' : 'text-emerald-500';
-            const scoreText = isFatal ? 'Fatal (0)' : '100';
+            const scoreText = isFatal ? 'Fatal (0)' : 'Non-Fatal (100)';
 
             return `
-              <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-                <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold">
-                    ${index + 1}
+              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold text-sm">
+                      ${index + 1}
+                    </div>
+                    <div>
+                      <p class="font-bold text-slate-700 dark:text-slate-200">${item.file_name}</p>
+                      <p class="text-xs text-slate-400">${new Date(item.created_at).toLocaleDateString()}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p class="font-bold text-slate-700 dark:text-slate-200">Review ${index + 1}</p>
-                    <p class="text-xs text-slate-400">${new Date(review.timestamp).toLocaleDateString()}</p>
+                  <div class="flex items-center gap-3">
+                    <div class="font-bold ${scoreColor} text-sm">${scoreText}</div>
+                    <button onclick="viewAuditItemForAgent('${item.id}')" 
+                      class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 dark:hover:bg-slate-500 flex items-center justify-center text-slate-600 dark:text-slate-300 transition"
+                      title="View Details">
+                      👁️
+                    </button>
                   </div>
-                </div>
-                
-                <div class="flex items-center gap-6">
-                  <div class="font-bold ${scoreColor} text-lg">${scoreText}</div>
-                  <button onclick="viewReviewDetailForAgent('${review.id}')" 
-                    class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition shadow-sm"
-                    title="View Feedback & Proof">
-                    👁️
-                  </button>
                 </div>
               </div>
             `;
           }).join('');
-
-        } else {
-          modal.classList.add('hidden');
-          contentEmpty.classList.remove('hidden');
         }
       }
     }
