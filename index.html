@@ -1091,12 +1091,12 @@
             </div>
             <div
               class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal Errors</p>
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal</p>
               <div id="modal-fatal-errors" class="text-2xl font-bold text-red-500">--</div>
             </div>
             <div
               class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-              <p class="text-xs font-bold uppercase text-slate-400 mb-2">Compliance</p>
+              <p class="text-xs font-bold uppercase text-slate-400 mb-2">100</p>
               <div id="modal-compliance" class="text-2xl font-bold text-blue-500">--</div>
             </div>
           </div>
@@ -3304,18 +3304,13 @@
         const totalScoreSum = weeklyScores.reduce((sum, s) => sum + s.score, 0);
         const avgScore = Math.round(totalScoreSum / weeklyScores.length);
         const fatalCount = weeklyScores.filter(s => s.score === 0).length;
-
-        // Compliance: Placeholder logic as per original requirement (can be average or based on fatals)
-        // Let's assume if 0 fatals -> 100%, else reduced. Or just N/A if not tracked explicitly in scores.
-        // The previous logic used a 'compliance' field from 'savePerformance'. 
-        // Here we only have score (0/100). Let's say Compliance = (Non-Fatal / Total) * 100
-        const complianceRate = Math.round(((weeklyScores.length - fatalCount) / weeklyScores.length) * 100);
+        const passCount = weeklyScores.filter(s => s.score === 100).length;
 
         // Update UI Stats
         document.getElementById('modal-total-score').innerText = avgScore + '%';
         document.getElementById('modal-audit-score').innerText = weeklyScores.length;
         document.getElementById('modal-fatal-errors').innerText = fatalCount;
-        document.getElementById('modal-compliance').innerText = complianceRate + '%';
+        document.getElementById('modal-compliance').innerText = passCount;
 
         // 3. Render Reviews List
         const listContainer = document.getElementById('modal-reviews-list');
