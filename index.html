@@ -1766,6 +1766,81 @@
     </div>
   </div>
 
+  <!-- VIEW REVIEW MODAL -->
+  <div id="view-review-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div
+        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
+        <div>
+          <h2 class="text-2xl font-extrabold flex items-center gap-2">
+            <span>👁️</span> Review Details
+          </h2>
+          <p class="text-xs text-slate-500 font-mono mt-1" id="view-modal-agent-id">--</p>
+        </div>
+        <button onclick="closeViewModal()"
+          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Left: Details -->
+        <div class="space-y-6">
+          <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+            <div class="text-xs font-bold uppercase text-slate-400 mb-1">Score</div>
+            <div id="view-modal-score" class="text-3xl font-black">--</div>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+            <div class="text-xs font-bold uppercase text-slate-400 mb-1">Observation/Feedback</div>
+            <p id="view-modal-feedback" class="text-slate-700 dark:text-slate-300 italic">--</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400 mb-1">Process</div>
+              <div id="view-modal-process" class="font-medium">--</div>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400 mb-1">Review Date</div>
+              <div id="view-modal-date" class="font-medium">--</div>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400 mb-1">File Name</div>
+              <div id="view-modal-filename" class="font-mono text-xs truncate">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: File Preview -->
+        <div
+          class="flex flex-col h-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
+          <div id="view-modal-preview-container" class="flex-1 flex items-center justify-center p-4">
+            <!-- Preview Content Injected Here -->
+            <p class="text-slate-400 text-sm">Loading preview...</p>
+          </div>
+          <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition">
+            <a id="view-modal-download-link" href="#" download
+              class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg hover:bg-blue-700">Download</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div
+        class="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-800/50">
+        <button id="view-modal-edit-btn" onclick=""
+          class="px-6 py-2 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-xl font-bold transition">Edit
+          Review</button>
+        <button id="view-modal-delete-btn" onclick=""
+          class="px-6 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-bold transition">Delete
+          Review</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // --- IndexedDB Handler for Large Files ---
     class FileDB {
@@ -2826,29 +2901,96 @@
       renderAdminDashboard();
     }
 
-    function viewReviewDetails(reviewId) {
+    async function viewReviewDetails(reviewId) {
       const reviews = MockBackend.getPerformanceScores();
       const review = reviews.find(r => r.id == reviewId);
 
-      if (review) {
-        const agent = USER_DB.find(u => u.id === review.agentId);
-        const agentName = agent ? agent.name : review.agentId;
-        const date = new Date(review.timestamp).toLocaleString();
+      if (!review) return alert('Review details not found.');
 
-        const details = `
-Review Details:
-- Date: ${date}
-- Agent: ${agentName} (${review.agentId})
-- Score: ${review.score === 0 ? '0 (Fatal Error)' : review.score}
-- Interaction Type: ${review.feedbackData.interactionType}
-- File: ${review.feedbackData.fileName}
-- Feedback: ${review.feedbackData.feedback}
+      const agent = USER_DB.find(u => u.id === review.agentId);
+      const agentName = agent ? agent.name : review.agentId;
+      const date = new Date(review.timestamp).toLocaleString();
+      const scoreClass = review.score === 100 ? 'text-emerald-500' : 'text-red-500';
+      const scoreText = review.score === 0 ? '0 (Fatal Error)' : '100 (Pass)';
 
-Reviewer: ${review.reviewerId}
-        `;
+      // Populate Modal Fields
+      document.getElementById('view-modal-agent-id').innerText = `${agentName} (${review.agentId})`;
+      document.getElementById('view-modal-score').className = `text-3xl font-black ${scoreClass}`;
+      document.getElementById('view-modal-score').innerText = scoreText;
+      document.getElementById('view-modal-feedback').innerText = review.feedbackData.feedback || 'No feedback provided.';
+      document.getElementById('view-modal-date').innerText = date;
+      const processType = (review.feedbackData && review.feedbackData.processType) ? review.feedbackData.processType : 'N/A';
+      document.getElementById('view-modal-process').innerText = processType === 'voice' ? 'Voice Call' : 'Non-Voice (Chat/Email)';
 
-        alert(details);
+      const fileName = (review.feedbackData && review.fileName) ? review.fileName : 'N/A';
+      document.getElementById('view-modal-filename').innerText = fileName;
+
+      // Setup Actions
+      document.getElementById('view-modal-edit-btn').onclick = () => { closeViewModal(); editReview(reviewId); };
+      document.getElementById('view-modal-delete-btn').onclick = () => { if (confirm('Delete this review?')) { MockBackend.deletePerformanceScore(reviewId); closeViewModal(); renderAdminDashboard(); } };
+
+      // Handle File Content
+      const previewContainer = document.getElementById('view-modal-preview-container');
+      const downloadLink = document.getElementById('view-modal-download-link');
+      previewContainer.innerHTML = '<div class="animate-pulse flex space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div></div>'; // Loading Spinner
+
+      try {
+        let content = null;
+        let type = 'application/octet-stream';
+
+        // Check where content is stored
+        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.fileId) {
+          // Fetch from IndexedDB
+          content = await FileDB.getFile(review.feedbackData.file.fileId);
+          type = review.feedbackData.file.type;
+        } else if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
+          // Legislative fallback (if stored directly)
+          content = review.feedbackData.file.content;
+          type = review.feedbackData.file.type;
+        }
+
+        if (content) {
+          downloadLink.href = content;
+          downloadLink.download = fileName;
+
+          if (type.startsWith('image/')) {
+            previewContainer.innerHTML = `<img src="${content}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">`;
+          } else if (type.startsWith('audio/')) {
+            previewContainer.innerHTML = `
+                    <div class="text-center w-full">
+                        <div class="text-4xl mb-4">🎵</div>
+                        <audio controls src="${content}" class="w-full"></audio>
+                    </div>`;
+          } else if (type === 'application/pdf') {
+            previewContainer.innerHTML = `<iframe src="${content}" class="w-full h-full rounded-lg border-0"></iframe>`;
+          } else {
+            previewContainer.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">📄</div>
+                        <p class="text-sm font-bold">File Preview Not Available</p>
+                        <p class="text-xs text-slate-500">Please download to view</p>
+                    </div>`;
+          }
+        } else {
+          previewContainer.innerHTML = `
+                <div class="text-center text-slate-400">
+                    <div class="text-4xl mb-2">⚠️</div>
+                    <p>File content not found or expired.</p>
+                </div>`;
+          downloadLink.classList.add('hidden');
+        }
+
+      } catch (e) {
+        console.error("Error loading file", e);
+        previewContainer.innerHTML = `<p class="text-red-500 text-sm">Error loading file.</p>`;
       }
+
+      document.getElementById('view-review-modal').classList.remove('hidden');
+    }
+
+    function closeViewModal() {
+      document.getElementById('view-review-modal').classList.add('hidden');
+      document.getElementById('view-modal-preview-container').innerHTML = ''; // Clear memory
     }
 
     function resetAllPerformanceData() {
