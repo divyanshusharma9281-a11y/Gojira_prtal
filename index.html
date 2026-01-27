@@ -2604,8 +2604,8 @@ Reviewer: ${review.reviewerId}
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
-        // STRICT ENTITY CHECK
-        if (user.role !== 'admin' && currentEntity && user.entity !== 'ALL' && user.entity !== currentEntity) {
+        // STRICT ENTITY CHECK - only for agents, not admins
+        if (user.role === 'agent' && currentEntity && user.entity !== currentEntity) {
           // Show Access Denied Modal using the updated title ID
           const modalTitle = document.getElementById('access-denied-title');
           if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
@@ -2618,16 +2618,12 @@ Reviewer: ${review.reviewerId}
         currentUser = user;
 
         if (user.role === 'admin') {
-          // Clear all existing performance data for fresh start
-          MockBackend.clearAllPerformanceData();
-          renderAdminDashboard();
           navigateTo('view-admin');
         } else {
           // Update Title
           const titleSpan = document.getElementById('agent-dashboard-title');
           if (titleSpan) titleSpan.innerText = `Welcome, ${user.name}`;
 
-          renderAgentDashboard();
           navigateTo('view-performance');
         }
         hideLogin();
