@@ -2877,10 +2877,10 @@ Reviewer: ${review.reviewerId}
       addBtn.classList.toggle('cursor-not-allowed', count >= 10);
 
       // Enable final submit if min reached
-      const allComplete = count >= 3 && adminReviewItems.every(item => item.file && item.observation && item.score !== null);
-      finalBtn.disabled = !allComplete;
-      finalBtn.classList.toggle('opacity-50', !allComplete);
-      finalBtn.classList.toggle('cursor-not-allowed', !allComplete);
+      // Enable final submit always (User Request)
+      const allComplete = true;
+      finalBtn.disabled = false;
+      finalBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
     function adminFinalSubmit() {
@@ -2901,8 +2901,9 @@ Reviewer: ${review.reviewerId}
       });
 
       // Validate
-      if (adminReviewItems.length < 3) {
-        alert('Minimum 3 reviews required');
+      // Validate
+      if (adminReviewItems.length === 0) {
+        alert('Please add at least one review');
         return;
       }
 
