@@ -1184,13 +1184,6 @@
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
-      <!-- File Upload Section -->
-      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-8">
-        <h2 class="text-xl font-bold mb-4">Upload Proofs for Agents</h2>
-        <input type="file" id="admin-file-upload" multiple class="mb-4">
-        <button onclick="handleAdminFileUpload()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload Files</button>
-      </div>
-
       <!-- Hidden legacy container for compatibility -->
       <div id="admin-agent-list-container" class="hidden"></div>
 
@@ -2936,19 +2929,36 @@
       const modal = document.getElementById('agent-proofs-modal');
       const content = document.getElementById('agent-proofs-content');
 
-      const reports = MockBackend.getReports();
-      if (reports.length === 0) {
-        content.innerHTML = '<div class="text-center text-slate-400 py-20"><div class="text-4xl mb-4">📭</div><h3 class="text-xl font-bold">No proofs uploaded yet.</h3></div>';
+      // Get all performance scores for the current agent
+      const allScores = MockBackend.getPerformanceScores();
+      const agentScores = allScores.filter(s => s.agentId === currentUser.id);
+
+      // Collect unique files from reviews
+      const proofs = [];
+      agentScores.forEach(review => {
+        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
+          proofs.push({
+            name: review.feedbackData.fileName || `Review File (${review.id})`,
+            type: review.feedbackData.file.type,
+            content: review.feedbackData.file.content,
+            date: new Date(review.timestamp).toLocaleString(),
+            reviewId: review.id
+          });
+        }
+      });
+
+      if (proofs.length === 0) {
+        content.innerHTML = '<div class="text-center text-slate-400 py-20"><div class="text-4xl mb-4">📭</div><h3 class="text-xl font-bold">No proofs attached to your reviews yet.</h3></div>';
       } else {
-        content.innerHTML = reports.map(r => `
+        content.innerHTML = proofs.map(p => `
           <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
             <div class="flex items-center justify-between gap-4">
               <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">${r.name}</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm">Uploaded on ${r.date} by ${r.uploader}</p>
-                <p class="text-slate-500 text-xs mt-1">Type: ${r.type}</p>
+                <h3 class="text-xl font-bold mb-2">${p.name}</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm">From review on ${p.date}</p>
+                <p class="text-slate-500 text-xs mt-1">Type: ${p.type}</p>
               </div>
-              <button onclick="openReport('${r.content}', '${r.type}')" class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition">View Proof</button>
+              <button onclick="openReport('${p.content}', '${p.type}')" class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition">View Proof</button>
             </div>
           </div>
         `).join('');
