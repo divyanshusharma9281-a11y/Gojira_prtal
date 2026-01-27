@@ -1007,35 +1007,11 @@
         <p class="opacity-90">Keep up the great work! Check your latest performance reviews below.</p>
       </div>
 
-      <!-- Weekly Performance Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Audits</p>
-          <div id="agent-total-audits" class="text-4xl font-black text-indigo-600">--</div>
-        </div>
-        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Fatal</p>
-          <div id="agent-fatal-count" class="text-2xl font-bold text-red-500">--</div>
-        </div>
-        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Non-Fatal</p>
-          <div id="agent-nonfatal-count" class="text-2xl font-bold text-green-500">--</div>
-        </div>
-        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-          <p class="text-xs font-bold uppercase text-slate-400 mb-2">Total Score</p>
-          <div id="agent-total-score" class="text-4xl font-black text-blue-600">--%</div>
-        </div>
-      </div>
-
-      <!-- Audit Details List -->
-      <div>
-        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-          <span class="bg-indigo-100 dark:bg-slate-700 text-indigo-600 p-2 rounded-lg text-sm">📋</span>
-          Weekly Audit Details
-        </h3>
-        <div id="agent-audit-list" class="space-y-3">
-          <!-- Populated by JS -->
-        </div>
+      <!-- View Performance Button -->
+      <div class="text-center">
+        <button onclick="openAgentPerformanceModal()" class="bg-indigo-600 text-white font-bold py-4 px-8 rounded-2xl hover:bg-indigo-700 transition shadow-lg text-lg">
+          📊 View My Performance
+        </button>
       </div>
 
     </div>
@@ -1156,94 +1132,29 @@
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <span class="font-bold text-xl text-indigo-600">Admin Dashboard (<span id="admin-current-entity-name">ALL</span>)</span>
-        <!-- Agent Selector -->
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Select Agent:</label>
-          <select id="agent-selector" onchange="onAgentSelected()"
-            class="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-            <option value="">Choose an agent...</option>
-            <!-- Agents will be populated here by JavaScript -->
-          </select>
-        </div>
+        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+        <span class="font-bold text-xl">Admin Dashboard</span>
       </div>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
-      <!-- Create Audit Section (Hidden initially) -->
-      <div id="create-audit-section" class="hidden bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-slate-200 dark:border-slate-700">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">📝</span>
-          Create Audit for <span id="selected-agent-audit-name" class="text-blue-600"></span> (<span id="selected-agent-audit-id" class="text-slate-500"></span>)
-        </h2>
+      <h1 class="text-3xl font-extrabold mb-8">Admin Panel</h1>
 
-        <!-- Add Audit Item Form -->
-        <div class="bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600 mb-6">
-          <h3 class="text-lg font-bold mb-4">Add Audit Item</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="block text-sm font-medium mb-2">File</label>
-              <input type="file" id="audit-file" accept="audio/*,image/*,application/pdf,.doc,.docx"
-                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 dark:file:bg-slate-600 dark:file:text-white">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-2">Score</label>
-              <select id="audit-score" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700">
-                <option value="">Select Score</option>
-                <option value="0">Fatal (0)</option>
-                <option value="100">Non-Fatal (100)</option>
-              </select>
-            </div>
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">Observation</label>
-            <textarea id="audit-observation" rows="3" placeholder="Enter detailed observation..."
-              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 resize-none"></textarea>
-          </div>
-          <button onclick="addAuditItem()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Add Item</button>
-        </div>
-
-        <!-- Audit Items Preview -->
-        <div class="mb-6">
-          <h3 class="text-lg font-bold mb-4">Audit Items (<span id="audit-items-count">0</span>)</h3>
-          <div id="audit-items-preview" class="space-y-3">
-            <!-- Items will be added here -->
-          </div>
-        </div>
-
-        <!-- Final Submit Button -->
-        <div class="text-center">
-          <button id="final-submit-btn" onclick="finalSubmitAudit()" disabled
-            class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition opacity-50 cursor-not-allowed">
-            Final Submit
-          </button>
-        </div>
+      <!-- File Upload Section -->
+      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-8">
+        <h2 class="text-xl font-bold mb-4">Upload Proofs for Agents</h2>
+        <input type="file" id="admin-file-upload" multiple class="mb-4">
+        <button onclick="handleAdminFileUpload()"
+          class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload
+          Files</button>
       </div>
 
-      <!-- Manage Feedback Section -->
-      <div class="mb-12">
-        <div class="flex items-center justify-between gap-4 mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
-            Manage Feedback
-          </h2>
-        </div>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-6">Agent</th>
-                <th class="p-6">Date</th>
-                <th class="p-6">Items</th>
-                <th class="p-6">Total Score</th>
-                <th class="p-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
+      <!-- Uploaded Files List -->
+      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h2 class="text-xl font-bold mb-4">Uploaded Proofs</h2>
+        <div id="admin-reports-list" class="space-y-4">
+          <!-- Files will be listed here -->
         </div>
       </div>
     </div>
@@ -1417,19 +1328,7 @@
   </div>
 
   <!-- AGENT VIEW AUDIT ITEM MODAL -->
-  <div id="agent-view-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 id="agent-view-modal-title" class="text-2xl font-extrabold">Audit Item Details</h2>
-        <button onclick="closeAgentViewModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
-      </div>
-      <div class="flex-1 overflow-y-auto p-8">
-        <div id="agent-view-modal-content">
-          <!-- Content will be populated by JS -->
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <script>
     // --- IndexedDB Handler for Large Files ---
@@ -1487,91 +1386,6 @@
 
     // MOCK BACKEND
     class MockBackend {
-      // AUDIT REPORTS
-      static getAuditReports() {
-        return JSON.parse(localStorage.getItem('gojira_audit_reports') || '[]');
-      }
-
-      static saveAuditReport(report) {
-        const reports = this.getAuditReports();
-        reports.push(report);
-        localStorage.setItem('gojira_audit_reports', JSON.stringify(reports));
-        return report.id;
-      }
-
-      static getAuditReportById(id) {
-        const reports = this.getAuditReports();
-        return reports.find(r => r.id === id);
-      }
-
-      static updateAuditReport(id, updates) {
-        const reports = this.getAuditReports();
-        const index = reports.findIndex(r => r.id === id);
-        if (index !== -1) {
-          reports[index] = { ...reports[index], ...updates };
-          localStorage.setItem('gojira_audit_reports', JSON.stringify(reports));
-        }
-      }
-
-      static deleteAuditReport(id) {
-        const reports = this.getAuditReports().filter(r => r.id !== id);
-        localStorage.setItem('gojira_audit_reports', JSON.stringify(reports));
-      }
-
-      // AUDIT ITEMS
-      static getAuditItems() {
-        return JSON.parse(localStorage.getItem('gojira_audit_items') || '[]');
-      }
-
-      static saveAuditItem(item) {
-        const items = this.getAuditItems();
-        items.push(item);
-        localStorage.setItem('gojira_audit_items', JSON.stringify(items));
-        return item.id;
-      }
-
-      static getAuditItemsByAuditId(auditId) {
-        const items = this.getAuditItems();
-        return items.filter(item => item.audit_id === auditId);
-      }
-
-      static updateAuditItem(id, updates) {
-        const items = this.getAuditItems();
-        const index = items.findIndex(item => item.id === id);
-        if (index !== -1) {
-          items[index] = { ...items[index], ...updates };
-          localStorage.setItem('gojira_audit_items', JSON.stringify(items));
-        }
-      }
-
-      static deleteAuditItem(id) {
-        const items = this.getAuditItems().filter(item => item.id !== id);
-        localStorage.setItem('gojira_audit_items', JSON.stringify(items));
-      }
-
-      // AGENT COMMENTS
-      static getAgentComments() {
-        return JSON.parse(localStorage.getItem('gojira_agent_comments') || '[]');
-      }
-
-      static saveAgentComment(comment) {
-        const comments = this.getAgentComments();
-        comments.push(comment);
-        localStorage.setItem('gojira_agent_comments', JSON.stringify(comments));
-        return comment.id;
-      }
-
-      static getCommentsByAuditItemId(auditItemId) {
-        const comments = this.getAgentComments();
-        return comments.filter(c => c.audit_item_id === auditItemId);
-      }
-
-      static deleteAgentComment(id) {
-        const comments = this.getAgentComments().filter(c => c.id !== id);
-        localStorage.setItem('gojira_agent_comments', JSON.stringify(comments));
-      }
-
-      // LEGACY METHODS (for backward compatibility)
       static getReports() {
         return JSON.parse(localStorage.getItem('gojira_reports') || '[]');
       }
@@ -1754,22 +1568,11 @@
 
         // Cleanup comments (keep 7 days)
         const comments = this.getComments();
-        const recentComments = comments.filter(c => {
-          const ts = c.timestamp || c.date;
-          return new Date(ts) > oneWeekAgo;
-        });
+        const recentComments = comments.filter(c => new Date(c.timestamp) > oneWeekAgo);
+
         if (comments.length !== recentComments.length) {
           localStorage.setItem('gojira_comments', JSON.stringify(recentComments));
-        }
-
-        // Cleanup reports (keep 7 days)
-        const reports = this.getReports();
-        const recentReports = reports.filter(r => {
-          const ts = r.timestamp || r.date;
-          return new Date(ts) > oneWeekAgo;
-        });
-        if (reports.length !== recentReports.length) {
-          localStorage.setItem('gojira_reports', JSON.stringify(recentReports));
+          console.log('Cleaned up old comments.');
         }
       }
 
@@ -1783,415 +1586,37 @@
 
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
-      // 1. Set Entity Header - Admin can only see their own entity
-      const adminUser = USER_DB.find(u => u.id === currentUser.id);
-      const entityContext = adminUser ? adminUser.entity : 'ALL';
-      document.getElementById('admin-current-entity-name').innerText = entityContext;
-
-      // 2. Populate Agent Selector Dropdown - Only agents from admin's entity
-      const agentSelector = document.getElementById('agent-selector');
-      const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entityContext);
-
-      agentSelector.innerHTML = '<option value="">Choose an agent...</option>';
-      agents.forEach(agent => {
-        const option = document.createElement('option');
-        option.value = agent.id;
-        option.textContent = `${agent.name} (${agent.id})`;
-        agentSelector.appendChild(option);
-      });
-
-      // 3. Populate Manage Feedback Table
-      const auditReports = MockBackend.getAuditReports();
+      const reports = MockBackend.getReports();
       const reportsList = document.getElementById('admin-reports-list');
 
-      if (auditReports.length === 0) {
-        reportsList.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-slate-400">No audit reports found.</td></tr>';
+      if (reports.length === 0) {
+        reportsList.innerHTML = '<p class="text-slate-500 text-center py-4">No files uploaded yet.</p>';
       } else {
-        reportsList.innerHTML = auditReports.map(report => {
-          const agent = USER_DB.find(u => u.id === report.agent_id);
-          const agentName = agent ? agent.name : report.agent_id;
-          const auditItems = MockBackend.getAuditItemsByAuditId(report.id);
-          const date = new Date(report.created_at).toLocaleString();
+        reportsList.innerHTML = reports.map(report => {
+          const agent = USER_DB.find(u => u.id === report.agentId);
+          const agentName = agent ? agent.name : report.agentId;
+          const date = new Date(report.timestamp).toLocaleString();
 
           return `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <td class="p-6 text-sm">${agentName}</td>
-              <td class="p-6 text-sm">${date}</td>
-              <td class="p-6 text-sm">${auditItems.length}</td>
-              <td class="p-6 text-sm">${report.total_score}%</td>
-              <td class="p-6 text-right flex justify-end gap-2">
-                <button onclick="viewAuditReport('${report.id}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="View">👁️</button>
-                <button onclick="editAuditReport('${report.id}')" class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition" title="Edit">✏️</button>
-                <button onclick="deleteAuditReport('${report.id}')" class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="Delete">🗑️</button>
-              </td>
-            </tr>
+            <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">📄</div>
+                <div>
+                  <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${report.fileName}</p>
+                  <p class="text-[10px] text-slate-400 uppercase">${date} • ${agentName}</p>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="openReport('${report.content}', '${report.type}')" class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-100 transition">View 👁️</button>
+                <button onclick="handleDeleteReport('${report.id}')" class="bg-red-50 dark:bg-red-900/30 text-red-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition">Delete 🗑️</button>
+              </div>
+            </div>
           `;
         }).join('');
       }
     }
 
-    // NEW AUDIT WORKFLOW FUNCTIONS
-    let selectedAgentForAudit = null;
-    let currentAuditItems = [];
 
-    function onAgentSelected() {
-      const agentSelector = document.getElementById('agent-selector');
-      const selectedAgentId = agentSelector.value;
-
-      if (selectedAgentId) {
-        selectedAgentForAudit = USER_DB.find(u => u.id === selectedAgentId);
-        // Show create audit section
-        document.getElementById('create-audit-section').classList.remove('hidden');
-        document.getElementById('selected-agent-audit-name').innerText = selectedAgentForAudit.name;
-        document.getElementById('selected-agent-audit-id').innerText = selectedAgentForAudit.id;
-        // Reset audit items
-        currentAuditItems = [];
-        updateAuditItemsPreview();
-        updateFinalSubmitButton();
-      } else {
-        document.getElementById('create-audit-section').classList.add('hidden');
-        selectedAgentForAudit = null;
-        currentAuditItems = [];
-      }
-    }
-
-    function addAuditItem() {
-      const fileInput = document.getElementById('audit-file');
-      const observationInput = document.getElementById('audit-observation');
-      const scoreSelect = document.getElementById('audit-score');
-
-      const file = fileInput.files[0];
-      const observation = observationInput.value.trim();
-      const score = parseInt(scoreSelect.value);
-
-      // Validation
-      if (!file) {
-        alert('Please select a file.');
-        return;
-      }
-      if (!observation) {
-        alert('Please provide observation.');
-        return;
-      }
-      if (isNaN(score)) {
-        alert('Please select a score.');
-        return;
-      }
-
-      // Convert file to Base64 and save
-      readFileAsBase64(file).then(content => {
-        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        FileDB.saveFile(fileId, content);
-
-        const auditItem = {
-          id: Date.now().toString(),
-          file_url: fileId,
-          file_name: file.name,
-          observation_text: observation,
-          score: score,
-          created_at: new Date().toISOString()
-        };
-
-        currentAuditItems.push(auditItem);
-
-        // Clear form
-        fileInput.value = '';
-        observationInput.value = '';
-        scoreSelect.value = '';
-
-        updateAuditItemsPreview();
-        updateFinalSubmitButton();
-      }).catch(err => {
-        console.error('File save error:', err);
-        alert('Error saving file. Please try again.');
-      });
-    }
-
-    function updateAuditItemsPreview() {
-      const container = document.getElementById('audit-items-preview');
-      const countElement = document.getElementById('audit-items-count');
-      if (countElement) countElement.innerText = currentAuditItems.length;
-
-      if (currentAuditItems.length === 0) {
-        container.innerHTML = '<p class="text-slate-500 text-center py-4">No audit items added yet.</p>';
-        return;
-      }
-
-      container.innerHTML = currentAuditItems.map((item, index) => `
-        <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg border">
-          <div class="flex justify-between items-start mb-2">
-            <div class="font-medium">Item ${index + 1}</div>
-            <button onclick="removeAuditItem(${index})" class="text-red-600 hover:text-red-800">Remove</button>
-          </div>
-          <div class="text-sm text-slate-600 dark:text-slate-300">
-            <div><strong>File:</strong> ${item.file_name}</div>
-            <div><strong>Observation:</strong> ${item.observation_text}</div>
-            <div><strong>Score:</strong> ${item.score === 0 ? 'Fatal (0)' : 'Non-Fatal (100)'}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function removeAuditItem(index) {
-      currentAuditItems.splice(index, 1);
-      updateAuditItemsPreview();
-      updateFinalSubmitButton();
-    }
-
-    function updateFinalSubmitButton() {
-      const submitBtn = document.getElementById('final-submit-btn');
-      const count = currentAuditItems.length;
-
-      if (count >= 3 && count <= 10) {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        submitBtn.innerText = `Final Submit (${count} items)`;
-      } else {
-        submitBtn.disabled = true;
-        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        if (count < 3) {
-          submitBtn.innerText = `Need ${3 - count} more items`;
-        } else {
-          submitBtn.innerText = 'Too many items (max 10)';
-        }
-      }
-    }
-
-    function finalSubmitAudit() {
-      if (currentAuditItems.length < 3 || currentAuditItems.length > 10) {
-        alert('Audit must have 3-10 items.');
-        return;
-      }
-
-      // Calculate total score
-      const totalScore = Math.round((currentAuditItems.reduce((sum, item) => sum + item.score, 0) / (currentAuditItems.length * 100)) * 100);
-
-      // Create audit report
-      const auditReport = {
-        id: Date.now().toString(),
-        admin_id: currentUser.id,
-        agent_id: selectedAgentForAudit.id,
-        entity_id: selectedAgentForAudit.entity,
-        week: new Date().toISOString().split('T')[0], // Current date as week
-        total_score: totalScore,
-        created_at: new Date().toISOString()
-      };
-
-      MockBackend.saveAuditReport(auditReport);
-
-      // Save audit items
-      currentAuditItems.forEach(item => {
-        const auditItem = {
-          ...item,
-          audit_id: auditReport.id
-        };
-        MockBackend.saveAuditItem(auditItem);
-      });
-
-      // Reset
-      selectedAgentForAudit = null;
-      currentAuditItems = [];
-      document.getElementById('agent-selector').value = '';
-      document.getElementById('create-audit-section').classList.add('hidden');
-
-      renderAdminDashboard();
-      alert('Audit submitted successfully!');
-    }
-
-    // MANAGE FEEDBACK FUNCTIONS
-    function viewAuditReport(auditId) {
-      const report = MockBackend.getAuditReportById(auditId);
-      const items = MockBackend.getAuditItemsByAuditId(auditId);
-      const agent = USER_DB.find(u => u.id === report.agent_id);
-
-      const modal = document.getElementById('view-modal');
-      document.getElementById('view-modal-title').innerText = `Audit Report - ${agent.name}`;
-      document.getElementById('view-modal-content').innerHTML = `
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div><strong>Agent:</strong> ${agent.name} (${agent.id})</div>
-            <div><strong>Date:</strong> ${new Date(report.created_at).toLocaleString()}</div>
-            <div><strong>Total Score:</strong> ${report.total_score}%</div>
-            <div><strong>Items:</strong> ${items.length}</div>
-          </div>
-          <div class="space-y-2">
-            ${items.map(item => `
-              <div class="border rounded p-3">
-                <div class="flex justify-between items-start mb-2">
-                  <div class="font-medium">File: ${item.file_name}</div>
-                  <div class="text-sm ${item.score === 0 ? 'text-red-600' : 'text-green-600'}">
-                    Score: ${item.score === 0 ? 'Fatal (0)' : 'Non-Fatal (100)'}
-                  </div>
-                </div>
-                <div class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-                  <strong>Observation:</strong> ${item.observation_text}
-                </div>
-                <button onclick="viewFile('${item.file_url}')" class="text-blue-600 hover:text-blue-800 text-sm">View File</button>
-                <div class="mt-2">
-                  ${MockBackend.getCommentsByAuditItemId(item.id).map(comment => `
-                    <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-sm mt-1">
-                      <strong>Agent Comment:</strong> ${comment.comment_text}
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-      modal.classList.remove('hidden');
-    }
-
-    function editAuditReport(auditId) {
-      // For simplicity, allow editing observations and scores
-      const report = MockBackend.getAuditReportById(auditId);
-      const items = MockBackend.getAuditItemsByAuditId(auditId);
-      const agent = USER_DB.find(u => u.id === report.agent_id);
-
-      // Open edit modal with form to modify items
-      const modal = document.getElementById('edit-modal');
-      document.getElementById('edit-modal-title').innerText = `Edit Audit Report - ${agent.name}`;
-      document.getElementById('edit-modal-content').innerHTML = `
-        <form id="edit-audit-form" class="space-y-4">
-          ${items.map((item, index) => `
-            <div class="border rounded p-3">
-              <div class="font-medium mb-2">Item ${index + 1}: ${item.file_name}</div>
-              <div class="space-y-2">
-                <div>
-                  <label class="block text-sm font-medium">Observation</label>
-                  <textarea name="observation_${item.id}" class="w-full p-2 border rounded" rows="2">${item.observation_text}</textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium">Score</label>
-                  <select name="score_${item.id}" class="w-full p-2 border rounded">
-                    <option value="0" ${item.score === 0 ? 'selected' : ''}>Fatal (0)</option>
-                    <option value="100" ${item.score === 100 ? 'selected' : ''}>Non-Fatal (100)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          `).join('')}
-          <div class="flex gap-2">
-            <button type="button" onclick="saveAuditEdits('${auditId}')" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
-            <button type="button" onclick="closeEditModal()" class="bg-slate-500 text-white px-4 py-2 rounded">Cancel</button>
-          </div>
-        </form>
-      `;
-      modal.classList.remove('hidden');
-    }
-
-    function saveAuditEdits(auditId) {
-      const form = document.getElementById('edit-audit-form');
-      const formData = new FormData(form);
-      const items = MockBackend.getAuditItemsByAuditId(auditId);
-
-      items.forEach(item => {
-        const observation = formData.get(`observation_${item.id}`);
-        const score = parseInt(formData.get(`score_${item.id}`));
-        MockBackend.updateAuditItem(item.id, {
-          observation_text: observation,
-          score: score
-        });
-      });
-
-      // Recalculate total score
-      const updatedItems = MockBackend.getAuditItemsByAuditId(auditId);
-      const totalScore = Math.round((updatedItems.reduce((sum, item) => sum + item.score, 0) / (updatedItems.length * 100)) * 100);
-      MockBackend.updateAuditReport(auditId, { total_score: totalScore });
-
-      closeEditModal();
-      renderAdminDashboard();
-      alert('Audit updated successfully!');
-    }
-
-    function deleteAuditReport(auditId) {
-      if (confirm('Are you sure you want to delete this audit report? This will also delete all associated items.')) {
-        // Delete items first
-        const items = MockBackend.getAuditItemsByAuditId(auditId);
-        items.forEach(item => MockBackend.deleteAuditItem(item.id));
-
-        // Delete report
-        MockBackend.deleteAuditReport(auditId);
-
-        renderAdminDashboard();
-        alert('Audit report deleted successfully!');
-      }
-    }
-
-    function viewFile(fileId) {
-      FileDB.getFile(fileId).then(content => {
-        const blob = new Blob([content], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-      }).catch(err => {
-        console.error('Error viewing file:', err);
-        alert('Error viewing file.');
-      });
-    }
-
-    function viewAuditItemForAgent(auditItemId) {
-      const auditItem = MockBackend.getAuditItems().find(item => item.id === auditItemId);
-      if (!auditItem) return;
-
-      const existingComments = MockBackend.getCommentsByAuditItemId(auditItemId);
-
-      const modal = document.getElementById('agent-view-modal');
-      document.getElementById('agent-view-modal-title').innerText = `Audit Item Details`;
-      document.getElementById('agent-view-modal-content').innerHTML = `
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div><strong>File:</strong> ${auditItem.file_name}</div>
-            <div><strong>Score:</strong> <span class="${auditItem.score === 0 ? 'text-red-600' : 'text-green-600'}">${auditItem.score === 0 ? 'Fatal (0)' : 'Non-Fatal (100)'}</span></div>
-          </div>
-          <div>
-            <strong>Observation:</strong>
-            <p class="mt-1 p-3 bg-slate-50 dark:bg-slate-700 rounded">${auditItem.observation_text}</p>
-          </div>
-          <div>
-            <button onclick="viewFile('${auditItem.file_url}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View File</button>
-          </div>
-          <div>
-            <strong>Add Comment:</strong>
-            <textarea id="agent-comment-text" class="w-full mt-2 p-3 border rounded" rows="3" placeholder="Enter your comment..."></textarea>
-            <button onclick="submitAgentComment('${auditItemId}')" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit Comment</button>
-          </div>
-          <div id="existing-comments">
-            ${existingComments.map(comment => `
-              <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded mt-2">
-                <strong>Your Comment:</strong> ${comment.comment_text}
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-      modal.classList.remove('hidden');
-    }
-
-    function submitAgentComment(auditItemId) {
-      const commentText = document.getElementById('agent-comment-text').value.trim();
-      if (!commentText) {
-        alert('Please enter a comment.');
-        return;
-      }
-
-      const comment = {
-        id: Date.now().toString(),
-        audit_item_id: auditItemId,
-        agent_id: currentUser.id,
-        comment_text: commentText,
-        created_at: new Date().toISOString()
-      };
-
-      MockBackend.saveAgentComment(comment);
-
-      // Refresh the modal content
-      viewAuditItemForAgent(auditItemId);
-      document.getElementById('agent-comment-text').value = '';
-    }
-
-    function closeAgentViewModal() {
-      document.getElementById('agent-view-modal').classList.add('hidden');
-    }
       document.getElementById('selected-agent-id-scoring').innerText = selectedAgentForReview.id;
       document.getElementById('process-type-display').innerText = selectedProcessType === 'voice' ? 'Voice' : 'Non-Voice';
       document.getElementById('scoring-file-name').innerText = selectedFileForReview.name;
@@ -2835,67 +2260,6 @@
     function renderAgentDashboard() {
       if (currentUser) {
         document.getElementById('agent-name-display').innerText = currentUser.name;
-
-        // Get all audit items for this agent (from all audits)
-        const allAuditReports = MockBackend.getAuditReports().filter(r => r.agent_id === currentUser.id);
-        const allAuditItems = [];
-        allAuditReports.forEach(report => {
-          const items = MockBackend.getAuditItemsByAuditId(report.id);
-          allAuditItems.push(...items);
-        });
-
-        // Filter for last 7 days
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        const weeklyItems = allAuditItems.filter(item => new Date(item.created_at) > oneWeekAgo);
-
-        // Calculate stats
-        const totalAudits = weeklyItems.length;
-        const fatalCount = weeklyItems.filter(item => item.score === 0).length;
-        const nonFatalCount = weeklyItems.filter(item => item.score === 100).length;
-        const totalScore = totalAudits > 0 ? Math.round((weeklyItems.reduce((sum, item) => sum + item.score, 0) / (totalAudits * 100)) * 100) : 0;
-
-        // Update stats cards
-        document.getElementById('agent-total-audits').innerText = totalAudits;
-        document.getElementById('agent-fatal-count').innerText = fatalCount;
-        document.getElementById('agent-nonfatal-count').innerText = nonFatalCount;
-        document.getElementById('agent-total-score').innerText = totalScore + '%';
-
-        // Render audit details list
-        const listContainer = document.getElementById('agent-audit-list');
-        if (weeklyItems.length === 0) {
-          listContainer.innerHTML = '<p class="text-slate-500 text-center py-8">No audits found for this week.</p>';
-        } else {
-          listContainer.innerHTML = weeklyItems.map((item, index) => {
-            const isFatal = item.score === 0;
-            const scoreColor = isFatal ? 'text-red-500' : 'text-emerald-500';
-            const scoreText = isFatal ? 'Fatal (0)' : 'Non-Fatal (100)';
-
-            return `
-              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full ${isFatal ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'} flex items-center justify-center font-bold text-sm">
-                      ${index + 1}
-                    </div>
-                    <div>
-                      <p class="font-bold text-slate-700 dark:text-slate-200">${item.file_name}</p>
-                      <p class="text-xs text-slate-400">${new Date(item.created_at).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <div class="font-bold ${scoreColor} text-sm">${scoreText}</div>
-                    <button onclick="viewAuditItemForAgent('${item.id}')" 
-                      class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 dark:hover:bg-slate-500 flex items-center justify-center text-slate-600 dark:text-slate-300 transition"
-                      title="View Details">
-                      👁️
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
       }
     }
 
@@ -3343,6 +2707,14 @@
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
+
+      // Render content for specific views
+      if (id === 'view-admin' && currentUser && currentUser.role === 'admin') {
+        renderAdminDashboard();
+      }
+      if (id === 'view-performance' && currentUser && currentUser.role === 'agent') {
+        renderAgentDashboard();
+      }
     }
 
     function toggleFaq(btn) {
