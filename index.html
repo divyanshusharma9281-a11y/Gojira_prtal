@@ -1641,54 +1641,25 @@
         </div>
       </div>
 
-      <!-- Manage Reports Section -->
+      <!-- Manage Uploaded Reports & Reviews Section -->
       <div class="mb-12">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
           <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
-          Manage Uploaded Reports
+          Manage Uploaded Reports (Performance Reviews)
         </h2>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-6">Date</th>
-                <th class="p-6">File Name</th>
-                <th class="p-6">Type</th>
-                <th class="p-6 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Manage Performance Reviews Section -->
-      <div class="mb-12">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-red-600 text-white rounded-lg p-2 text-xl">🗑️</span>
-          Manage Performance Reviews
-        </h2>
-        <div class="mb-4 flex justify-end">
-          <button onclick="resetAllPerformanceData()"
-            class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm">
-            Reset All Performance Data
-          </button>
-        </div>
         <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
           <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
             <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
               <tr>
                 <th class="p-6">Date</th>
                 <th class="p-6">Agent</th>
+                <th class="p-6">Type</th>
                 <th class="p-6">Score</th>
-                <th class="p-6">Interaction</th>
                 <th class="p-6">File</th>
                 <th class="p-6 text-right">Action</th>
               </tr>
             </thead>
-            <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
               <!-- JS Populates this -->
             </tbody>
           </table>
@@ -1752,6 +1723,46 @@
         the correct Employee ID for the selected entity.</p>
       <button onclick="document.getElementById('access-denied-modal').classList.add('hidden')"
         class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition">Close</button>
+    </div>
+  </div>
+
+  <!-- EDIT REVIEW MODAL -->
+  <div id="edit-review-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Edit Review</h2>
+        <button onclick="closeEditModal()" class="text-slate-500 hover:text-red-500 font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Observation/Feedback</label>
+        <textarea id="edit-feedback-input" rows="4"
+          class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-bold mb-2">Score</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="edit-score" value="100" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+            <span class="font-bold text-emerald-600">100 (Pass)</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="edit-score" value="0" class="w-4 h-4 text-red-600 focus:ring-red-500">
+            <span class="font-bold text-red-600">0 (Fatal)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <button onclick="saveEditedReview()"
+          class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">Save
+          Changes</button>
+        <button onclick="closeEditModal()"
+          class="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-3 rounded-xl hover:bg-slate-300 dark:hover:bg-slate-700 transition">Cancel</button>
+      </div>
+      <input type="hidden" id="edit-review-id">
     </div>
   </div>
 
@@ -1935,15 +1946,19 @@
           // Remove the score
           const updatedScores = scores.filter(s => s.id != scoreId);
           localStorage.setItem('gojira_performance_scores', JSON.stringify(updatedScores));
+        }
+      }
 
-          // Check if this was the agent's most recent score
-          // Note: Logic to revert status is complex if we have mixed history. 
-          // For now, simpler to just remove history item.
-          // If we want to sync status, we should re-calculate from remaining history?
-
-          // Let's re-calculate latest status from remaining recent scores (last 7 days?)
-          // Or just leave status alone as it might be an average.
-          // User didn't ask for perfect sync on delete, just ability to delete.
+      static updatePerformanceScore(id, updates) {
+        const scores = this.getPerformanceScores();
+        const index = scores.findIndex(s => s.id == id);
+        if (index !== -1) {
+          scores[index].score = updates.score;
+          scores[index].isFatal = updates.isFatal;
+          if (scores[index].feedbackData) {
+            scores[index].feedbackData.feedback = updates.feedback;
+          }
+          localStorage.setItem('gojira_performance_scores', JSON.stringify(scores));
         }
       }
 
@@ -2004,50 +2019,33 @@
         agentSelector.appendChild(option);
       });
 
-      // 3. Populate Reports Table
-      const reports = MockBackend.getReports();
-      const reportsList = document.getElementById('admin-reports-list');
-      if (reports.length === 0) {
-        reportsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No reports uploaded yet.</td></tr>';
-      } else {
-        reportsList.innerHTML = reports.map(r => `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-            <td class="p-6">${r.date}</td>
-            <td class="p-6">${r.name}</td>
-            <td class="p-6">${r.type || 'Unknown'}</td>
-            <td class="p-6 text-right">
-              <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-              <button onclick="handleDeleteReport(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
-            </td>
-          </tr>
-        `).join('');
-      }
-
-      // 4. Populate Performance Reviews Table
+      // 3. Populate Reports Table (Now consolidated with Reviews)
       const reviews = MockBackend.getPerformanceScores();
-      const reviewsList = document.getElementById('admin-reviews-list');
+      const reportsList = document.getElementById('admin-reports-list');
+
       if (reviews.length === 0) {
-        reviewsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No performance reviews yet.</td></tr>';
+        reportsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No reports/reviews found.</td></tr>';
       } else {
-        reviewsList.innerHTML = reviews.map(r => {
+        reportsList.innerHTML = reviews.map(r => {
           const agent = USER_DB.find(u => u.id === r.agentId);
           const agentName = agent ? agent.name : r.agentId;
           const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
           const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
           const date = new Date(r.timestamp).toLocaleString();
-          // Safety check for feedbackData
-          const fileName = (r.feedbackData && r.feedbackData.fileName) ? r.feedbackData.fileName : 'N/A';
+          const fileName = (r.feedbackData && r.fileName) ? r.fileName : 'N/A';
+          const type = (r.feedbackData && r.feedbackData.processType) ? (r.feedbackData.processType === 'voice' ? 'Voice' : 'Non-Voice') : 'N/A';
 
           return `
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <td class="p-6">${date}</td>
-              <td class="p-6">${agentName}</td>
+              <td class="p-6 text-sm">${date}</td>
+              <td class="p-6 font-medium">${agentName}</td>
+              <td class="p-6 text-slate-500">${type}</td>
               <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
-              <td class="p-6">--</td>
-              <td class="p-6">${fileName}</td>
-              <td class="p-6 text-right">
-                <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+              <td class="p-6 text-xs font-mono text-slate-500 truncate max-w-[150px]">${fileName}</td>
+              <td class="p-6 text-right flex justify-end gap-2">
+                <button onclick="viewReviewDetails(${r.id})" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="View">👁️</button>
+                <button onclick="editReview(${r.id})" class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition" title="Edit">✏️</button>
+                <button onclick="handleDeleteReview(${r.id})" class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="Delete">🗑️</button>
               </td>
             </tr>
           `;
@@ -2775,11 +2773,57 @@
       }
     }
 
-    function handleDeleteComment(id) {
-      if (confirm('Are you sure you want to delete this comment?')) {
-        MockBackend.deleteComment(id);
-        renderAdminDashboard(); // Refresh
+    function handleDeleteReview(id) {
+      if (confirm('Are you sure you want to delete this performance review?')) {
+        MockBackend.deletePerformanceScore(id);
+        renderAdminDashboard();
       }
+    }
+
+    let currentEditingReviewId = null;
+
+    function editReview(id) {
+      const scores = MockBackend.getPerformanceScores();
+      const review = scores.find(s => s.id == id);
+      if (!review) return alert('Review not found');
+
+      currentEditingReviewId = id;
+      document.getElementById('edit-review-id').value = id;
+      document.getElementById('edit-feedback-input').value = review.feedbackData.feedback;
+
+      const scoreRadios = document.getElementsByName('edit-score');
+      scoreRadios.forEach(r => {
+        if (parseInt(r.value) === review.score) r.checked = true;
+      });
+
+      document.getElementById('edit-review-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-review-modal').classList.add('hidden');
+      currentEditingReviewId = null;
+    }
+
+    function saveEditedReview() {
+      if (!currentEditingReviewId) return;
+
+      const newFeedback = document.getElementById('edit-feedback-input').value;
+      const selectedScoreRadio = document.querySelector('input[name="edit-score"]:checked');
+
+      if (!selectedScoreRadio) return alert('Please select a score');
+
+      const newScore = parseInt(selectedScoreRadio.value);
+      const isFatal = newScore === 0;
+
+      MockBackend.updatePerformanceScore(currentEditingReviewId, {
+        score: newScore,
+        isFatal: isFatal,
+        feedback: newFeedback
+      });
+
+      alert('Review updated successfully');
+      closeEditModal();
+      renderAdminDashboard();
     }
 
     function viewReviewDetails(reviewId) {
