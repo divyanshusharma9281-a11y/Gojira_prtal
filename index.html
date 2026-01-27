@@ -820,13 +820,9 @@
     </header>
 
     <div class="max-w-5xl mx-auto px-6 py-14">
-      <!-- Tabs -->
+      <!-- Tabs Removed. Only Tools content shown by default -->
       <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-        <button onclick="showTab('guidelines', 'rupee112')" id="tab-guidelines-rupee112"
-          class="px-6 py-3 font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Customer
-          Script Templates</button>
-        <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112"
-          class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+        <button class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -1167,196 +1163,75 @@
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
       </div>
 
-      <!-- Guidelines Tab Content -->
-      <div id="content-guidelines-loan112" class="tab-content hidden">
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="text-4xl">📜</div>
-            <div>
-              <h3 class="text-2xl font-bold">Customer Script Template & Mandatory Rules</h3>
-              <p class="text-slate-500 text-sm">Universal guidelines for all brands (Bharat Loan, Loan 112, etc.)</p>
+      <!-- Guidelines Tab Content REMOVED -->
+    </div>
+
+    <!-- Tools Tab Content -->
+    <div id="content-tools-loan112" class="tab-content">
+      <div class="grid gap-6">
+        <div
+          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
+              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
+                Email.
+              </p>
             </div>
-          </div>
-
-          <div class="space-y-8">
-            <!-- Mandatory Rules -->
-            <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl border border-red-100 dark:border-red-800">
-              <h4 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
-                <span>⚠️</span> Mandatory Rules Highlighted
-              </h4>
-              <ul class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
-                <li class="flex gap-2">
-                  <span class="font-bold text-red-500">48h Rule:</span>
-                  <span>Disbursement timeline must strictly be stated as "up to 48 hours". Never promise instant or
-                    same-day without verification.</span>
-                </li>
-                <li class="flex gap-2">
-                  <span class="font-bold text-red-500">Payment:</span>
-                  <span><strong>ALWAYS</strong> confirm payment receipt visually before proceeding. Do not rely on
-                    customer verbal confirmation.</span>
-                </li>
-                <li class="flex gap-2">
-                  <span class="font-bold text-red-500">Etiquette:</span>
-                  <span>Do NOT use "Sir/Ma'am". Use the customer's name (e.g., "Mr. Sharma").</span>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Tiered Escalation -->
-            <div>
-              <h4 class="text-lg font-bold mb-4">Tiered Credit Manager Logic</h4>
-              <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-                <table class="w-full text-sm text-left">
-                  <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-                    <tr>
-                      <th class="p-4">Escalation Level</th>
-                      <th class="p-4">Action Required</th>
-                      <th class="p-4">Manager Tagging</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                    <tr class="bg-white dark:bg-slate-800">
-                      <td class="p-4 font-bold">1st Instance</td>
-                      <td class="p-4">Standard resolution attempt</td>
-                      <td class="p-4 text-slate-400">None</td>
-                    </tr>
-                    <tr class="bg-white dark:bg-slate-800">
-                      <td class="p-4 font-bold text-amber-600">2nd Instance</td>
-                      <td class="p-4">Customer dissatisfied/repeat query</td>
-                      <td class="p-4">Tag <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Team
-                          Lead</span></td>
-                    </tr>
-                    <tr class="bg-white dark:bg-slate-800">
-                      <td class="p-4 font-bold text-red-600">3rd Instance</td>
-                      <td class="p-4">Conflict/Escalation request</td>
-                      <td class="p-4">Tag <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Credit
-                          Manager</span> Immediately</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- App Response Logic -->
-            <div class="grid md:grid-cols-2 gap-6">
-              <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
-                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Lead/Partial (Incomplete)</h5>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Customer has not finished the form.</p>
-                <div
-                  class="bg-white dark:bg-slate-800 p-3 rounded border border-blue-100 dark:border-slate-700 text-xs italic">
-                  "I can see you started the application but haven't completed the final step. Please upload [Document]
-                  to proceed."
-                </div>
-              </div>
-              <div
-                class="p-5 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800">
-                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">Submitted (Complete)</h5>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Form is fully submitted.</p>
-                <div
-                  class="bg-white dark:bg-slate-800 p-3 rounded border border-green-100 dark:border-slate-700 text-xs italic">
-                  "Your application is successfully submitted. It is currently under verification. Please wait for the
-                  update within 48 hours."
-                </div>
-              </div>
-            </div>
-
-            <!-- Email Template -->
-            <div>
-              <h4 class="text-lg font-bold mb-4">Professional Email Template</h4>
-              <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl font-mono text-sm relative group">
-                <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copied!')"
-                  class="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition text-xs font-bold text-slate-500">Copy</button>
-                <div class="whitespace-pre-wrap">Subject: Application Status Update - [Application ID]
-
-                  Dear [Customer Name],
-
-                  Thank you for choosing [Brand Name].
-
-                  This is to confirm that we have received your application. It is currently being reviewed by our
-                  credit team.
-
-                  Timeline:
-                  - Initial Review: 24 Hours
-                  - Disbursement (if approved): Up to 48 Hours
-
-                  Please note that we will never ask for an OTP or PIN over the phone.
-
-                  Regards,
-                  [Agent Name]
-                  Support Team</div>
-              </div>
-            </div>
-
+            <a href="https://loan112fintech.com/" target="_blank"
+              class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
+              ↗</a>
           </div>
         </div>
-      </div>
 
-      <!-- Tools Tab Content -->
-      <div id="content-tools-loan112" class="tab-content">
-        <div class="grid gap-6">
-          <div
-            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">Loan112 Portal and Search Module</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Main application processing, document view, and status checks. Customer search via PAN, Mobile, or
-                  Email.
-                </p>
-              </div>
-              <a href="https://loan112fintech.com/" target="_blank"
-                class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition">Visit Portal
-                ↗</a>
+        <div
+          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
+              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                Telephony integration, lead management, and communication logging.
+              </p>
             </div>
+            <a href="https://cpaas.wocom365.com/" target="_blank"
+              class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
+              WOCOM ↗</a>
           </div>
+        </div>
 
-          <div
-            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">WOCOM 365</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Telephony integration, lead management, and communication logging.
-                </p>
-              </div>
-              <a href="https://cpaas.wocom365.com/" target="_blank"
-                class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-700 transition">Open
-                WOCOM ↗</a>
+        <div
+          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
+              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                Handle real-time customer chats efficiently through the AI-powered cloud platform.
+              </p>
             </div>
+            <a href="https://cloud.yellow.ai/auth/login" target="_blank"
+              class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
+              Chat ↗</a>
           </div>
+        </div>
 
-          <div
-            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">Yellow Ai</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Handle real-time customer chats efficiently through the AI-powered cloud platform.
-                </p>
-              </div>
-              <a href="https://cloud.yellow.ai/auth/login" target="_blank"
-                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-indigo-700 transition">Login
-                Chat ↗</a>
+        <div
+          class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
+              <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                Review customer emails and attachments. Standard channel for ticketing and complex queries.
+              </p>
             </div>
-          </div>
-
-          <div
-            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div class="flex-1">
-                <h3 class="text-xl font-bold mb-2">Outlook (Care@loan112.com)</h3>
-                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                  Review customer emails and attachments. Standard channel for ticketing and complex queries.
-                </p>
-              </div>
-              <a href="https://outlook.office.com/mail/" target="_blank"
-                class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
-                ↗</a>
-            </div>
+            <a href="https://outlook.office.com/mail/" target="_blank"
+              class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+              ↗</a>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
 
   <!-- RUPEEONTIME SPECIFIC VIEW -->
