@@ -101,6 +101,7 @@
       <div class="flex flex-col items-end gap-2">
         <div class="flex items-center gap-2">
           <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
+          <button onclick="showLogin('ALL')" class="text-slate-500 hover:text-blue-600 text-sm font-semibold px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 transition">Login</button>
           <button onclick="toggleTheme()"
             class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
             <span id="theme-icon">🌙</span>
@@ -387,6 +388,36 @@
         <div class="text-4xl mb-4">✨</div>
         <h3 class="text-xl font-bold mb-2">Stay Tuned!</h3>
         <p class="text-slate-600 dark:text-slate-400">There are no new updates currently.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+        <span class="font-bold text-xl">Admin Dashboard</span>
+      </div>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <h1 class="text-3xl font-extrabold mb-8">Admin Panel</h1>
+
+      <!-- File Upload Section -->
+      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 mb-8">
+        <h2 class="text-xl font-bold mb-4">Upload Proofs for Agents</h2>
+        <input type="file" id="admin-file-upload" multiple class="mb-4">
+        <button onclick="handleAdminFileUpload()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition">Upload Files</button>
+      </div>
+
+      <!-- Uploaded Files List -->
+      <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+        <h2 class="text-xl font-bold mb-4">Uploaded Proofs</h2>
+        <div id="admin-reports-list" class="space-y-4">
+          <!-- Files will be listed here -->
+        </div>
       </div>
     </div>
   </div>
@@ -974,7 +1005,7 @@
       </div>
 
       <!-- Dashboard Grid -->
-      <div class="grid grid-cols-1 max-w-2xl mx-auto gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-8">
 
         <!-- Weekly Performance Tab/Card -->
         <div onclick="openAgentPerformanceModal()"
@@ -997,6 +1028,26 @@
           </div>
         </div>
 
+        <!-- Proofs from Admin -->
+        <div onclick="openAgentProofsModal()"
+          class="cursor-pointer group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
+            <span class="text-9xl">📄</span>
+          </div>
+
+          <div
+            class="w-16 h-16 rounded-2xl bg-green-50 dark:bg-slate-700 flex items-center justify-center text-3xl mb-6 text-green-600">
+            📎
+          </div>
+
+          <h3 class="text-2xl font-bold mb-2">Proofs from Admin</h3>
+          <p class="text-slate-500 text-sm mb-6">View proofs and documents uploaded by the admin.</p>
+
+          <div class="flex items-center gap-2 text-green-600 font-bold group-hover:gap-4 transition-all">
+            <span>View Proofs</span>
+            <span>→</span>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -1081,6 +1132,34 @@
           <h3 class="text-xl font-bold">No performance review available yet.</h3>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT PROOFS MODAL -->
+  <div id="agent-proofs-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col animate-scale-up">
+
+      <!-- Modal Header -->
+      <div
+        class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 z-10">
+        <div>
+          <h2 class="text-2xl font-extrabold flex items-center gap-2">
+            <span>📎</span> Proofs from Admin
+          </h2>
+          <p class="text-xs text-slate-500 font-mono mt-1">Documents and proofs uploaded by the admin</p>
+        </div>
+        <button onclick="closeAgentProofsModal()"
+          class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition font-bold text-xl">&times;</button>
+      </div>
+
+      <!-- Modal Content (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-8">
+        <div id="agent-proofs-content" class="space-y-6">
+          <!-- Proofs will be populated here -->
+        </div>
       </div>
     </div>
   </div>
@@ -1833,6 +1912,28 @@
             </td>
           </tr>
         `).join('');
+      }
+
+      // Populate Uploaded Reports/Proofs for simple admin view
+      const uploadedReportsList = document.getElementById('admin-reports-list');
+      if (uploadedReportsList) {
+        const reports = MockBackend.getReports();
+        if (reports.length === 0) {
+          uploadedReportsList.innerHTML = '<p class="text-center text-slate-400 py-8">No proofs uploaded yet.</p>';
+        } else {
+          uploadedReportsList.innerHTML = reports.map(r => `
+            <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold">${r.name}</h4>
+                <p class="text-sm text-slate-500">Uploaded on ${r.date}</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="openReport('${r.content}', '${r.type}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">View</button>
+                <button onclick="handleDeleteReport(${r.id})" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Delete</button>
+              </div>
+            </div>
+          `).join('');
+        }
       }
     }
 
@@ -2844,6 +2945,35 @@
     function logout() {
       currentUser = null;
       navigateTo('view-home');
+    }
+
+    function openAgentProofsModal() {
+      const modal = document.getElementById('agent-proofs-modal');
+      const content = document.getElementById('agent-proofs-content');
+
+      const reports = MockBackend.getReports();
+      if (reports.length === 0) {
+        content.innerHTML = '<div class="text-center text-slate-400 py-20"><div class="text-4xl mb-4">📭</div><h3 class="text-xl font-bold">No proofs uploaded yet.</h3></div>';
+      } else {
+        content.innerHTML = reports.map(r => `
+          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">${r.name}</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm">Uploaded on ${r.date} by ${r.uploader}</p>
+                <p class="text-slate-500 text-xs mt-1">Type: ${r.type}</p>
+              </div>
+              <button onclick="openReport('${r.content}', '${r.type}')" class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition">View Proof</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeAgentProofsModal() {
+      document.getElementById('agent-proofs-modal').classList.add('hidden');
     }
 
 
