@@ -959,38 +959,22 @@
   <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <span class="font-bold text-xl text-indigo-600">Admin Dashboard</span>
+        <span class="font-bold text-xl text-indigo-600">Admin Dashboard - <span id="admin-entity-display">--</span></span>
       </div>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
-      <!-- Section 1: Select Entity & Agent -->
+      <!-- Section 1: Select Agent Only -->
       <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">🏢</span>
-          Select Entity & Agent
+          <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
+          Select Agent
         </h2>
 
-        <!-- Entity Selection -->
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Entity</label>
-          <select id="admin-entity-selector" onchange="adminOnEntityChange()"
-            class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
-            <option value="">Select Entity...</option>
-            <option value="BharatLoan">BharatLoan</option>
-            <option value="Rupee112">Rupee112</option>
-            <option value="Loan112">Loan112</option>
-            <option value="RupeeOnTime">RupeeOnTime</option>
-          </select>
-        </div>
-
-        <!-- Agent Selection (appears after entity selection) -->
-        <div id="admin-agent-section" class="hidden">
-          <label class="block text-sm font-semibold mb-3">Select Agent</label>
-          <div id="admin-agents-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-            <!-- Agents will be populated here -->
-          </div>
+        <!-- Agent Selection -->
+        <div id="admin-agents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+          <!-- Agents will be populated here -->
         </div>
 
         <button id="admin-start-review-btn" onclick="adminStartQualityReview()" disabled
@@ -1095,6 +1079,20 @@
           <input id="empid" type="text" required
             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
         </div>
+
+        <!-- Entity Selection for Admin -->
+        <div id="admin-login-entity-section" class="hidden mb-6">
+          <label class="block text-sm font-medium mb-2">Select Entity</label>
+          <select id="admin-login-entity"
+            class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+            <option value="">Choose Entity...</option>
+            <option value="BharatLoan">BharatLoan</option>
+            <option value="Rupee112">Rupee112</option>
+            <option value="Loan112">Loan112</option>
+            <option value="RupeeOnTime">RupeeOnTime</option>
+          </select>
+        </div>
+
         <button type="submit"
           class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
       </form>
@@ -2532,8 +2530,20 @@ Reviewer: ${review.reviewerId}
     }
 
     function showLogin(entity) {
-      currentEntity = entity;
-      document.getElementById('login-title').innerText = `Login to ${entity}`;
+      // Check if an employee ID is entered - if it's admin, show entity selector
+      const empIdInput = document.getElementById('empid');
+      const user = USER_DB.find(u => u.id === empIdInput.value.trim());
+      
+      if (user && user.role === 'admin') {
+        document.getElementById('login-title').innerText = 'Admin Login - Select Entity';
+        document.getElementById('admin-login-entity-section').classList.remove('hidden');
+        currentEntity = '';
+      } else {
+        currentEntity = entity;
+        document.getElementById('login-title').innerText = `Login to ${entity}`;
+        document.getElementById('admin-login-entity-section').classList.add('hidden');
+      }
+      
       document.getElementById('login-modal').classList.remove('hidden');
     }
 
@@ -2601,29 +2611,34 @@ Reviewer: ${review.reviewerId}
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
-        // STRICT ENTITY CHECK - only for agents, not admins
-        if (user.role === 'agent' && currentEntity && user.entity !== currentEntity) {
-          // Show Access Denied Modal using the updated title ID
-          const modalTitle = document.getElementById('access-denied-title');
-          if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
-
-          hideLogin();
-          document.getElementById('access-denied-modal').classList.remove('hidden');
-          return;
-        }
-
-        currentUser = user;
-
+        // For admin, require entity selection
         if (user.role === 'admin') {
+          const selectedEntity = document.getElementById('admin-login-entity').value;
+          if (!selectedEntity) {
+            alert('Please select an entity');
+            return;
+          }
+          adminCurrentEntity = selectedEntity;
+          currentUser = user;
           navigateTo('view-admin');
+          adminLoadAgents();
+          hideLogin();
         } else {
-          // Update Title
+          // For agents, check entity match
+          if (currentEntity && user.entity !== currentEntity) {
+            const modalTitle = document.getElementById('access-denied-title');
+            if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
+            hideLogin();
+            document.getElementById('access-denied-modal').classList.remove('hidden');
+            return;
+          }
+          
+          currentUser = user;
           const titleSpan = document.getElementById('agent-dashboard-title');
           if (titleSpan) titleSpan.innerText = `Welcome, ${user.name}`;
-
           navigateTo('view-performance');
+          hideLogin();
         }
-        hideLogin();
       } else {
         alert('Invalid Employee ID. Please check your credentials.');
       }
@@ -2644,19 +2659,11 @@ Reviewer: ${review.reviewerId}
     let adminCurrentAgentName = '';
     let adminReviewItems = [];
 
-    function adminOnEntityChange() {
-      const entity = document.getElementById('admin-entity-selector').value;
-      adminCurrentEntity = entity;
-      adminCurrentAgent = '';
+    function adminLoadAgents() {
+      // Display current entity
+      document.getElementById('admin-entity-display').textContent = adminCurrentEntity;
       
-      if (!entity) {
-        document.getElementById('admin-agent-section').classList.add('hidden');
-        document.getElementById('admin-start-review-btn').disabled = true;
-        document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
-        return;
-      }
-      
-      const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entity);
+      const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === adminCurrentEntity);
       const agentsList = document.getElementById('admin-agents-list');
       
       agentsList.innerHTML = agents.map(agent => `
@@ -2667,8 +2674,6 @@ Reviewer: ${review.reviewerId}
           <div class="text-xs text-slate-500">${agent.id}</div>
         </button>
       `).join('');
-      
-      document.getElementById('admin-agent-section').classList.remove('hidden');
     }
 
     function adminSelectAgent(agentId, agentName) {
@@ -2690,7 +2695,7 @@ Reviewer: ${review.reviewerId}
 
     function adminStartQualityReview() {
       if (!adminCurrentEntity || !adminCurrentAgent) {
-        alert('Please select both Entity and Agent');
+        alert('Please select an agent');
         return;
       }
       
@@ -2706,11 +2711,11 @@ Reviewer: ${review.reviewerId}
       document.getElementById('admin-quality-form-section').classList.add('hidden');
       adminReviewItems = [];
       document.getElementById('admin-review-items-container').innerHTML = '';
-      document.getElementById('admin-entity-selector').value = '';
-      document.getElementById('admin-agent-section').classList.add('hidden');
+      document.querySelectorAll('.admin-agent-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-100', 'dark:bg-slate-500');
+      });
       document.getElementById('admin-start-review-btn').disabled = true;
       document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
-      adminCurrentEntity = '';
       adminCurrentAgent = '';
     }
 
