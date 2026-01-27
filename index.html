@@ -2762,6 +2762,9 @@ Reviewer: ${review.reviewerId}
       // Enable start button
       document.getElementById('admin-start-review-btn').disabled = false;
       document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+      // Refresh reviews list for this agent
+      adminLoadReviewsList();
     }
 
     function adminStartQualityReview() {
@@ -2890,7 +2893,7 @@ Reviewer: ${review.reviewerId}
       finalBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
-    function adminFinalSubmit() {
+    async function adminFinalSubmit() {
       // Collect data from form
       adminReviewItems = [];
       document.querySelectorAll('.admin-review-item').forEach((item, index) => {
@@ -2908,52 +2911,80 @@ Reviewer: ${review.reviewerId}
       });
 
       // Validate
-      // Validate
       if (adminReviewItems.length === 0) {
         alert('Please add at least one review');
         return;
       }
 
-      // Save to localStorage
-      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const now = new Date();
+      const submitBtn = document.getElementById('admin-final-submit-btn');
+      submitBtn.innerText = 'Submitting...';
+      submitBtn.disabled = true;
 
-      adminReviewItems.forEach(item => {
-        if (item.file) {
-          reviews.push({
-            date: now.toLocaleDateString(),
-            agentId: adminCurrentAgent,
-            agentName: adminCurrentAgentName,
-            entity: adminCurrentEntity,
-            fileName: item.file.name,
-            score: item.score,
-            observation: item.observation,
-            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
+      try {
+        // Read all files as Data URLs
+        const processedItems = await Promise.all(adminReviewItems.map(item => {
+          return new Promise((resolve, reject) => {
+            if (!item.file) resolve(null);
+            const reader = new FileReader();
+            reader.onload = (e) => resolve({ ...item, fileContent: e.target.result });
+            reader.onerror = reject;
+            reader.readAsDataURL(item.file);
           });
-        }
-      });
+        }));
 
-      localStorage.setItem('adminReviews', JSON.stringify(reviews));
+        // Save to localStorage
+        let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        const now = new Date();
 
-      alert('Quality reviews submitted successfully!');
-      adminCancelReview();
-      adminLoadReviewsList();
+        processedItems.forEach(item => {
+          if (item) {
+            reviews.push({
+              date: now.toLocaleDateString(),
+              agentId: adminCurrentAgent,
+              agentName: adminCurrentAgentName,
+              entity: adminCurrentEntity,
+              fileName: item.file.name,
+              fileContent: item.fileContent, // Store content
+              score: item.score,
+              observation: item.observation,
+              expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
+            });
+          }
+        });
+
+        localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+        alert('Quality reviews submitted successfully!');
+        adminCancelReview();
+        adminLoadReviewsList();
+      } catch (error) {
+        console.error("Error submitting reviews:", error);
+        alert("Failed to submit reviews. Please try again.");
+      } finally {
+        submitBtn.innerText = '✅ Final Submit';
+        submitBtn.disabled = false;
+      }
     }
 
     function adminLoadReviewsList() {
-      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const tbody = document.getElementById('admin-reviews-list');
 
       // Remove expired reviews
       const now = new Date();
-      const filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
+      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
       localStorage.setItem('adminReviews', JSON.stringify(filtered));
 
+      // Filter by selected agent if one is chosen
+      if (adminCurrentAgent) {
+        filtered = filtered.filter(r => r.agentId === adminCurrentAgent);
+      }
+
       tbody.innerHTML = filtered.map((review, idx) => `
-        <tr>
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
           <td class="p-6">${review.date}</td>
           <td class="p-6">${review.agentName}</td>
-          <td class="p-6">${review.fileName}</td>
+          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
           <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
           <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
           <td class="p-6 text-right space-x-2">
@@ -2965,10 +2996,26 @@ Reviewer: ${review.reviewerId}
       `).join('');
     }
 
+    function openFileContent(content, name) {
+      if (!content) return alert('File content not found.');
+      // Open in new window
+      const win = window.open();
+      if (win) {
+        win.document.write(`<iframe src="${content}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+        win.document.title = name;
+      } else {
+        alert('Please allow popups to view the file.');
+      }
+    }
+
     function adminViewReview(index) {
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const review = reviews[index];
-      alert(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}`);
+
+      const choice = confirm(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}\n\nClick OK to open the file.`);
+      if (choice && review.fileContent) {
+        openFileContent(review.fileContent, review.fileName);
+      }
     }
 
     function adminEditReview(index) {
@@ -3102,7 +3149,10 @@ Reviewer: ${review.reviewerId}
       const agentReviews = reviews.filter(r => r.agentId === agentId);
       const review = agentReviews[index];
 
-      alert(`📋 Review Detail\n\nFile: ${review.fileName}\nScore: ${review.score}\nObservation:\n${review.observation}`);
+      const choice = confirm(`📋 Review Detail\n\nFile: ${review.fileName}\nScore: ${review.score}\nObservation:\n${review.observation}\n\nClick OK to OPEN THE FILE.`);
+      if (choice && review.fileContent) {
+        openFileContent(review.fileContent, review.fileName);
+      }
     }
 
     function agentSubmitComment() {
