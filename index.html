@@ -2538,106 +2538,41 @@
       if (total === 100) display.className = "text-2xl font-black text-emerald-500";
       else if (total === 0) display.className = "text-2xl font-black text-red-500";
       else display.className = "text-2xl font-black text-indigo-600";
-      function createFinalSubmissionSection() {
-        const section = document.createElement('div');
-        section.id = 'final-submission-section';
-        section.className = 'hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700';
+    }
 
-        section.innerHTML = `
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-green-600 text-white rounded-lg p-2 text-xl">✅</span>
-            Final Performance Submission for <span id="final-agent-name" class="text-green-600"></span>
-          </h2>
-          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            Cancel Process
-          </button>
-        </div>
+    function recalculateAgentStats(agentId) {
+      const allScores = MockBackend.getPerformanceScores();
+      const agentReviews = allScores.filter(r => r.agentId === agentId);
 
-        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div><strong>Agent ID:</strong> <span id="final-agent-id" class="font-mono"></span></div>
-            <div><strong>Average Score:</strong> <span id="final-average-score" class="font-bold text-green-600"></span>/100</div>
-          </div>
-        </div>
-
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold mb-4">Review Summary (3 Reviews Completed)</h3>
-          <div id="final-review-summary" class="space-y-2">
-            <!-- Review summaries will be populated here -->
-          </div>
-        </div>
-
-        <div class="mb-6 p-4 bg-yellow-50 dark:bg-slate-700 rounded-xl border border-yellow-200 dark:border-slate-600">
-          <p class="text-sm text-yellow-800 dark:text-yellow-200">
-            <strong>Note:</strong> This will calculate the final performance score based on the average of all 3 reviews and update the agent's performance record. All individual reviews will be saved to history.
-          </p>
-        </div>
-
-        <button onclick="submitFinalPerformanceScore()"
-          class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30">
-          Submit Final Performance Score
-        </button>
-      `;
-
-        // Insert after the scoring section
-        const scoringSection = document.getElementById('scoring-section');
-        scoringSection.parentNode.insertBefore(section, scoringSection.nextSibling);
-      }
-
-      function submitFinalPerformanceScore() {
-        const agentId = document.getElementById('final-agent-id').innerText;
-        const pendingReviews = getPendingReviews(agentId);
-
-        if (pendingReviews.length < 3) {
-          alert('Minimum 3 reviews required before final submission.');
-          return;
-        }
-
-        // 1. Calculate final score (average of all reviews)
-        const totalScore = pendingReviews.reduce((sum, review) => sum + review.score, 0);
-        const finalScore = Math.round(totalScore / pendingReviews.length);
-        const hasFatal = pendingReviews.some(review => review.isFatal);
-
-        // 2. Save EACH review to history individually
-        pendingReviews.forEach(review => {
-          MockBackend.addPerformanceHistory({
-            agentId: agentId,
-            score: review.score,
-            isFatal: review.isFatal,
-            feedbackData: review.feedbackData,
-            timestamp: review.timestamp, // Keep original timestamp
-            reviewerId: review.reviewerId
-          });
-        });
-
-        // 3. Update Agent's Current Status with Average Score
+      if (agentReviews.length === 0) {
+        // Reset to defaults if no reviews left
         MockBackend.savePerformance(agentId, {
-          score: finalScore,
-          isFatal: hasFatal,
-          lastReviewDate: new Date().toLocaleString(),
-          reviewerId: currentUser.id
+          score: 0,
+          isFatal: false,
+          lastReviewDate: 'N/A',
+          reviewerId: null,
+          totalAudits: 0,
+          fatalCount: 0,
+          perfectCount: 0
         });
-
-        // 4. Cleanup
-        const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
-        delete allPending[agentId];
-        localStorage.setItem('pending_agent_reviews', JSON.stringify(allPending));
-
-        // Reset workflow
-        document.getElementById('final-submission-section').classList.add('hidden');
-        document.getElementById('admin-agent-list-section').classList.add('hidden');
-
-        // Reset selections
-        selectedAgentForReview = null;
-        selectedFileForReview = null;
-        document.getElementById('agent-selector').value = '';
-
-        // Refresh dashboard
-        renderAdminDashboard();
-
-        alert(`Final performance score (${finalScore}/100) submitted successfully for agent! All ${pendingReviews.length} reviews saved.`);
+        return;
       }
+
+      const totalScore = agentReviews.reduce((sum, r) => sum + r.score, 0);
+      const averageScore = Math.round(totalScore / agentReviews.length);
+
+      MockBackend.savePerformance(agentId, {
+        score: averageScore,
+        isFatal: agentReviews.some(r => r.isFatal),
+        lastReviewDate: new Date().toLocaleString(),
+        reviewerId: currentUser.id,
+        totalAudits: agentReviews.length,
+        fatalCount: agentReviews.filter(r => r.score === 0).length,
+        perfectCount: agentReviews.filter(r => r.score === 100).length
+      });
+    }
+
+    function handleAdminFileUpload() {
       const fileInput = document.getElementById('admin-file-upload');
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -2946,43 +2881,115 @@
         contentLoaded.classList.remove('hidden');
         contentEmpty.classList.add('hidden');
 
-        // Populate Scores
-        document.getElementById('modal-audit-score').innerText = perfData.score;
-        document.getElementById('modal-fatal-errors').innerText = perfData.errors;
-        document.getElementById('modal-compliance').innerText = perfData.compliance === '100' ? '100%' : '0%';
+        // Populate Scores from Saved Stats (or recalculate if needed/missing)
+        let auditCount = perfData.totalAudits !== undefined ? perfData.totalAudits : 0;
+        let fatalCount = perfData.fatalCount !== undefined ? perfData.fatalCount : 0;
+        let perfectCount = perfData.perfectCount !== undefined ? perfData.perfectCount : 0;
+        let totalScore = perfData.score || 0;
 
-        // Calculate Total if not saved, or use saved logic. 
-        // Since we save specific fields, let's re-calculate display total or assume Audit is main.
-        // User said "Total Quality Score... automatically fetch".
-        // In Admin calc we did: If Fatal=1 -> 0, else (Audit+Comp)/2. Let's replicate or use saved.
-        // We should ideally save the Total. But for now re-calc.
-        let total = 0;
-        const audit = parseInt(perfData.score) || 0;
-        const comp = parseInt(perfData.compliance) || 0;
-        const errors = parseInt(perfData.errors) || 0;
+        // If stats are missing (legacy data), recalculate
+        if (perfData.totalAudits === undefined) {
+          const allScores = MockBackend.getPerformanceScores();
+          const agentReviews = allScores.filter(r => r.agentId === currentUser.id);
+          auditCount = agentReviews.length;
+          fatalCount = agentReviews.filter(r => r.score === 0).length;
+          perfectCount = agentReviews.filter(r => r.score === 100).length;
+          // If audits exist, calculate average
+          if (auditCount > 0) {
+            const reviewSum = agentReviews.reduce((sum, r) => sum + r.score, 0);
+            totalScore = Math.round(reviewSum / auditCount);
+          }
+        }
 
-        if (errors === 1) total = 0;
-        else total = (audit + comp) / 2;
+        document.getElementById('modal-audit-score').innerText = auditCount;
+        document.getElementById('modal-fatal-errors').innerText = fatalCount;
+        document.getElementById('modal-compliance').innerText = perfectCount; // Using compliance block for 100 count
+        document.getElementById('modal-total-score').innerText = totalScore + '%';
 
-        document.getElementById('modal-total-score').innerText = total + '%';
+        // Populate Reviews
+        const reviewsList = document.getElementById('modal-reviews-list');
+        const allScores = MockBackend.getPerformanceScores();
+        const agentReviews = allScores.filter(r => r.agentId === currentUser.id);
 
-        // Populate Proofs
+        if (reviewsList) {
+          if (agentReviews.length > 0) {
+            reviewsList.innerHTML = agentReviews.map((r, index) => {
+              // Use feedbackData.file.type for display logic if needed
+              // For now just show "File"
+              const hasFile = r.feedbackData && r.feedbackData.fileName;
+              return `
+                  <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 mb-2">
+                     <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full ${r.isFatal ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'} flex items-center justify-center font-bold text-lg">${index + 1}</div>
+                        <div>
+                           <p class="font-bold text-sm text-slate-700 dark:text-slate-200">Score: ${r.score}</p>
+                           <p class="text-[10px] text-slate-400 uppercase">${new Date(r.timestamp).toLocaleDateString()}</p>
+                        </div>
+                        <div class="ml-4 hidden sm:block">
+                           <p class="text-xs text-slate-500 truncate max-w-[150px]">${hasFile ? '📎 ' + r.feedbackData.fileName : 'No File'}</p>
+                        </div>
+                     </div>
+                     <button onclick="viewReviewDetailForAgent(${r.id})" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
+                  </div>
+               `;
+            }).join('');
+          } else {
+            reviewsList.innerHTML = '<p class="text-center text-slate-400 italic py-4">No reviews found.</p>';
+          }
+        }
+
+        // Populate Proofs (Aggregate from reviews if perfData.proofs is missing/empty)
         const proofsList = document.getElementById('modal-proofs-list');
-        if (perfData.proofs && perfData.proofs.length > 0) {
-          proofsList.innerHTML = perfData.proofs.map(p => `
-                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+        if (proofsList) {
+          let proofsHtml = '';
+
+          if (perfData.proofs && perfData.proofs.length > 0) {
+            // Use Legacy/Direct Proofs
+            proofsHtml = perfData.proofs.map(p => `
+                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 mb-2">
                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
+                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon || '📄'}</div>
                       <div>
                          <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
-                         <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
+                         <p class="text-[10px] text-slate-400 uppercase">${(p.type || '').split('/')[1] || 'FILE'}</p>
                       </div>
                    </div>
                    <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
                 </div>
-             `).join('');
-        } else {
-          proofsList.innerHTML = '<p class="col-span-2 text-center text-slate-400 italic">No proofs attached.</p>';
+              `).join('');
+          } else if (agentReviews.length > 0) {
+            // Aggregate from reviews
+            const uniqueFiles = [];
+            agentReviews.forEach(r => {
+              if (r.feedbackData && r.feedbackData.file && (r.feedbackData.file.content || r.feedbackData.file.fileId)) {
+                // Avoid duplicates if needed, but reviews are unique events
+                uniqueFiles.push({
+                  name: r.fileName || r.feedbackData.fileName || `Review File`,
+                  timestamp: r.timestamp,
+                  type: r.feedbackData.file.type,
+                  reviewId: r.id,
+                  // Use viewReviewDetailForAgent to open
+                });
+              }
+            });
+
+            if (uniqueFiles.length > 0) {
+              proofsHtml = uniqueFiles.map(p => `
+                   <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 mb-2">
+                      <div class="flex items-center gap-3">
+                         <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">📎</div>
+                         <div>
+                            <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
+                            <p class="text-[10px] text-slate-400 uppercase">${new Date(p.timestamp).toLocaleDateString()}</p>
+                         </div>
+                      </div>
+                      <button onclick="viewReviewDetailForAgent(${p.reviewId})" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
+                   </div>
+                 `).join('');
+            }
+          }
+
+          proofsList.innerHTML = proofsHtml || '<p class="col-span-2 text-center text-slate-400 italic py-4">No proofs attached.</p>';
         }
 
       } else {
@@ -3075,6 +3082,73 @@
 
     function closeAgentProofsModal() {
       document.getElementById('agent-proofs-modal').classList.add('hidden');
+    }
+
+    async function viewReviewDetailForAgent(reviewId) {
+      const reviews = MockBackend.getPerformanceScores();
+      const review = reviews.find(r => r.id == reviewId);
+
+      if (!review) return alert('Review details not found.');
+
+      // Allow agent to view their own review
+      if (currentUser && review.agentId !== currentUser.id) return alert('Unauthorized access.');
+
+      const scoreClass = review.score === 100 ? 'text-emerald-500' : 'text-red-500';
+      const scoreText = review.score === 0 ? '0 (Fatal Error)' : '100 (Pass)';
+
+      // Reuse the View Modal but HIDE Admin Actions
+      document.getElementById('view-modal-agent-id').innerText = `Your Review`;
+      document.getElementById('view-modal-score').className = `text-3xl font-black ${scoreClass}`;
+      document.getElementById('view-modal-score').innerText = scoreText;
+      document.getElementById('view-modal-feedback').innerText = review.feedbackData.feedback || 'No feedback provided.';
+      document.getElementById('view-modal-date').innerText = new Date(review.timestamp).toLocaleString();
+      document.getElementById('view-modal-process').innerText = (review.feedbackData && review.feedbackData.processType) ? review.feedbackData.processType : 'N/A';
+      document.getElementById('view-modal-filename').innerText = (review.feedbackData && review.fileName) ? review.fileName : 'N/A';
+
+      // Hide Admin Actions
+      document.getElementById('view-modal-edit-btn').classList.add('hidden');
+      document.getElementById('view-modal-delete-btn').classList.add('hidden');
+
+      // File Content Logic (Same as Admin)
+      const previewContainer = document.getElementById('view-modal-preview-container');
+      const downloadLink = document.getElementById('view-modal-download-link');
+      previewContainer.innerHTML = '<div class="animate-pulse flex space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div><div class="w-2 h-2 bg-slate-400 rounded-full"></div></div>';
+
+      try {
+        let content = null;
+        let type = 'application/octet-stream';
+        if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.fileId) {
+          content = await FileDB.getFile(review.feedbackData.file.fileId);
+          type = review.feedbackData.file.type;
+        } else if (review.feedbackData && review.feedbackData.file && review.feedbackData.file.content) {
+          content = review.feedbackData.file.content;
+          type = review.feedbackData.file.type;
+        }
+
+        if (content) {
+          downloadLink.href = content;
+          downloadLink.download = review.fileName || 'download';
+          downloadLink.classList.remove('hidden');
+
+          if (type.startsWith('image/')) {
+            previewContainer.innerHTML = `<img src="${content}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">`;
+          } else if (type.startsWith('audio/')) {
+            previewContainer.innerHTML = `<audio controls src="${content}" class="w-full"></audio>`;
+          } else if (type === 'application/pdf') {
+            previewContainer.innerHTML = `<iframe src="${content}" class="w-full h-full rounded-lg border-0"></iframe>`;
+          } else {
+            previewContainer.innerHTML = `<div class="text-center"><p>File available for download.</p></div>`;
+          }
+        } else {
+          previewContainer.innerHTML = '<p class="text-slate-400">No file content.</p>';
+          downloadLink.classList.add('hidden');
+        }
+      } catch (e) {
+        console.error(e);
+        previewContainer.innerHTML = '<p class="text-red-500">Error loading file.</p>';
+      }
+
+      document.getElementById('view-review-modal').classList.remove('hidden');
     }
 
 
