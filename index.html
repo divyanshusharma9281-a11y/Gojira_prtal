@@ -841,111 +841,231 @@
           </div>
 
           <div class="space-y-8">
-            <!-- Mandatory Rules -->
-            <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl border border-red-100 dark:border-red-800">
-              <h4 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
-                <span>⚠️</span> Mandatory Rules Highlighted
-              </h4>
-              <ul class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
-                <li class="flex gap-2">
-                  <span class="font-bold text-red-500">48h Rule:</span>
-                  <span>Disbursement timeline must strictly be stated as "up to 48 hours". Never promise instant or
-                    same-day without verification.</span>
-                </li>
-                <li class="flex gap-2">
-                  <span class="font-bold text-red-500">Payment:</span>
-                  <span><strong>ALWAYS</strong> confirm payment receipt visually before proceeding. Do not rely on
-                    customer verbal confirmation.</span>
-                </li>
-                <li class="flex gap-2">
-                  <span class="font-bold text-red-500">Etiquette:</span>
-                  <span>Do NOT use "Sir/Ma'am". Use the customer's name (e.g., "Mr. Sharma").</span>
-                </li>
-              </ul>
+            <!-- 1. Payment-Related Queries -->
+            <div class="border-l-4 border-indigo-500 pl-4">
+              <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-4">1. Payment-Related Queries</h4>
+
+              <!-- A. Payment Done but Not Reflecting -->
+              <div class="mb-6">
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">A. Payment Done but Not Reflecting on
+                  Portal</h5>
+                <div class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl space-y-2 text-sm">
+                  <div class="flex gap-2"><span class="font-bold text-indigo-600">Ask:</span> "Could you please confirm
+                    the exact amount paid?"</div>
+                  <div class="flex gap-2"><span class="font-bold text-indigo-600">Verify:</span> Confirm the amount
+                    match.</div>
+                  <div class="flex gap-2"><span class="font-bold text-red-600">Escalate:</span> Email concerned team AND
+                    update WhatsApp group.</div>
+                  <div class="flex gap-2 bg-red-100 dark:bg-red-900/30 p-2 rounded"><span
+                      class="font-bold text-red-600">Compulsory:</span> You must mention the confirmed payment amount in
+                    the WhatsApp group.</div>
+                </div>
+              </div>
+
+              <!-- B. Payment Done and Reflecting on Portal -->
+              <div class="mb-6">
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">B. Payment Done and Reflecting on Portal
+                  (Verification Pending)</h5>
+                <div
+                  class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl relative group cursor-pointer border border-blue-100 dark:border-blue-800"
+                  onclick="navigator.clipboard.writeText(this.innerText); alert('Script Copied!')">
+                  <p class="text-blue-800 dark:text-blue-200 text-sm italic font-medium">"We have received your payment
+                    of ₹[Amount]. Your payment is currently under verification and will be updated within 24 hours
+                    (maximum)."</p>
+                  <span class="absolute top-2 right-2 text-xs text-blue-400 opacity-0 group-hover:opacity-100">Click to
+                    Copy</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Tiered Escalation -->
-            <div>
-              <h4 class="text-lg font-bold mb-4">Tiered Credit Manager Logic</h4>
-              <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+            <!-- 2. Application-Related Queries -->
+            <div class="border-l-4 border-green-500 pl-4">
+              <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-4">2. Application-Related Queries</h4>
+
+              <!-- A. Application Incomplete -->
+              <div class="mb-6">
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">A. Application Incomplete (Status: Lead,
+                  Partial, eKYC Pending, etc.)</h5>
+                <div
+                  class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl relative group cursor-pointer mb-2 border border-green-100 dark:border-green-800"
+                  onclick="navigator.clipboard.writeText(this.innerText); alert('Script Copied!')">
+                  <p class="text-green-800 dark:text-green-200 text-sm italic font-medium">"Your application is
+                    currently in process. Kindly complete the remaining steps 100% through the [Brand Name] application.
+                    If you are facing any issues, please visit our website or contact us at care@[brand].com and try
+                    again after some time."</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg text-sm mb-2">
+                  <span class="font-semibold">If customer asks about processing time:</span>
+                  <p class="italic mt-1 text-slate-600 dark:text-slate-400">"There is a maximum processing time of 24
+                    hours after successful completion of your application. Once completed, a credit manager will be
+                    assigned and will contact you within 24 hours."</p>
+                </div>
+                <div
+                  class="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg text-xs font-bold text-red-600 border border-red-200 dark:border-red-800">
+                  ⚠️ Strict Rule: Do not promise that our team will contact them within 24 hours until the application
+                  is 100% complete.
+                </div>
+              </div>
+
+              <!-- B. Application Submitted Successfully -->
+              <div class="mb-6">
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">B. Application Submitted Successfully
+                  (Reference Number Generated)</h5>
+                <div
+                  class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl relative group cursor-pointer border border-green-100 dark:border-green-800"
+                  onclick="navigator.clipboard.writeText(this.innerText); alert('Script Copied!')">
+                  <p class="text-green-800 dark:text-green-200 text-sm italic font-medium">"Your application has been
+                    submitted successfully. Our team will contact you within 24 hours."</p>
+                </div>
+              </div>
+
+              <!-- C. Repeat Customer -->
+              <div>
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">C. Repeat Customer (Bank Statement
+                  Required/100% Applied)</h5>
+                <div
+                  class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl relative group cursor-pointer border border-green-100 dark:border-green-800"
+                  onclick="navigator.clipboard.writeText(this.innerText); alert('Script Copied!')">
+                  <p class="text-green-800 dark:text-green-200 text-sm italic font-medium">"Since you are an existing
+                    customer, your application status is in process. Kindly wait while a credit manager is assigned.
+                    They will contact you within 24 hours."</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Credit Manager-Related Queries -->
+            <div class="border-l-4 border-amber-500 pl-4">
+              <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-4">3. Credit Manager-Related Queries</h4>
+              <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
                 <table class="w-full text-sm text-left">
                   <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
                     <tr>
-                      <th class="p-4">Escalation Level</th>
-                      <th class="p-4">Action Required</th>
-                      <th class="p-4">Manager Tagging</th>
+                      <th class="p-4">Frequency</th>
+                      <th class="p-4">Agent Action</th>
+                      <th class="p-4">Script to Customer</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     <tr class="bg-white dark:bg-slate-800">
-                      <td class="p-4 font-bold">1st Instance</td>
-                      <td class="p-4">Standard resolution attempt</td>
-                      <td class="p-4 text-slate-400">None</td>
+                      <td class="p-4 font-bold">1st Time</td>
+                      <td class="p-4">Highlight/Escalate concern to team.</td>
+                      <td class="p-4 italic text-slate-600">"We are escalating this; the team will contact you within 24
+                        hours."</td>
                     </tr>
                     <tr class="bg-white dark:bg-slate-800">
                       <td class="p-4 font-bold text-amber-600">2nd Instance</td>
-                      <td class="p-4">Customer dissatisfied/repeat query</td>
-                      <td class="p-4">Tag <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Team
-                          Lead</span></td>
+                      <td class="p-4">Verify previous escalation log.</td>
+                      <td class="p-4 italic text-slate-600">"An executive has already escalated the issue; the team will
+                        contact you within 24 hours."</td>
                     </tr>
                     <tr class="bg-white dark:bg-slate-800">
                       <td class="p-4 font-bold text-red-600">3rd Instance</td>
-                      <td class="p-4">Conflict/Escalation request</td>
-                      <td class="p-4">Tag <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Credit
-                          Manager</span> Immediately</td>
+                      <td class="p-4">Tag your Manager in the escalation.</td>
+                      <td class="p-4 italic text-slate-600">"We have prioritized this with senior management. Please
+                        wait for the 24h window."</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <!-- App Response Logic -->
-            <div class="grid md:grid-cols-2 gap-6">
-              <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
-                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Lead/Partial (Incomplete)</h5>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Customer has not finished the form.</p>
+            <!-- 4. Collections -->
+            <div class="border-l-4 border-red-500 pl-4">
+              <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-4">4. Collections (Extensions, Waivers,
+                Settlement)</h4>
+
+              <!-- A. Extension Requests -->
+              <div class="mb-6">
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">A. Extension Requests (Medical Reasons)
+                </h5>
                 <div
-                  class="bg-white dark:bg-slate-800 p-3 rounded border border-blue-100 dark:border-slate-700 text-xs italic">
-                  "I can see you started the application but haven't completed the final step. Please upload [Document]
-                  to proceed."
+                  class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl relative group cursor-pointer border border-red-100 dark:border-red-800"
+                  onclick="navigator.clipboard.writeText(this.innerText); alert('Script Copied!')">
+                  <p class="text-red-800 dark:text-red-200 text-sm italic font-medium">"We do not have the authority to
+                    grant extensions. Your case has been forwarded to the collection team. If payment is not made on
+                    time, it may impact your CIBIL score, and a charge of 2% per day (1% interest + 1% penalty) will
+                    apply. If you have a medical issue, please share valid medical documents at care@[brand].com. Our
+                    email team will review and respond within 24 hours."</p>
                 </div>
               </div>
-              <div
-                class="p-5 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800">
-                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">Submitted (Complete)</h5>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Form is fully submitted.</p>
+
+              <!-- B. Penalty Waiver -->
+              <div>
+                <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">B. Penalty Waiver & Settlement</h5>
+                <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg text-sm mb-2"><span
+                    class="font-bold text-red-600">Ask:</span> "May I know the reason for the waiver/settlement
+                  request?"</div>
                 <div
-                  class="bg-white dark:bg-slate-800 p-3 rounded border border-green-100 dark:border-slate-700 text-xs italic">
-                  "Your application is successfully submitted. It is currently under verification. Please wait for the
-                  update within 48 hours."
+                  class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl relative group cursor-pointer border border-red-100 dark:border-red-800"
+                  onclick="navigator.clipboard.writeText(this.innerText); alert('Script Copied!')">
+                  <p class="text-red-800 dark:text-red-200 text-sm italic font-medium">"We do not have the authority to
+                    approve penalty waivers or settlements. Please email care@[brand].com with valid reasons and
+                    supporting evidence. Your concern will be escalated, and the team will update you within 24 hours."
+                  </p>
                 </div>
               </div>
             </div>
 
-            <!-- Email Template -->
-            <div>
-              <h4 class="text-lg font-bold mb-4">Professional Email Template</h4>
-              <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl font-mono text-sm relative group">
-                <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copied!')"
-                  class="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition text-xs font-bold text-slate-500">Copy</button>
-                <div class="whitespace-pre-wrap">Subject: Application Status Update - [Application ID]
+            <!-- 5. Disbursement-Related Queries -->
+            <div class="border-l-4 border-cyan-500 pl-4">
+              <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-4">5. Disbursement-Related Queries</h4>
 
-                  Dear [Customer Name],
+              <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="p-4 bg-cyan-50 dark:bg-cyan-900/20 rounded-xl border border-cyan-100 dark:border-slate-700">
+                  <h5 class="font-bold mb-2">A. Amount Not Credited</h5>
+                  <ul class="text-sm space-y-2 list-disc list-inside">
+                    <li><strong>If < 48 Hours:</strong> Tell customer to wait. Do not escalate.</li>
+                    <li><strong>If > 48 Hours:</strong> Request bank statement via email. Raise concern.</li>
+                  </ul>
+                </div>
+                <div class="p-4 bg-cyan-50 dark:bg-cyan-900/20 rounded-xl border border-cyan-100 dark:border-slate-700">
+                  <h5 class="font-bold mb-2">B. Loan Cancellation After Disbursement</h5>
+                  <p class="text-sm">Action: Immediately update the Refund Tracker under sheet "Cancel After
+                    Disbursement". Ensure details are accurate.</p>
+                </div>
+              </div>
+            </div>
 
-                  Thank you for choosing [Brand Name].
+            <!-- 6. Refund-Related Queries -->
+            <div class="border-l-4 border-purple-500 pl-4">
+              <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-4">6. Refund-Related Queries</h4>
+              <div
+                class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-slate-700 text-sm space-y-2">
+                <div><span class="font-bold text-purple-600">Ask:</span> "Could you please confirm the refund amount you
+                  are expecting?"</div>
+                <div><span class="font-bold text-purple-600">Action:</span> Raise to the email team.</div>
+                <div><span class="font-bold text-purple-600">Timeline:</span> Inform customer it takes 7–10 working
+                  days.</div>
+              </div>
+            </div>
 
-                  This is to confirm that we have received your application. It is currently being reviewed by our
-                  credit team.
+            <!-- 7. Email Team Mandatory Rules -->
+            <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-2xl border-2 border-slate-300 dark:border-slate-600">
+              <h4 class="text-lg font-bold mb-4 flex items-center gap-2">
+                <span>📧</span> Email Team Mandatory Rules
+              </h4>
+              <ul class="space-y-4 text-sm">
+                <li class="flex gap-3 items-start">
+                  <span class="text-red-500 font-bold">✖</span>
+                  <span>DO NOT use "Sir" or "Ma'am."</span>
+                </li>
+                <li class="flex gap-3 items-start">
+                  <span class="text-green-500 font-bold">✔</span>
+                  <span>DO greet the customer by their First Name.</span>
+                </li>
+              </ul>
 
-                  Timeline:
-                  - Initial Review: 24 Hours
-                  - Disbursement (if approved): Up to 48 Hours
+              <div
+                class="mt-4 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative group">
+                <div class="text-xs font-bold uppercase text-slate-400 mb-2">Format for Payment Confirmation</div>
+                <div class="font-mono text-sm whitespace-pre-wrap">Dear [Customer Name],
 
-                  Please note that we will never ask for an OTP or PIN over the phone.
-
-                  Regards,
-                  [Agent Name]
-                  Support Team</div>
+                  This is to confirm that we have received your payment as per the details below:
+                  Loan Number: {{Loan Number}}
+                  Amount Paid: {{Amount}}
+                  Date of Payment: {{Payment Date}}</div>
+                <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText); alert('Copied!')"
+                  class="absolute top-4 right-4 text-slate-400 hover:text-blue-500">📋</button>
               </div>
             </div>
 
@@ -2280,7 +2400,15 @@
       });
 
       // 3. Populate Reports Table (Now consolidated with Reviews)
-      const reviews = MockBackend.getPerformanceScores();
+      let reviews = MockBackend.getPerformanceScores();
+
+      // [BUG FIX] Filter reviews by entity IF not in ALL context
+      if (entityContext !== 'ALL') {
+        // Get IDs of agents belonging to this entity
+        const entityAgentIds = USER_DB.filter(u => u.entity === entityContext).map(u => u.id);
+        reviews = reviews.filter(r => entityAgentIds.includes(r.agentId));
+      }
+
       const reportsList = document.getElementById('admin-reports-list');
 
       if (reviews.length === 0) {
