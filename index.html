@@ -162,13 +162,6 @@
           <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
           <h2 class="text-2xl font-bold mb-2">Resources</h2>
         </div>
-
-        <div onclick="navigateTo('view-admin')"
-          class="p-10 rounded-[2.5rem] cursor-pointer hover-lift bg-red-600 text-white">
-          <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">⚙️</div>
-          <h2 class="text-2xl font-bold mb-2">Admin Panel</h2>
-          <p class="text-sm opacity-90">File uploads and management.</p>
-        </div>
       </div>
     </main>
   </div>
@@ -642,28 +635,6 @@
               <p class="text-slate-600 dark:text-slate-300">Click to view entity checklists.</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADMIN VIEW -->
-  <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
-    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-      <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
-      <span class="mx-auto font-bold">Admin Panel</span>
-    </header>
-    <div class="max-w-4xl mx-auto px-6 py-14">
-      <h1 class="text-3xl font-extrabold mb-8">File Upload & Storage</h1>
-      <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
-        <h2 class="text-xl font-bold mb-4">Upload Files</h2>
-        <p class="text-slate-600 dark:text-slate-300 mb-6">Attach call recordings, chat logs, emails, and other files (max 20 MB each).</p>
-        <input type="file" id="fileInput" multiple accept=".mp3,.wav,.txt,.pdf,.doc,.docx,.eml" class="mb-4">
-        <button onclick="uploadFiles()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Upload</button>
-        <div id="uploadStatus" class="mt-4"></div>
-        <div id="fileList" class="mt-6">
-          <h3 class="text-lg font-bold mb-2">Uploaded Files</h3>
-          <ul id="uploadedFilesList" class="space-y-2"></ul>
         </div>
       </div>
     </div>
@@ -3034,11 +3005,6 @@
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
-
-      // Load uploaded files if navigating to admin
-      if (id === 'view-admin') {
-        loadUploadedFiles();
-      }
     }
 
     function toggleFaq(btn) {
@@ -3457,113 +3423,6 @@ Open attached proof?
       }
     }
 
-    // File Upload Functions
-    let db;
-    const DB_NAME = 'FileStorageDB';
-    const DB_VERSION = 1;
-    const STORE_NAME = 'files';
-
-    function initDB() {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          db = request.result;
-          resolve(db);
-        };
-        request.onupgradeneeded = (event) => {
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains(STORE_NAME)) {
-            db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-          }
-        };
-      });
-    }
-
-    async function uploadFiles() {
-      const fileInput = document.getElementById('fileInput');
-      const files = fileInput.files;
-      const status = document.getElementById('uploadStatus');
-      
-      if (files.length === 0) {
-        status.innerText = 'Please select files to upload.';
-        return;
-      }
-
-      await initDB();
-
-      for (let file of files) {
-        if (file.size > 20 * 1024 * 1024) { // 20 MB
-          status.innerText = `File ${file.name} is too large. Max size is 20 MB.`;
-          continue;
-        }
-
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const fileData = {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            data: e.target.result,
-            uploadedAt: new Date().toISOString()
-          };
-
-          const transaction = db.transaction([STORE_NAME], 'readwrite');
-          const store = transaction.objectStore(STORE_NAME);
-          const request = store.add(fileData);
-          
-          request.onsuccess = () => {
-            status.innerText = `File ${file.name} uploaded successfully.`;
-            loadUploadedFiles();
-          };
-          request.onerror = () => {
-            status.innerText = `Failed to upload ${file.name}.`;
-          };
-        };
-        reader.readAsArrayBuffer(file);
-      }
-    }
-
-    async function loadUploadedFiles() {
-      await initDB();
-      const transaction = db.transaction([STORE_NAME], 'readonly');
-      const store = transaction.objectStore(STORE_NAME);
-      const request = store.getAll();
-
-      request.onsuccess = () => {
-        const files = request.result;
-        const list = document.getElementById('uploadedFilesList');
-        list.innerHTML = '';
-        files.forEach(file => {
-          const li = document.createElement('li');
-          li.className = 'flex justify-between items-center p-2 bg-white dark:bg-slate-700 rounded';
-          li.innerHTML = `
-            <span>${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-            <button onclick="downloadFile(${file.id})" class="text-blue-600 hover:text-blue-800">Download</button>
-          `;
-          list.appendChild(li);
-        });
-      };
-    }
-
-    async function downloadFile(id) {
-      await initDB();
-      const transaction = db.transaction([STORE_NAME], 'readonly');
-      const store = transaction.objectStore(STORE_NAME);
-      const request = store.get(id);
-
-      request.onsuccess = () => {
-        const file = request.result;
-        const blob = new Blob([file.data]);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name;
-        a.click();
-        URL.revokeObjectURL(url);
-      };
-    }
-
     window.onload = () => {
       // Cleanup old data (older than 7 days)
       MockBackend.cleanupOldData();
@@ -3573,11 +3432,6 @@ Open attached proof?
         document.documentElement.classList.add('dark');
         document.getElementById('theme-icon').innerText = '☀️';
         document.getElementById('theme-text').innerText = 'Light';
-      }
-
-      // Load uploaded files on admin view
-      if (document.getElementById('view-admin').classList.contains('active')) {
-        loadUploadedFiles();
       }
     }
   </script>
