@@ -1101,7 +1101,7 @@
       <div>
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
           <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
-          Agent Feedback (Auto-delete after 7 days)
+          Agent Comments
         </h2>
         <div class="mb-4">
           <button onclick="adminDeleteAllFeedback()"
@@ -2951,6 +2951,7 @@ Reviewer: ${review.reviewerId}
           <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
           <td class="p-6 text-right space-x-2">
             <button onclick="adminViewReview(${idx})" class="text-blue-600 hover:text-blue-700">👁️ View</button>
+            <button onclick="adminEditReview(${idx})" class="text-amber-600 hover:text-amber-700">✏️ Edit</button>
             <button onclick="adminDeleteReview(${idx})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
           </td>
         </tr>
@@ -2961,6 +2962,30 @@ Reviewer: ${review.reviewerId}
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const review = reviews[index];
       alert(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}`);
+    }
+
+    function adminEditReview(index) {
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const review = reviews[index];
+
+      // Edit Score
+      let newScore = prompt(`Edit Score for ${review.agentName} (Current: ${review.score}):`, review.score);
+      if (newScore === null) return; // Cancelled
+      newScore = parseInt(newScore);
+      if (isNaN(newScore) || (newScore !== 0 && newScore !== 100)) {
+        alert('Invalid score. Please enter 0 or 100.');
+        return;
+      }
+
+      // Edit Observation
+      const newObs = prompt(`Edit Observation (Current: ${review.observation}):`, review.observation);
+      if (newObs === null) return; // Cancelled
+
+      // Update and Save
+      reviews[index].score = newScore;
+      reviews[index].observation = newObs;
+      localStorage.setItem('adminReviews', JSON.stringify(reviews));
+      adminLoadReviewsList();
     }
 
     function adminDeleteReview(index) {
