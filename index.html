@@ -3023,6 +3023,11 @@ Reviewer: ${review.reviewerId}
       let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
       localStorage.setItem('adminReviews', JSON.stringify(filtered));
 
+      // Filter by current entity (admin can only see reviews for their entity)
+      if (currentUser && currentUser.entity !== 'ALL') {
+        filtered = filtered.filter(r => r.entity === currentUser.entity);
+      }
+
       // Filter by selected agent if one is chosen
       if (adminCurrentAgent) {
         filtered = filtered.filter(r => r.agentId === adminCurrentAgent);
