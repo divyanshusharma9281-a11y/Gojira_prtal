@@ -1412,8 +1412,35 @@
       document.getElementById('portal-login-screen').classList.add('hidden');
       document.getElementById('top-nav').classList.remove('hidden');
       
-      // Auto-navigate to home
-      navigateTo('view-home');
+      // Filter entities display based on user
+      filterEntitiesDisplay();
+      
+      // Route based on role
+      if (currentSessionUser.role === 'admin') {
+        // Admin - set entity and show admin dashboard
+        adminCurrentEntity = currentSessionUser.entity;
+        currentUser = currentSessionUser;
+        document.getElementById('admin-welcome-text').innerText = `Welcome ${currentSessionUser.name}`;
+        navigateTo('view-admin');
+        adminLoadAgents();
+      } else if (currentSessionUser.role === 'reviewer') {
+        // Reviewer - set entity and show reviewer dashboard
+        reviewerCurrentEntity = currentSessionUser.entity;
+        currentUser = currentSessionUser;
+        document.getElementById('reviewer-welcome-text').innerText = `Welcome ${currentSessionUser.name}`;
+        document.getElementById('reviewer-entity-display').textContent = reviewerCurrentEntity;
+        navigateTo('view-reviewer');
+        reviewerLoadAgentsForEntity();
+      } else if (currentSessionUser.role === 'agent') {
+        // Agent - set entity from their ID and show agent dashboard
+        currentEntity = currentSessionUser.entity;
+        currentUser = currentSessionUser;
+        navigateTo('view-home');
+        filterEntitiesDisplay(); // Filter entities for agent
+      } else {
+        // Regular user
+        navigateTo('view-home');
+      }
     }
 
     // Portal Logout
@@ -2893,21 +2920,50 @@ Reviewer: ${review.reviewerId}
       'view-rupeeontime': 'RupeeOnTime'
     };
 
+    // Filter entities display based on user role
+    function filterEntitiesDisplay() {
+      const userToCheck = currentSessionUser || currentUser;
+      if (!userToCheck) return; // Not logged in via new system
+      
+      // Get all entity cards
+      const entities = document.querySelectorAll('#view-entities .grid > div');
+      
+      entities.forEach(entityCard => {
+        // Check which entity this card represents based on onclick attribute
+        const onclick = entityCard.getAttribute('onclick');
+        let entityToShow = null;
+        
+        if (onclick.includes('bharatloan')) entityToShow = 'BharatLoan';
+        else if (onclick.includes('rupee112')) entityToShow = 'Rupee112';
+        else if (onclick.includes('loan112')) entityToShow = 'Loan112';
+        else if (onclick.includes('rupeeontime')) entityToShow = 'RupeeOnTime';
+        
+        // Show/hide based on user's entity
+        if (userToCheck.entity === 'ALL') {
+          entityCard.style.display = ''; // Show all for admin/reviewer
+        } else if (userToCheck.entity === entityToShow) {
+          entityCard.style.display = ''; // Show only matching entity for agents
+        } else {
+          entityCard.style.display = 'none'; // Hide non-matching entities
+        }
+      });
+    }
+
     function navigateTo(id) {
-      // CHECK ACCESS PERMISSION
-      if (currentUser) {
-        if (currentUser.entity !== 'ALL') {
-          const targetEntity = ENTITY_VIEW_MAP[id];
-          if (targetEntity && targetEntity !== currentUser.entity) {
+      // CHECK ACCESS PERMISSION - Use currentSessionUser for new login system
+      const userToCheck = currentSessionUser || currentUser;
+      
+      if (userToCheck && userToCheck.entity !== 'ALL') {
+        const targetEntity = ENTITY_VIEW_MAP[id];
+        if (targetEntity && targetEntity !== userToCheck.entity) {
 
-            // Dynamic check: Update modal text to ensure it matches requirement
-            const modalTitle = document.getElementById('access-denied-title');
-            if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
+          // Dynamic check: Update modal text to ensure it matches requirement
+          const modalTitle = document.getElementById('access-denied-title');
+          if (modalTitle) modalTitle.innerText = 'Please enter the correct ID and can choose the correct entity for this ID';
 
-            // Show Access Denied Modal
-            document.getElementById('access-denied-modal').classList.remove('hidden');
-            return; // STOP NAVIGATION
-          }
+          // Show Access Denied Modal
+          document.getElementById('access-denied-modal').classList.remove('hidden');
+          return; // STOP NAVIGATION
         }
       }
 
