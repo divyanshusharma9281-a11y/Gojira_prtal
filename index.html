@@ -1154,6 +1154,23 @@
         <h1 id="reviewer-welcome-text" class="text-3xl font-bold">Welcome Ayushi Gupta</h1>
       </div>
 
+      <!-- Section 1: Select Agent -->
+      <div class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">👥</span>
+          Select Agent
+        </h2>
+
+        <!-- Agent Selection -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Select Agent</label>
+          <select id="reviewer-agent-selector" onchange="reviewerSelectAgent(this)"
+            class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-purple-500 outline-none transition cursor-pointer">
+            <option value="">-- Choose Agent --</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Section 2: Reviews List -->
       <div id="reviewer-reviews-section" class="mb-12 hidden">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -2458,26 +2475,24 @@ Reviewer: ${review.reviewerId}
     let reviewerCurrentEntity = '';
     let reviewerCurrentAgent = '';
 
-    function reviewerSelectEntity(entity) {
-      reviewerCurrentEntity = entity;
-      document.getElementById('reviewer-entity-display').textContent = entity || '--';
+    function reviewerLoadAllAgents() {
+      // Load all agents from all entities
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      const selector = document.getElementById('reviewer-agent-selector');
+      selector.innerHTML = '<option value="">-- Choose Agent --</option>';
 
-      if (entity) {
-        // Load agents for selected entity
-        let agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entity);
-        const selector = document.getElementById('reviewer-agent-selector');
-        selector.innerHTML = '<option value="">-- Choose Agent --</option>';
+      // Sort agents by entity and name
+      agents.sort((a, b) => {
+        if (a.entity !== b.entity) return a.entity.localeCompare(b.entity);
+        return a.name.localeCompare(b.name);
+      });
 
-        agents.forEach(agent => {
-          const option = document.createElement('option');
-          option.value = agent.id;
-          option.textContent = `${agent.name} (${agent.id})`;
-          selector.appendChild(option);
-        });
-
-        // Hide reviews section when entity changes
-        document.getElementById('reviewer-reviews-section').classList.add('hidden');
-      }
+      agents.forEach(agent => {
+        const option = document.createElement('option');
+        option.value = agent.id;
+        option.textContent = `${agent.name} (${agent.id}) - ${agent.entity}`;
+        selector.appendChild(option);
+      });
     }
 
     function reviewerSelectAgent(selectElement) {
@@ -2502,11 +2517,7 @@ Reviewer: ${review.reviewerId}
       const now = new Date();
       let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
 
-      // Filter by current entity and agent
-      if (reviewerCurrentEntity) {
-        filtered = filtered.filter(r => r.entity === reviewerCurrentEntity);
-      }
-
+      // Filter by selected agent (no entity filter needed)
       if (reviewerCurrentAgent) {
         filtered = filtered.filter(r => r.agentId === reviewerCurrentAgent);
       }
@@ -2854,6 +2865,7 @@ Reviewer: ${review.reviewerId}
           document.getElementById('reviewer-welcome-text').innerText = `Welcome ${user.name}`;
           
           navigateTo('view-reviewer');
+          reviewerLoadAllAgents();
           hideLogin();
         } else {
           // For agents, check entity match
