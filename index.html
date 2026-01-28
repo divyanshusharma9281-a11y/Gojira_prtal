@@ -2699,9 +2699,9 @@ Reviewer: ${review.reviewerId}
 
       if (user) {
         if (user.role === 'admin') {
-          // Set Entity based on the card clicked (currentEntity)
-          // If no specific entity context (e.g. direct login?), default to ALL
-          adminCurrentEntity = currentEntity || 'ALL';
+          // For admin, use the selected entity from the dropdown, fallback to currentEntity
+          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
+          adminCurrentEntity = selectedEntity;
 
           currentUser = user;
           navigateTo('view-admin');
