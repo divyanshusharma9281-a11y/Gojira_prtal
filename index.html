@@ -3543,11 +3543,9 @@ Reviewer: ${review.reviewerId}
       selector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
 
       agents.forEach(agent => {
-        const perf = MockBackend.getPerformance(agent.id);
-        const scoreText = perf ? `${perf.score}%` : 'Not Scored';
         const option = document.createElement('option');
         option.value = agent.id;
-        option.text = `${agent.name} (${agent.id})`;
+        option.text = `${agent.name} ${agent.id}`;
         option.dataset.name = agent.name;
         selector.appendChild(option);
       });
@@ -3562,14 +3560,17 @@ Reviewer: ${review.reviewerId}
       const agentName = selectedOption.dataset.name;
 
       if (agentId) {
-        adminSelectAgent(agentId, agentName);
+        adminCurrentAgent = agentId;
+        adminCurrentAgentName = agentName;
+        // Enable the start review button
+        document.getElementById('admin-start-review-btn').disabled = false;
+        document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
       } else {
-        // Reset if they select default option
         adminCurrentAgent = '';
+        adminCurrentAgentName = '';
+        // Disable the start review button
         document.getElementById('admin-start-review-btn').disabled = true;
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
-        // Hide the submitted reviews section when no agent is selected
-        document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
       }
     }
 
