@@ -1802,7 +1802,7 @@
       document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
 
       // 2. Populate Agent Selector Dropdown
-      const agentSelector = document.getElementById('agent-selector');
+      const agentSelector = document.getElementById('admin-agent-selector');
 
       // Filter Agents
       let agents = USER_DB.filter(u => u.role === 'agent');
@@ -1821,7 +1821,8 @@
         const scoreText = perf ? `${perf.score}%` : 'Not Scored';
         const option = document.createElement('option');
         option.value = agent.id;
-        option.textContent = `${agent.name} (${agent.id}) - ${scoreText}${reviewProgress}`;
+        option.textContent = `${agent.name} ${agent.id}`;
+        option.dataset.name = agent.name;
         agentSelector.appendChild(option);
       });
 
