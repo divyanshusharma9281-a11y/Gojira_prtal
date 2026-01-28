@@ -1205,6 +1205,115 @@
     </div>
   </div>
 
+  <!-- AGENT QUALITY ASSURANCE CHECKLIST -->
+  <div id="view-agent-qa" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <span class="font-bold text-xl text-purple-600">Quality Assurance Checklist - Weekly Performance</span>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Welcome Banner -->
+      <div class="mb-8 p-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl">
+        <h1 id="agent-qa-welcome-text" class="text-3xl font-bold">Welcome</h1>
+        <p class="text-purple-100 mt-2">View your weekly performance and quality scores</p>
+      </div>
+
+      <!-- Weekly Performance Section -->
+      <div class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📊</span>
+          Weekly Performance
+        </h2>
+
+        <!-- Performance Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <!-- Total Reviews -->
+          <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-purple-200 dark:border-slate-600">
+            <div class="text-3xl font-bold text-purple-600" id="agent-total-reviews">0</div>
+            <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Total Reviews</p>
+          </div>
+
+          <!-- Average Score -->
+          <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-purple-200 dark:border-slate-600">
+            <div class="text-3xl font-bold text-indigo-600" id="agent-avg-score">0</div>
+            <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Average Score</p>
+          </div>
+
+          <!-- Last Review -->
+          <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-purple-200 dark:border-slate-600">
+            <div class="text-lg font-bold text-blue-600" id="agent-last-review">--</div>
+            <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Last Review Date</p>
+          </div>
+
+          <!-- Performance Status -->
+          <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-purple-200 dark:border-slate-600">
+            <div class="text-lg font-bold text-green-600" id="agent-performance-status">Excellent</div>
+            <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Current Status</p>
+          </div>
+        </div>
+
+        <!-- Reviews History Table -->
+        <h3 class="text-xl font-bold mb-4 mt-8">Your Review History</h3>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Reviewer</th>
+                <th class="p-6">File</th>
+                <th class="p-6">Score</th>
+                <th class="p-6">Observation</th>
+                <th class="p-6">Status</th>
+              </tr>
+            </thead>
+            <tbody id="agent-reviews-history" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- No Reviews Message -->
+        <div id="agent-no-reviews-message" class="text-center py-12 hidden">
+          <div class="text-4xl mb-4">📭</div>
+          <h4 class="text-xl font-bold text-slate-600 dark:text-slate-400">No Reviews Yet</h4>
+          <p class="text-slate-500 dark:text-slate-500 mt-2">Your reviews will appear here once submitted by quality assurance team.</p>
+        </div>
+      </div>
+
+      <!-- Feedback Section -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
+          Your Feedback
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Reviewer</th>
+                <th class="p-6">Feedback</th>
+                <th class="p-6">Expires In</th>
+              </tr>
+            </thead>
+            <tbody id="agent-feedback-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- No Feedback Message -->
+        <div id="agent-no-feedback-message" class="text-center py-12 hidden">
+          <div class="text-4xl mb-4">✨</div>
+          <h4 class="text-xl font-bold text-slate-600 dark:text-slate-400">No Feedback Yet</h4>
+          <p class="text-slate-500 dark:text-slate-500 mt-2">You're all set! No pending feedback at the moment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- REVIEWER DASHBOARD -->
   <div id="view-reviewer" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
@@ -1432,11 +1541,11 @@
         navigateTo('view-reviewer');
         reviewerLoadAgentsForEntity();
       } else if (currentSessionUser.role === 'agent') {
-        // Agent - set entity from their ID and show agent dashboard
+        // Agent - set entity from their ID and show Quality Assurance Dashboard
         currentEntity = currentSessionUser.entity;
         currentUser = currentSessionUser;
-        navigateTo('view-home');
-        filterEntitiesDisplay(); // Filter entities for agent
+        navigateTo('view-agent-qa');
+        agentLoadQADashboard(); // Load agent QA dashboard with their reviews and feedback
       } else {
         // Regular user
         navigateTo('view-home');
@@ -2786,6 +2895,117 @@ Reviewer: ${review.reviewerId}
         <p>${observation}</p>
       `;
       alert(content);
+    }
+
+    // ===== AGENT QUALITY ASSURANCE FUNCTIONS =====
+    function agentLoadQADashboard() {
+      if (!currentSessionUser || currentSessionUser.role !== 'agent') {
+        return; // Only for agents
+      }
+
+      const agentId = currentSessionUser.id;
+      const agentName = currentSessionUser.name;
+
+      // Set welcome text
+      document.getElementById('agent-qa-welcome-text').innerText = `Welcome ${agentName}`;
+
+      // Load reviews for this agent
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      
+      // Filter reviews for current agent only
+      const agentReviews = reviews.filter(r => r.agentId === agentId);
+
+      // Calculate stats
+      const totalReviews = agentReviews.length;
+      const avgScore = totalReviews > 0 ? Math.round(agentReviews.reduce((sum, r) => sum + r.score, 0) / totalReviews) : 0;
+      
+      // Get last review date
+      let lastReviewDate = '--';
+      if (agentReviews.length > 0) {
+        const lastReview = agentReviews[0];
+        lastReviewDate = lastReview.date;
+      }
+
+      // Determine performance status
+      let status = 'Excellent';
+      let statusColor = 'text-green-600';
+      if (avgScore >= 80) {
+        status = 'Excellent';
+        statusColor = 'text-green-600';
+      } else if (avgScore >= 60) {
+        status = 'Good';
+        statusColor = 'text-blue-600';
+      } else if (avgScore >= 40) {
+        status = 'Need Improvement';
+        statusColor = 'text-amber-600';
+      } else {
+        status = 'Critical';
+        statusColor = 'text-red-600';
+      }
+
+      // Update stats
+      document.getElementById('agent-total-reviews').innerText = totalReviews;
+      document.getElementById('agent-avg-score').innerText = avgScore;
+      document.getElementById('agent-last-review').innerText = lastReviewDate;
+      document.getElementById('agent-performance-status').className = `text-lg font-bold ${statusColor}`;
+      document.getElementById('agent-performance-status').innerText = status;
+
+      // Populate reviews history table
+      const tbody = document.getElementById('agent-reviews-history');
+      const noReviewsMsg = document.getElementById('agent-no-reviews-message');
+
+      if (agentReviews.length === 0) {
+        tbody.innerHTML = '';
+        noReviewsMsg.classList.remove('hidden');
+      } else {
+        noReviewsMsg.classList.add('hidden');
+        tbody.innerHTML = agentReviews.map(review => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${review.date}</td>
+            <td class="p-6">${review.reviewerName || 'Admin'}</td>
+            <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
+            <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : review.score >= 50 ? 'text-blue-600' : 'text-red-600'}">${review.score}</span></td>
+            <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
+            <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${review.score === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${review.score === 100 ? 'Good' : 'Review'}</span></td>
+          </tr>
+        `).join('');
+      }
+
+      // Load feedback
+      agentLoadFeedback(agentId);
+    }
+
+    function agentLoadFeedback(agentId) {
+      let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
+      
+      // Filter feedback for current agent
+      let agentComments = comments.filter(c => c.agentId === agentId);
+
+      const tbody = document.getElementById('agent-feedback-list');
+      const noFeedbackMsg = document.getElementById('agent-no-feedback-message');
+
+      if (agentComments.length === 0) {
+        tbody.innerHTML = '';
+        noFeedbackMsg.classList.remove('hidden');
+      } else {
+        noFeedbackMsg.classList.add('hidden');
+        const now = new Date();
+        tbody.innerHTML = agentComments.map(comment => {
+          // Calculate expiry date (7 days from comment date)
+          const commentDate = new Date(comment.date);
+          const expiryDate = new Date(commentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+          const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+          
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6">${comment.date}</td>
+              <td class="p-6">Quality Team</td>
+              <td class="p-6 text-sm">${comment.text.substring(0, 50)}...</td>
+              <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${daysLeft > 0 ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}">${daysLeft > 0 ? daysLeft + ' days' : 'Expired'}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     function handleAgentSearch(query) {
