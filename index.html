@@ -191,15 +191,9 @@
       <h1 class="text-5xl font-extrabold mb-6">
         Welcome to
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-          Training Portal
+          Training & Quality Portal
         </span>
       </h1>
-
-      <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-12">
-        Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
-      </p>
-
-
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8" style="pointer-events: auto;">
         <div onclick="navigateTo('view-kb')"
@@ -214,7 +208,6 @@
           style="pointer-events: auto;">
           <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">🏦</div>
           <h2 class="text-2xl font-bold mb-2">Brand Entities</h2>
-          <p class="text-sm opacity-90">Specific guidelines for each entity.</p>
         </div>
 
         <div onclick="navigateTo('view-updates')"
@@ -229,7 +222,7 @@
           style="pointer-events: auto;">
           <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁</div>
           <h2 class="text-2xl font-bold mb-2">Resources</h2>
-          <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
+          <p class="text-sm opacity-90">Guidelines and quality checkup</p>
         </div>
       </div>
     </main>
@@ -3700,6 +3693,23 @@ Reviewer: ${review.reviewerId}
         });
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+        // Add feedback to agent in gojira_comments
+        let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
+        const feedbackText = adminReviewItems
+          .filter(item => item && item.observation)
+          .map((item, idx) => `Review ${idx + 1}: ${item.observation}`)
+          .join('\n');
+        
+        if (feedbackText.trim()) {
+          comments.unshift({
+            id: Date.now(),
+            text: feedbackText,
+            agentId: adminCurrentAgent,
+            date: new Date().toLocaleString()
+          });
+          localStorage.setItem('gojira_comments', JSON.stringify(comments));
+        }
 
         alert('Quality reviews submitted successfully!');
         adminCancelReview();
