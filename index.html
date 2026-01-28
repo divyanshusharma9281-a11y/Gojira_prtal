@@ -581,7 +581,21 @@
           </div>
         </div>
 
-        <div
+        <!-- Quality Assurance Checklist - Agent Only -->
+        <div id="qa-checklist-card-agent"
+          class="hidden bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-400 transition"
+          onclick="navigateTo('view-agent-qa')">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📊</div>
+            <div>
+              <h3 class="text-xl font-bold">Quality Assurance Checklist</h3>
+              <p class="text-slate-600 dark:text-slate-300">View your weekly performance and reviews.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quality Assurance Checklist - Non-Agent Users -->
+        <div id="qa-checklist-card-other"
           class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer"
           onclick="navigateTo('view-checklist')">
           <div class="flex items-center gap-4 mb-4">
@@ -1523,6 +1537,7 @@
       
       // Filter entities display based on user
       filterEntitiesDisplay();
+      filterResourcesQACard(); // Set QA card visibility based on user role
       
       // Route based on role
       if (currentSessionUser.role === 'admin') {
@@ -1540,15 +1555,12 @@
         document.getElementById('reviewer-entity-display').textContent = reviewerCurrentEntity;
         navigateTo('view-reviewer');
         reviewerLoadAgentsForEntity();
-      } else if (currentSessionUser.role === 'agent') {
-        // Agent - set entity from their ID and show Quality Assurance Dashboard
+      } else {
+        // Agent and regular users - go to home
         currentEntity = currentSessionUser.entity;
         currentUser = currentSessionUser;
-        navigateTo('view-agent-qa');
-        agentLoadQADashboard(); // Load agent QA dashboard with their reviews and feedback
-      } else {
-        // Regular user
         navigateTo('view-home');
+        filterEntitiesDisplay(); // Filter entities for agent
       }
     }
 
@@ -3169,6 +3181,25 @@ Reviewer: ${review.reviewerId}
       });
     }
 
+    // Filter QA Checklist card in Resources based on user role
+    function filterResourcesQACard() {
+      const userToCheck = currentSessionUser || currentUser;
+      const agentCard = document.getElementById('qa-checklist-card-agent');
+      const otherCard = document.getElementById('qa-checklist-card-other');
+      
+      if (!agentCard || !otherCard) return;
+      
+      if (userToCheck && userToCheck.role === 'agent') {
+        // Show agent-specific QA card
+        agentCard.classList.remove('hidden');
+        otherCard.classList.add('hidden');
+      } else {
+        // Show entity checklist QA card for others
+        agentCard.classList.add('hidden');
+        otherCard.classList.remove('hidden');
+      }
+    }
+
     function navigateTo(id) {
       // CHECK ACCESS PERMISSION - Use currentSessionUser for new login system
       const userToCheck = currentSessionUser || currentUser;
@@ -3194,6 +3225,11 @@ Reviewer: ${review.reviewerId}
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
+      
+      // Filter Resources QA card when navigating to resources
+      if (id === 'view-resources') {
+        filterResourcesQACard();
+      }
     }
 
     function toggleFaq(btn) {
