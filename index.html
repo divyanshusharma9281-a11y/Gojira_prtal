@@ -2783,6 +2783,9 @@ Reviewer: ${review.reviewerId}
 
         selector.appendChild(optgroup);
       });
+
+      // Load reviews for the current entity
+      adminLoadReviewsList();
     }
 
     function adminSelectAgentFromDropdown(selectElement) {
