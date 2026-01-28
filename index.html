@@ -160,7 +160,6 @@
             class="font-['Montserrat'] text-3xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 stylish leading-none">
             Gojira TP
           </span>
-          <p id="user-greeting" class="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-1">Hi Guest</p>
         </div>
       </div>
 
@@ -197,6 +196,8 @@
           Training & Quality Portal
         </span>
       </h1>
+
+      <p id="home-user-greeting" class="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-12">Hi Guest</p>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8" style="pointer-events: auto;">
         <div onclick="navigateTo('view-kb')"
@@ -1531,9 +1532,9 @@
       document.getElementById('portal-login-screen').classList.add('hidden');
       document.getElementById('top-nav').classList.remove('hidden');
       
-      // Set user greeting in navbar
+      // Set user greeting on home page
       const firstName = currentSessionUser.name.split(' ')[0];
-      document.getElementById('user-greeting').innerText = `Hi ${firstName}`;
+      document.getElementById('home-user-greeting').innerText = `Hi ${firstName}`;
       
       // Filter entities display based on user
       filterEntitiesDisplay();
@@ -1570,7 +1571,7 @@
       localStorage.removeItem('gojira_session_user');
       
       // Reset user greeting
-      document.getElementById('user-greeting').innerText = 'Hi Guest';
+      document.getElementById('home-user-greeting').innerText = 'Hi Guest';
       
       // Clear all forms
       document.getElementById('portal-emp-id').value = '';
