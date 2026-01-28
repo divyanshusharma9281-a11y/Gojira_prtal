@@ -1797,99 +1797,80 @@
 
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
-      // 1. Set Entity Header
-      const entityContext = currentEntity || 'ALL'; // Fallback
-      document.getElementById('admin-current-entity-name').innerText = entityContext === 'ALL' ? 'All Entities' : entityContext;
-
-      // 2. Populate Agent Selector Dropdown
-      const agentSelector = document.getElementById('admin-agent-selector');
-
-      // Filter Agents
-      let agents = USER_DB.filter(u => u.role === 'agent');
-      if (entityContext !== 'ALL') {
-        agents = agents.filter(u => u.entity === entityContext);
-      }
-
-      // Clear existing options except the first one
-      agentSelector.innerHTML = '<option value="">Choose an agent...</option>';
-
-      // Add agent options
-      agents.forEach(agent => {
-        const perf = MockBackend.getPerformance(agent.id);
-        const pendingReviews = getPendingReviews(agent.id);
-        const reviewProgress = pendingReviews.length > 0 ? ` (${pendingReviews.length}/3 reviews)` : '';
-        const scoreText = perf ? `${perf.score}%` : 'Not Scored';
-        const option = document.createElement('option');
-        option.value = agent.id;
-        option.textContent = `${agent.name} ${agent.id}`;
-        option.dataset.name = agent.name;
-        agentSelector.appendChild(option);
-      });
-
-      // 3. Populate Reports Table
+      // This function is called to refresh UI after operations
+      // It should use adminLoadAgents() instead to maintain consistency
+      adminLoadAgents();
+      
+      // Populate Reports Table
       const reports = MockBackend.getReports();
       const reportsList = document.getElementById('admin-reports-list');
-      if (reports.length === 0) {
-        reportsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No reports uploaded yet.</td></tr>';
-      } else {
-        reportsList.innerHTML = reports.map(r => `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-            <td class="p-6">${r.date}</td>
-            <td class="p-6">${r.name}</td>
-            <td class="p-6">${r.type || 'Unknown'}</td>
-            <td class="p-6 text-right">
-              <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-              <button onclick="handleDeleteReport(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
-            </td>
-          </tr>
-        `).join('');
-      }
-
-      // 4. Populate Performance Reviews Table
-      const reviews = MockBackend.getPerformanceScores();
-      const reviewsList = document.getElementById('admin-reviews-list');
-      if (reviews.length === 0) {
-        reviewsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No performance reviews yet.</td></tr>';
-      } else {
-        reviewsList.innerHTML = reviews.map(r => {
-          const agent = USER_DB.find(u => u.id === r.agentId);
-          const agentName = agent ? agent.name : r.agentId;
-          const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
-          const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
-          const date = new Date(r.timestamp).toLocaleString();
-
-          return `
+      if (reportsList) {
+        if (reports.length === 0) {
+          reportsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No reports uploaded yet.</td></tr>';
+        } else {
+          reportsList.innerHTML = reports.map(r => `
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <td class="p-6">${date}</td>
-              <td class="p-6">${agentName}</td>
-              <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
-              <td class="p-6">--</td>
-              <td class="p-6">${r.feedbackData.fileName}</td>
+              <td class="p-6">${r.date}</td>
+              <td class="p-6">${r.name}</td>
+              <td class="p-6">${r.type || 'Unknown'}</td>
               <td class="p-6 text-right">
-                <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+                <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                <button onclick="handleDeleteReport(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
               </td>
             </tr>
-          `;
-        }).join('');
+          `).join('');
+        }
       }
 
-      // 5. Populate Comments Table
+      // Populate Performance Reviews Table
+      const reviews = MockBackend.getPerformanceScores();
+      const reviewsList = document.getElementById('admin-reviews-list');
+      if (reviewsList) {
+        if (reviews.length === 0) {
+          reviewsList.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No performance reviews yet.</td></tr>';
+        } else {
+          reviewsList.innerHTML = reviews.map(r => {
+            const agent = USER_DB.find(u => u.id === r.agentId);
+            const agentName = agent ? agent.name : r.agentId;
+            const scoreClass = r.score === 100 ? 'text-emerald-600' : 'text-red-600';
+            const scoreText = r.score === 0 ? '0 (Fatal)' : r.score;
+            const date = new Date(r.timestamp).toLocaleString();
+
+            return `
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <td class="p-6">${date}</td>
+                <td class="p-6">${agentName}</td>
+                <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
+                <td class="p-6">--</td>
+                <td class="p-6">${r.feedbackData.fileName}</td>
+                <td class="p-6 text-right">
+                  <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                  <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Populate Comments Table
       const comments = MockBackend.getComments();
       const commentsList = document.getElementById('admin-comments-list');
-      if (comments.length === 0) {
-        commentsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No comments yet.</td></tr>';
-      } else {
-        commentsList.innerHTML = comments.map(c => `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-            <td class="p-6">${c.date}</td>
-            <td class="p-6">${USER_DB.find(u => u.id === c.agentId)?.name || c.agentId}</td>
-            <td class="p-6">${c.text}</td>
-            <td class="p-6 text-right">
-              <button onclick="handleDeleteComment(${c.id})" class="text-red-600 hover:text-red-800">Delete</button>
-            </td>
-          </tr>
-        `).join('');
+      if (commentsList) {
+        if (comments.length === 0) {
+          commentsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No comments yet.</td></tr>';
+        } else {
+          commentsList.innerHTML = comments.map(c => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6">${c.date}</td>
+              <td class="p-6">${USER_DB.find(u => u.id === c.agentId)?.name || c.agentId}</td>
+              <td class="p-6">${c.text}</td>
+              <td class="p-6 text-right">
+                <button onclick="handleDeleteComment(${c.id})" class="text-red-600 hover:text-red-800">Delete</button>
+              </td>
+            </tr>
+          `).join('');
+        }
       }
     }
 
@@ -3386,7 +3367,9 @@ Reviewer: ${review.reviewerId}
       // If user is logged in as admin, set entity and navigate to admin dashboard
       if (currentSessionUser && currentSessionUser.role === 'admin') {
         currentEntity = entityName;
+        adminCurrentEntity = entityName;
         navigateTo('view-admin');
+        adminLoadAgents();
       } else {
         // For non-logged-in users or non-admins, show login modal
         showLogin(entityName);
@@ -3533,14 +3516,25 @@ Reviewer: ${review.reviewerId}
 
     function adminLoadAgents() {
       // Display current entity
-      document.getElementById('admin-entity-display').textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
+      const entityDisplay = document.getElementById('admin-entity-display');
+      if (entityDisplay) {
+        entityDisplay.textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
+      }
 
+      // Get the selector dropdown
+      const selector = document.getElementById('admin-agent-selector');
+      if (!selector) {
+        console.error('admin-agent-selector element not found');
+        return;
+      }
+
+      // Filter agents by entity
       let agents = USER_DB.filter(u => u.role === 'agent');
-      if (adminCurrentEntity !== 'ALL') {
+      if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
         agents = agents.filter(u => u.entity === adminCurrentEntity);
       }
 
-      const selector = document.getElementById('admin-agent-selector');
+      // Clear and repopulate dropdown
       selector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
 
       agents.forEach(agent => {
