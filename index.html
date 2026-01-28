@@ -3593,12 +3593,18 @@ Reviewer: ${review.reviewerId}
         // Enable the start review button
         document.getElementById('admin-start-review-btn').disabled = false;
         document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+        // Show the submitted reviews section
+        document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
+        // Load reviews for this agent
+        adminLoadReviewsList();
       } else {
         adminCurrentAgent = '';
         adminCurrentAgentName = '';
         // Disable the start review button
         document.getElementById('admin-start-review-btn').disabled = true;
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
+        // Hide the submitted reviews section
+        document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
       }
     }
 
