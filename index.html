@@ -479,6 +479,8 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools')" id="tab-tools"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+        <button onclick="showTab('agents')" id="tab-agents"
+          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -554,6 +556,16 @@
                 class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
                 ↗</a>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agents Tab Content -->
+      <div id="content-agents" class="tab-content hidden">
+        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-2xl font-bold mb-6">Agents for BharatLoan</h3>
+          <div id="agents-list-bharatloan" class="space-y-4">
+            <!-- Agents will be populated by JS -->
           </div>
         </div>
       </div>
@@ -666,6 +678,8 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+        <button onclick="showTab('agents', 'rupee112')" id="tab-agents-rupee112"
+          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -744,6 +758,16 @@
           </div>
         </div>
       </div>
+
+      <!-- Agents Tab Content -->
+      <div id="content-agents-rupee112" class="tab-content hidden">
+        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-2xl font-bold mb-6">Agents for Rupee112</h3>
+          <div id="agents-list-rupee112" class="space-y-4">
+            <!-- Agents will be populated by JS -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -770,6 +794,8 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+        <button onclick="showTab('agents', 'loan112')" id="tab-agents-loan112"
+          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -848,6 +874,16 @@
           </div>
         </div>
       </div>
+
+      <!-- Agents Tab Content -->
+      <div id="content-agents-loan112" class="tab-content hidden">
+        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-2xl font-bold mb-6">Agents for Loan112</h3>
+          <div id="agents-list-loan112" class="space-y-4">
+            <!-- Agents will be populated by JS -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -874,6 +910,8 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
+        <button onclick="showTab('agents', 'rupeeontime')" id="tab-agents-rupeeontime"
+          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -949,6 +987,16 @@
                 class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
                 ↗</a>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agents Tab Content -->
+      <div id="content-agents-rupeeontime" class="tab-content hidden">
+        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-2xl font-bold mb-6">Agents for RupeeOnTime</h3>
+          <div id="agents-list-rupeeontime" class="space-y-4">
+            <!-- Agents will be populated by JS -->
           </div>
         </div>
       </div>
@@ -3228,7 +3276,7 @@ Reviewer: ${review.reviewerId}
       // Hide all tab contents
       document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
       // Remove active from all tabs
-      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}` : '#tab-guidelines, #tab-tools';
+      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}, #tab-agents${prefix}` : '#tab-guidelines, #tab-tools, #tab-agents';
       document.querySelectorAll(tabSelectors).forEach(btn => {
         btn.classList.remove('text-blue-600', 'border-blue-600');
         btn.classList.add('text-slate-500', 'border-transparent');
@@ -3238,6 +3286,48 @@ Reviewer: ${review.reviewerId}
       // Activate selected tab
       document.getElementById('tab-' + tab + prefix).classList.add('text-blue-600', 'border-blue-600');
       document.getElementById('tab-' + tab + prefix).classList.remove('text-slate-500', 'border-transparent');
+      
+      // Populate agents list if agents tab is selected
+      if (tab === 'agents') {
+        populateAgentsList(entity);
+      }
+    }
+
+    function populateAgentsList(entity) {
+      const entityMap = {
+        'bharatloan': 'BharatLoan',
+        'rupee112': 'Rupee112',
+        'loan112': 'Loan112',
+        'rupeeontime': 'RupeeOnTime',
+        '': 'BharatLoan' // default
+      };
+      
+      const entityName = entityMap[entity] || 'BharatLoan';
+      const containerId = `agents-list-${entity || 'bharatloan'}`;
+      const container = document.getElementById(containerId);
+      
+      if (!container) return;
+      
+      // Filter agents for the current entity
+      const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entityName);
+      
+      if (agents.length === 0) {
+        container.innerHTML = '<div class="p-4 text-center text-slate-500">No agents found for this entity.</div>';
+        return;
+      }
+      
+      // Create agent list HTML
+      container.innerHTML = agents.map(agent => `
+        <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-900 dark:text-white text-lg">${agent.name}</h4>
+              <p class="text-sm text-slate-600 dark:text-slate-300 font-mono">${agent.id}</p>
+            </div>
+            <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 px-3 py-1 rounded-lg text-sm font-semibold">${agent.entity}</div>
+          </div>
+        </div>
+      `).join('');
     }
 
     function toggleTheme() {
