@@ -3292,7 +3292,7 @@ Reviewer: ${review.reviewerId}
     }
 
     function handleChecklistClick(entityName, viewId) {
-      // If user is logged in and is admin, navigate directly to entity view
+      // If user is logged in as admin, navigate directly to entity view
       if (currentSessionUser && currentSessionUser.role === 'admin') {
         navigateTo(viewId);
       } else {
