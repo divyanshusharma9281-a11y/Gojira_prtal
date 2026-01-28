@@ -1138,8 +1138,20 @@
       <form onsubmit="submitLogin(event)">
         <div class="mb-6">
           <label class="block text-sm font-medium mb-2">Employee ID</label>
-          <input id="empid" type="text" required
+          <input id="empid" type="text" oninput="checkLoginType()" required
             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+        </div>
+
+        <div id="login-entity-section" class="mb-6 hidden">
+          <label class="block text-sm font-medium mb-2">Select Entity (Admin Only)</label>
+          <select id="login-entity"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="">All Entities</option>
+            <option value="BharatLoan">BharatLoan</option>
+            <option value="Rupee112">Rupee112</option>
+            <option value="Loan112">Loan112</option>
+            <option value="RupeeOnTime">RupeeOnTime</option>
+          </select>
         </div>
 
 
@@ -2695,18 +2707,35 @@ Reviewer: ${review.reviewerId}
       { id: 'ROT/GG/25/005', name: 'Vikram Yadav', role: 'agent', entity: 'RupeeOnTime' }
     ];
 
+    function checkLoginType() {
+      const empId = document.getElementById('empid').value.trim();
+      const user = USER_DB.find(u => u.id === empId);
+      const entitySection = document.getElementById('login-entity-section');
+
+      if (user && user.role === 'admin') {
+        entitySection.classList.remove('hidden');
+      } else {
+        entitySection.classList.add('hidden');
+      }
+    }
+
     function submitLogin(event) {
       event.preventDefault();
       const empId = document.getElementById('empid').value.trim();
+      const selectedEntity = document.getElementById('login-entity').value;
 
       const user = USER_DB.find(u => u.id === empId);
 
       if (user) {
         if (user.role === 'admin') {
-          adminCurrentEntity = 'ALL';
+          // Set Entity
+          const entity = selectedEntity || 'ALL';
+          currentEntity = entity;
+          adminCurrentEntity = entity;
+
           currentUser = user;
           navigateTo('view-admin');
-          adminLoadAgents();
+          adminLoadAgents(); // This needs to filter based on adminCurrentEntity
           hideLogin();
         } else {
           // For agents, check entity match
