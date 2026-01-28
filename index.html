@@ -1166,6 +1166,55 @@
     </div>
   </div>
 
+  <!-- EDIT REVIEW MODAL -->
+  <div id="admin-edit-review-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-lg w-full">
+      <h3 class="text-2xl font-bold mb-6">Edit Review</h3>
+
+      <!-- Score -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Score</label>
+        <div class="flex gap-4">
+          <label
+            class="flex items-center gap-2 cursor-pointer bg-emerald-50 dark:bg-slate-700 p-3 rounded-xl border border-emerald-100 dark:border-slate-600">
+            <input type="radio" name="edit-score" value="100" class="w-5 h-5 text-emerald-600">
+            <span class="font-bold text-emerald-600">100 (Pass)</span>
+          </label>
+          <label
+            class="flex items-center gap-2 cursor-pointer bg-red-50 dark:bg-slate-700 p-3 rounded-xl border border-red-100 dark:border-slate-600">
+            <input type="radio" name="edit-score" value="0" class="w-5 h-5 text-red-600">
+            <span class="font-bold text-red-600">0 (Fatal/Fail)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Observation -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Observation</label>
+        <textarea id="edit-observation" rows="3"
+          class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+      </div>
+
+      <!-- File -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2">Update File (Optional)</label>
+        <p class="text-xs text-slate-500 mb-2">Current: <span id="edit-current-filename"
+            class="font-mono font-bold"></span></p>
+        <input type="file" id="edit-file-upload"
+          class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="adminSaveEdit()" id="btn-save-edit"
+          class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">Save
+          Changes</button>
+        <button onclick="document.getElementById('admin-edit-review-modal').classList.add('hidden')"
+          class="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-700 transition">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // MOCK BACKEND
     class MockBackend {
@@ -3018,28 +3067,82 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    let currentEditIndex = -1;
+
     function adminEditReview(index) {
+      currentEditIndex = index;
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const review = reviews[index];
 
-      // Edit Score
-      let newScore = prompt(`Edit Score for ${review.agentName} (Current: ${review.score}):`, review.score);
-      if (newScore === null) return; // Cancelled
-      newScore = parseInt(newScore);
-      if (isNaN(newScore) || (newScore !== 0 && newScore !== 100)) {
-        alert('Invalid score. Please enter 0 or 100.');
-        return;
+      // Populate Modal
+      document.getElementById('edit-observation').value = review.observation;
+      document.getElementById('edit-current-filename').innerText = review.fileName || 'None';
+
+      // Set Radio
+      const radios = document.getElementsByName('edit-score');
+      radios.forEach(r => {
+        // Reset first
+        r.checked = false;
+        if (parseInt(r.value) === review.score) r.checked = true;
+      });
+
+      // Clear file input
+      document.getElementById('edit-file-upload').value = '';
+
+      // Show Modal
+      document.getElementById('admin-edit-review-modal').classList.remove('hidden');
+    }
+
+    async function adminSaveEdit() {
+      if (currentEditIndex === -1) return;
+
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const review = reviews[currentEditIndex];
+
+      // Get Values
+      const obs = document.getElementById('edit-observation').value;
+      const scoreEl = document.querySelector('input[name="edit-score"]:checked');
+      if (!scoreEl) return alert('Please select a score');
+      const score = parseInt(scoreEl.value);
+
+      // Handle File
+      const fileInput = document.getElementById('edit-file-upload');
+
+      const saveBtn = document.getElementById('btn-save-edit');
+      saveBtn.innerText = 'Saving...';
+      saveBtn.disabled = true;
+
+      try {
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const content = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          review.fileName = file.name;
+          review.fileContent = content; // Update content
+        }
+
+        review.observation = obs;
+        review.score = score;
+
+        // Save
+        reviews[currentEditIndex] = review;
+        localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+        // Refresh & Close
+        adminLoadReviewsList();
+        document.getElementById('admin-edit-review-modal').classList.add('hidden');
+        alert('Review updated successfully!');
+      } catch (err) {
+        console.error(err);
+        alert('Error saving edit');
+      } finally {
+        saveBtn.innerText = 'Save Changes';
+        saveBtn.disabled = false;
       }
-
-      // Edit Observation
-      const newObs = prompt(`Edit Observation (Current: ${review.observation}):`, review.observation);
-      if (newObs === null) return; // Cancelled
-
-      // Update and Save
-      reviews[index].score = newScore;
-      reviews[index].observation = newObs;
-      localStorage.setItem('adminReviews', JSON.stringify(reviews));
-      adminLoadReviewsList();
     }
 
     function adminDeleteReview(index) {
