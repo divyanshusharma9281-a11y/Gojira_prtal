@@ -1078,6 +1078,12 @@
           <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
           Submitted Reviews
         </h2>
+        <div class="mb-4">
+          <button onclick="adminDeleteAllReviews()"
+            class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
+            🗑️ Delete All Reviews
+          </button>
+        </div>
         <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
           <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
             <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
@@ -3158,6 +3164,19 @@ Reviewer: ${review.reviewerId}
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
         adminLoadReviewsList();
+      }
+    }
+
+    function adminDeleteAllReviews() {
+      if (confirm('Delete all reviews for this entity? This action cannot be undone.')) {
+        let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        
+        // Remove only reviews for the current entity
+        reviews = reviews.filter(r => r.entity !== adminCurrentEntity);
+        
+        localStorage.setItem('adminReviews', JSON.stringify(reviews));
+        adminLoadReviewsList();
+        alert('All reviews for this entity have been deleted.');
       }
     }
 
