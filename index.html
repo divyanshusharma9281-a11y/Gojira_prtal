@@ -1540,29 +1540,12 @@
       filterEntitiesDisplay();
       filterResourcesQACard(); // Set QA card visibility based on user role
       
-      // Route based on role
-      if (currentSessionUser.role === 'admin') {
-        // Admin - set entity and show admin dashboard
-        adminCurrentEntity = currentSessionUser.entity;
-        currentUser = currentSessionUser;
-        document.getElementById('admin-welcome-text').innerText = `Welcome ${currentSessionUser.name}`;
-        navigateTo('view-admin');
-        adminLoadAgents();
-      } else if (currentSessionUser.role === 'reviewer') {
-        // Reviewer - set entity and show reviewer dashboard
-        reviewerCurrentEntity = currentSessionUser.entity;
-        currentUser = currentSessionUser;
-        document.getElementById('reviewer-welcome-text').innerText = `Welcome ${currentSessionUser.name}`;
-        document.getElementById('reviewer-entity-display').textContent = reviewerCurrentEntity;
-        navigateTo('view-reviewer');
-        reviewerLoadAgentsForEntity();
-      } else {
-        // Agent and regular users - go to home
-        currentEntity = currentSessionUser.entity;
-        currentUser = currentSessionUser;
-        navigateTo('view-home');
-        filterEntitiesDisplay(); // Filter entities for agent
-      }
+      // Set currentUser and currentEntity for all users
+      currentUser = currentSessionUser;
+      currentEntity = currentSessionUser.entity;
+      
+      // Route all users to home page
+      navigateTo('view-home');
     }
 
     // Portal Logout
