@@ -1020,6 +1020,11 @@
     </header>
 
     <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Welcome Banner -->
+      <div class="mb-8 p-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-3xl">
+        <h1 id="admin-welcome-text" class="text-3xl font-bold">Welcome Siddhant Chauhan</h1>
+      </div>
+
       <!-- Section 1: Select Agent Only -->
       <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -1126,6 +1131,78 @@
               </tr>
             </thead>
             <tbody id="admin-feedback-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWER DASHBOARD -->
+  <div id="view-reviewer" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
+      <div class="flex items-center gap-4">
+        <span class="font-bold text-xl text-purple-600">Review Dashboard - <span id="reviewer-entity-display">--</span></span>
+      </div>
+      <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Welcome Banner -->
+      <div class="mb-8 p-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl">
+        <h1 id="reviewer-welcome-text" class="text-3xl font-bold">Welcome Ayushi Gupta</h1>
+      </div>
+
+      <!-- Section 1: Select Entity and Agent -->
+      <div class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">🔍</span>
+          View Reviews
+        </h2>
+
+        <!-- Entity Selection -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Select Entity</label>
+          <select id="reviewer-entity-selector" onchange="reviewerSelectEntity(this.value)"
+            class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-purple-500 outline-none transition cursor-pointer">
+            <option value="">-- Choose Entity --</option>
+            <option value="BharatLoan">BharatLoan</option>
+            <option value="Rupee112">Rupee112</option>
+            <option value="Loan112">Loan112</option>
+            <option value="RupeeOnTime">RupeeOnTime</option>
+          </select>
+        </div>
+
+        <!-- Agent Selection -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Select Agent</label>
+          <select id="reviewer-agent-selector" onchange="reviewerSelectAgent(this)"
+            class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-purple-500 outline-none transition cursor-pointer">
+            <option value="">-- Choose Agent --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Section 2: Reviews List -->
+      <div id="reviewer-reviews-section" class="mb-12 hidden">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📋</span>
+          Agent Reviews
+        </h2>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">File</th>
+                <th class="p-6">Score</th>
+                <th class="p-6">Observation</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="reviewer-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
               <!-- JS Populates this -->
             </tbody>
           </table>
@@ -2407,7 +2484,88 @@ Reviewer: ${review.reviewerId}
       navigateTo('view-home');
     }
 
+    // ===== REVIEWER FUNCTIONS =====
+    let reviewerCurrentEntity = '';
+    let reviewerCurrentAgent = '';
 
+    function reviewerSelectEntity(entity) {
+      reviewerCurrentEntity = entity;
+      document.getElementById('reviewer-entity-display').textContent = entity || '--';
+
+      if (entity) {
+        // Load agents for selected entity
+        let agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entity);
+        const selector = document.getElementById('reviewer-agent-selector');
+        selector.innerHTML = '<option value="">-- Choose Agent --</option>';
+
+        agents.forEach(agent => {
+          const option = document.createElement('option');
+          option.value = agent.id;
+          option.textContent = `${agent.name} (${agent.id})`;
+          selector.appendChild(option);
+        });
+
+        // Hide reviews section when entity changes
+        document.getElementById('reviewer-reviews-section').classList.add('hidden');
+      }
+    }
+
+    function reviewerSelectAgent(selectElement) {
+      const selectedOption = selectElement.options[selectElement.selectedIndex];
+      const agentId = selectedOption.value;
+
+      if (agentId) {
+        reviewerCurrentAgent = agentId;
+        reviewerLoadReviews();
+        document.getElementById('reviewer-reviews-section').classList.remove('hidden');
+      } else {
+        reviewerCurrentAgent = '';
+        document.getElementById('reviewer-reviews-section').classList.add('hidden');
+      }
+    }
+
+    function reviewerLoadReviews() {
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const tbody = document.getElementById('reviewer-reviews-list');
+
+      // Remove expired reviews
+      const now = new Date();
+      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
+
+      // Filter by current entity and agent
+      if (reviewerCurrentEntity) {
+        filtered = filtered.filter(r => r.entity === reviewerCurrentEntity);
+      }
+
+      if (reviewerCurrentAgent) {
+        filtered = filtered.filter(r => r.agentId === reviewerCurrentAgent);
+      }
+
+      tbody.innerHTML = filtered.map((review, idx) => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+          <td class="p-6">${review.date}</td>
+          <td class="p-6">${review.agentName}</td>
+          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
+          <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
+          <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
+          <td class="p-6 text-right">
+            <button onclick="reviewerViewReview('${review.date}', '${review.agentName}', '${review.fileName}', '${review.score}', '${review.observation}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function reviewerViewReview(date, agentName, fileName, score, observation) {
+      const content = `
+        <strong>Date:</strong> ${date}<br>
+        <strong>Agent:</strong> ${agentName}<br>
+        <strong>File:</strong> ${fileName}<br>
+        <strong>Score:</strong> ${score}<br>
+        <strong>Observation:</strong><br>
+        <p>${observation}</p>
+      `;
+      alert(content);
+    }
 
     function handleAgentSearch(query) {
       const resultsDiv = document.getElementById('indiv-agent-results');
@@ -2650,6 +2808,7 @@ Reviewer: ${review.reviewerId}
     // USER DATABASE
     const USER_DB = [
       { id: 'BL/GG/25/1135', name: 'Siddhant Chauhan', role: 'admin', entity: 'ALL' },
+      { id: 'BL/GG/25/0957', name: 'Ayushi Gupta', role: 'reviewer', entity: 'ALL' },
       { id: 'BL/GG/25/703', name: 'SHARAD ADHIKARI', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/704', name: 'DIVYANSHU SHARMA', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/705', name: 'AYUSHMAN TIBREWAL', role: 'agent', entity: 'BharatLoan' },
@@ -2710,8 +2869,21 @@ Reviewer: ${review.reviewerId}
           adminCurrentEntity = selectedEntity;
 
           currentUser = user;
+          
+          // Set welcome message with admin name
+          document.getElementById('admin-welcome-text').innerText = `Welcome ${user.name}`;
+          
           navigateTo('view-admin');
           adminLoadAgents();
+          hideLogin();
+        } else if (user.role === 'reviewer') {
+          // For reviewer, show reviewer dashboard
+          currentUser = user;
+          
+          // Set welcome message with reviewer name
+          document.getElementById('reviewer-welcome-text').innerText = `Welcome ${user.name}`;
+          
+          navigateTo('view-reviewer');
           hideLogin();
         } else {
           // For agents, check entity match
