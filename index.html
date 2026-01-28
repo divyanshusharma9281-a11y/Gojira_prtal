@@ -3539,29 +3539,17 @@ Reviewer: ${review.reviewerId}
         agents = agents.filter(u => u.entity === adminCurrentEntity);
       }
 
-      // Group by Entity
-      const grouped = {};
-      agents.forEach(agent => {
-        if (!grouped[agent.entity]) grouped[agent.entity] = [];
-        grouped[agent.entity].push(agent);
-      });
-
       const selector = document.getElementById('admin-agent-selector');
       selector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
 
-      Object.keys(grouped).forEach(entity => {
-        const optgroup = document.createElement('optgroup');
-        optgroup.label = entity;
-
-        grouped[entity].forEach(agent => {
-          const option = document.createElement('option');
-          option.value = agent.id;
-          option.text = `${agent.name} (${agent.id})`;
-          option.dataset.name = agent.name; // Store name for easy access
-          optgroup.appendChild(option);
-        });
-
-        selector.appendChild(optgroup);
+      agents.forEach(agent => {
+        const perf = MockBackend.getPerformance(agent.id);
+        const scoreText = perf ? `${perf.score}%` : 'Not Scored';
+        const option = document.createElement('option');
+        option.value = agent.id;
+        option.text = `${agent.name} (${agent.id})`;
+        option.dataset.name = agent.name;
+        selector.appendChild(option);
       });
 
       // Load reviews for the current entity
