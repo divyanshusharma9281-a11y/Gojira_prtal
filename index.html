@@ -4286,24 +4286,19 @@ Reviewer: ${review.reviewerId}
     }
 
     function adminLoadFeedbackList() {
-      const comments = JSON.parse(localStorage.getItem('agentComments') || '[]');
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
       const tbody = document.getElementById('admin-feedback-list');
 
-      // Remove old feedback (older than 7 days)
-      const now = new Date();
-      const filtered = comments.filter(c => {
-        const commentDate = new Date(c.date);
-        const diffTime = now - commentDate;
-        const diffDays = diffTime / (1000 * 60 * 60 * 24);
-        return diffDays < 7;
-      });
-      localStorage.setItem('agentComments', JSON.stringify(filtered));
+      if (comments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No agent replies yet.</td></tr>';
+        return;
+      }
 
-      tbody.innerHTML = filtered.map((comment, idx) => `
+      tbody.innerHTML = comments.map((comment, idx) => `
         <tr>
           <td class="p-6">${comment.date}</td>
-          <td class="p-6">${comment.agentName}</td>
-          <td class="p-6">${comment.comment}</td>
+          <td class="p-6">${comment.authorName}</td>
+          <td class="p-6">${comment.text.substring(0, 80)}...</td>
           <td class="p-6 text-right">
             <button onclick="adminDeleteFeedback(${idx})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
           </td>
@@ -4312,9 +4307,9 @@ Reviewer: ${review.reviewerId}
     }
 
     function adminDeleteFeedback(index) {
-      let comments = JSON.parse(localStorage.getItem('agentComments') || '[]');
+      let comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
       comments.splice(index, 1);
-      localStorage.setItem('agentComments', JSON.stringify(comments));
+      localStorage.setItem('reviewComments', JSON.stringify(comments));
       adminLoadFeedbackList();
     }
 
