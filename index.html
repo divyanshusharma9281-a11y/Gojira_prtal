@@ -3855,9 +3855,17 @@ Reviewer: ${review.reviewerId}
         filtered = filtered.filter(r => r.entity === adminCurrentEntity);
       }
 
-      // Filter by selected agent if one is chosen
+      // IMPORTANT: Only show reviews for the SELECTED agent
       if (adminCurrentAgent) {
         filtered = filtered.filter(r => r.agentId === adminCurrentAgent);
+      } else {
+        // If no agent is selected, show no reviews
+        filtered = [];
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No submitted reviews for this agent yet.</td></tr>';
+        return;
       }
 
       tbody.innerHTML = filtered.map((review, idx) => `
@@ -3873,6 +3881,7 @@ Reviewer: ${review.reviewerId}
           </td>
         </tr>
       `).join('');
+    }
     }
 
     function openFileContent(content, name) {
