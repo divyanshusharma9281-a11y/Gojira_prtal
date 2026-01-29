@@ -1319,14 +1319,6 @@
           <p class="text-xs text-slate-500 mt-2">Selected: <span id="admin-review-file-name">None</span></p>
         </div>
 
-        <!-- Chat/Email ID Section (for Non-Voice reviews) -->
-        <div id="admin-review-id-section" class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-purple-200 dark:border-slate-600">
-          <label class="block text-sm font-semibold mb-3">Enter Chat/Email ID or Thread ID</label>
-          <input type="text" id="admin-review-id-input" placeholder="e.g., chat_12345 or email_thread_789"
-            class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-          <p class="text-xs text-slate-500 mt-2">This ID will be referenced in the review</p>
-        </div>
-
         <div id="admin-review-items-container" class="space-y-6">
           <!-- Review items will be dynamically added here -->
         </div>
@@ -3806,19 +3798,7 @@ Reviewer: ${review.reviewerId}
       document.getElementById('admin-quality-form-section').classList.remove('hidden');
       document.getElementById('admin-review-agent-display').textContent = adminCurrentAgentName;
       
-      // Show/hide file vs ID input based on type
-      const fileSection = document.getElementById('admin-review-file-section');
-      const idSection = document.getElementById('admin-review-id-section');
-      
-      if (type === 'voice') {
-        fileSection.classList.remove('hidden');
-        idSection.classList.add('hidden');
-      } else {
-        fileSection.classList.add('hidden');
-        idSection.classList.remove('hidden');
-      }
-
-      // Add first item
+      // Add first review item
       adminAddReviewItem();
     }
 
