@@ -1096,8 +1096,8 @@
         <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition"
           onclick="checkAgentNotifications(true)" title="Check Updates">
           <span class="text-2xl">🔔</span>
-          <span id="agent-notification-dot"
-            class="hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
+          <span
+            class="agent-notification-dot hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
         </div>
         <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
       </div>
@@ -1358,7 +1358,18 @@
   <div id="view-agent-qa" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
+        <button onclick="navigateTo('view-performance')" class="font-bold text-slate-500 hover:text-blue-600">←
+          Back</button>
         <span class="font-bold text-xl text-purple-600">Quality Assurance Checklist - Weekly Performance</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition"
+          onclick="checkAgentNotifications(true)" title="Check Updates">
+          <span class="text-2xl">🔔</span>
+          <span
+            class="agent-notification-dot hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
+        </div>
+        <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
       </div>
     </header>
 
@@ -2956,15 +2967,15 @@ Reviewer: ${review.reviewerId}
       });
 
       const hasUpdate = recentReviews.length > 0;
-      const dot = document.getElementById('agent-notification-dot');
+      const dots = document.querySelectorAll('.agent-notification-dot');
 
       if (hasUpdate) {
-        if (dot) dot.classList.remove('hidden');
+        dots.forEach(dot => dot.classList.remove('hidden'));
         if (showPopup) {
           alert('You have received the quality feedback for this week kindly check.');
         }
       } else {
-        if (dot) dot.classList.add('hidden');
+        dots.forEach(dot => dot.classList.add('hidden'));
         if (showPopup) {
           alert("There's no update.");
         }
