@@ -3862,6 +3862,16 @@ Reviewer: ${review.reviewerId}
             <p class="text-xs text-slate-500 mt-1">Selected: <span class="review-file-name">None</span></p>
           </div>
         `;
+      } else {
+        // Show Chat/Email ID input for non-voice reviews
+        itemHtml += `
+          <!-- Chat/Email ID (Non-Voice) -->
+          <div class="mb-4">
+            <label class="block text-sm font-semibold mb-2">Enter Chat/Email ID or Thread ID</label>
+            <input type="text" class="review-chat-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+              placeholder="e.g., chat123, thread456, email@example.com" data-item-index="${itemIndex - 1}">
+          </div>
+        `;
       }
 
       // Common fields for both voice and non-voice
@@ -3897,7 +3907,7 @@ Reviewer: ${review.reviewerId}
       `;
 
       container.insertAdjacentHTML('beforeend', itemHtml);
-      adminReviewItems.push({ file: null, observation: '', score: null, reviewType: adminReviewType });
+      adminReviewItems.push({ file: null, chatId: '', observation: '', score: null, reviewType: adminReviewType });
 
       // Update button states
       adminUpdateReviewButtons();
@@ -3949,31 +3959,41 @@ Reviewer: ${review.reviewerId}
         const observation = item.querySelector('.review-observation').value;
         const score = item.querySelector('.review-score:checked')?.value;
         
-        // For voice reviews, file is required. For non-voice, file is not needed.
-        const fileInput = item.querySelector('.review-file-input');
-        const file = fileInput ? fileInput.files[0] : null;
+        // For voice reviews, capture file. For non-voice, capture Chat/Email ID
+        let file = null;
+        let chatId = '';
+        
+        if (adminReviewType === 'voice') {
+          const fileInput = item.querySelector('.review-file-input');
+          file = fileInput ? fileInput.files[0] : null;
+        } else {
+          const chatIdInput = item.querySelector('.review-chat-id');
+          chatId = chatIdInput ? chatIdInput.value.trim() : '';
+        }
 
         items.push({
           file: file,
+          chatId: chatId,
           observation: observation,
           score: parseInt(score) || null,
           reviewType: adminReviewType
         });
       });
 
-      // Filter out empty items but allow non-voice items without files
+      // Filter out empty items - validate based on review type
       const validItems = items.filter(item => {
         if (adminReviewType === 'voice') {
           return item.file && item.observation && item.score !== null;
         } else {
-          // Non-voice: file not required, but observation and score are
-          return item.observation && item.score !== null;
+          // Non-voice: chatId, observation and score are required
+          return item.chatId && item.observation && item.score !== null;
         }
       });
 
       // Validate
       if (validItems.length === 0) {
-        alert(`Please complete at least one ${adminReviewType === 'voice' ? 'file upload with' : ''} review item`);
+        const required = adminReviewType === 'voice' ? 'file and observation' : 'Chat/Email ID and observation';
+        alert(`Please complete at least one review item with ${required} and a score`);
         return;
       }
 
@@ -4004,19 +4024,26 @@ Reviewer: ${review.reviewerId}
 
         processedItems.forEach((item, idx) => {
           const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 1000).toString() + '-' + idx;
-          reviews.push({
+          const reviewObj = {
             id: reviewId,
             date: now.toLocaleDateString(),
             agentId: adminCurrentAgent,
             agentName: adminCurrentAgentName,
             entity: adminCurrentEntity,
             reviewType: item.reviewType,
-            fileName: item.fileName,
-            fileContent: item.fileContent,
             score: item.score,
             observation: item.observation,
             expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
-          });
+          };
+          
+          if (item.reviewType === 'voice') {
+            reviewObj.fileName = item.fileName;
+            reviewObj.fileContent = item.fileContent;
+          } else {
+            reviewObj.chatId = item.chatId;
+          }
+          
+          reviews.push(reviewObj);
         });
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
