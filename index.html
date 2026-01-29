@@ -1272,6 +1272,39 @@
         </button>
       </div>
 
+      <!-- Voice/Non-Voice Type Selection Modal -->
+      <div id="voice-type-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4">
+          <h2 class="text-2xl font-bold mb-6 text-center">Select Review Type</h2>
+          <p class="text-slate-600 dark:text-slate-400 text-center mb-6">Choose the type of quality check for this agent</p>
+          
+          <div class="space-y-4">
+            <button onclick="selectVoiceType('voice')" 
+              class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-3">
+              <span class="text-2xl">🎙️</span>
+              <div>
+                <div class="font-bold">Voice</div>
+                <div class="text-sm opacity-90">Call recordings & interaction</div>
+              </div>
+            </button>
+            
+            <button onclick="selectVoiceType('non-voice')" 
+              class="w-full bg-purple-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-purple-700 transition flex items-center justify-center gap-3">
+              <span class="text-2xl">💬</span>
+              <div>
+                <div class="font-bold">Non-Voice</div>
+                <div class="text-sm opacity-90">Chat/Email interactions</div>
+              </div>
+            </button>
+          </div>
+          
+          <button onclick="document.getElementById('voice-type-modal').classList.add('hidden')" 
+            class="w-full mt-4 bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-400 transition">
+            Cancel
+          </button>
+        </div>
+      </div>
+
       <!-- Section 2: Quality Review Form (Hidden initially) -->
       <div id="admin-quality-form-section"
         class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
@@ -1282,6 +1315,22 @@
           </h2>
           <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
             Back</button>
+        </div>
+
+        <!-- File Input Section (for Voice reviews) -->
+        <div id="admin-review-file-section" class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-emerald-200 dark:border-slate-600">
+          <label class="block text-sm font-semibold mb-3">Select Call Recording or File (Max 100MB)</label>
+          <input type="file" id="admin-review-file-input" 
+            class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700">
+          <p class="text-xs text-slate-500 mt-2">Selected: <span id="admin-review-file-name">None</span></p>
+        </div>
+
+        <!-- Chat/Email ID Section (for Non-Voice reviews) -->
+        <div id="admin-review-id-section" class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-purple-200 dark:border-slate-600">
+          <label class="block text-sm font-semibold mb-3">Enter Chat/Email ID or Thread ID</label>
+          <input type="text" id="admin-review-id-input" placeholder="e.g., chat_12345 or email_thread_789"
+            class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+          <p class="text-xs text-slate-500 mt-2">This ID will be referenced in the review</p>
         </div>
 
         <div id="admin-review-items-container" class="space-y-6">
@@ -2960,10 +3009,7 @@ Reviewer: ${review.reviewerId}
         // Handle date string MM/DD/YYYY or similar
         return r.agentId === currentUser.id;
       });
-      // Further filter by date if needed, but for now just showing if ANY new reviews exist might be better if the user thinks "received the quality feedback for THIS week". 
-      // Let's rely on adminReviews matching current agent as primary.
 
-      // Check if there are reviews from this week?
       const recentReviews = newReviews.filter(r => {
         const d = new Date(r.date);
         return !isNaN(d.getTime()) && d >= oneWeekAgo;
@@ -2976,6 +3022,8 @@ Reviewer: ${review.reviewerId}
         dots.forEach(dot => dot.classList.remove('hidden'));
         if (showPopup) {
           alert('You have received the quality feedback for this week kindly check.');
+          // Auto-remove notification after agent sees it
+          dots.forEach(dot => dot.classList.add('hidden'));
         }
       } else {
         dots.forEach(dot => dot.classList.add('hidden'));
@@ -3624,6 +3672,7 @@ Reviewer: ${review.reviewerId}
     let adminCurrentAgent = '';
     let adminCurrentAgentName = '';
     let adminReviewItems = [];
+    let adminReviewType = ''; // 'voice' or 'non-voice'
 
     function adminLoadAgents() {
       // Display current entity
@@ -3707,9 +3756,31 @@ Reviewer: ${review.reviewerId}
         return;
       }
 
+      // Show voice/non-voice selection modal
+      document.getElementById('voice-type-modal').classList.remove('hidden');
+    }
+
+    function selectVoiceType(type) {
+      // type: 'voice' or 'non-voice'
+      adminReviewType = type;
+      document.getElementById('voice-type-modal').classList.add('hidden');
+      
+      // Show quality review form
       adminReviewItems = [];
       document.getElementById('admin-quality-form-section').classList.remove('hidden');
       document.getElementById('admin-review-agent-display').textContent = adminCurrentAgentName;
+      
+      // Show/hide file vs ID input based on type
+      const fileSection = document.getElementById('admin-review-file-section');
+      const idSection = document.getElementById('admin-review-id-section');
+      
+      if (type === 'voice') {
+        fileSection.classList.remove('hidden');
+        idSection.classList.add('hidden');
+      } else {
+        fileSection.classList.add('hidden');
+        idSection.classList.remove('hidden');
+      }
 
       // Add first item
       adminAddReviewItem();
@@ -3736,21 +3807,29 @@ Reviewer: ${review.reviewerId}
       const itemIndex = adminReviewItems.length + 1;
       const container = document.getElementById('admin-review-items-container');
 
-      const itemHtml = `
+      let itemHtml = `
         <div class="admin-review-item bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600">
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-bold text-lg">Review #${itemIndex}</h4>
             ${itemIndex > 1 ? `<button onclick="adminRemoveReviewItem(${itemIndex - 1})" class="text-red-600 hover:text-red-700 text-sm">🗑️ Remove</button>` : ''}
           </div>
+      `;
 
-          <!-- File Upload -->
+      // Show file upload only for voice reviews
+      if (adminReviewType === 'voice') {
+        itemHtml += `
+          <!-- File Upload (Voice) -->
           <div class="mb-4">
             <label class="block text-sm font-semibold mb-2">Select File (Max 20MB)</label>
             <input type="file" class="review-file-input block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700"
               data-item-index="${itemIndex - 1}" onchange="adminOnFileSelected(${itemIndex - 1})">
             <p class="text-xs text-slate-500 mt-1">Selected: <span class="review-file-name">None</span></p>
           </div>
+        `;
+      }
 
+      // Common fields for both voice and non-voice
+      itemHtml += `
           <!-- Observation -->
           <div class="mb-4">
             <label class="block text-sm font-semibold mb-2">Observation</label>
@@ -3782,7 +3861,7 @@ Reviewer: ${review.reviewerId}
       `;
 
       container.insertAdjacentHTML('beforeend', itemHtml);
-      adminReviewItems.push({ file: null, observation: '', score: null });
+      adminReviewItems.push({ file: null, observation: '', score: null, reviewType: adminReviewType });
 
       // Update button states
       adminUpdateReviewButtons();
@@ -3829,24 +3908,36 @@ Reviewer: ${review.reviewerId}
 
     async function adminFinalSubmit() {
       // Collect data from form
-      adminReviewItems = [];
+      const items = [];
       document.querySelectorAll('.admin-review-item').forEach((item, index) => {
-        const fileInput = item.querySelector('.review-file-input');
         const observation = item.querySelector('.review-observation').value;
         const score = item.querySelector('.review-score:checked')?.value;
+        
+        // For voice reviews, file is required. For non-voice, file is not needed.
+        const fileInput = item.querySelector('.review-file-input');
+        const file = fileInput ? fileInput.files[0] : null;
 
-        if (fileInput.files[0]) {
-          adminReviewItems[index] = {
-            file: fileInput.files[0],
-            observation: observation,
-            score: parseInt(score) || null
-          };
+        items.push({
+          file: file,
+          observation: observation,
+          score: parseInt(score) || null,
+          reviewType: adminReviewType
+        });
+      });
+
+      // Filter out empty items but allow non-voice items without files
+      const validItems = items.filter(item => {
+        if (adminReviewType === 'voice') {
+          return item.file && item.observation && item.score !== null;
+        } else {
+          // Non-voice: file not required, but observation and score are
+          return item.observation && item.score !== null;
         }
       });
 
       // Validate
-      if (adminReviewItems.length === 0) {
-        alert('Please add at least one review');
+      if (validItems.length === 0) {
+        alert(`Please complete at least one ${adminReviewType === 'voice' ? 'file upload with' : ''} review item`);
         return;
       }
 
@@ -3855,14 +3946,19 @@ Reviewer: ${review.reviewerId}
       submitBtn.disabled = true;
 
       try {
-        // Read all files as Data URLs
-        const processedItems = await Promise.all(adminReviewItems.map(item => {
+        // Read all files as Data URLs (for voice reviews only)
+        const processedItems = await Promise.all(validItems.map(item => {
           return new Promise((resolve, reject) => {
-            if (!item.file) resolve(null);
-            const reader = new FileReader();
-            reader.onload = (e) => resolve({ ...item, fileContent: e.target.result });
-            reader.onerror = reject;
-            reader.readAsDataURL(item.file);
+            if (!item.file) {
+              // Non-voice review without file
+              resolve({ ...item, fileContent: null, fileName: null });
+            } else {
+              // Voice review with file
+              const reader = new FileReader();
+              reader.onload = (e) => resolve({ ...item, fileContent: e.target.result, fileName: item.file.name });
+              reader.onerror = reject;
+              reader.readAsDataURL(item.file);
+            }
           });
         }));
 
@@ -3871,27 +3967,26 @@ Reviewer: ${review.reviewerId}
         const now = new Date();
 
         processedItems.forEach(item => {
-          if (item) {
-            reviews.push({
-              date: now.toLocaleDateString(),
-              agentId: adminCurrentAgent,
-              agentName: adminCurrentAgentName,
-              entity: adminCurrentEntity,
-              fileName: item.file.name,
-              fileContent: item.fileContent, // Store content
-              score: item.score,
-              observation: item.observation,
-              expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
-            });
-          }
+          reviews.push({
+            date: now.toLocaleDateString(),
+            agentId: adminCurrentAgent,
+            agentName: adminCurrentAgentName,
+            entity: adminCurrentEntity,
+            reviewType: item.reviewType,
+            fileName: item.fileName,
+            fileContent: item.fileContent,
+            score: item.score,
+            observation: item.observation,
+            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
+          });
         });
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
         // Add feedback to agent in gojira_comments
         let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
-        const feedbackText = adminReviewItems
-          .filter(item => item && item.observation)
+        const feedbackText = processedItems
+          .filter(item => item.observation)
           .map((item, idx) => `Review ${idx + 1}: ${item.observation}`)
           .join('\n');
 
