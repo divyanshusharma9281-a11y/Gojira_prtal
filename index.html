@@ -3024,76 +3024,6 @@ Reviewer: ${review.reviewerId}
       currentUser = null;
       navigateTo('view-home');
     }
-
-    // ===== REVIEWER FUNCTIONS =====
-    let reviewerCurrentEntity = '';
-    let reviewerCurrentAgent = '';
-
-    function reviewerLoadAgentsForEntity() {
-      // Load agents for the current entity
-      let agents = USER_DB.filter(u => u.role === 'agent' && u.entity === reviewerCurrentEntity);
-      const selector = document.getElementById('reviewer-agent-selector');
-      selector.innerHTML = '<option value="">-- Choose Agent --</option>';
-
-      agents.forEach(agent => {
-        const option = document.createElement('option');
-        option.value = agent.id;
-        option.textContent = `${agent.name} (${agent.id})`;
-        selector.appendChild(option);
-      });
-    }
-
-    function reviewerSelectEntity(entity) {
-      reviewerCurrentEntity = entity;
-      document.getElementById('reviewer-entity-display').textContent = entity || '--';
-
-      if (entity) {
-        reviewerLoadAgentsForEntity();
-        // Hide reviews section when entity changes
-        document.getElementById('reviewer-reviews-section').classList.add('hidden');
-      }
-    }
-
-    function reviewerSelectAgent(selectElement) {
-      const selectedOption = selectElement.options[selectElement.selectedIndex];
-      const agentId = selectedOption.value;
-
-      if (agentId) {
-        reviewerCurrentAgent = agentId;
-        reviewerLoadReviews();
-        document.getElementById('reviewer-reviews-section').classList.remove('hidden');
-      } else {
-        reviewerCurrentAgent = '';
-        document.getElementById('reviewer-reviews-section').classList.add('hidden');
-      }
-    }
-
-    function reviewerLoadReviews() {
-      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const tbody = document.getElementById('reviewer-reviews-list');
-
-      // Remove expired reviews
-      const now = new Date();
-      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
-
-      // Filter by current entity and agent
-      if (reviewerCurrentEntity) {
-        filtered = filtered.filter(r => r.entity === reviewerCurrentEntity);
-      }
-
-      if (reviewerCurrentAgent) {
-        filtered = filtered.filter(r => r.agentId === reviewerCurrentAgent);
-      }
-
-      tbody.innerHTML = filtered.map((review, idx) => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-          <td class="p-6">${review.date}</td>
-          <td class="p-6">${review.agentName}</td>
-          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
-          <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
-          <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
-          <td class="p-6 text-right">
-            <button onclick="reviewerViewReview('${review.date}', '${review.agentName}', '${review.fileName}', '${review.score}', '${review.observation}', '${review.fileContent}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
           </td>
         </tr>
       `).join('');
@@ -3429,6 +3359,11 @@ Reviewer: ${review.reviewerId}
         filterResourcesQACard();
       }
 
+      // Load QA Dashboard for agents
+      if (id === 'view-agent-qa') {
+        agentLoadQADashboard();
+      }
+
       // Check notifications on navigation if agent
       if (currentSessionUser && currentSessionUser.role === 'agent') {
         checkAgentNotifications(false);
@@ -3552,31 +3487,14 @@ Reviewer: ${review.reviewerId}
     }
 
     function handleChecklistClick(entityName) {
-      // If user is logged in via portal, use their session
-      if (currentSessionUser) {
+      // If user is logged in as admin, set entity and navigate to admin dashboard
+      if (currentSessionUser && currentSessionUser.role === 'admin') {
         currentEntity = entityName;
-
-        // Admin users navigate to admin dashboard
-        if (currentSessionUser.role === 'admin') {
-          adminCurrentEntity = entityName;
-          navigateTo('view-admin');
-          adminLoadAgents();
-        } else if (currentSessionUser.role === 'reviewer') {
-          // Reviewers navigate to reviewer dashboard with selected entity
-          reviewerCurrentEntity = entityName;
-
-          // Update entity display
-          const display = document.getElementById('reviewer-entity-display');
-          if (display) display.textContent = reviewerCurrentEntity;
-
-          navigateTo('view-reviewer');
-          reviewerLoadAgentsForEntity();
-        } else {
-          // Agents and other logged-in users navigate to entity view
-          navigateTo('view-' + entityName.toLowerCase());
-        }
+        adminCurrentEntity = entityName;
+        navigateTo('view-admin');
+        adminLoadAgents();
       } else {
-        // For non-logged-in users, show login modal
+        // For non-logged-in users or non-admins, show login modal
         showLogin(entityName);
       }
     }
