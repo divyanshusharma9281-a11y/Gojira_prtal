@@ -2809,22 +2809,18 @@ Reviewer: ${review.reviewerId}
           <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
           <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
           <td class="p-6 text-right">
-            <button onclick="reviewerViewReview('${review.date}', '${review.agentName}', '${review.fileName}', '${review.score}', '${review.observation}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
+            <button onclick="reviewerViewReview('${review.date}', '${review.agentName}', '${review.fileName}', '${review.score}', '${review.observation}', '${review.fileContent}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
           </td>
         </tr>
       `).join('');
     }
 
-    function reviewerViewReview(date, agentName, fileName, score, observation) {
-      const content = `
-        <strong>Date:</strong> ${date}<br>
-        <strong>Agent:</strong> ${agentName}<br>
-        <strong>File:</strong> ${fileName}<br>
-        <strong>Score:</strong> ${score}<br>
-        <strong>Observation:</strong><br>
-        <p>${observation}</p>
-      `;
-      alert(content);
+    function reviewerViewReview(date, agentName, fileName, score, observation, fileContent) {
+      const choice = confirm(`Date: ${date}\nAgent: ${agentName}\nFile: ${fileName}\nScore: ${score}\nObservation: ${observation}\n\nClick OK to open the file.`);
+
+      if (choice && fileContent && fileContent !== 'undefined') {
+        openFileContent(fileContent, fileName);
+      }
     }
 
     // ===== AGENT QUALITY ASSURANCE FUNCTIONS =====
