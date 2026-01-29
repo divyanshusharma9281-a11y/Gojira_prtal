@@ -668,8 +668,6 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools', 'rupee112')" id="tab-tools-rupee112"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-        <button onclick="showTab('agents', 'rupee112')" id="tab-agents-rupee112"
-          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -749,15 +747,6 @@
         </div>
       </div>
 
-      <!-- Agents Tab Content -->
-      <div id="content-agents-rupee112" class="tab-content hidden">
-        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
-          <h3 class="text-2xl font-bold mb-6">Agents for Rupee112</h3>
-          <div id="agents-list-rupee112" class="space-y-4">
-            <!-- Agents will be populated by JS -->
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -784,8 +773,6 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools', 'loan112')" id="tab-tools-loan112"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-        <button onclick="showTab('agents', 'loan112')" id="tab-agents-loan112"
-          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -865,15 +852,6 @@
         </div>
       </div>
 
-      <!-- Agents Tab Content -->
-      <div id="content-agents-loan112" class="tab-content hidden">
-        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
-          <h3 class="text-2xl font-bold mb-6">Agents for Loan112</h3>
-          <div id="agents-list-loan112" class="space-y-4">
-            <!-- Agents will be populated by JS -->
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -900,8 +878,6 @@
           class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
         <button onclick="showTab('tools', 'rupeeontime')" id="tab-tools-rupeeontime"
           class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-        <button onclick="showTab('agents', 'rupeeontime')" id="tab-agents-rupeeontime"
-          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Agents</button>
       </div>
 
       <!-- Guidelines Tab Content -->
@@ -981,15 +957,6 @@
         </div>
       </div>
 
-      <!-- Agents Tab Content -->
-      <div id="content-agents-rupeeontime" class="tab-content hidden">
-        <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700">
-          <h3 class="text-2xl font-bold mb-6">Agents for RupeeOnTime</h3>
-          <div id="agents-list-rupeeontime" class="space-y-4">
-            <!-- Agents will be populated by JS -->
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -3231,7 +3198,7 @@ Reviewer: ${review.reviewerId}
       // Hide all tab contents
       document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
       // Remove active from all tabs
-      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}, #tab-agents${prefix}` : '#tab-guidelines, #tab-tools, #tab-agents';
+      const tabSelectors = entity ? `#tab-guidelines${prefix}, #tab-tools${prefix}` : '#tab-guidelines, #tab-tools';
       document.querySelectorAll(tabSelectors).forEach(btn => {
         btn.classList.remove('text-blue-600', 'border-blue-600');
         btn.classList.add('text-slate-500', 'border-transparent');
