@@ -1174,36 +1174,7 @@
         </button>
       </div>
 
-      <!-- Section 2: Uploaded Reports -->
-      <div id="admin-reports-section" class="mb-12">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📄</span>
-          Uploaded Reports
-        </h2>
-        <div class="mb-4">
-          <button onclick="adminDeleteAllReports()"
-            class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
-            🗑️ Delete All Reports
-          </button>
-        </div>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-6">Date</th>
-                <th class="p-6">Name</th>
-                <th class="p-6">Type</th>
-                <th class="p-6 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="admin-reports-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Section 3: Quality Review Form (Hidden initially) -->
+      <!-- Section 2: Quality Review Form (Hidden initially) -->
       <div id="admin-quality-form-section"
         class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
         <div class="flex items-center justify-between mb-6">
@@ -1834,27 +1805,6 @@
       // It should use adminLoadAgents() instead to maintain consistency
       adminLoadAgents();
       
-      // Populate Reports Table
-      const reports = MockBackend.getReports();
-      const reportsList = document.getElementById('admin-reports-list');
-      if (reportsList) {
-        if (reports.length === 0) {
-          reportsList.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No reports uploaded yet.</td></tr>';
-        } else {
-          reportsList.innerHTML = reports.map(r => `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <td class="p-6">${r.date}</td>
-              <td class="p-6">${r.name}</td>
-              <td class="p-6">${r.type || 'Unknown'}</td>
-              <td class="p-6 text-right">
-                <button onclick="openReport('${r.content}', '${r.type}')" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                <button onclick="handleDeleteReport(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
-              </td>
-            </tr>
-          `).join('');
-        }
-      }
-
       // Populate Performance Reviews Table
       const reviews = MockBackend.getPerformanceScores();
       const reviewsList = document.getElementById('admin-reviews-list');
