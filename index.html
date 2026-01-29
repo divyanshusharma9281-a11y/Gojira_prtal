@@ -3024,18 +3024,6 @@ Reviewer: ${review.reviewerId}
       currentUser = null;
       navigateTo('view-home');
     }
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function reviewerViewReview(date, agentName, fileName, score, observation, fileContent) {
-      const choice = confirm(`Date: ${date}\nAgent: ${agentName}\nFile: ${fileName}\nScore: ${score}\nObservation: ${observation}\n\nClick OK to open the file.`);
-
-      if (choice && fileContent && fileContent !== 'undefined') {
-        openFileContent(fileContent, fileName);
-      }
-    }
 
     // ===== AGENT QUALITY ASSURANCE FUNCTIONS =====
     function agentLoadQADashboard() {
