@@ -573,8 +573,188 @@
             <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄</div>
             <div>
               <h3 class="text-xl font-bold">Guidelines</h3>
-              <p class="text-slate-600 dark:text-slate-300">Comprehensive brand guidelines and procedures.</p>
+              <p class="text-slate-600 dark:text-slate-300">Comprehensive operational procedures.</p>
             </div>
+          </div>
+
+          <div class="space-y-4 mt-6">
+            <!-- 1. Payment Queries -->
+            <div class="faq-item border-b border-slate-200 dark:border-slate-700 pb-4">
+              <button onclick="toggleFaq(this)"
+                class="w-full text-left font-bold text-lg flex justify-between items-center text-slate-800 dark:text-slate-200 hover:text-purple-600 transition">
+                <span>1. Payment Queries</span>
+                <span>▼</span>
+              </button>
+              <div class="faq-answer text-slate-600 dark:text-slate-300 text-sm">
+                <div class="mb-4 mt-2">
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">A. Payment Not Reflecting (Agent Portal)
+                  </h4>
+                  <p><strong>Step 1:</strong> Verbally confirm the exact payment amount with the customer.</p>
+                  <p><strong>Step 2:</strong> Update the WhatsApp Group immediately with the confirmed amount.</p>
+                  <p><strong>Step 3:</strong> Escalate/Tag the concerned team via email.</p>
+                  <p class="text-red-500 font-bold mt-1">Rule: Escalation is forbidden without prior amount
+                    confirmation.</p>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">B. Payment Reflecting (Verification
+                    Pending)</h4>
+                  <p><strong>Script:</strong> "We have received your payment of ₹[Amount]. Your payment is currently
+                    under verification and will be updated within 24 hours (maximum)."</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Application Status Queries -->
+            <div class="faq-item border-b border-slate-200 dark:border-slate-700 pb-4">
+              <button onclick="toggleFaq(this)"
+                class="w-full text-left font-bold text-lg flex justify-between items-center text-slate-800 dark:text-slate-200 hover:text-purple-600 transition">
+                <span>2. Application Status Queries</span>
+                <span>▼</span>
+              </button>
+              <div class="faq-answer text-slate-600 dark:text-slate-300 text-sm">
+                <div class="mb-4 mt-2">
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">A. Incomplete Applications
+                    (Leads/Partial/eKYC Pending)</h4>
+                  <p><strong>Script:</strong> "Your application is currently in process. Kindly complete the remaining
+                    steps 100% through the application. If you are facing any issues, please visit our website or
+                    contact us at care@bharatloan.com and try again after some time."</p>
+                  <p class="mt-2"><strong>If asked about time:</strong> "There is a maximum processing time of 24 hours
+                    after 100% completion. A credit manager will then be assigned and will contact you within 24 hours."
+                  </p>
+                  <p class="text-red-500 font-bold mt-1">🚫 Prohibition: Never assure a callback within 24 hours for
+                    incomplete applications.</p>
+                </div>
+                <div class="mb-4">
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">B. Successfully Submitted (#Reference
+                    Generated)</h4>
+                  <p><strong>Script:</strong> "Your application has been submitted successfully. Our team will contact
+                    you within 24 hours."</p>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">C. Repeat Customers (100% Applied)</h4>
+                  <p><strong>Script:</strong> "Since you are an existing customer, your application status is in
+                    process. Kindly wait while a credit manager is assigned. They will contact you within 24 hours."</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Credit Manager Escalations -->
+            <div class="faq-item border-b border-slate-200 dark:border-slate-700 pb-4">
+              <button onclick="toggleFaq(this)"
+                class="w-full text-left font-bold text-lg flex justify-between items-center text-slate-800 dark:text-slate-200 hover:text-purple-600 transition">
+                <span>3. Credit Manager Escalations</span>
+                <span>▼</span>
+              </button>
+              <div class="faq-answer text-slate-600 dark:text-slate-300 text-sm">
+                <table class="w-full text-left mt-2 border-collapse">
+                  <thead>
+                    <tr class="border-b border-slate-200 dark:border-slate-700">
+                      <th class="py-2 font-bold">Scenario</th>
+                      <th class="py-2 font-bold">Action</th>
+                      <th class="py-2 font-bold">Agent Script</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tr>
+                      <td class="py-2 pr-2">New Concern</td>
+                      <td class="py-2 pr-2">Highlight/Escalate</td>
+                      <td class="py-2 italic">"Your concern is being escalated; the team will contact you within 24
+                        hours."</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 pr-2">Raised Same Day</td>
+                      <td class="py-2 pr-2">Verify previous log</td>
+                      <td class="py-2 italic">"An executive has already escalated this; the team will contact you within
+                        24 hours."</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 pr-2">Raised Twice</td>
+                      <td class="py-2 pr-2">Tag Manager in email</td>
+                      <td class="py-2 italic">"We are prioritizing this with senior management. Please wait for the 24h
+                        window."</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 4. Collections & Special Requests -->
+            <div class="faq-item border-b border-slate-200 dark:border-slate-700 pb-4">
+              <button onclick="toggleFaq(this)"
+                class="w-full text-left font-bold text-lg flex justify-between items-center text-slate-800 dark:text-slate-200 hover:text-purple-600 transition">
+                <span>4. Collections & Special Requests</span>
+                <span>▼</span>
+              </button>
+              <div class="faq-answer text-slate-600 dark:text-slate-300 text-sm">
+                <div class="mb-4 mt-2">
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">A. Medical Extensions</h4>
+                  <p><strong>Mandatory Script:</strong> "We do not have the authority to grant extensions. Your case is
+                    with the collection team. If payment is delayed, it may impact your CIBIL score, and a 2% daily
+                    charge (1% interest + 1% penalty) will apply. Please email valid medical documents to
+                    care@bharatloan.com for review."</p>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">B. Penalty Waiver / Settlement</h4>
+                  <p><strong>Step 1:</strong> Ask the customer for the specific reason.</p>
+                  <p><strong>Script:</strong> "We do not have authority for waivers. Please email care@bharatloan.com
+                    with valid reasons and evidence. Your concern will be escalated for a response within 24 hours."</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Disbursement & Refunds -->
+            <div class="faq-item border-b border-slate-200 dark:border-slate-700 pb-4">
+              <button onclick="toggleFaq(this)"
+                class="w-full text-left font-bold text-lg flex justify-between items-center text-slate-800 dark:text-slate-200 hover:text-purple-600 transition">
+                <span>5. Disbursement & Refunds</span>
+                <span>▼</span>
+              </button>
+              <div class="faq-answer text-slate-600 dark:text-slate-300 text-sm">
+                <div class="mb-4 mt-2">
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">A. Disbursement Delay</h4>
+                  <p><strong>Rule:</strong> Wait 48 hours from the disbursement date.</p>
+                  <p><strong>Action (<48h):< /strong> Do not escalate. Advise the customer to wait.</p>
+                  <p><strong>Action (>48h):</strong> Request a bank statement via email for verification.</p>
+                </div>
+                <div class="mb-4">
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">B. Cancellation After Disbursement</h4>
+                  <p><strong>Action:</strong> Immediately update the Refund Tracker under the sheet “Cancel After
+                    Disbursement” with 100% accurate details.</p>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2">C. Pending Refunds</h4>
+                  <p><strong>Step 1:</strong> Confirm the refund amount with the customer.</p>
+                  <p><strong>Timeline:</strong> Inform the customer of the 7–10 working days window.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Email Protocol -->
+            <div class="faq-item border-b border-slate-200 dark:border-slate-700 pb-4">
+              <button onclick="toggleFaq(this)"
+                class="w-full text-left font-bold text-lg flex justify-between items-center text-slate-800 dark:text-slate-200 hover:text-purple-600 transition">
+                <span>6. Email Protocol (Mandatory)</span>
+                <span>▼</span>
+              </button>
+              <div class="faq-answer text-slate-600 dark:text-slate-300 text-sm">
+                <div class="mb-4 mt-2">
+                  <p class="text-red-500 font-bold mb-2">🚫 Strict Prohibition: Never use "Sir" or "Ma'am."</p>
+                  <p><strong>Greeting:</strong> Always use the customer's First Name (e.g., "Dear Rajesh,").</p>
+                </div>
+                <div
+                  class="bg-indigo-50 dark:bg-slate-700 p-4 rounded-xl border border-indigo-100 dark:border-slate-600">
+                  <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">Payment Confirmation Format:</h4>
+                  <p class="font-mono text-xs">
+                    Dear [Customer Name],<br><br>
+                    This is to confirm that we have received your payment as per the details below:<br><br>
+                    Loan Number: {{Loan Number}}<br>
+                    Amount Paid: {{Amount}}<br>
+                    Date of Payment: {{Payment Date}}
+                  </p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
