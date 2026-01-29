@@ -3829,6 +3829,8 @@ Reviewer: ${review.reviewerId}
 
         alert('Quality reviews submitted successfully!');
         adminCancelReview();
+        // Show the submitted reviews section and reload the list
+        document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
         adminLoadReviewsList();
       } catch (error) {
         console.error("Error submitting reviews:", error);
