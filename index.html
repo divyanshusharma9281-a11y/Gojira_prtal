@@ -183,7 +183,7 @@
           </button>
 
           <!-- Agent Notification (Home) -->
-          <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition"
+          <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition agent-notification-bell"
             onclick="checkAgentNotifications(true)" title="Check Updates">
             <span class="text-xl">🔔</span>
             <span
@@ -1102,7 +1102,7 @@
         <span id="agent-dashboard-title" class="font-bold text-xl">Agent Dashboard</span>
       </div>
       <div class="flex items-center gap-4">
-        <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition"
+        <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition agent-notification-bell"
           onclick="checkAgentNotifications(true)" title="Check Updates">
           <span class="text-2xl">🔔</span>
           <span
@@ -1420,7 +1420,7 @@
         <span class="font-bold text-xl text-purple-600">Quality Assurance Checklist - Weekly Performance</span>
       </div>
       <div class="flex items-center gap-4">
-        <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition"
+        <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition agent-notification-bell"
           onclick="checkAgentNotifications(true)" title="Check Updates">
           <span class="text-2xl">🔔</span>
           <span
@@ -3135,16 +3135,35 @@ Reviewer: ${review.reviewerId}
         noReviewsMsg.classList.remove('hidden');
       } else {
         noReviewsMsg.classList.add('hidden');
-        tbody.innerHTML = agentReviews.map(review => `
+        // Build rows showing full observation and comment/reply UI
+        tbody.innerHTML = agentReviews.map(review => {
+          const fileCell = review.fileName ? `<td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>` : `<td class="p-6 text-sm">-</td>`;
+
+          // Comments for this review
+          const comments = (JSON.parse(localStorage.getItem('reviewComments') || '[]')).filter(c => c.reviewId === review.id);
+          const commentsHtml = comments.length === 0 ? '<div class="text-sm text-slate-500 italic">No replies yet</div>' : comments.map(c => `<div class="mb-2"><strong class="text-sm">${c.authorName || c.authorId}</strong> <span class="text-xs text-slate-400">(${c.date})</span><div class="text-sm mt-1">${c.text}</div></div>`).join('');
+
+          return `
           <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
             <td class="p-6">${review.date}</td>
             <td class="p-6">${review.reviewerName || 'Admin'}</td>
-            <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
+            ${fileCell}
             <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : review.score >= 50 ? 'text-blue-600' : 'text-red-600'}">${review.score}</span></td>
-            <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
+            <td class="p-6 text-sm">
+              <div class="mb-3"><strong class="text-sm">Observation</strong>
+                <div class="text-sm mt-1 whitespace-pre-wrap">${(review.observation || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+              </div>
+              <div class="mb-3"><strong class="text-sm">Replies</strong>
+                <div id="review-comments-${review.id}" class="mt-2">${commentsHtml}</div>
+              </div>
+              <div class="flex gap-2">
+                <textarea id="reply-${review.id}" rows="2" placeholder="Add a reply..." class="w-full px-3 py-2 rounded border border-slate-200"></textarea>
+                <button onclick="agentReplyToReview('${review.id}')" class="px-4 py-2 bg-blue-600 text-white rounded">Reply</button>
+              </div>
+            </td>
             <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${review.score === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${review.score === 100 ? 'Good' : 'Review'}</span></td>
           </tr>
-        `).join('');
+        `}).join('');
       }
 
       // Load feedback
@@ -3207,6 +3226,30 @@ Reviewer: ${review.reviewerId}
         `).join('');
       }
       resultsDiv.classList.remove('hidden');
+    }
+
+    // Agent reply to a specific review
+    function agentReplyToReview(reviewId) {
+      const textarea = document.getElementById('reply-' + reviewId);
+      if (!textarea) return;
+      const text = textarea.value.trim();
+      if (!text) return alert('Please write a reply first.');
+      const now = new Date().toLocaleString();
+
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      comments.unshift({
+        id: Date.now().toString() + '-' + Math.floor(Math.random() * 1000).toString(),
+        reviewId: reviewId,
+        authorId: currentSessionUser?.id || currentUser?.id || 'agent',
+        authorName: currentSessionUser?.name || currentUser?.name || 'Agent',
+        text: text,
+        date: now
+      });
+      localStorage.setItem('reviewComments', JSON.stringify(comments));
+
+      // Clear textarea and refresh agent dashboard comments
+      textarea.value = '';
+      agentLoadQADashboard();
     }
 
     function selectAgent(id) {
@@ -3406,6 +3449,11 @@ Reviewer: ${review.reviewerId}
       } else if (currentUser && currentUser.role === 'agent') {
         checkAgentNotifications(false);
       }
+
+      // Show notification bell only on homepage
+      document.querySelectorAll('.agent-notification-bell').forEach(b => {
+        if (id === 'view-home') b.classList.remove('hidden'); else b.classList.add('hidden');
+      });
     }
 
     function toggleFaq(btn) {
@@ -3966,8 +4014,10 @@ Reviewer: ${review.reviewerId}
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         const now = new Date();
 
-        processedItems.forEach(item => {
+        processedItems.forEach((item, idx) => {
+          const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 1000).toString() + '-' + idx;
           reviews.push({
+            id: reviewId,
             date: now.toLocaleDateString(),
             agentId: adminCurrentAgent,
             agentName: adminCurrentAgentName,
