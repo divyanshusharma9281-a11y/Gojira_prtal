@@ -1429,9 +1429,9 @@
   <div id="view-agent-qa" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <button onclick="navigateTo('view-performance')" class="font-bold text-slate-500 hover:text-blue-600">←
+        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">←
           Back</button>
-        <span class="font-bold text-xl text-purple-600">Quality Assurance Checklist - Weekly Performance</span>
+        <span class="font-bold text-xl text-purple-600">Quality Assurance Checklist</span>
       </div>
       <div class="flex items-center gap-4">
       </div>
@@ -3296,9 +3296,13 @@ Reviewer: ${review.reviewerId}
       }
 
       // Determine performance status
-      let status = 'Excellent';
-      let statusColor = 'text-green-600';
-      if (avgScore >= 80) {
+      let status = 'Pending';
+      let statusColor = 'text-slate-600';
+      
+      if (totalReviews === 0) {
+        status = 'Pending';
+        statusColor = 'text-slate-600';
+      } else if (avgScore >= 80) {
         status = 'Excellent';
         statusColor = 'text-green-600';
       } else if (avgScore >= 60) {
@@ -4661,25 +4665,93 @@ Reviewer: ${review.reviewerId}
       if (!currentSessionUser || currentSessionUser.role !== 'agent') return;
 
       const agentId = currentSessionUser.id;
+      
+      // Get or initialize monthly data storage
+      let monthlyData = JSON.parse(localStorage.getItem(`agentMonthlyData_${agentId}`) || '{}');
+      const now = new Date();
+      
+      // If no data exists or month has passed, initialize new month
+      if (!monthlyData.startDate) {
+        monthlyData = {
+          startDate: now.getTime(),
+          weeks: [
+            { weekNumber: 1, audits: 0, avgScore: 0, fatalCount: 0 },
+            { weekNumber: 2, audits: 0, avgScore: 0, fatalCount: 0 },
+            { weekNumber: 3, audits: 0, avgScore: 0, fatalCount: 0 },
+            { weekNumber: 4, audits: 0, avgScore: 0, fatalCount: 0 }
+          ]
+        };
+      } else {
+        // Check if 28 days have passed since month started
+        const monthStartTime = new Date(monthlyData.startDate);
+        const daysPassed = (now - monthStartTime) / (1000 * 60 * 60 * 24);
+        
+        if (daysPassed >= 28) {
+          // Reset the month - start new cycle
+          monthlyData = {
+            startDate: now.getTime(),
+            weeks: [
+              { weekNumber: 1, audits: 0, avgScore: 0, fatalCount: 0 },
+              { weekNumber: 2, audits: 0, avgScore: 0, fatalCount: 0 },
+              { weekNumber: 3, audits: 0, avgScore: 0, fatalCount: 0 },
+              { weekNumber: 4, audits: 0, avgScore: 0, fatalCount: 0 }
+            ]
+          };
+        }
+      }
+
+      // Calculate which week we're in based on days elapsed
+      const monthStartTime = new Date(monthlyData.startDate);
+      const daysPassed = (now - monthStartTime) / (1000 * 60 * 60 * 24);
+      const currentWeekNumber = Math.floor(daysPassed / 7) + 1;
+      
+      // Get current week reviews
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const agentReviews = reviews.filter(r => r.agentId === agentId);
-
-      const now = new Date();
+      
       const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
       const monthlyReviews = agentReviews.filter(r => {
         const reviewDate = new Date(r.date);
         return reviewDate >= fourWeeksAgo && reviewDate <= now;
       });
 
-      const hasEnoughData = monthlyReviews.length > 0;
+      // Update current week data with latest reviews
+      if (monthlyData.weeks[currentWeekNumber - 1]) {
+        const weekStart = new Date(monthStartTime.getTime() + (currentWeekNumber - 1) * 7 * 24 * 60 * 60 * 1000);
+        const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+        
+        const weekReviews = monthlyReviews.filter(r => {
+          const reviewDate = new Date(r.date);
+          return reviewDate >= weekStart && reviewDate < weekEnd;
+        });
+        
+        const weekAudits = weekReviews.length;
+        const weekScore = weekAudits > 0 ? Math.round((weekReviews.reduce((sum, r) => sum + r.score, 0) / weekAudits / 100) * 100) : 0;
+        const weekFatals = weekReviews.filter(r => r.score === 0).length;
+        
+        monthlyData.weeks[currentWeekNumber - 1] = {
+          weekNumber: currentWeekNumber,
+          audits: weekAudits,
+          avgScore: weekScore,
+          fatalCount: weekFatals
+        };
+      }
+
+      // Save updated data
+      localStorage.setItem(`agentMonthlyData_${agentId}`, JSON.stringify(monthlyData));
+
+      // Check if we have data to display
+      const totalData = monthlyData.weeks.reduce((sum, w) => sum + w.audits, 0);
+      const hasEnoughData = totalData > 0;
+      
       document.getElementById('agent-no-monthly-data').classList.toggle('hidden', hasEnoughData);
 
       if (hasEnoughData) {
-        // Calculate overall monthly stats
-        const totalAudits = monthlyReviews.length;
-        const totalScore = monthlyReviews.reduce((sum, r) => sum + r.score, 0);
-        const avgScore = Math.round((totalScore / totalAudits / 100) * 100); // Convert to percentage
-        const fatalCount = monthlyReviews.filter(r => r.score === 0).length;
+        // Calculate overall stats from stored weeks
+        const totalAudits = monthlyData.weeks.reduce((sum, w) => sum + w.audits, 0);
+        const totalScore = monthlyData.weeks.reduce((sum, w) => sum + (w.audits > 0 ? w.avgScore * w.audits : 0), 0);
+        const avgScore = totalAudits > 0 ? Math.round(totalScore / totalAudits) : 0;
+        const fatalCount = monthlyData.weeks.reduce((sum, w) => sum + w.fatalCount, 0);
 
         let status = 'Excellent';
         if (avgScore >= 80) status = 'Excellent';
@@ -4692,23 +4764,24 @@ Reviewer: ${review.reviewerId}
         document.getElementById('agent-monthly-fatal-count').textContent = fatalCount;
         document.getElementById('agent-monthly-status').textContent = status;
 
-        // Calculate weekly breakdown
+        // Display stored weekly data
+        monthlyData.weeks.forEach((week) => {
+          document.getElementById(`agent-monthly-week${week.weekNumber}-audits`).textContent = week.audits;
+          document.getElementById(`agent-monthly-week${week.weekNumber}-score`).textContent = week.avgScore + '%';
+          document.getElementById(`agent-monthly-week${week.weekNumber}-fatals`).textContent = week.fatalCount;
+        });
+      } else {
+        // No data yet - show dashes
+        document.getElementById('agent-monthly-total-audits').textContent = '--';
+        document.getElementById('agent-monthly-avg-score').textContent = '--';
+        document.getElementById('agent-monthly-fatal-count').textContent = '--';
+        document.getElementById('agent-monthly-status').textContent = '----';
+        
+        // Clear weekly breakdown
         for (let week = 1; week <= 4; week++) {
-          const weekStart = new Date(fourWeeksAgo.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000);
-          const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-          const weekReviews = monthlyReviews.filter(r => {
-            const reviewDate = new Date(r.date);
-            return reviewDate >= weekStart && reviewDate < weekEnd;
-          });
-
-          const weekAudits = weekReviews.length;
-          const weekScore = weekAudits > 0 ? Math.round((weekReviews.reduce((sum, r) => sum + r.score, 0) / weekAudits / 100) * 100) : 0;
-          const weekFatals = weekReviews.filter(r => r.score === 0).length;
-
-          document.getElementById(`agent-monthly-week${week}-audits`).textContent = weekAudits;
-          document.getElementById(`agent-monthly-week${week}-score`).textContent = weekScore + '%';
-          document.getElementById(`agent-monthly-week${week}-fatals`).textContent = weekFatals;
+          document.getElementById(`agent-monthly-week${week}-audits`).textContent = '--';
+          document.getElementById(`agent-monthly-week${week}-score`).textContent = '--';
+          document.getElementById(`agent-monthly-week${week}-fatals`).textContent = '--';
         }
       }
     }
@@ -4750,7 +4823,7 @@ Reviewer: ${review.reviewerId}
         </div>
 
         <div id="review-detail-id-section" class="hidden">
-          <label class="block text-sm font-semibold mb-2">Chat/Email ID or Thread ID</label>
+          <label class="block text-sm font-semibold mb-2">EMAIL/CHAT ID</label>
           <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg font-mono text-sm" id="review-detail-id-value">-</div>
         </div>
 
