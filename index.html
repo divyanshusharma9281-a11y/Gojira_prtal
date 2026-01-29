@@ -86,10 +86,13 @@
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
   <!-- MAIN PORTAL LOGIN SCREEN -->
-  <div id="portal-login-screen" class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
+  <div id="portal-login-screen"
+    class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
     <div class="bg-white dark:bg-slate-800 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4">
       <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">G</div>
+        <div
+          class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
+          G</div>
         <h1 class="text-3xl font-bold text-indigo-600">Gojira TP</h1>
         <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Training Portal Login</p>
       </div>
@@ -107,21 +110,25 @@
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
         </div>
 
-        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Login</button>
+        <button type="submit"
+          class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Login</button>
       </form>
 
       <div class="text-center">
-        <button onclick="showChangePasswordModal()" class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
+        <button onclick="showChangePasswordModal()"
+          class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
       </div>
     </div>
   </div>
 
   <!-- CHANGE PASSWORD MODAL -->
-  <div id="change-password-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div id="change-password-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold">Change Password</h2>
-        <button onclick="hideChangePasswordModal()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+        <button onclick="hideChangePasswordModal()"
+          class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
       </div>
 
       <form onsubmit="submitChangePassword(event)">
@@ -143,13 +150,16 @@
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 outline-none transition">
         </div>
 
-        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition">Update Password</button>
+        <button type="submit"
+          class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition">Update
+          Password</button>
       </form>
     </div>
   </div>
 
   <!-- TOP NAV (hidden initially) -->
-  <nav id="top-nav" class="hidden bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+  <nav id="top-nav"
+    class="hidden bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-start justify-between">
       <div onclick="navigateTo('view-home')" class="flex gap-3 cursor-pointer group">
         <div
@@ -171,7 +181,8 @@
             <span id="theme-icon">🌙</span>
             <span id="theme-text">Dark</span>
           </button>
-          <button onclick="portalLogout()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-800 transition">
+          <button onclick="portalLogout()"
+            class="flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-800 transition">
             🚪 Logout
           </button>
         </div>
@@ -1242,7 +1253,8 @@
         <div id="agent-no-reviews-message" class="text-center py-12 hidden">
           <div class="text-4xl mb-4">📭</div>
           <h4 class="text-xl font-bold text-slate-600 dark:text-slate-400">No Reviews Yet</h4>
-          <p class="text-slate-500 dark:text-slate-500 mt-2">Your reviews will appear here once submitted by quality assurance team.</p>
+          <p class="text-slate-500 dark:text-slate-500 mt-2">Your reviews will appear here once submitted by quality
+            assurance team.</p>
         </div>
       </div>
 
@@ -1282,7 +1294,8 @@
   <div id="view-reviewer" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
       <div class="flex items-center gap-4">
-        <span class="font-bold text-xl text-purple-600">Review Dashboard - <span id="reviewer-entity-display">--</span></span>
+        <span class="font-bold text-xl text-purple-600">Review Dashboard - <span
+            id="reviewer-entity-display">--</span></span>
       </div>
       <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
     </header>
@@ -1437,7 +1450,7 @@
         });
         localStorage.setItem('gojira_passwords', JSON.stringify(allUsers));
       }
-      
+
       // Check if already logged in
       const sessionUser = localStorage.getItem('gojira_session_user');
       if (sessionUser) {
@@ -1462,7 +1475,7 @@
       // Check password
       const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
       const correctPassword = savedPasswords[empId] || '1234';
-      
+
       if (password !== correctPassword) {
         alert('❌ Invalid Password');
         return;
@@ -1471,11 +1484,11 @@
       // Login successful
       currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
       localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
-      
+
       // Clear login form
       document.getElementById('portal-emp-id').value = '';
       document.getElementById('portal-password').value = '';
-      
+
       // Show portal content
       showPortalContent();
     }
@@ -1484,19 +1497,19 @@
     function showPortalContent() {
       document.getElementById('portal-login-screen').classList.add('hidden');
       document.getElementById('top-nav').classList.remove('hidden');
-      
+
       // Set user greeting on home page
       const firstName = currentSessionUser.name.split(' ')[0];
       document.getElementById('home-user-greeting').innerText = `Hi ${firstName}`;
-      
+
       // Filter entities display based on user
       filterEntitiesDisplay();
       filterResourcesQACard(); // Set QA card visibility based on user role
-      
+
       // Set currentUser and currentEntity for all users
       currentUser = currentSessionUser;
       currentEntity = currentSessionUser.entity;
-      
+
       // Route all users to home page
       navigateTo('view-home');
     }
@@ -1505,21 +1518,21 @@
     function portalLogout() {
       currentSessionUser = null;
       localStorage.removeItem('gojira_session_user');
-      
+
       // Reset user greeting
       document.getElementById('home-user-greeting').innerText = 'Hi Guest';
-      
+
       // Clear all forms
       document.getElementById('portal-emp-id').value = '';
       document.getElementById('portal-password').value = '';
       document.getElementById('change-pass-emp-id').value = '';
       document.getElementById('change-pass-current').value = '';
       document.getElementById('change-pass-new').value = '';
-      
+
       // Show login screen
       document.getElementById('portal-login-screen').classList.remove('hidden');
       document.getElementById('top-nav').classList.add('hidden');
-      
+
       // Hide all views
       document.querySelectorAll('.app-view').forEach(view => {
         view.classList.remove('active');
@@ -1541,7 +1554,7 @@
     // Submit Change Password
     function submitChangePassword(event) {
       event.preventDefault();
-      
+
       const empId = document.getElementById('change-pass-emp-id').value.trim();
       const currentPassword = document.getElementById('change-pass-current').value;
       const newPassword = document.getElementById('change-pass-new').value;
@@ -1709,7 +1722,7 @@
       // This function is called to refresh UI after operations
       // It should use adminLoadAgents() instead to maintain consistency
       adminLoadAgents();
-      
+
       // Populate Performance Reviews Table
       const reviews = MockBackend.getPerformanceScores();
       const reviewsList = document.getElementById('admin-reviews-list');
@@ -2828,14 +2841,14 @@ Reviewer: ${review.reviewerId}
 
       // Load reviews for this agent
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      
+
       // Filter reviews for current agent only
       const agentReviews = reviews.filter(r => r.agentId === agentId);
 
       // Calculate stats
       const totalReviews = agentReviews.length;
       const avgScore = totalReviews > 0 ? Math.round(agentReviews.reduce((sum, r) => sum + r.score, 0) / totalReviews) : 0;
-      
+
       // Get last review date
       let lastReviewDate = '--';
       if (agentReviews.length > 0) {
@@ -2894,7 +2907,7 @@ Reviewer: ${review.reviewerId}
 
     function agentLoadFeedback(agentId) {
       let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
-      
+
       // Filter feedback for current agent
       let agentComments = comments.filter(c => c.agentId === agentId);
 
@@ -2912,7 +2925,7 @@ Reviewer: ${review.reviewerId}
           const commentDate = new Date(comment.date);
           const expiryDate = new Date(commentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
           const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-          
+
           return `
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
               <td class="p-6">${comment.date}</td>
@@ -3061,20 +3074,20 @@ Reviewer: ${review.reviewerId}
     function filterEntitiesDisplay() {
       const userToCheck = currentSessionUser || currentUser;
       if (!userToCheck) return; // Not logged in via new system
-      
+
       // Get all entity cards
       const entities = document.querySelectorAll('#view-entities .grid > div');
-      
+
       entities.forEach(entityCard => {
         // Check which entity this card represents based on onclick attribute
         const onclick = entityCard.getAttribute('onclick');
         let entityToShow = null;
-        
+
         if (onclick.includes('bharatloan')) entityToShow = 'BharatLoan';
         else if (onclick.includes('rupee112')) entityToShow = 'Rupee112';
         else if (onclick.includes('loan112')) entityToShow = 'Loan112';
         else if (onclick.includes('rupeeontime')) entityToShow = 'RupeeOnTime';
-        
+
         // Show/hide based on user's entity
         if (userToCheck.entity === 'ALL') {
           entityCard.style.display = ''; // Show all for admin/reviewer
@@ -3091,9 +3104,9 @@ Reviewer: ${review.reviewerId}
       const userToCheck = currentSessionUser || currentUser;
       const agentCard = document.getElementById('qa-checklist-card-agent');
       const otherCard = document.getElementById('qa-checklist-card-other');
-      
+
       if (!agentCard || !otherCard) return;
-      
+
       if (userToCheck && userToCheck.role === 'agent') {
         // Show agent-specific QA card
         agentCard.classList.remove('hidden');
@@ -3108,7 +3121,7 @@ Reviewer: ${review.reviewerId}
     function navigateTo(id) {
       // CHECK ACCESS PERMISSION - Use currentSessionUser for new login system
       const userToCheck = currentSessionUser || currentUser;
-      
+
       if (userToCheck && userToCheck.entity !== 'ALL') {
         const targetEntity = ENTITY_VIEW_MAP[id];
         if (targetEntity && targetEntity !== userToCheck.entity) {
@@ -3130,7 +3143,7 @@ Reviewer: ${review.reviewerId}
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
-      
+
       // Filter Resources QA card when navigating to resources
       if (id === 'view-resources') {
         filterResourcesQACard();
@@ -3156,7 +3169,7 @@ Reviewer: ${review.reviewerId}
       // Activate selected tab
       document.getElementById('tab-' + tab + prefix).classList.add('text-blue-600', 'border-blue-600');
       document.getElementById('tab-' + tab + prefix).classList.remove('text-slate-500', 'border-transparent');
-      
+
       // Populate agents list if agents tab is selected
       if (tab === 'agents') {
         populateAgentsList(entity);
@@ -3171,21 +3184,21 @@ Reviewer: ${review.reviewerId}
         'rupeeontime': 'RupeeOnTime',
         '': 'BharatLoan' // default
       };
-      
+
       const entityName = entityMap[entity] || 'BharatLoan';
       const containerId = `agents-list-${entity || 'bharatloan'}`;
       const container = document.getElementById(containerId);
-      
+
       if (!container) return;
-      
+
       // Filter agents for the current entity
       const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === entityName);
-      
+
       if (agents.length === 0) {
         container.innerHTML = '<div class="p-4 text-center text-slate-500">No agents found for this entity.</div>';
         return;
       }
-      
+
       // Create agent list HTML
       container.innerHTML = agents.map(agent => `
         <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 hover:shadow-md transition">
@@ -3255,14 +3268,24 @@ Reviewer: ${review.reviewerId}
       // If user is logged in via portal, use their session
       if (currentSessionUser) {
         currentEntity = entityName;
-        
+
         // Admin users navigate to admin dashboard
         if (currentSessionUser.role === 'admin') {
           adminCurrentEntity = entityName;
           navigateTo('view-admin');
           adminLoadAgents();
+        } else if (currentSessionUser.role === 'reviewer') {
+          // Reviewers navigate to reviewer dashboard with selected entity
+          reviewerCurrentEntity = entityName;
+
+          // Update entity display
+          const display = document.getElementById('reviewer-entity-display');
+          if (display) display.textContent = reviewerCurrentEntity;
+
+          navigateTo('view-reviewer');
+          reviewerLoadAgentsForEntity();
         } else {
-          // Reviewers and other logged-in users navigate to entity view
+          // Agents and other logged-in users navigate to entity view
           navigateTo('view-' + entityName.toLowerCase());
         }
       } else {
@@ -3340,10 +3363,10 @@ Reviewer: ${review.reviewerId}
           adminCurrentEntity = selectedEntity;
 
           currentUser = user;
-          
+
           // Set welcome message with admin name
           document.getElementById('admin-welcome-text').innerText = `Welcome ${user.name}`;
-          
+
           navigateTo('view-admin');
           adminLoadAgents();
           hideLogin();
@@ -3353,13 +3376,13 @@ Reviewer: ${review.reviewerId}
           reviewerCurrentEntity = selectedEntity;
 
           currentUser = user;
-          
+
           // Set welcome message with reviewer name
           document.getElementById('reviewer-welcome-text').innerText = `Welcome ${user.name}`;
-          
+
           // Set entity display
           document.getElementById('reviewer-entity-display').textContent = reviewerCurrentEntity;
-          
+
           navigateTo('view-reviewer');
           reviewerLoadAgentsForEntity();
           hideLogin();
@@ -3398,7 +3421,7 @@ Reviewer: ${review.reviewerId}
         document.getElementById('theme-icon').innerText = '☀️';
         document.getElementById('theme-text').innerText = 'Light';
       }
-      
+
       // Initialize portal login system
       initPortal();
     }
@@ -3678,7 +3701,7 @@ Reviewer: ${review.reviewerId}
           .filter(item => item && item.observation)
           .map((item, idx) => `Review ${idx + 1}: ${item.observation}`)
           .join('\n');
-        
+
         if (feedbackText.trim()) {
           comments.unshift({
             id: Date.now(),
@@ -3857,10 +3880,10 @@ Reviewer: ${review.reviewerId}
     function adminDeleteAllReviews() {
       if (confirm('Delete all reviews for this entity? This action cannot be undone.')) {
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-        
+
         // Remove only reviews for the current entity
         reviews = reviews.filter(r => r.entity !== adminCurrentEntity);
-        
+
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
         adminLoadReviewsList();
         alert('All reviews for this entity have been deleted.');
