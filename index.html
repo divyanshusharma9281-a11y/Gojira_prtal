@@ -202,20 +202,12 @@
             <span id="theme-text">Dark</span>
           </button>
 
-          <!-- Agent Notification (Home) -->
-          <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition agent-notification-bell"
-            onclick="checkAgentNotifications(true)" title="Check Updates">
+          <!-- Unified Notification Bell -->
+          <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition notification-bell"
+            onclick="checkNotifications(true)" title="Check Notifications">
             <span class="text-xl">🔔</span>
             <span
-              class="agent-notification-dot hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
-          </div>
-
-          <!-- Admin Notification -->
-          <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition admin-notification-bell"
-            onclick="checkAdminNotifications(true)" title="Check Agent Replies">
-            <span class="text-xl">🔔</span>
-            <span
-              class="admin-notification-dot hidden absolute top-0 right-0 w-3 h-3 bg-orange-500 rounded-full border-2 border-white dark:border-slate-800"></span>
+              class="notification-dot hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
           </div>
 
           <button onclick="portalLogout()"
@@ -3063,6 +3055,18 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    function checkNotifications(showPopup) {
+      if (!currentUser) return;
+
+      const dot = document.querySelector('.notification-dot');
+
+      if (currentUser.role === 'agent') {
+        checkAgentNotifications(showPopup);
+      } else if (currentUser.role === 'admin') {
+        checkAdminNotifications(showPopup);
+      }
+    }
+
     function checkAgentNotifications(showPopup) {
       if (!currentUser || currentUser.role !== 'agent') return;
 
@@ -3081,15 +3085,15 @@ Reviewer: ${review.reviewerId}
       });
 
       const hasUpdate = recentReviews.length > 0;
-      const dots = document.querySelectorAll('.agent-notification-dot');
+      const dot = document.querySelector('.notification-dot');
 
       if (hasUpdate) {
-        dots.forEach(dot => dot.classList.remove('hidden'));
+        dot.classList.remove('hidden');
         if (showPopup) {
           showAgentNotifications(recentReviews);
         }
       } else {
-        dots.forEach(dot => dot.classList.add('hidden'));
+        dot.classList.add('hidden');
         if (showPopup) {
           showNotificationsModal([]);
         }
@@ -3123,7 +3127,7 @@ Reviewer: ${review.reviewerId}
       }
       
       document.getElementById('notifications-modal').classList.remove('hidden');
-      document.querySelectorAll('.agent-notification-dot').forEach(dot => dot.classList.add('hidden'));
+      document.querySelector('.notification-dot').classList.add('hidden');
     }
 
     function agentViewNotificationReview(reviewId) {
@@ -3145,15 +3149,15 @@ Reviewer: ${review.reviewerId}
       // Find new comments that haven't been seen by admin
       const newComments = comments.filter(c => !adminNotifications.includes(c.id));
       
-      const adminDot = document.querySelector('.admin-notification-dot');
+      const dot = document.querySelector('.notification-dot');
       
       if (newComments.length > 0) {
-        adminDot.classList.remove('hidden');
+        dot.classList.remove('hidden');
         if (showPopup) {
           showAdminNotifications(newComments);
         }
       } else {
-        adminDot.classList.add('hidden');
+        dot.classList.add('hidden');
         if (showPopup) {
           showNotificationsModal([]);
         }
@@ -3195,7 +3199,7 @@ Reviewer: ${review.reviewerId}
       }
       
       document.getElementById('notifications-modal').classList.remove('hidden');
-      document.querySelector('.admin-notification-dot').classList.add('hidden');
+      document.querySelector('.notification-dot').classList.add('hidden');
     }
 
     function adminViewNotificationComment(reviewId) {
@@ -4623,8 +4627,8 @@ Reviewer: ${review.reviewerId}
       openReviewDetail(reviewId); // Refresh modal
       agentLoadQADashboard(); // Refresh dashboard
       // Notify admin of new reply
-      if (document.querySelector('.admin-notification-dot')) {
-        document.querySelector('.admin-notification-dot').classList.remove('hidden');
+      if (document.querySelector('.notification-dot')) {
+        document.querySelector('.notification-dot').classList.remove('hidden');
       }
     }
 
