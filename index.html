@@ -3252,14 +3252,21 @@ Reviewer: ${review.reviewerId}
     }
 
     function handleChecklistClick(entityName) {
-      // If user is logged in as admin, set entity and navigate to admin dashboard
-      if (currentSessionUser && currentSessionUser.role === 'admin') {
+      // If user is logged in via portal, use their session
+      if (currentSessionUser) {
         currentEntity = entityName;
-        adminCurrentEntity = entityName;
-        navigateTo('view-admin');
-        adminLoadAgents();
+        
+        // Admin users navigate to admin dashboard
+        if (currentSessionUser.role === 'admin') {
+          adminCurrentEntity = entityName;
+          navigateTo('view-admin');
+          adminLoadAgents();
+        } else {
+          // Reviewers and other logged-in users navigate to entity view
+          navigateTo('view-' + entityName.toLowerCase());
+        }
       } else {
-        // For non-logged-in users or non-admins, show login modal
+        // For non-logged-in users, show login modal
         showLogin(entityName);
       }
     }
