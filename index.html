@@ -85,6 +85,15 @@
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
+  <!-- DEBUG BANNER (visible only when debugging) -->
+  <div id="debug-banner" class="fixed bottom-4 right-4 bg-yellow-200 text-black p-3 rounded-lg shadow hidden z-50 max-w-sm">
+    <strong>Debug:</strong>
+    <div id="debug-messages" class="text-sm mt-1 max-h-40 overflow-y-auto"></div>
+    <div class="mt-2 text-xs text-slate-700">(auto-hidden after 8s)</div>
+  </div>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen"
     class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
@@ -1789,27 +1798,53 @@
       // Check if already logged in
       const sessionUser = localStorage.getItem('gojira_session_user');
       if (sessionUser) {
-        currentSessionUser = JSON.parse(sessionUser);
-        // Restore role-specific UI and state
-        if (currentSessionUser.role === 'admin') {
-          currentUser = currentSessionUser;
-          adminCurrentEntity = currentSessionUser.entity || 'ALL';
-          const welcomeText = document.getElementById('admin-welcome-text');
-          if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
-          adminLoadAgents();
-        } else if (currentSessionUser.role === 'reviewer') {
-          currentUser = currentSessionUser;
-          reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
-          adminCurrentEntity = reviewerCurrentEntity; // ensure agents load correctly
-          const welcomeText = document.getElementById('reviewer-welcome-text');
-          if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
-          const entityDisplay = document.getElementById('reviewer-entity-display');
-          if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
-          adminLoadAgents();
-        } else {
-          currentUser = currentSessionUser;
+        try {
+          currentSessionUser = JSON.parse(sessionUser);
+          console.info('[initPortal] Restored session for', currentSessionUser.id, currentSessionUser.role);
+          debugBannerLog(`[initPortal] Restored session for ${currentSessionUser.id} (${currentSessionUser.role})`);
+          // Restore role-specific UI and state
+          if (currentSessionUser.role === 'admin') {
+            currentUser = currentSessionUser;
+            adminCurrentEntity = currentSessionUser.entity || 'ALL';
+            const welcomeText = document.getElementById('admin-welcome-text');
+            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+            adminLoadAgents();
+          } else if (currentSessionUser.role === 'reviewer') {
+            currentUser = currentSessionUser;
+            reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
+            adminCurrentEntity = reviewerCurrentEntity; // ensure agents load correctly
+            const welcomeText = document.getElementById('reviewer-welcome-text');
+            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+            const entityDisplay = document.getElementById('reviewer-entity-display');
+            if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
+            adminLoadAgents();
+          } else {
+            currentUser = currentSessionUser;
+          }
+          showPortalContent();
+        } catch (err) {
+          console.error('[initPortal] invalid session data', err);
         }
-        showPortalContent();
+      }
+    }
+
+    // Debug logging helper
+    function debugBannerLog(msg) {
+      try {
+        const banner = document.getElementById('debug-banner');
+        const messages = document.getElementById('debug-messages');
+        if (messages) {
+          const entry = document.createElement('div');
+          entry.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
+          messages.appendChild(entry);
+          if (banner) banner.classList.remove('hidden');
+          setTimeout(() => {
+            if (entry && entry.parentNode) entry.parentNode.removeChild(entry);
+            if (messages && messages.children.length === 0 && banner) banner.classList.add('hidden');
+          }, 8000);
+        }
+      } catch (e) {
+        console.debug('[debugBannerLog] failed', e);
       }
     }
 
@@ -3854,84 +3889,97 @@ Reviewer: ${review.reviewerId}
     }
 
     function submitLogin(event) {
-      event.preventDefault();
-      const empId = document.getElementById('portal-emp-id').value.trim();
-      const password = document.getElementById('portal-password').value;
+      try {
+        event.preventDefault();
+        const empId = document.getElementById('portal-emp-id').value.trim();
+        const password = document.getElementById('portal-password').value;
+        console.debug('[submitLogin] empId:', empId);
+        debugBannerLog(`[submitLogin] empId: ${empId}`);
 
-      // Check if employee exists
-      const user = USER_DB.find(u => u.id === empId);
-      if (!user) {
-        alert('❌ Invalid Employee ID');
-        return;
-      }
+        // Check if employee exists
+        const user = USER_DB.find(u => u.id === empId);
+        if (!user) {
+          console.warn('[submitLogin] Invalid Employee ID:', empId);
+          alert('❌ Invalid Employee ID');
+          return;
+        }
 
-      // Check password
-      const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
-      const correctPassword = savedPasswords[empId] || '1234';
+        // Check password
+        const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
+        console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0,5));
+        debugBannerLog('[submitLogin] passwords initialized');
+        const correctPassword = savedPasswords[empId] || '1234';
 
-      if (password !== correctPassword) {
-        alert('❌ Invalid Password');
-        return;
-      }
+        if (password !== correctPassword) {
+          console.warn('[submitLogin] Invalid Password for', empId);
+          alert('❌ Invalid Password');
+          return;
+        }
 
-      // Login successful - save session
-      currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
-      localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
+        // Login successful - save session
+        currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
+        localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
+        console.info('[submitLogin] Login successful for', user.id, user.role);
+        debugBannerLog(`[submitLogin] Login successful for ${user.id} (${user.role})`);
 
-      // Clear login form
-      document.getElementById('portal-emp-id').value = '';
-      document.getElementById('portal-password').value = '';
+        // Clear login form
+        document.getElementById('portal-emp-id').value = '';
+        document.getElementById('portal-password').value = '';
 
-      // Route users based on role
-      if (user.role === 'admin') {
-        // For admin
-        const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
-        adminCurrentEntity = selectedEntity;
-        currentUser = user;
-        currentEntity = user.entity;
+        // Route users based on role
+        if (user.role === 'admin') {
+          // For admin
+          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
+          adminCurrentEntity = selectedEntity;
+          currentUser = user;
+          currentEntity = user.entity;
 
-        // Set welcome message with admin name
-        const welcomeText = document.getElementById('admin-welcome-text');
-        if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
+          // Set welcome message with admin name
+          const welcomeText = document.getElementById('admin-welcome-text');
+          if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
 
-        showPortalContent();
-        navigateTo('view-home');
-      } else if (user.role === 'reviewer') {
-        // For reviewer
-        const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'BharatLoan';
-        reviewerCurrentEntity = selectedEntity;
-        adminCurrentEntity = selectedEntity; // ensure agent lists populate
-        currentUser = user;
-        currentEntity = user.entity;
+          showPortalContent();
+          navigateTo('view-home');
+        } else if (user.role === 'reviewer') {
+          // For reviewer
+          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'BharatLoan';
+          reviewerCurrentEntity = selectedEntity;
+          adminCurrentEntity = selectedEntity; // ensure agent lists populate
+          currentUser = user;
+          currentEntity = user.entity;
 
-        // Set welcome message with reviewer name
-        const welcomeText = document.getElementById('reviewer-welcome-text');
-        if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
+          // Set welcome message with reviewer name
+          const welcomeText = document.getElementById('reviewer-welcome-text');
+          if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
 
-        // Set entity display
-        const entityDisplay = document.getElementById('reviewer-entity-display');
-        if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
+          // Set entity display
+          const entityDisplay = document.getElementById('reviewer-entity-display');
+          if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
 
-        // Populate agent list for reviewer
-        adminLoadAgents();
+          // Populate agent list for reviewer
+          adminLoadAgents();
 
-        showPortalContent();
-        navigateTo('view-home');
-      } else if (user.role === 'agent') {
-        // For agents
-        currentUser = user;
-        currentEntity = user.entity;
+          showPortalContent();
+          navigateTo('view-home');
+        } else if (user.role === 'agent') {
+          // For agents
+          currentUser = user;
+          currentEntity = user.entity;
 
-        // Update Header Title
-        const titleSpan = document.getElementById('agent-dashboard-title');
-        if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+          // Update Header Title
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
 
-        // Update Banner Name
-        const bannerName = document.getElementById('agent-name-display');
-        if (bannerName) bannerName.innerText = user.name;
+          // Update Banner Name
+          const bannerName = document.getElementById('agent-name-display');
+          if (bannerName) bannerName.innerText = user.name;
 
-        showPortalContent();
-        navigateTo('view-home');
+          showPortalContent();
+          navigateTo('view-home');
+        }
+      } catch (err) {
+        console.error('[submitLogin] error', err);
+        alert('An unexpected error occurred during login. Check console for details.');
       }
     }
 
@@ -4067,6 +4115,8 @@ Reviewer: ${review.reviewerId}
         document.getElementById('reviewer-reviews-section').classList.add('hidden');
       }
     }
+
+    function adminStartQualityReview() {
       if (!adminCurrentEntity || !adminCurrentAgent) {
         alert('Please select an agent');
         return;
