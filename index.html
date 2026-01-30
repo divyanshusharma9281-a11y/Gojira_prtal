@@ -4143,6 +4143,18 @@ Reviewer: ${review.reviewerId}
       // Refresh UI after reconciliation
       renderAdminAgentDropdown();
       checkAndEnableWeekFinalButton();
+      updateClearFinalizationsButton();
+    }
+
+    function updateClearFinalizationsButton() {
+      const btn = document.getElementById('admin-clear-finalizations-btn');
+      if (!btn) return;
+      if (adminCurrentAgent) {
+        const name = adminCurrentAgentName || adminCurrentAgent;
+        btn.innerText = `✖️ Clear Finalizations for ${name}`;
+      } else {
+        btn.innerText = '✖️ Clear Finalizations';
+      }
     }
 
     function adminClearReviewsForAgent(agentId) {
@@ -4178,6 +4190,9 @@ Reviewer: ${review.reviewerId}
       adminLoadReviewsList();
       renderAdminAgentDropdown();
       checkAndEnableWeekFinalButton();
+
+      // Update button label
+      updateClearFinalizationsButton();
 
       alert(`Cleared ${removed} review(s) for agent ${agentId}.`);
     }
@@ -4380,6 +4395,9 @@ Reviewer: ${review.reviewerId}
 
       // Update week UI and final button state
       checkAndEnableWeekFinalButton();
+
+      // Update Clear Finalizations button label
+      updateClearFinalizationsButton();
     }
 
     function adminSelectAgentFromDropdown(selectElement) {
@@ -4397,6 +4415,8 @@ Reviewer: ${review.reviewerId}
         document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
         // Load reviews for this agent
         adminLoadReviewsList();
+        // Update clear finalizations button
+        updateClearFinalizationsButton();
       } else {
         adminCurrentAgent = '';
         adminCurrentAgentName = '';
@@ -4405,6 +4425,8 @@ Reviewer: ${review.reviewerId}
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
         // Hide the submitted reviews section
         document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
+        // Update clear finalizations button
+        updateClearFinalizationsButton();
       }
     }
 
@@ -4448,6 +4470,9 @@ Reviewer: ${review.reviewerId}
 
       // Refresh reviews list for this agent
       adminLoadReviewsList();
+
+      // Update Clear Finalizations button label
+      updateClearFinalizationsButton();
     }
 
     function reviewerSelectAgent(selectElement) {
@@ -5053,7 +5078,30 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    function adminClearFinalizations() {
+    function adminClearFinalizations(targetAgentId) {
+      // If a target agent id provided (or an agent is selected), clear only that agent's flag; otherwise clear for current entity
+      const agentToClear = targetAgentId || adminCurrentAgent || null;
+
+      if (agentToClear) {
+        const agentObj = USER_DB.find(u => String(u.id) === String(agentToClear));
+        const agentName = agentObj ? agentObj.name : agentToClear;
+        if (!confirm(`Clear finalized flag for ${agentName}? This will remove the blue tick for this agent.`)) return;
+
+        unmarkAgentWeekComplete('ALL', agentToClear);
+        reconcileFinalizeFlags();
+
+        // Refresh UI
+        renderAdminAgentDropdown();
+        checkAndEnableWeekFinalButton();
+        if (adminCurrentAgent && String(adminCurrentAgent) === String(agentToClear)) {
+          adminSelectAgent(agentToClear, agentName);
+        }
+
+        updateClearFinalizationsButton();
+        alert(`Finalized flag cleared for ${agentName}.`);
+        return;
+      }
+
       if (!confirm('Clear finalized flags for agents in this entity? This will remove blue ticks where applicable.')) return;
 
       // Collect agent IDs in current entity
@@ -5075,6 +5123,7 @@ Reviewer: ${review.reviewerId}
       checkAndEnableWeekFinalButton();
       adminLoadReviewsList();
 
+      updateClearFinalizationsButton();
       alert('Finalized flags cleared for agents in this entity (if applicable).');
     }
 
