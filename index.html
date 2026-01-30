@@ -118,8 +118,8 @@
     }
 
     .animate-zoom-in {
-      animation: zoomIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
-      /* Delayed zoom */
+      animation: zoomIn 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
+      /* Increased duration for slow entry */
       opacity: 0;
     }
 
@@ -131,6 +131,43 @@
     .animate-door-right {
       transform-origin: right;
       animation: swingRight 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+    }
+
+    /* Gojira Theme Variables and Styles */
+    :root {
+      --gojira-red: #b91c1c; /* deep red */
+      --gojira-blue: #0f172a; /* dark blue */
+      --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
+    }
+
+    /* Theme applied after login to make pages colorful */
+    .gojira-theme header {
+      background: var(--gojira-grad) !important;
+      color: #fff !important;
+      border: none !important;
+    }
+
+    .gojira-theme .app-view {
+      background: linear-gradient(180deg, rgba(185,28,28,0.02), rgba(14,42,90,0.02));
+    }
+
+    .gojira-theme .card,
+    .gojira-theme .panel {
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(14, 40, 90, 0.06);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .gojira-theme .accent-btn {
+      background: var(--gojira-grad); color: white; border: none;
+      box-shadow: 0 10px 30px rgba(30,58,138,0.12);
+    }
+
+    /* Door branding */
+    .door-brand {
+      font-family: 'Montserrat', sans-serif;
+      text-shadow: 4px 5px 10px rgba(0,0,0,0.45);
+      letter-spacing: -2px;
     }
   </style>
 </head>
@@ -173,11 +210,11 @@
     <!-- Revealed Background -->
     <div class="absolute inset-0 bg-gradient-to-br from-red-950 via-slate-900 to-blue-950 z-0"></div>
 
-    <!-- Background Typography Theme -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-20 z-0">
+    <!-- Background Typography Theme (Door Branding) -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-30 z-0">
       <h1
-        class="text-[15rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600 transform -rotate-12 whitespace-nowrap blur-sm">
-        G Gojira</h1>
+        class="door-brand text-[18rem] font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 transform -rotate-8 whitespace-nowrap drop-shadow-lg">
+        G - Gojira</h1>
     </div>
 
     <!-- Colored Login Card -->
@@ -2081,6 +2118,10 @@
       // Show login screen
       document.getElementById('portal-login-screen').classList.remove('hidden');
       document.getElementById('top-nav').classList.add('hidden');
+
+      // Remove Gojira theme
+      document.body.classList.remove('gojira-theme');
+      localStorage.removeItem('gojira_theme_active');
 
       // Hide all views
       document.querySelectorAll('.app-view').forEach(view => {
@@ -4192,6 +4233,10 @@ Reviewer: ${review.reviewerId}
         localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
         console.info('[submitLogin] Login successful for', user.id, user.role);
 
+        // Apply colorful Gojira theme across pages after login
+        document.body.classList.add('gojira-theme');
+        localStorage.setItem('gojira_theme_active', '1');
+
         // Clear login form
         document.getElementById('portal-emp-id').value = '';
         document.getElementById('portal-password').value = '';
@@ -4270,6 +4315,14 @@ Reviewer: ${review.reviewerId}
 
           // Restore global variables based on role
           currentUser = currentSessionUser;
+
+          // If a theme was active for this session, re-apply it
+          const themeActive = localStorage.getItem('gojira_theme_active');
+          if (themeActive && currentSessionUser) {
+            document.body.classList.add('gojira-theme');
+            console.debug('[onload] Re-applying Gojira theme for restored session');
+          }
+
           // initPortal will be called but we will override its default "show login" behavior if we have a user
         }
       } catch (e) {
