@@ -3898,10 +3898,19 @@ Reviewer: ${review.reviewerId}
     }
 
     function showLogin(entity) {
+      // Open the unified portal login screen for entity-specific login
       currentEntity = entity;
-      document.getElementById('login-title').innerText = `Login to ${entity}`;
-      document.getElementById('login-modal').classList.remove('hidden');
-      document.getElementById('empid').value = '';
+      // Set placeholder to indicate entity context
+      const portalEmp = document.getElementById('portal-emp-id');
+      if (portalEmp) portalEmp.placeholder = `Employee ID for ${entity}`;
+      const portalPass = document.getElementById('portal-password');
+      if (portalPass) portalPass.value = '';
+
+      // Show the main portal login screen (single login UI)
+      document.getElementById('portal-login-screen').classList.remove('hidden');
+      // Also ensure the small login modal is hidden to avoid duplicate UIs
+      const smallModal = document.getElementById('login-modal');
+      if (smallModal) smallModal.classList.add('hidden');
     }
 
     function handleChecklistClick(entityName) {
@@ -3922,8 +3931,20 @@ Reviewer: ${review.reviewerId}
     }
 
     function hideLogin() {
-      document.getElementById('login-modal').classList.add('hidden');
-      document.getElementById('empid').value = '';
+      // Hide both login UIs to ensure a single login/logout experience
+      const smallModal = document.getElementById('login-modal');
+      if (smallModal) smallModal.classList.add('hidden');
+
+      const portalScreen = document.getElementById('portal-login-screen');
+      if (portalScreen) portalScreen.classList.add('hidden');
+
+      // Clear inputs
+      const empSmall = document.getElementById('empid');
+      if (empSmall) empSmall.value = '';
+      const portalEmp = document.getElementById('portal-emp-id');
+      if (portalEmp) portalEmp.value = '';
+      const portalPass = document.getElementById('portal-password');
+      if (portalPass) portalPass.value = '';
     }
 
     // USER DATABASE
