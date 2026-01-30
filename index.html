@@ -1375,10 +1375,14 @@
           <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
           Submitted Reviews
         </h2>
-        <div class="mb-4">
+        <div class="mb-4 flex gap-3">
           <button onclick="adminDeleteAllReviews()"
             class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
             🗑️ Delete All Reviews
+          </button>
+          <button onclick="adminClearFinalizations()" id="admin-clear-finalizations-btn"
+            class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
+            ✖️ Clear Finalizations
           </button>
         </div>
         <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
@@ -5047,6 +5051,31 @@ Reviewer: ${review.reviewerId}
 
         alert('All reviews for this entity have been deleted. Finalization flags were cleared where applicable.');
       }
+    }
+
+    function adminClearFinalizations() {
+      if (!confirm('Clear finalized flags for agents in this entity? This will remove blue ticks where applicable.')) return;
+
+      // Collect agent IDs in current entity
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
+        agents = agents.filter(u => u.entity === adminCurrentEntity);
+      }
+
+      agents.forEach(a => {
+        // Unmark across all entities to be safe
+        unmarkAgentWeekComplete('ALL', a.id);
+      });
+
+      // Reconcile to remove any flags that shouldn't exist (based on review counts)
+      reconcileFinalizeFlags();
+
+      // Refresh UI
+      renderAdminAgentDropdown();
+      checkAndEnableWeekFinalButton();
+      adminLoadReviewsList();
+
+      alert('Finalized flags cleared for agents in this entity (if applicable).');
     }
 
     function adminDeleteAllReports() {
