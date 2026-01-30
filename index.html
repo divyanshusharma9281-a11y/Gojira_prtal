@@ -1279,14 +1279,19 @@
             <div id="admin-week-progress" class="text-sm text-slate-500">(0/0 completed)</div>
             <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()" class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed" disabled>Final Submit This Week</button>
           </div>
-          <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
-            class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
+          <!-- Hidden native select (kept for backwards compatibility) -->
+          <select id="admin-agent-selector" class="hidden">
             <option value="">-- Click to Select Agent --</option>
           </select>
 
-          <div id="admin-agent-status-list" class="mt-4 grid gap-2 grid-cols-2 lg:grid-cols-3">
-            <!-- Agent completion status will be rendered here -->
-          </div>
+          <!-- Custom dropdown that visually replaces the select and supports badges -->
+          <div id="admin-agent-dropdown" class="relative">
+            <div id="admin-agent-dropdown-selected" class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer flex items-center justify-between">
+              <span id="admin-agent-dropdown-selected-text">-- Click to Select Agent --</span>
+              <span class="text-xl text-slate-400">▾</span>
+            </div>
+            <div id="admin-agent-dropdown-list" class="absolute z-50 mt-2 w-full bg-white dark:bg-slate-800 rounded-xl shadow max-h-60 overflow-auto hidden"></div>
+          </div> 
         </div>
 
         <button id="admin-start-review-btn" onclick="adminStartQualityReview()" disabled
@@ -4063,8 +4068,8 @@ Reviewer: ${review.reviewerId}
       state.completedAgents[week] = state.completedAgents[week] || {};
       state.completedAgents[week][agentId] = true;
       setEntityWeekState(entity, state);
-      // Refresh UI status list and controls
-      renderAdminAgentStatusList();
+      // Refresh UI dropdown and controls
+      renderAdminAgentDropdown();
       checkAndEnableWeekFinalButton();
     }
 
@@ -4074,40 +4079,81 @@ Reviewer: ${review.reviewerId}
       return !!(state.completedAgents && state.completedAgents[week] && state.completedAgents[week][agentId]);
     }
 
-    function renderAdminAgentStatusList() {
-      const container = document.getElementById('admin-agent-status-list');
-      if (!container) return;
-      container.innerHTML = '';
+    function renderAdminAgentDropdown() {
+      const adminSelector = document.getElementById('admin-agent-selector');
+      const dropdownList = document.getElementById('admin-agent-dropdown-list');
+      const selectedText = document.getElementById('admin-agent-dropdown-selected-text');
+      const dropdownSelected = document.getElementById('admin-agent-dropdown-selected');
+      if (!dropdownList || !adminSelector || !selectedText || !dropdownSelected) return;
+
+      // Build agent list
+      dropdownList.innerHTML = '';
+      adminSelector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
+
       let agents = USER_DB.filter(u => u.role === 'agent');
       if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
         agents = agents.filter(u => u.entity === adminCurrentEntity);
       }
+
       const state = getEntityWeekState(adminCurrentEntity || 'ALL');
       const currentWeek = state.currentWeek || 1;
 
       agents.forEach(agent => {
-        const completed = state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][agent.id];
-        const card = document.createElement('div');
-        card.className = 'flex items-center justify-between p-2 border rounded';
+        const completed = !!(state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][agent.id]);
 
-        const left = document.createElement('div');
-        left.className = 'flex items-center';
-        const badge = document.createElement('div');
-        badge.className = `w-6 h-6 rounded-full mr-2 flex items-center justify-center ${completed ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`;
-        badge.textContent = completed ? '✔' : '';
-        const name = document.createElement('div');
-        name.textContent = `${agent.name} ${agent.id}`;
-        left.appendChild(badge);
-        left.appendChild(name);
+        // Populate hidden select for backwards compatibility
+        const option = document.createElement('option');
+        option.value = agent.id;
+        option.text = `${agent.name} ${agent.id}${completed ? ' ✅' : ''}`;
+        option.dataset.name = agent.name;
+        if (completed) option.title = `Finalized for Week ${currentWeek}`;
+        adminSelector.appendChild(option);
 
-        const right = document.createElement('div');
-        right.className = 'text-sm text-gray-500';
-        right.textContent = completed ? `Finalized Wk ${currentWeek}` : '';
+        // Create visible list item
+        const item = document.createElement('div');
+        item.className = 'p-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between';
+        item.innerHTML = `
+          <div class="flex items-center">
+            <div class="w-6 h-6 rounded-full mr-3 flex items-center justify-center ${completed ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}">${completed ? '✔' : ''}</div>
+            <div class="font-bold">${agent.name} ${agent.id}</div>
+          </div>
+          <div class="text-sm text-slate-500">${completed ? 'Finalized Wk ' + currentWeek : ''}</div>
+        `;
 
-        card.appendChild(left);
-        card.appendChild(right);
-        container.appendChild(card);
+        item.addEventListener('click', () => {
+          adminSelectAgent(agent.id, agent.name);
+          // Update selected text
+          selectedText.innerHTML = `${agent.name} ${agent.id}${completed ? ' <span class=\"text-blue-600 font-bold\">✔</span>' : ''}`;
+          // close dropdown
+          dropdownList.classList.add('hidden');
+        });
+
+        dropdownList.appendChild(item);
       });
+
+      // Update selected text if an agent is already selected (show blue tick if completed)
+      if (adminCurrentAgent) {
+        const sel = [...adminSelector.options].find(o => o.value === adminCurrentAgent);
+        const agent = agents.find(a => a.id === adminCurrentAgent);
+        const completed = agent && isAgentWeekComplete(adminCurrentEntity || 'ALL', adminCurrentAgent);
+        if (sel) selectedText.innerHTML = `${agent.name} ${agent.id}${completed ? ' <span class="text-blue-600 font-bold">✔</span>' : ''}`;
+      } else {
+        selectedText.textContent = '-- Click to Select Agent --';
+      }
+
+      // Toggle dropdown on click
+      dropdownSelected.onclick = (e) => {
+        e.stopPropagation();
+        dropdownList.classList.toggle('hidden');
+      };
+
+      // Close dropdown when clicking outside (attach listener only once)
+      if (!dropdownList.dataset.listenerAttached) {
+        document.addEventListener('click', (ev) => {
+          if (!dropdownList.classList.contains('hidden')) dropdownList.classList.add('hidden');
+        });
+        dropdownList.dataset.listenerAttached = '1';
+      }
     }
 
     function checkAndEnableWeekFinalButton() {
@@ -4183,17 +4229,7 @@ Reviewer: ${review.reviewerId}
         agents = agents.filter(u => u.entity === adminCurrentEntity);
       }
 
-      // Populate admin dropdown
-      if (adminSelector) {
-        adminSelector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
-        agents.forEach(agent => {
-          const option = document.createElement('option');
-          option.value = agent.id;
-          option.text = `${agent.name} ${agent.id}`;
-          option.dataset.name = agent.name;
-          adminSelector.appendChild(option);
-        });
-      }
+
 
       // Populate reviewer dropdown
       if (reviewerSelector) {
@@ -4230,8 +4266,8 @@ Reviewer: ${review.reviewerId}
       // Load reviews for the current entity
       adminLoadReviewsList();
 
-      // Render agent status badges for admin
-      renderAdminAgentStatusList();
+      // Render agent dropdown with inline badges for admin
+      renderAdminAgentDropdown();
 
       // Update week UI and final button state
       checkAndEnableWeekFinalButton();
