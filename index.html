@@ -85,15 +85,6 @@
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-  <!-- DEBUG BANNER (visible only when debugging) -->
-  <div id="debug-banner" class="fixed bottom-4 right-4 bg-yellow-200 text-black p-3 rounded-lg shadow hidden z-50 max-w-sm">
-    <strong>Debug:</strong>
-    <div id="debug-messages" class="text-sm mt-1 max-h-40 overflow-y-auto"></div>
-    <div class="mt-2 text-xs text-slate-700">(auto-hidden after 8s)</div>
-  </div>
-
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
-
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen"
     class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
@@ -1801,7 +1792,6 @@
         try {
           currentSessionUser = JSON.parse(sessionUser);
           console.info('[initPortal] Restored session for', currentSessionUser.id, currentSessionUser.role);
-          debugBannerLog(`[initPortal] Restored session for ${currentSessionUser.id} (${currentSessionUser.role})`);
           // Restore role-specific UI and state
           if (currentSessionUser.role === 'admin') {
             currentUser = currentSessionUser;
@@ -1828,25 +1818,6 @@
       }
     }
 
-    // Debug logging helper
-    function debugBannerLog(msg) {
-      try {
-        const banner = document.getElementById('debug-banner');
-        const messages = document.getElementById('debug-messages');
-        if (messages) {
-          const entry = document.createElement('div');
-          entry.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
-          messages.appendChild(entry);
-          if (banner) banner.classList.remove('hidden');
-          setTimeout(() => {
-            if (entry && entry.parentNode) entry.parentNode.removeChild(entry);
-            if (messages && messages.children.length === 0 && banner) banner.classList.add('hidden');
-          }, 8000);
-        }
-      } catch (e) {
-        console.debug('[debugBannerLog] failed', e);
-      }
-    }
 
     // Portal Login Function
     function showPortalContent() {
@@ -3894,7 +3865,6 @@ Reviewer: ${review.reviewerId}
         const empId = document.getElementById('portal-emp-id').value.trim();
         const password = document.getElementById('portal-password').value;
         console.debug('[submitLogin] empId:', empId);
-        debugBannerLog(`[submitLogin] empId: ${empId}`);
 
         // Check if employee exists
         const user = USER_DB.find(u => u.id === empId);
@@ -3907,7 +3877,6 @@ Reviewer: ${review.reviewerId}
         // Check password
         const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
         console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0,5));
-        debugBannerLog('[submitLogin] passwords initialized');
         const correctPassword = savedPasswords[empId] || '1234';
 
         if (password !== correctPassword) {
@@ -3920,7 +3889,6 @@ Reviewer: ${review.reviewerId}
         currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
         localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
         console.info('[submitLogin] Login successful for', user.id, user.role);
-        debugBannerLog(`[submitLogin] Login successful for ${user.id} (${user.role})`);
 
         // Clear login form
         document.getElementById('portal-emp-id').value = '';
