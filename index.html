@@ -191,9 +191,16 @@
     .gojira-theme header,
     .gojira-theme #top-nav {
       background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%) !important;
-      color: #fff !important;
+      /* For the colored theme we show headers with dark text (per request) */
+      color: #0b0b0b !important;
       border: none !important;
-      transition: background 0.4s ease;
+      transition: background 0.4s ease, color 0.25s ease;
+    }
+
+    /* Ensure any white-text inside header elements is forced to dark in colored mode */
+    .gojira-theme header .text-white,
+    .gojira-theme #top-nav .text-white {
+      color: #0b0b0b !important;
     }
 
     .gojira-theme .app-view {
@@ -244,6 +251,18 @@
 
     /* Login label styling */
     .login-label { color: var(--gojira-red); font-weight: 700; }
+
+    /* Header colored flash for smooth transition between themes */
+    #top-nav.header-colored-flash,
+    header.header-colored-flash {
+      background: var(--gojira-grad) !important;
+      color: #fff !important;
+      box-shadow: 0 8px 30px rgba(30,58,138,0.15);
+      transition: background 0.35s ease, color 0.25s ease;
+    }
+
+    /* subtle pulse while flashing */
+    .header-colored-flash .glow { box-shadow: 0 14px 40px rgba(30,58,138,0.22); }
   </style>
 </head>
 
@@ -4179,9 +4198,25 @@ Reviewer: ${review.reviewerId}
       localStorage.setItem('theme', mode);
     }
 
+    function flashHeaderColored(duration = 700) {
+      const topNav = document.getElementById('top-nav');
+      const headerEl = document.querySelector('header');
+      const els = [topNav, headerEl].filter(Boolean);
+      els.forEach(el => el.classList.add('header-colored-flash'));
+      setTimeout(() => els.forEach(el => el.classList.remove('header-colored-flash')), duration);
+    }
+
     function toggleTheme() {
       const cur = localStorage.getItem('theme') || 'light';
       const next = cur === 'light' ? 'colored' : (cur === 'colored' ? 'dark' : 'light');
+
+      // If transitioning directly between Light and Dark (not via colored), show a brief colored flash
+      if ((cur === 'light' && next === 'dark') || (cur === 'dark' && next === 'light')) {
+        flashHeaderColored(700);
+        setTimeout(() => setTheme(next), 700);
+        return;
+      }
+
       setTheme(next);
     }
 
