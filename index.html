@@ -49,12 +49,6 @@
       padding-top: 0.75rem;
     }
 
-    /* Hide notification bell on admin and reviewer dashboards */
-    #view-admin.active ~ nav .notification-bell,
-    #view-reviewer.active ~ nav .notification-bell {
-      display: none !important;
-    }
-
     .tab-content {
       display: block;
     }
@@ -3068,7 +3062,7 @@ Reviewer: ${review.reviewerId}
 
       if (currentUser.role === 'agent') {
         checkAgentNotifications(showPopup);
-      } else if (currentUser.role === 'admin') {
+      } else if (currentUser.role === 'admin' || currentUser.role === 'reviewer') {
         checkAdminNotifications(showPopup);
       }
     }
@@ -3147,12 +3141,12 @@ Reviewer: ${review.reviewerId}
     }
 
     function checkAdminNotifications(showPopup) {
-      if (!currentUser || currentUser.role !== 'admin') return;
+      if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'reviewer')) return;
 
       const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
       const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
       
-      // Find new comments that haven't been seen by admin
+      // Find new comments that haven't been seen by admin/reviewer
       const newComments = comments.filter(c => !adminNotifications.includes(c.id));
       
       const dot = document.querySelector('.notification-dot');
@@ -3213,9 +3207,25 @@ Reviewer: ${review.reviewerId}
       const review = reviews.find(r => r.id === reviewId);
       if (review) {
         closeNotificationsModal();
-        // Show the comments section
+        // Navigate to the admin dashboard and highlight the review
+        const entity = review.entity || review.agentEntity;
+        adminCurrentEntity = entity;
+        
+        // Mark notification as read
+        const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+        const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+        const newCommentIds = comments
+          .filter(c => !adminNotifications.includes(c.id))
+          .map(c => c.id);
+        adminNotifications.push(...newCommentIds);
+        localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
+        
         setTimeout(() => {
-          alert(`Agent: ${review.agentName}\nReview Date: ${review.date}\nScore: ${review.score}\n\nCheck the Agent Comments section for the full reply.`);
+          navigateTo('view-admin');
+          adminLoadAgents();
+          // Navigate directly to the review details
+          const comment = comments.find(c => c.reviewId === reviewId);
+          alert(`New Reply from: ${comment?.authorName || 'Agent'}\n\nNavigating to the review in Admin Dashboard...\n\nReply: "${comment?.text.substring(0, 100) || 'Check details'}..."`);
         }, 300);
       }
     }
@@ -3612,15 +3622,6 @@ Reviewer: ${review.reviewerId}
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
-      // Toggle bell visibility for admin/reviewer dashboards
-      const bellEl = document.querySelector('.notification-bell');
-      if (bellEl) {
-        if (id === 'view-admin' || id === 'view-reviewer') {
-          bellEl.style.display = 'none';
-        } else {
-          bellEl.style.display = '';
-        }
-      }
 
       // Filter Resources QA card when navigating to resources
       if (id === 'view-resources') {
@@ -3760,14 +3761,19 @@ Reviewer: ${review.reviewerId}
     }
 
     function handleChecklistClick(entityName) {
-      // If user is logged in as admin, set entity and navigate to admin dashboard
-      if (currentSessionUser && currentSessionUser.role === 'admin') {
+      // If user is logged in as admin or reviewer, set entity and navigate to admin/reviewer dashboard
+      if (currentSessionUser && (currentSessionUser.role === 'admin' || currentSessionUser.role === 'reviewer')) {
         currentEntity = entityName;
         adminCurrentEntity = entityName;
-        navigateTo('view-admin');
-        adminLoadAgents();
+        if (currentSessionUser.role === 'admin') {
+          navigateTo('view-admin');
+          adminLoadAgents();
+        } else if (currentSessionUser.role === 'reviewer') {
+          navigateTo('view-reviewer');
+          adminLoadAgents();
+        }
       } else {
-        // For non-logged-in users or non-admins, show login modal
+        // For non-logged-in users or agents, show login modal
         showLogin(entityName);
       }
     }
