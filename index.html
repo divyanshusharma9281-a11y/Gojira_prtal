@@ -4310,6 +4310,32 @@ Reviewer: ${review.reviewerId}
       document.getElementById('admin-start-review-btn').disabled = false;
       document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
 
+      // Update summary card similar to onAgentSelected but using adminReviews
+      const agentListContainer = document.getElementById('admin-agent-list');
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const agentReviews = reviews.filter(r => String(r.agentId) === String(agentId) && (!adminCurrentEntity || adminCurrentEntity === 'ALL' || r.entity === adminCurrentEntity));
+      const reviewStatus = agentReviews.length === 0
+        ? 'No reviews submitted'
+        : agentReviews.length >= 3
+          ? 'Ready for final submission'
+          : `${agentReviews.length}/3 reviews completed`;
+
+      agentListContainer.innerHTML = `
+        <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
+           <div class="flex items-center justify-between mb-4">
+              <div>
+                 <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${agentName}</h4>
+                 <p class="text-sm text-slate-500 font-mono">${agentId}</p>
+                 <p class="text-xs text-slate-400 mt-1">Entity: ${USER_DB.find(u => String(u.id) === String(agentId))?.entity || ''}</p>
+                 <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
+              </div>
+              <div class="text-right">
+                 <button onclick="adminStartQualityReview()" id="admin-top-start-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold">${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
+              </div>
+           </div>
+        </div>
+      `;
+
       // Refresh reviews list for this agent
       adminLoadReviewsList();
     }
@@ -4603,11 +4629,39 @@ Reviewer: ${review.reviewerId}
           localStorage.setItem('gojira_comments', JSON.stringify(comments));
         }
 
-        alert('Quality reviews submitted successfully!');
+        // Inform admin about how many valid reviews were saved and how many items were skipped
+        const invalidCount = validItems.length - processedItems.length; // typically 0 unless file read failed
+        const savedCount = processedItems.length;
+
+        // Determine cumulative reviews for this agent and mark week complete if threshold reached
+        const allReviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        const totalForAgent = allReviews.filter(r => String(r.agentId) === String(adminCurrentAgent)).length;
+
+        if (invalidCount > 0) {
+          alert(`${savedCount} review(s) saved. ${invalidCount} item(s) could not be read/saved and were skipped.`);
+        } else {
+          alert(`${savedCount} review(s) saved successfully.`);
+        }
+
+        if (totalForAgent >= 3) {
+          // Mark agent completed for current week
+          markAgentWeekComplete(adminCurrentEntity || 'ALL', adminCurrentAgent);
+          // Inform admin
+          const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+          const currentWeek = state.currentWeek || 1;
+          alert(`Total reviews for ${adminCurrentAgentName}: ${totalForAgent}. Agent finalized for Week ${currentWeek}.`);
+        }
+
+        // Store current selection, reset dialog, and re-select agent so UI remains focused
+        const preservedAgentId = adminCurrentAgent;
+        const preservedAgentName = adminCurrentAgentName;
         adminCancelReview();
-        // Show the submitted reviews section and reload the list
-        document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
-        adminLoadReviewsList();
+        // Re-select agent to show updated reviews and status
+        if (preservedAgentId) {
+          adminSelectAgent(preservedAgentId, preservedAgentName || preservedAgentId);
+        }
+        // Ensure dropdown updates to show blue tick if applicable
+        renderAdminAgentDropdown();
       } catch (error) {
         console.error("Error submitting reviews:", error);
         alert("Failed to submit reviews. Please try again.");
