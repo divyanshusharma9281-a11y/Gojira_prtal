@@ -3355,9 +3355,8 @@ Reviewer: ${review.reviewerId}
             <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="adminViewNotificationComment('${comment.reviewId}')">
               <div class="flex items-start justify-between">
                 <div class="flex-1">
-                  <h3 class="font-bold text-orange-900 dark:text-orange-200">New Agent Reply</h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">From: ${comment.authorName}</p>
-                  <p class="text-sm text-slate-600 dark:text-slate-400">Date: ${comment.date}</p>
+                  <h3 class="font-bold text-orange-900 dark:text-orange-200">${comment.authorName} commented on review</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Review Date: ${comment.date}</p>
                   <p class="text-sm mt-2 text-slate-700 dark:text-slate-300 line-clamp-2">"${comment.text.substring(0, 80)}..."</p>
                 </div>
                 <span class="bg-orange-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
@@ -5018,11 +5017,48 @@ Reviewer: ${review.reviewerId}
     function adminViewReview(index) {
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const review = reviews[index];
+      if (!review) return;
 
-      const choice = confirm(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}\n\nClick OK to open the file.`);
-      if (choice && review.fileContent) {
-        openFileContent(review.fileContent, review.fileName);
+      const modal = document.getElementById('admin-review-detail-modal');
+
+      // Populate fields
+      document.getElementById('admin-review-detail-agent').textContent = review.agentName || 'Unknown Agent';
+      document.getElementById('admin-review-detail-type').textContent = review.reviewType === 'voice' ? '🎙️ Voice Call' : '💬 Chat/Email';
+      document.getElementById('admin-review-detail-date').textContent = review.displayDate || review.date;
+      document.getElementById('admin-review-detail-score').textContent = review.score;
+      document.getElementById('admin-review-detail-observation').textContent = review.observation;
+
+      // File or ID
+      if (review.reviewType === 'voice') {
+        document.getElementById('admin-review-detail-file-section').classList.remove('hidden');
+        document.getElementById('admin-review-detail-id-section').classList.add('hidden');
+        document.getElementById('admin-review-detail-file-name').textContent = review.fileName || 'N/A';
+        document.getElementById('admin-review-detail-file-link').onclick = () => openFileContent(review.fileContent, review.fileName);
+      } else {
+        document.getElementById('admin-review-detail-file-section').classList.add('hidden');
+        document.getElementById('admin-review-detail-id-section').classList.remove('hidden');
+        const idText = (review.emailId ? 'Email: ' + review.emailId : '') + (review.emailId && review.chatId ? ' | ' : '') + (review.chatId ? 'Chat: ' + review.chatId : '');
+        document.getElementById('admin-review-detail-id-value').textContent = idText || 'N/A';
       }
+
+      // Comments
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === review.id);
+      const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No comments yet</p>' : comments.map(c => `
+        <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2 ${c.authorId === (currentUser?.id || 'admin') ? 'ml-8 bg-blue-50 dark:bg-blue-900/20' : 'mr-8'}">
+          <div class="flex justify-between items-center mb-1">
+             <span class="font-bold text-sm ${c.authorId === (currentUser?.id || 'admin') ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}">${c.authorName || 'User'}</span>
+             <span class="text-xs text-slate-400">${c.date}</span>
+          </div>
+          <div class="text-sm text-slate-800 dark:text-slate-200">${c.text}</div>
+        </div>
+      `).join('');
+      document.getElementById('admin-review-detail-comments').innerHTML = commentsHtml;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeAdminReviewDetailModal() {
+      document.getElementById('admin-review-detail-modal').classList.add('hidden');
     }
 
     let currentEditIndex = -1;
@@ -5837,6 +5873,72 @@ Reviewer: ${review.reviewerId}
       <div class="p-6 border-t border-slate-200 dark:border-slate-700">
         <button onclick="closeReviewDetailModal()"
           class="w-full bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-4 rounded-lg">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Admin Review Detail Modal (NEW) -->
+  <div id="admin-review-detail-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    onclick="if(event.target.id === 'admin-review-detail-modal') closeAdminReviewDetailModal()">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      onclick="event.stopPropagation()">
+      <div
+        class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Review Details (Admin)</h2>
+        <button onclick="closeAdminReviewDetailModal()" class="text-slate-500 hover:text-slate-700 text-2xl">✕</button>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-lg font-bold" id="admin-review-detail-agent">Agent Name</h3>
+            <p class="text-sm text-slate-500" id="admin-review-detail-date">-</p>
+          </div>
+          <div id="admin-review-detail-type" class="text-lg font-bold text-blue-600"></div>
+        </div>
+
+        <div id="admin-review-detail-file-section" class="hidden">
+          <label class="block text-sm font-semibold mb-2">Uploaded File</label>
+          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg flex justify-between items-center">
+            <div id="admin-review-detail-file-name" class="font-semibold">-</div>
+            <button id="admin-review-detail-file-link" class="text-blue-600 underline text-sm font-bold">📥
+              Download/View</button>
+          </div>
+        </div>
+
+        <div id="admin-review-detail-id-section" class="hidden">
+          <label class="block text-sm font-semibold mb-2">Contact ID</label>
+          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg font-mono text-sm"
+            id="admin-review-detail-id-value">-</div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Observation</label>
+          <div id="admin-review-detail-observation"
+            class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg whitespace-pre-wrap text-sm">-</div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Score</label>
+          <div class="text-3xl font-bold" id="admin-review-detail-score">-</div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Comments History</label>
+          <div id="admin-review-detail-comments"
+            class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg max-h-60 overflow-y-auto space-y-3">
+            <!-- Comments injected here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 border-t border-slate-200 dark:border-slate-700">
+        <button onclick="closeAdminReviewDetailModal()"
+          class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition">
           Close
         </button>
       </div>
