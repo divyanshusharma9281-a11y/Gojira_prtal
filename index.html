@@ -3905,8 +3905,12 @@ Reviewer: ${review.reviewerId}
     }
 
     function handleChecklistClick(entityName) {
+      // Ensure we respect persisted sessions too (check localStorage if needed)
+      const session = currentSessionUser || (localStorage.getItem('gojira_session_user') ? JSON.parse(localStorage.getItem('gojira_session_user')) : null);
+
       // If user is logged in as admin, set entity and navigate to admin dashboard
-      if (currentSessionUser && currentSessionUser.role === 'admin') {
+      if (session && session.role === 'admin') {
+        currentSessionUser = session;
         currentEntity = entityName;
         adminCurrentEntity = entityName;
         navigateTo('view-admin');
