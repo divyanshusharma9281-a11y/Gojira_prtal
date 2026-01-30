@@ -4107,6 +4107,40 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    // Reconcile finalize flags across all entityWeekState entries against the current adminReviews
+    function reconcileFinalizeFlags() {
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const counts = {};
+      reviews.forEach(r => {
+        const id = String(r.agentId);
+        counts[id] = (counts[id] || 0) + 1;
+      });
+
+      Object.keys(localStorage).forEach(key => {
+        if (!key.startsWith('entityWeekState_')) return;
+        try {
+          const state = JSON.parse(localStorage.getItem(key) || '{}');
+          if (!state || !state.completedAgents) return;
+          let changed = false;
+          Object.keys(state.completedAgents).forEach(wk => {
+            Object.keys(state.completedAgents[wk] || {}).forEach(agentId => {
+              if (!counts[agentId] || counts[agentId] < 3) {
+                delete state.completedAgents[wk][agentId];
+                changed = true;
+              }
+            });
+          });
+          if (changed) localStorage.setItem(key, JSON.stringify(state));
+        } catch (e) {
+          console.warn('Failed to reconcile', key, e);
+        }
+      });
+
+      // Refresh UI after reconciliation
+      renderAdminAgentDropdown();
+      checkAndEnableWeekFinalButton();
+    }
+
     function adminClearReviewsForAgent(agentId) {
       if (!agentId) return alert('No agent selected');
       const confirmClear = confirm('Clear all submitted reviews for this agent? This action cannot be undone.');
@@ -4128,6 +4162,9 @@ Reviewer: ${review.reviewerId}
 
       // Unmark week completion across all entities for this agent
       unmarkAgentWeekComplete('ALL', agentId);
+
+      // Reconcile any remaining flags against current stored reviews
+      reconcileFinalizeFlags();
 
       // Refresh UI
       if (adminCurrentAgent && String(adminCurrentAgent) === String(agentId)) {
@@ -4964,6 +5001,8 @@ Reviewer: ${review.reviewerId}
           const remaining = reviews.filter(r => String(r.agentId) === String(agentId)).length;
           if (remaining < 3) {
             unmarkAgentWeekComplete('ALL', agentId);
+            // Reconcile flags globally to ensure consistency
+            reconcileFinalizeFlags();
             // Refresh dropdown etc.
             renderAdminAgentDropdown();
             checkAndEnableWeekFinalButton();
@@ -4997,6 +5036,9 @@ Reviewer: ${review.reviewerId}
             unmarkAgentWeekComplete('ALL', agentId);
           }
         });
+
+        // Reconcile across all entities to handle edge cases where flags may remain
+        reconcileFinalizeFlags();
 
         // Refresh UI
         renderAdminAgentDropdown();
