@@ -1790,6 +1790,25 @@
       const sessionUser = localStorage.getItem('gojira_session_user');
       if (sessionUser) {
         currentSessionUser = JSON.parse(sessionUser);
+        // Restore role-specific UI and state
+        if (currentSessionUser.role === 'admin') {
+          currentUser = currentSessionUser;
+          adminCurrentEntity = currentSessionUser.entity || 'ALL';
+          const welcomeText = document.getElementById('admin-welcome-text');
+          if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+          adminLoadAgents();
+        } else if (currentSessionUser.role === 'reviewer') {
+          currentUser = currentSessionUser;
+          reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
+          adminCurrentEntity = reviewerCurrentEntity; // ensure agents load correctly
+          const welcomeText = document.getElementById('reviewer-welcome-text');
+          if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+          const entityDisplay = document.getElementById('reviewer-entity-display');
+          if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
+          adminLoadAgents();
+        } else {
+          currentUser = currentSessionUser;
+        }
         showPortalContent();
       }
     }
@@ -3881,6 +3900,7 @@ Reviewer: ${review.reviewerId}
         // For reviewer
         const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'BharatLoan';
         reviewerCurrentEntity = selectedEntity;
+        adminCurrentEntity = selectedEntity; // ensure agent lists populate
         currentUser = user;
         currentEntity = user.entity;
 
@@ -3891,6 +3911,9 @@ Reviewer: ${review.reviewerId}
         // Set entity display
         const entityDisplay = document.getElementById('reviewer-entity-display');
         if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
+
+        // Populate agent list for reviewer
+        adminLoadAgents();
 
         showPortalContent();
         navigateTo('view-home');
