@@ -1232,6 +1232,35 @@
               Feedback</button>
           </div>
 
+          <!-- Agent Feedback (moved here from Admin homepage) -->
+          <div class="mt-6">
+            <h3 class="text-lg font-bold mb-4 flex items-center gap-3">
+              <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
+              Agent Comments
+            </h3>
+            <div class="mb-4">
+              <button onclick="adminDeleteAllFeedback()"
+                class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
+                🗑️ Delete All Feedback
+              </button>
+            </div>
+            <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+              <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+                <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+                  <tr>
+                    <th class="p-6">Date</th>
+                    <th class="p-6">Agent</th>
+                    <th class="p-6">Feedback</th>
+                    <th class="p-6 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-feedback-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+                  <!-- JS Populates this -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
         <!-- Empty State -->
@@ -1290,57 +1319,15 @@
           Start Quality Review
         </button>
 
-        <!-- Inline Voice/Non-Voice Selection (shown after selecting an agent) -->
-        <div id="admin-voice-type-section" class="hidden mt-4 space-y-3">
-          <div class="text-sm font-semibold mb-2">Select Review Type</div>
-          <div class="flex gap-3">
-            <button id="admin-voice-btn" onclick="adminSelectVoiceType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center">
-              <div class="font-medium">Voice</div>
-              <div class="text-sm opacity-90">Call recordings & interaction</div>
-            </button>
-            <button id="admin-non-voice-btn" onclick="adminSelectVoiceType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center">
-              <div class="font-medium">Non-Voice</div>
-              <div class="text-sm opacity-90">Chat/Email interactions</div>
-            </button>
-          </div>
-        </div>
+
       </div>
 
-      <!-- Voice/Non-Voice Type Selection Modal -->
-      <div id="voice-type-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4">
-          <h2 class="text-2xl font-bold mb-6 text-center">Select Review Type</h2>
-          <p class="text-slate-600 dark:text-slate-400 text-center mb-6">Choose the type of quality check for this agent</p>
-        </div>
-      </div>
+
 
       <!-- Confirm Clear Finalizations Modal -->
 
 
-          <div class="space-y-4">
-            <button onclick="selectVoiceType('voice')" 
-              class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-3">
-              <span class="text-2xl">🎙️</span>
-              <div>
-                <div class="font-bold">Voice</div>
-                <div class="text-sm opacity-90">Call recordings & interaction</div>
-              </div>
-            </button>
-            
-            <button onclick="selectVoiceType('non-voice')" 
-              class="w-full bg-purple-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-purple-700 transition flex items-center justify-center gap-3">
-              <span class="text-2xl">💬</span>
-              <div>
-                <div class="font-bold">Non-Voice</div>
-                <div class="text-sm opacity-90">Chat/Email interactions</div>
-              </div>
-            </button>
-          </div>
-          
-          <button onclick="document.getElementById('voice-type-modal').classList.add('hidden')" 
-            class="w-full mt-4 bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-400 transition">
-            Cancel
-          </button>
+
         </div>
       </div>
 
@@ -1415,34 +1402,7 @@
         </div>
       </div>
 
-      <!-- Section 4: Agent Feedback -->
-      <div>
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
-          Agent Comments
-        </h2>
-        <div class="mb-4">
-          <button onclick="adminDeleteAllFeedback()"
-            class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
-            🗑️ Delete All Feedback
-          </button>
-        </div>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-6">Date</th>
-                <th class="p-6">Agent</th>
-                <th class="p-6">Feedback</th>
-                <th class="p-6 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="admin-feedback-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+
     </div>
   </div>
 
@@ -4340,17 +4300,8 @@ Reviewer: ${review.reviewerId}
         adminCurrentAgent = agentId;
         adminCurrentAgentName = agentName;
 
-        // Keep inline voice/non-voice section hidden when using the dropdown (visible only for agent list selection)
-        // Reset any previous inline selection state but do not display the inline controls
+        // Reset any previous inline selection state (inline controls removed)
         adminReviewType = '';
-        try {
-          document.getElementById('admin-voice-btn').classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
-          document.getElementById('admin-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
-          document.getElementById('admin-non-voice-btn').classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-          document.getElementById('admin-non-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
-        } catch (e) {
-          // buttons may not exist; ignore
-        }
 
         // Enable the start review button (dropdown users will use modal to pick type)
         document.getElementById('admin-start-review-btn').disabled = false;
@@ -4369,8 +4320,6 @@ Reviewer: ${review.reviewerId}
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
         // Hide the submitted reviews section
         document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
-        // Hide inline selection
-        document.getElementById('admin-voice-type-section').classList.add('hidden');
         adminReviewType = '';
         // Update clear finalizations button
         updateClearFinalizationsButton();
@@ -4384,19 +4333,12 @@ Reviewer: ${review.reviewerId}
       // Show the submitted reviews section when agent is selected
       document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
 
-      // Hide and reset inline review type selection until admin explicitly chooses one
-      document.getElementById('admin-voice-type-section').classList.remove('hidden');
+      // Clear any previous inline selection state
       adminReviewType = '';
-      try {
-        document.getElementById('admin-voice-btn').classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
-        document.getElementById('admin-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
-        document.getElementById('admin-non-voice-btn').classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-        document.getElementById('admin-non-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
-      } catch (e) {}
 
-      // Disable start button until type is chosen
-      document.getElementById('admin-start-review-btn').disabled = true;
-      document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
+      // Enable start button so admin can proceed to Quality Checklist
+      document.getElementById('admin-start-review-btn').disabled = false;
+      document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
 
       // Update summary card similar to onAgentSelected but using adminReviews
       const agentListContainer = document.getElementById('admin-agent-list');
@@ -4419,7 +4361,7 @@ Reviewer: ${review.reviewerId}
               </div>
               <div class="text-right flex items-center gap-3">
                  <button onclick="adminClearReviewsForAgent('${agentId}')" id="admin-clear-reviews-btn" class="bg-red-100 text-red-700 px-3 py-2 rounded-md text-sm font-semibold border border-red-200 hover:bg-red-200">Clear Reviews</button>
-                 <button onclick="adminStartQualityReview()" id="admin-top-start-btn" disabled class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed">${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
+                 <button onclick="adminStartQualityReview()" id="admin-top-start-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold">${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
               </div>
            </div>
         </div>
@@ -4458,27 +4400,26 @@ Reviewer: ${review.reviewerId}
         return;
       }
 
-      // If an inline type is selected (agent list selection), proceed using it
-      if (adminReviewType) {
-        selectVoiceType(adminReviewType);
+      // Open the Quality Assurance view and pre-select the chosen agent for review
+      selectedAgentForReview = USER_DB.find(u => u.id === adminCurrentAgent);
+      if (!selectedAgentForReview) {
+        alert('Selected agent not found.');
         return;
       }
 
-      // If inline controls are hidden (dropdown flow), open the modal as fallback
-      const inlineSection = document.getElementById('admin-voice-type-section');
-      if (inlineSection && inlineSection.classList.contains('hidden')) {
-        document.getElementById('voice-type-modal').classList.remove('hidden');
-        return;
-      }
+      // Navigate to the QA checklist view where process type (Voice/Non-Voice) is selected
+      navigateTo('view-agent-qa');
 
-      // Otherwise prompt the admin to choose a type from inline controls
-      alert('Please select a review type (Voice or Non-Voice) before starting');
+      // Update QA header and any agent-specific displays (if present)
+      try {
+        document.getElementById('agent-qa-welcome-text').textContent = `Review - ${selectedAgentForReview.name}`;
+      } catch (e) {}
     }
 
     function selectVoiceType(type) {
       // type: 'voice' or 'non-voice'
       adminReviewType = type;
-      document.getElementById('voice-type-modal').classList.add('hidden');
+      try { document.getElementById('voice-type-modal').classList.add('hidden'); } catch (e) {}
       
       // Show quality review form
       adminReviewItems = [];
@@ -4489,37 +4430,7 @@ Reviewer: ${review.reviewerId}
       adminAddReviewItem();
     }
 
-    function adminSelectVoiceType(type) {
-      // Set the selected type and update inline button styles
-      adminReviewType = type;
-      const voiceBtn = document.getElementById('admin-voice-btn');
-      const nonVoiceBtn = document.getElementById('admin-non-voice-btn');
 
-      if (voiceBtn && nonVoiceBtn) {
-        if (type === 'voice') {
-          voiceBtn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
-          voiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
-          nonVoiceBtn.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-          nonVoiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
-        } else {
-          nonVoiceBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-          nonVoiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
-          voiceBtn.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
-          voiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
-        }
-      }
-
-      // Enable start buttons now that type is selected
-      const startBtn = document.getElementById('admin-start-review-btn');
-      startBtn.disabled = false;
-      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-
-      const topStartBtn = document.getElementById('admin-top-start-btn');
-      if (topStartBtn) {
-        topStartBtn.disabled = false;
-        topStartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    }
 
     function adminCancelReview() {
       document.getElementById('admin-quality-form-section').classList.add('hidden');
