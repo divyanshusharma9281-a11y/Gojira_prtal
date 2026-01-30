@@ -85,12 +85,30 @@
     @keyframes zoomIn {
       from {
         opacity: 0;
-        transform: scale(0.5);
+        transform: translateY(20px) scale(0.7);
       }
 
       to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Door brand descent animation: keeps same size but moves down behind the login card */
+    @keyframes doorBrandDescend {
+      0% {
+        transform: translateY(0) scale(1) rotate(-8deg);
+        opacity: 1;
+      }
+
+      60% {
+        transform: translateY(7rem) scale(0.96) rotate(-8deg);
+        opacity: 0.6;
+      }
+
+      100% {
+        transform: translateY(14rem) scale(0.85) rotate(-8deg);
+        opacity: 0.18;
       }
     }
 
@@ -118,9 +136,23 @@
     }
 
     .animate-zoom-in {
-      animation: zoomIn 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
-      /* Increased duration for slow entry */
+      animation: zoomIn 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s forwards;
+      /* Slightly longer, slower zoom out */
       opacity: 0;
+    }
+
+    /* Apply door-brand descent to the big heading so it moves when doors swing */
+    #door-brand .door-brand {
+      transform-origin: center;
+      animation: doorBrandDescend 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+      will-change: transform, opacity;
+    }
+
+    #door-brand.moved {
+      z-index: 0 !important;
+      opacity: 0.18 !important;
+      pointer-events: none;
+      transform: translateY(14rem) scale(0.85) rotate(-8deg);
     }
 
     .animate-door-left {
@@ -201,17 +233,19 @@
 
     <!-- The Split Doors (3D Swing) -->
     <div
-      class="fixed inset-y-0 left-0 w-1/2 bg-gradient-to-r from-red-950 to-red-900 z-50 animate-door-left flex items-center justify-end border-r border-red-800 shadow-2xl">
+      class="fixed inset-y-0 left-0 w-1/2 z-50 animate-door-left flex items-center justify-end border-r border-transparent shadow-2xl"
+      style="background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
     </div>
     <div
-      class="fixed inset-y-0 right-0 w-1/2 bg-gradient-to-l from-blue-950 to-blue-900 z-50 animate-door-right flex items-center justify-start border-l border-blue-800 shadow-2xl">
+      class="fixed inset-y-0 right-0 w-1/2 z-50 animate-door-right flex items-center justify-start border-l border-transparent shadow-2xl"
+      style="background: linear-gradient(270deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
     </div>
 
     <!-- Revealed Background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-red-950 via-slate-900 to-blue-950 z-0"></div>
+    <div class="absolute inset-0 z-0" style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
 
     <!-- Background Typography Theme (Door Branding) -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-30 z-0">
+    <div id="door-brand" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-50">
       <h1
         class="door-brand text-[18rem] font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 transform -rotate-8 whitespace-nowrap drop-shadow-lg">
         G - Gojira</h1>
@@ -4321,6 +4355,25 @@ Reviewer: ${review.reviewerId}
           if (themeActive && currentSessionUser) {
             document.body.classList.add('gojira-theme');
             console.debug('[onload] Re-applying Gojira theme for restored session');
+          }
+
+          // Move door-brand behind login after its animation completes (synchronised with doors)
+          try {
+            const doorBrandEl = document.getElementById('door-brand');
+            if (doorBrandEl) {
+              const heading = doorBrandEl.querySelector('.door-brand');
+              heading?.addEventListener('animationend', () => {
+                doorBrandEl.classList.add('moved');
+                console.debug('[onload] door-brand animation ended, moved behind login');
+              });
+
+              // Fallback in case animationend isn't triggered
+              setTimeout(() => {
+                doorBrandEl.classList.add('moved');
+              }, 2600);
+            }
+          } catch (e) {
+            console.warn('[onload] failed to attach door-brand listeners', e);
           }
 
           // initPortal will be called but we will override its default "show login" behavior if we have a user
