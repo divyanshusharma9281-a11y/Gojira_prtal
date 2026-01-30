@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gojira TP | Training Portal</title>
+  <!-- APP_VERSION: 20260130-001 -->
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -84,6 +85,23 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+  <!-- Update Available Banner (hidden by default) -->
+  <div id="update-banner" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl mx-auto px-4">
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded-lg shadow-md flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="text-lg">🔔</div>
+        <div>
+          <div class="font-bold">New version available</div>
+          <div class="text-sm text-yellow-800">A new version of the portal is available. Refresh to get the latest updates.</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="update-reload-btn" class="bg-yellow-600 text-white px-4 py-2 rounded-md font-semibold">Reload Now</button>
+        <button id="update-dismiss-btn" class="text-sm text-yellow-800 underline">Dismiss</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen"
@@ -5650,7 +5668,71 @@ Reviewer: ${review.reviewerId}
     window.addEventListener('load', function () {
       adminLoadReviewsList();
       adminLoadFeedbackList();
+
+      // Start update checker once initial admin data is loaded
+      try {
+        startUpdateChecker();
+      } catch (e) {
+        console.warn('[updateChecker] failed to start', e);
+      }
     });
+
+    /* ----------------- Auto-update / cache-refresh checker -----------------
+       It checks the embedded APP_VERSION token in the page and periodically
+       fetches the page with cache: 'no-store' to detect version changes.
+       When a new version is detected it shows a small banner with a reload
+       button so users can refresh to get the latest updates without re-sharing.
+    ----------------------------------------------------------------------- */
+
+    // Helper: extract token like "APP_VERSION: 20260130-001" from page text
+    function _extractAppVersion(text) {
+      const m = text.match(/APP_VERSION:\s*([0-9A-Za-z_.\-]+)/i);
+      return m ? m[1] : null;
+    }
+
+    const _currentAppVersion = _extractAppVersion(document.documentElement.innerHTML) || 'unknown';
+    let _updateCheckerInterval = null;
+
+    function showUpdateBanner() {
+      const banner = document.getElementById('update-banner');
+      if (!banner) return;
+      banner.classList.remove('hidden');
+
+      const reloadBtn = document.getElementById('update-reload-btn');
+      const dismissBtn = document.getElementById('update-dismiss-btn');
+
+      // Attach handlers
+      reloadBtn.onclick = () => location.reload();
+      dismissBtn.onclick = () => banner.classList.add('hidden');
+
+      // Auto-reload after 60s to ensure users get the new version (optional)
+      setTimeout(() => {
+        if (!banner.classList.contains('hidden')) location.reload();
+      }, 60000);
+    }
+
+    async function checkForUpdates() {
+      try {
+        const resp = await fetch(location.href, { cache: 'no-store', credentials: 'same-origin' });
+        if (!resp.ok) return;
+        const text = await resp.text();
+        const remoteVersion = _extractAppVersion(text);
+        if (remoteVersion && remoteVersion !== _currentAppVersion) {
+          console.info('[updateChecker] new version detected', remoteVersion, 'current', _currentAppVersion);
+          showUpdateBanner();
+          // stop further checks once detected
+          if (_updateCheckerInterval) clearInterval(_updateCheckerInterval);
+        }
+      } catch (e) {
+        console.warn('[updateChecker] check failed', e);
+      }
+    }
+
+    function startUpdateChecker() {
+      // Run an immediate check, then poll every 30s
+      checkForUpdates();
+      _updateCheckerInterval = setInterval(checkForUpdates, 30 * 1000);
+    }
 
   </script>
 
