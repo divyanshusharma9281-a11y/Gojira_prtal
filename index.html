@@ -182,26 +182,57 @@
     }
 
     /* Theme applied after login to make pages colorful */
-    .gojira-theme header {
-      background: var(--gojira-grad) !important;
+    body.gojira-theme {
+      background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
+      color: rgba(255,255,255,0.92);
+      transition: background 0.5s ease, color 0.3s ease;
+    }
+
+    .gojira-theme header,
+    .gojira-theme #top-nav {
+      background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%) !important;
       color: #fff !important;
       border: none !important;
+      transition: background 0.4s ease;
     }
 
     .gojira-theme .app-view {
-      background: linear-gradient(180deg, rgba(185,28,28,0.02), rgba(14,42,90,0.02));
+      background: linear-gradient(180deg, rgba(185,28,28,0.03), rgba(14,42,90,0.03));
     }
 
     .gojira-theme .card,
     .gojira-theme .panel {
+      background: rgba(10,14,22,0.6);
+      color: rgba(255,255,255,0.92);
       border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(14, 40, 90, 0.06);
-      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 8px 40px rgba(14, 40, 90, 0.12);
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
     .gojira-theme .accent-btn {
       background: var(--gojira-grad); color: white; border: none;
-      box-shadow: 0 10px 30px rgba(30,58,138,0.12);
+      box-shadow: 0 10px 30px rgba(30,58,138,0.18);
+    }
+
+    /* Inputs and form elements */
+    .gojira-theme input,
+    .gojira-theme select,
+    .gojira-theme textarea {
+      background: rgba(255,255,255,0.02) !important;
+      border: 1px solid rgba(255,255,255,0.06) !important;
+      color: rgba(255,255,255,0.95) !important;
+    }
+
+    .gojira-theme .btn-outline {
+      border-color: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.92);
+    }
+
+    /* Accent badges */
+    .gojira-theme .badge {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
     /* Door branding */
