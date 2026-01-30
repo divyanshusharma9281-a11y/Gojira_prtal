@@ -3606,6 +3606,12 @@ Reviewer: ${review.reviewerId}
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
+      // Hide notification bell on admin and reviewer dashboards
+      const bellEl = document.querySelector('.notification-bell');
+      if (bellEl) {
+        if (id === 'view-admin' || id === 'view-reviewer') bellEl.classList.add('hidden');
+        else bellEl.classList.remove('hidden');
+      }
 
       // Filter Resources QA card when navigating to resources
       if (id === 'view-resources') {
