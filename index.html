@@ -1289,6 +1289,21 @@
           class="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition opacity-50 cursor-not-allowed">
           Start Quality Review
         </button>
+
+        <!-- Inline Voice/Non-Voice Selection (shown after selecting an agent) -->
+        <div id="admin-voice-type-section" class="hidden mt-4 space-y-3">
+          <div class="text-sm font-semibold mb-2">Select Review Type</div>
+          <div class="flex gap-3">
+            <button id="admin-voice-btn" onclick="adminSelectVoiceType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center">
+              <div class="font-medium">Voice</div>
+              <div class="text-sm opacity-90">Call recordings & interaction</div>
+            </button>
+            <button id="admin-non-voice-btn" onclick="adminSelectVoiceType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center">
+              <div class="font-medium">Non-Voice</div>
+              <div class="text-sm opacity-90">Chat/Email interactions</div>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Voice/Non-Voice Type Selection Modal -->
@@ -4324,12 +4339,27 @@ Reviewer: ${review.reviewerId}
       if (agentId) {
         adminCurrentAgent = agentId;
         adminCurrentAgentName = agentName;
-        // Enable the start review button
-        document.getElementById('admin-start-review-btn').disabled = false;
-        document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
-        // Show the submitted reviews section
+
+        // Show voice/non-voice selection inline
+        document.getElementById('admin-voice-type-section').classList.remove('hidden');
+
+        // Clear any previous review type selection
+        adminReviewType = '';
+        try {
+          document.getElementById('admin-voice-btn').classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+          document.getElementById('admin-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
+          document.getElementById('admin-non-voice-btn').classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+          document.getElementById('admin-non-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
+        } catch (e) {
+          // buttons may not exist yet in older UI states; ignore
+        }
+
+        // Disable start button until type is chosen
+        document.getElementById('admin-start-review-btn').disabled = true;
+        document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
+
+        // Show the submitted reviews section and load reviews for this agent
         document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
-        // Load reviews for this agent
         adminLoadReviewsList();
         // Update clear finalizations button
         updateClearFinalizationsButton();
@@ -4341,6 +4371,9 @@ Reviewer: ${review.reviewerId}
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
         // Hide the submitted reviews section
         document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
+        // Hide inline selection
+        document.getElementById('admin-voice-type-section').classList.add('hidden');
+        adminReviewType = '';
         // Update clear finalizations button
         updateClearFinalizationsButton();
       }
@@ -4353,9 +4386,19 @@ Reviewer: ${review.reviewerId}
       // Show the submitted reviews section when agent is selected
       document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
 
-      // Enable start button
-      document.getElementById('admin-start-review-btn').disabled = false;
-      document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+      // Hide and reset inline review type selection until admin explicitly chooses one
+      document.getElementById('admin-voice-type-section').classList.remove('hidden');
+      adminReviewType = '';
+      try {
+        document.getElementById('admin-voice-btn').classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        document.getElementById('admin-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
+        document.getElementById('admin-non-voice-btn').classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+        document.getElementById('admin-non-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
+      } catch (e) {}
+
+      // Disable start button until type is chosen
+      document.getElementById('admin-start-review-btn').disabled = true;
+      document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
 
       // Update summary card similar to onAgentSelected but using adminReviews
       const agentListContainer = document.getElementById('admin-agent-list');
@@ -4378,7 +4421,7 @@ Reviewer: ${review.reviewerId}
               </div>
               <div class="text-right flex items-center gap-3">
                  <button onclick="adminClearReviewsForAgent('${agentId}')" id="admin-clear-reviews-btn" class="bg-red-100 text-red-700 px-3 py-2 rounded-md text-sm font-semibold border border-red-200 hover:bg-red-200">Clear Reviews</button>
-                 <button onclick="adminStartQualityReview()" id="admin-top-start-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold">${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
+                 <button onclick="adminStartQualityReview()" id="admin-top-start-btn" disabled class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed">${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
               </div>
            </div>
         </div>
@@ -4417,8 +4460,14 @@ Reviewer: ${review.reviewerId}
         return;
       }
 
-      // Show voice/non-voice selection modal
-      document.getElementById('voice-type-modal').classList.remove('hidden');
+      // Ensure a review type has been selected inline
+      if (!adminReviewType) {
+        alert('Please select a review type (Voice or Non-Voice) before starting');
+        return;
+      }
+
+      // Proceed using the chosen type (reuses existing flow)
+      selectVoiceType(adminReviewType);
     }
 
     function selectVoiceType(type) {
@@ -4433,6 +4482,38 @@ Reviewer: ${review.reviewerId}
       
       // Add first review item
       adminAddReviewItem();
+    }
+
+    function adminSelectVoiceType(type) {
+      // Set the selected type and update inline button styles
+      adminReviewType = type;
+      const voiceBtn = document.getElementById('admin-voice-btn');
+      const nonVoiceBtn = document.getElementById('admin-non-voice-btn');
+
+      if (voiceBtn && nonVoiceBtn) {
+        if (type === 'voice') {
+          voiceBtn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+          voiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+          nonVoiceBtn.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+          nonVoiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+        } else {
+          nonVoiceBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+          nonVoiceBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+          voiceBtn.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+          voiceBtn.classList.add('border-slate-200', 'dark:border-slate-600');
+        }
+      }
+
+      // Enable start buttons now that type is selected
+      const startBtn = document.getElementById('admin-start-review-btn');
+      startBtn.disabled = false;
+      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      const topStartBtn = document.getElementById('admin-top-start-btn');
+      if (topStartBtn) {
+        topStartBtn.disabled = false;
+        topStartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
     }
 
     function adminCancelReview() {
