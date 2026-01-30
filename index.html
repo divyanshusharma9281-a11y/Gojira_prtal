@@ -94,15 +94,26 @@
       }
     }
 
-    @keyframes slideLeft {
+    /* 3D Swing Animations */
+    @keyframes swingLeft {
+      from {
+        transform: rotateY(0deg);
+      }
+
       to {
-        transform: translateX(-100%);
+        transform: rotateY(95deg);
+        opacity: 0;
       }
     }
 
-    @keyframes slideRight {
+    @keyframes swingRight {
+      from {
+        transform: rotateY(0deg);
+      }
+
       to {
-        transform: translateX(100%);
+        transform: rotateY(-95deg);
+        opacity: 0;
       }
     }
 
@@ -113,11 +124,13 @@
     }
 
     .animate-door-left {
-      animation: slideLeft 1.2s cubic-bezier(0.6, 0.05, 0.01, 1) 0.5s forwards;
+      transform-origin: left;
+      animation: swingLeft 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
     }
 
     .animate-door-right {
-      animation: slideRight 1.2s cubic-bezier(0.6, 0.05, 0.01, 1) 0.5s forwards;
+      transform-origin: right;
+      animation: swingRight 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
     }
   </style>
 </head>
@@ -146,10 +159,10 @@
   </div>
 
   <!-- MAIN PORTAL LOGIN SCREEN -->
-  <div id="portal-login-screen"
-    class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden">
+  <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
+    style="perspective: 1500px;">
 
-    <!-- The Split Doors -->
+    <!-- The Split Doors (3D Swing) -->
     <div
       class="fixed inset-y-0 left-0 w-1/2 bg-gradient-to-r from-red-950 to-red-900 z-50 animate-door-left flex items-center justify-end border-r border-red-800 shadow-2xl">
     </div>
