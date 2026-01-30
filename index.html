@@ -4340,10 +4340,8 @@ Reviewer: ${review.reviewerId}
         adminCurrentAgent = agentId;
         adminCurrentAgentName = agentName;
 
-        // Show voice/non-voice selection inline
-        document.getElementById('admin-voice-type-section').classList.remove('hidden');
-
-        // Clear any previous review type selection
+        // Keep inline voice/non-voice section hidden when using the dropdown (visible only for agent list selection)
+        // Reset any previous inline selection state but do not display the inline controls
         adminReviewType = '';
         try {
           document.getElementById('admin-voice-btn').classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
@@ -4351,12 +4349,12 @@ Reviewer: ${review.reviewerId}
           document.getElementById('admin-non-voice-btn').classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
           document.getElementById('admin-non-voice-btn').classList.add('border-slate-200', 'dark:border-slate-600');
         } catch (e) {
-          // buttons may not exist yet in older UI states; ignore
+          // buttons may not exist; ignore
         }
 
-        // Disable start button until type is chosen
-        document.getElementById('admin-start-review-btn').disabled = true;
-        document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
+        // Enable the start review button (dropdown users will use modal to pick type)
+        document.getElementById('admin-start-review-btn').disabled = false;
+        document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
 
         // Show the submitted reviews section and load reviews for this agent
         document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
@@ -4460,14 +4458,21 @@ Reviewer: ${review.reviewerId}
         return;
       }
 
-      // Ensure a review type has been selected inline
-      if (!adminReviewType) {
-        alert('Please select a review type (Voice or Non-Voice) before starting');
+      // If an inline type is selected (agent list selection), proceed using it
+      if (adminReviewType) {
+        selectVoiceType(adminReviewType);
         return;
       }
 
-      // Proceed using the chosen type (reuses existing flow)
-      selectVoiceType(adminReviewType);
+      // If inline controls are hidden (dropdown flow), open the modal as fallback
+      const inlineSection = document.getElementById('admin-voice-type-section');
+      if (inlineSection && inlineSection.classList.contains('hidden')) {
+        document.getElementById('voice-type-modal').classList.remove('hidden');
+        return;
+      }
+
+      // Otherwise prompt the admin to choose a type from inline controls
+      alert('Please select a review type (Voice or Non-Voice) before starting');
     }
 
     function selectVoiceType(type) {
