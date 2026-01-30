@@ -2167,9 +2167,8 @@
       document.getElementById('portal-login-screen').classList.remove('hidden');
       document.getElementById('top-nav').classList.add('hidden');
 
-      // Remove Gojira theme
-      document.body.classList.remove('gojira-theme');
-      localStorage.removeItem('gojira_theme_active');
+      // Reset theme to light on logout
+      setTheme('light');
 
       // Hide all views
       document.querySelectorAll('.app-view').forEach(view => {
@@ -4125,22 +4124,34 @@ Reviewer: ${review.reviewerId}
       `).join('');
     }
 
-    function toggleTheme() {
+    function setTheme(mode) {
+      // mode: 'light' | 'colored' | 'dark'
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
       const text = document.getElementById('theme-text');
 
-      if (html.classList.contains('dark')) {
-        html.classList.remove('dark');
-        icon.innerText = '🌙';
-        text.innerText = 'Dark';
-        localStorage.setItem('theme', 'light');
-      } else {
-        html.classList.add('dark');
+      html.classList.toggle('dark', mode === 'dark');
+      // Gojira colored theme is applied on the body
+      document.body.classList.toggle('gojira-theme', mode === 'colored');
+
+      if (mode === 'light') {
         icon.innerText = '☀️';
         text.innerText = 'Light';
-        localStorage.setItem('theme', 'dark');
+      } else if (mode === 'colored') {
+        icon.innerText = '🎨';
+        text.innerText = 'Gojira';
+      } else { // dark
+        icon.innerText = '🌙';
+        text.innerText = 'Dark';
       }
+
+      localStorage.setItem('theme', mode);
+    }
+
+    function toggleTheme() {
+      const cur = localStorage.getItem('theme') || 'light';
+      const next = cur === 'light' ? 'colored' : (cur === 'colored' ? 'dark' : 'light');
+      setTheme(next);
     }
 
     function toggleDropdown(entity) {
@@ -4281,9 +4292,8 @@ Reviewer: ${review.reviewerId}
         localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
         console.info('[submitLogin] Login successful for', user.id, user.role);
 
-        // Apply colorful Gojira theme across pages after login
-        document.body.classList.add('gojira-theme');
-        localStorage.setItem('gojira_theme_active', '1');
+        // Apply colorful Gojira theme across pages after login (tri-state)
+        setTheme('colored');
 
         // Clear login form
         document.getElementById('portal-emp-id').value = '';
@@ -4347,12 +4357,11 @@ Reviewer: ${review.reviewerId}
     }
 
     window.onload = () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.getElementById('theme-icon').innerText = '☀️';
-        document.getElementById('theme-text').innerText = 'Light';
-      }
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      // Apply saved theme (supports 'light' | 'colored' | 'dark')
+      try { setTheme(savedTheme); } catch (e) { console.warn('[onload] setTheme failed', e); }
+
+
 
       // Safety: Ensure session persists across refreshes. 
       try {
@@ -4364,12 +4373,8 @@ Reviewer: ${review.reviewerId}
           // Restore global variables based on role
           currentUser = currentSessionUser;
 
-          // If a theme was active for this session, re-apply it
-          const themeActive = localStorage.getItem('gojira_theme_active');
-          if (themeActive && currentSessionUser) {
-            document.body.classList.add('gojira-theme');
-            console.debug('[onload] Re-applying Gojira theme for restored session');
-          }
+          // Theme state handled globally via setTheme during onload (no legacy flag used)
+          console.debug('[onload] current theme:', localStorage.getItem('theme'));
 
           // Move door-brand behind login after its animation completes (synchronised with doors)
           try {
