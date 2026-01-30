@@ -49,6 +49,12 @@
       padding-top: 0.75rem;
     }
 
+    /* Hide notification bell on admin and reviewer dashboards */
+    #view-admin.active ~ nav .notification-bell,
+    #view-reviewer.active ~ nav .notification-bell {
+      display: none !important;
+    }
+
     .tab-content {
       display: block;
     }
@@ -3606,24 +3612,13 @@ Reviewer: ${review.reviewerId}
       document.getElementById('search-bar').classList.add('hidden');
       document.getElementById('search-input').value = '';
       document.getElementById('search-results').innerHTML = '';
-      // Remove notification bell on admin and reviewer dashboards
+      // Toggle bell visibility for admin/reviewer dashboards
       const bellEl = document.querySelector('.notification-bell');
       if (bellEl) {
         if (id === 'view-admin' || id === 'view-reviewer') {
-          bellEl.remove();
-          window.bellRemoved = true;
-        } else if (window.bellRemoved) {
-          // Restore bell if it was removed
-          const headerButtons = document.querySelector('.flex.flex-col.items-end.gap-2 .flex.items-center.gap-2');
-          if (headerButtons && !document.querySelector('.notification-bell')) {
-            const newBell = document.createElement('div');
-            newBell.className = 'relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition notification-bell';
-            newBell.onclick = () => checkNotifications(true);
-            newBell.title = 'Check Notifications';
-            newBell.innerHTML = '<span class="text-xl">🔔</span><span class="notification-dot hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>';
-            headerButtons.insertBefore(newBell, headerButtons.querySelector('button:last-child'));
-            window.bellRemoved = false;
-          }
+          bellEl.style.display = 'none';
+        } else {
+          bellEl.style.display = '';
         }
       }
 
