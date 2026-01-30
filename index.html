@@ -3092,6 +3092,16 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    function getAgentSeenNotifications(agentId) {
+      return JSON.parse(localStorage.getItem(`agentNotifications_${agentId}`) || '[]');
+    }
+
+    function markAgentSeenNotifications(agentId, ids) {
+      const seen = new Set(getAgentSeenNotifications(agentId));
+      ids.forEach(id => seen.add(id));
+      localStorage.setItem(`agentNotifications_${agentId}`, JSON.stringify(Array.from(seen)));
+    }
+
     function checkAgentNotifications(showPopup) {
       if (!currentUser || currentUser.role !== 'agent') return;
 
@@ -3100,22 +3110,25 @@ Reviewer: ${review.reviewerId}
       // Filter for this week (last 7 days) and current agent
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-      const newReviews = reviews.filter(r => {
-        return r.agentId === currentUser.id;
-      });
+      const agentReviews = reviews.filter(r => r.agentId === currentUser.id);
 
-      const recentReviews = newReviews.filter(r => {
+      const recentReviews = agentReviews.filter(r => {
         const d = new Date(r.date);
         return !isNaN(d.getTime()) && d >= oneWeekAgo;
       });
 
-      const hasUpdate = recentReviews.length > 0;
+      const seenIds = getAgentSeenNotifications(currentUser.id);
+      const unseen = recentReviews.filter(r => !seenIds.includes(r.id));
+
       const dot = document.querySelector('.notification-dot');
 
-      if (hasUpdate) {
+      if (unseen.length > 0) {
         dot.classList.remove('hidden');
         if (showPopup) {
+          // Show all recent reviews but mark them as seen once shown
           showAgentNotifications(recentReviews);
+          markAgentSeenNotifications(currentUser.id, recentReviews.map(r => r.id));
+          dot.classList.add('hidden');
         }
       } else {
         dot.classList.add('hidden');
@@ -3153,6 +3166,10 @@ Reviewer: ${review.reviewerId}
       
       document.getElementById('notifications-modal').classList.remove('hidden');
       document.querySelector('.notification-dot').classList.add('hidden');
+      // Mark reviews as seen for this agent when the modal is opened
+      if (currentUser && currentUser.role === 'agent') {
+        markAgentSeenNotifications(currentUser.id, reviews.map(r => r.id));
+      }
     }
 
     function agentViewNotificationReview(reviewId) {
@@ -3160,6 +3177,13 @@ Reviewer: ${review.reviewerId}
       const review = reviews.find(r => r.id === reviewId);
       if (review) {
         closeNotificationsModal();
+        // Mark this review as seen for the agent
+        if (currentUser && currentUser.role === 'agent') {
+          markAgentSeenNotifications(currentUser.id, [reviewId]);
+          const dot = document.querySelector('.notification-dot');
+          if (dot) dot.classList.add('hidden');
+        }
+
         // Navigate agent to QA dashboard and open the review detail
         navigateTo('view-agent-qa');
         // Ensure agent dashboard reloads
