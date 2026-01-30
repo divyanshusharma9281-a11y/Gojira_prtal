@@ -4587,20 +4587,13 @@ Reviewer: ${review.reviewerId}
           </div>
         `;
       } else {
-        // Show Chat AND Email ID input for non-voice reviews
+        // Show single contact input for non-voice reviews (Chat ID or Email ID - only one required)
         itemHtml += `
-          <!-- Chat & Email ID (Non-Voice) -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="block text-sm font-semibold mb-2">Chat ID</label>
-              <input type="text" class="review-chat-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
-                placeholder="Enter Chat ID" data-item-index="${itemIndex - 1}">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2">Email ID</label>
-              <input type="text" class="review-email-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
-                placeholder="Enter Email ID" data-item-index="${itemIndex - 1}">
-            </div>
+          <!-- Chat or Email ID (Non-Voice) -->
+          <div class="mb-4">
+            <label class="block text-sm font-semibold mb-2">Chat ID or Email ID</label>
+            <input type="text" class="review-contact-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+              placeholder="Enter Chat ID or Email ID (one required)" data-item-index="${itemIndex - 1}">
           </div>
         `;
       }
@@ -4725,8 +4718,20 @@ Reviewer: ${review.reviewerId}
           const chatIdInput = item.querySelector('.review-chat-id');
           chatId = chatIdInput ? chatIdInput.value.trim() : '';
           const emailIdInput = item.querySelector('.review-email-id');
-          emailId = emailIdInput ? emailIdInput.value.trim() : '';
-          if (!chatId || !emailId) missingFields = true;
+          // For non-voice, accept either Chat ID or Email ID (one required)
+          const contactInput = item.querySelector('.review-contact-id');
+          const contactVal = contactInput ? contactInput.value.trim() : '';
+          let chatId = '';
+          let emailId = '';
+          if (contactVal) {
+            if (contactVal.includes('@')) {
+              emailId = contactVal;
+            } else {
+              chatId = contactVal;
+            }
+          } else {
+            missingFields = true; // neither provided
+          }
         }
 
         if (!observation || score === null) missingFields = true;
