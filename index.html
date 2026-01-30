@@ -3195,8 +3195,8 @@ Reviewer: ${review.reviewerId}
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
       // Safe Trim Comparison
-      const currentAgentId = String(currentUser.id).trim();
-      const agentReviews = reviews.filter(r => String(r.agentId).trim() === currentAgentId);
+      const currentAgentId = String(currentUser.id).trim().toLowerCase();
+      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === currentAgentId);
 
       const recentReviews = agentReviews.filter(r => {
         // Try parsing ISO date first, then fallback
@@ -3472,7 +3472,7 @@ Reviewer: ${review.reviewerId}
         return; // Only for agents
       }
 
-      const agentId = String(currentSessionUser.id).trim(); // Trimming for safety
+      const agentId = String(currentSessionUser.id).trim().toLowerCase(); // Normalize Agent ID
       const agentName = currentSessionUser.name;
 
       // Set welcome text
@@ -3482,7 +3482,7 @@ Reviewer: ${review.reviewerId}
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
 
       // Filter reviews for current agent only (robust comparison)
-      const agentReviews = reviews.filter(r => String(r.agentId).trim() === agentId);
+      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === agentId);
 
       // Calculate stats
       const totalReviews = agentReviews.length;
@@ -4548,14 +4548,14 @@ Reviewer: ${review.reviewerId}
 
     function startQualityReviewWithType(type) {
       console.debug('[startQualityReviewWithType] type=', type, 'adminCurrentAgent=', adminCurrentAgent, 'selectedAgentForReview=', selectedAgentForReview?.id);
-      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) {}
+      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) { }
 
       if (!adminCurrentAgent && selectedAgentForReview) {
         adminCurrentAgent = selectedAgentForReview.id;
         adminCurrentAgentName = selectedAgentForReview.name;
       }
 
-      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) {}
+      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) { }
 
       // Reuse the existing adminSelectReviewType flow
       adminSelectReviewType(type);
