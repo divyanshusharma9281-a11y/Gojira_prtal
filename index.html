@@ -3934,18 +3934,21 @@ Reviewer: ${review.reviewerId}
     let agentCurrentEntity = '';
 
     function adminLoadAgents() {
-      // Display current entity
-      const entityDisplay = document.getElementById('admin-entity-display');
-      if (entityDisplay) {
-        entityDisplay.textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
+      // Display current entity for admin dashboard
+      const adminEntityDisplay = document.getElementById('admin-entity-display');
+      if (adminEntityDisplay) {
+        adminEntityDisplay.textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
       }
 
-      // Get the selector dropdown
-      const selector = document.getElementById('admin-agent-selector');
-      if (!selector) {
-        console.error('admin-agent-selector element not found');
-        return;
+      // Display current entity for reviewer dashboard
+      const reviewerEntityDisplay = document.getElementById('reviewer-entity-display');
+      if (reviewerEntityDisplay && currentSessionUser && currentSessionUser.role === 'reviewer') {
+        reviewerEntityDisplay.textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
       }
+
+      // Get the selector dropdown for admin
+      const adminSelector = document.getElementById('admin-agent-selector');
+      const reviewerSelector = document.getElementById('reviewer-agent-selector');
 
       // Filter agents by entity
       let agents = USER_DB.filter(u => u.role === 'agent');
@@ -3953,16 +3956,29 @@ Reviewer: ${review.reviewerId}
         agents = agents.filter(u => u.entity === adminCurrentEntity);
       }
 
-      // Clear and repopulate dropdown
-      selector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
+      // Populate admin dropdown
+      if (adminSelector) {
+        adminSelector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
+        agents.forEach(agent => {
+          const option = document.createElement('option');
+          option.value = agent.id;
+          option.text = `${agent.name} ${agent.id}`;
+          option.dataset.name = agent.name;
+          adminSelector.appendChild(option);
+        });
+      }
 
-      agents.forEach(agent => {
-        const option = document.createElement('option');
-        option.value = agent.id;
-        option.text = `${agent.name} ${agent.id}`;
-        option.dataset.name = agent.name;
-        selector.appendChild(option);
-      });
+      // Populate reviewer dropdown
+      if (reviewerSelector) {
+        reviewerSelector.innerHTML = '<option value="">-- Choose Agent --</option>';
+        agents.forEach(agent => {
+          const option = document.createElement('option');
+          option.value = agent.id;
+          option.text = `${agent.name} ${agent.id}`;
+          option.dataset.name = agent.name;
+          reviewerSelector.appendChild(option);
+        });
+      }
 
       // Load reviews for the current entity
       adminLoadReviewsList();
@@ -4009,7 +4025,25 @@ Reviewer: ${review.reviewerId}
       adminLoadReviewsList();
     }
 
-    function adminStartQualityReview() {
+    function reviewerSelectAgent(selectElement) {
+      const selectedOption = selectElement.options[selectElement.selectedIndex];
+      const agentId = selectedOption.value;
+      const agentName = selectedOption.dataset.name;
+
+      if (agentId) {
+        adminCurrentAgent = agentId;
+        adminCurrentAgentName = agentName;
+        // Show the reviews section
+        document.getElementById('reviewer-reviews-section').classList.remove('hidden');
+        // Load reviews for this agent
+        reviewerLoadReviewsList();
+      } else {
+        adminCurrentAgent = '';
+        adminCurrentAgentName = '';
+        // Hide the reviews section
+        document.getElementById('reviewer-reviews-section').classList.add('hidden');
+      }
+    }
       if (!adminCurrentEntity || !adminCurrentAgent) {
         alert('Please select an agent');
         return;
@@ -4330,6 +4364,74 @@ Reviewer: ${review.reviewerId}
           </td>
         </tr>
       `).join('');
+    }
+
+    function reviewerLoadReviewsList() {
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const tbody = document.getElementById('reviewer-reviews-list');
+
+      // Remove expired reviews
+      const now = new Date();
+      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
+
+      // Filter by current entity
+      if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
+        filtered = filtered.filter(r => r.entity === adminCurrentEntity);
+      }
+
+      // Only show reviews for the SELECTED agent
+      if (adminCurrentAgent) {
+        filtered = filtered.filter(r => r.agentId === adminCurrentAgent);
+      } else {
+        filtered = [];
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No submitted reviews for this agent yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((review, idx) => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+          <td class="p-6">${review.date}</td>
+          <td class="p-6">${review.agentName}</td>
+          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
+          <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
+          <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
+          <td class="p-6 text-right space-x-2">
+            <button onclick="reviewerViewReview('${review.id}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
+            <button onclick="reviewerViewComments('${review.id}')" class="text-purple-600 hover:text-purple-700">💬 Comments</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function reviewerViewReview(reviewId) {
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const review = reviews.find(r => r.id === reviewId);
+      if (review) {
+        const choice = confirm(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}\n\nClick OK to open the file.`);
+        if (choice && review.fileContent) {
+          openFileContent(review.fileContent, review.fileName);
+        }
+      }
+    }
+
+    function reviewerViewComments(reviewId) {
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      const reviewComments = comments.filter(c => c.reviewId === reviewId);
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const review = reviews.find(r => r.id === reviewId);
+
+      if (reviewComments.length === 0) {
+        alert('No comments yet for this review.');
+      } else {
+        let commentsText = `Comments for ${review.agentName}'s review:\n\n`;
+        reviewComments.forEach(c => {
+          commentsText += `[${c.date}] ${c.authorName}:\n${c.text}\n\n`;
+        });
+        alert(commentsText);
+      }
     }
 
     function openFileContent(content, name) {
