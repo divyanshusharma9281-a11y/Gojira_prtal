@@ -181,7 +181,7 @@
       --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
     }
 
-    /* Theme applied after login to make pages colorful */
+    /* Theme applied after login to make pages colorful (legacy - not used when removed) */
     body.gojira-theme {
       background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
       color: rgba(255,255,255,0.92);
@@ -201,6 +201,24 @@
     .gojira-theme header .text-white,
     .gojira-theme #top-nav .text-white {
       color: #0b0b0b !important;
+    }
+
+    /* Dark mode with subtle red mix */
+    body.dark {
+      background: linear-gradient(180deg, #061025 0%, #0b1220 40%, #160a0a 100%);
+      color: rgba(255,255,255,0.95);
+      transition: background 0.45s ease, color 0.25s ease;
+    }
+
+    body.dark header,
+    body.dark #top-nav {
+      background: linear-gradient(90deg, rgba(185,28,28,0.06) 0%, #0b1220 60%) !important;
+      color: rgba(255,255,255,0.95) !important;
+    }
+
+    /* Ensure headings remain readable in dark mode */
+    body.dark h1, body.dark h2, body.dark h3, body.dark .font-bold, body.dark .font-extrabold {
+      color: rgba(255,255,255,0.95) !important;
     }
 
     .gojira-theme .app-view {
@@ -4184,24 +4202,20 @@ Reviewer: ${review.reviewerId}
     }
 
     function setTheme(mode) {
-      // mode: 'light' | 'colored' | 'dark'
+      // mode: 'light' | 'dark'
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
       const text = document.getElementById('theme-text');
 
-      html.classList.toggle('dark', mode === 'dark');
-      // Gojira colored theme is applied on the body
-      document.body.classList.toggle('gojira-theme', mode === 'colored');
-
-      if (mode === 'light') {
-        icon.innerText = '☀️';
-        text.innerText = 'Light';
-      } else if (mode === 'colored') {
-        icon.innerText = '🎨';
-        text.innerText = 'Gojira';
-      } else { // dark
+      if (mode === 'dark') {
+        html.classList.add('dark');
+        // Slight red mix in dark mode is handled by CSS (see .dark rules)
         icon.innerText = '🌙';
         text.innerText = 'Dark';
+      } else {
+        html.classList.remove('dark');
+        icon.innerText = '☀️';
+        text.innerText = 'Light';
       }
 
       localStorage.setItem('theme', mode);
@@ -4217,16 +4231,11 @@ Reviewer: ${review.reviewerId}
 
     function toggleTheme() {
       const cur = localStorage.getItem('theme') || 'light';
-      const next = cur === 'light' ? 'colored' : (cur === 'colored' ? 'dark' : 'light');
+      const next = cur === 'light' ? 'dark' : 'light';
 
-      // If transitioning directly between Light and Dark (not via colored), show a brief colored flash
-      if ((cur === 'light' && next === 'dark') || (cur === 'dark' && next === 'light')) {
-        flashHeaderColored(700);
-        setTimeout(() => setTheme(next), 700);
-        return;
-      }
-
-      setTheme(next);
+      // Show a brief colored flash as a transition effect between themes
+      flashHeaderColored(500);
+      setTimeout(() => setTheme(next), 180);
     }
 
     function toggleDropdown(entity) {
@@ -4367,8 +4376,8 @@ Reviewer: ${review.reviewerId}
         localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
         console.info('[submitLogin] Login successful for', user.id, user.role);
 
-        // Apply colorful Gojira theme across pages after login (tri-state)
-        setTheme('colored');
+        // Apply dark theme after login (colored option removed)
+        setTheme('dark');
 
         // Clear login form
         document.getElementById('portal-emp-id').value = '';
@@ -4433,7 +4442,7 @@ Reviewer: ${review.reviewerId}
 
     window.onload = () => {
       const savedTheme = localStorage.getItem('theme') || 'light';
-      // Apply saved theme (supports 'light' | 'colored' | 'dark')
+      // Apply saved theme (supports 'light' | 'dark')
       try { setTheme(savedTheme); } catch (e) { console.warn('[onload] setTheme failed', e); }
 
 
