@@ -109,14 +109,21 @@
 
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen"
-    class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-slate-800 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4">
+    class="fixed inset-0 bg-gradient-to-br from-indigo-900 to-blue-800 flex items-center justify-center z-50 overflow-hidden">
+
+    <!-- Background Typography Theme -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-10">
+      <h1 class="text-[15rem] font-black text-white transform -rotate-12 whitespace-nowrap blur-sm">G Gojira</h1>
+    </div>
+
+    <div
+      class="bg-white/95 backdrop-blur-md dark:bg-slate-800/95 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-10 border border-white/20">
       <div class="text-center mb-8">
         <div
-          class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
+          class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-lg shadow-indigo-500/50">
           G</div>
-        <h1 class="text-3xl font-bold text-indigo-600">Gojira TP</h1>
-        <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Training Portal Login</p>
+        <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Gojira TP</h1>
+        <p class="text-slate-500 dark:text-slate-300 text-sm mt-2">Training Portal Login</p>
       </div>
 
       <form onsubmit="submitLogin(event)">
