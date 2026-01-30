@@ -3421,7 +3421,7 @@ Reviewer: ${review.reviewerId}
           return `
           <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
             <td class="p-6">${review.date}</td>
-            <td class="p-6">${review.reviewerName || 'Admin'}</td>
+            <td class="p-6" title="${review.reviewerName || 'Quality Team'}">Quality Team</td>
             <td class="p-6">
               <button onclick="openReviewDetail('${review.id}')" class="text-blue-600 hover:text-blue-800 underline font-semibold">
                 👁️ View
