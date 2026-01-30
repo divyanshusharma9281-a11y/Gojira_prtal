@@ -87,17 +87,21 @@
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
   <!-- Update Available Banner (hidden by default) -->
-  <div id="update-banner" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl mx-auto px-4">
-    <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded-lg shadow-md flex items-center justify-between">
+  <div id="update-banner"
+    class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl mx-auto px-4">
+    <div
+      class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded-lg shadow-md flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="text-lg">🔔</div>
         <div>
           <div class="font-bold">New version available</div>
-          <div class="text-sm text-yellow-800">A new version of the portal is available. Refresh to get the latest updates.</div>
+          <div class="text-sm text-yellow-800">A new version of the portal is available. Refresh to get the latest
+            updates.</div>
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <button id="update-reload-btn" class="bg-yellow-600 text-white px-4 py-2 rounded-md font-semibold">Reload Now</button>
+        <button id="update-reload-btn" class="bg-yellow-600 text-white px-4 py-2 rounded-md font-semibold">Reload
+          Now</button>
         <button id="update-dismiss-btn" class="text-sm text-yellow-800 underline">Dismiss</button>
       </div>
     </div>
@@ -5465,7 +5469,8 @@ Reviewer: ${review.reviewerId}
       }
 
       // Load comments for this review
-      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === reviewId);
+      const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      const comments = allComments.filter(c => c.reviewId === reviewId);
       const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No replies yet</p>' : comments.map(c => `
         <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2">
           <div class="font-semibold text-sm">${c.authorName || 'Agent'}</div>
@@ -5475,12 +5480,40 @@ Reviewer: ${review.reviewerId}
       `).join('');
       document.getElementById('review-detail-comments').innerHTML = commentsHtml;
 
-      // Set reply handler
-      document.getElementById('review-detail-reply-btn').onclick = () => agentReplyFromModal(reviewId);
+      // Check if agent has already replied
+      const replyInput = document.getElementById('review-detail-reply-input');
+      const replyBtn = document.getElementById('review-detail-reply-btn');
+
+      const hasReplied = comments.some(c => c.authorId === (currentUser.id || currentSessionUser.id));
+
+      if (hasReplied && (currentUser.role === 'agent')) {
+        replyInput.disabled = true;
+        replyInput.placeholder = "You have already replied to this review.";
+        replyBtn.disabled = true;
+        replyBtn.innerHTML = "Reply Sent ✅";
+        replyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        replyInput.disabled = false;
+        replyInput.placeholder = "Write your reply...";
+        replyBtn.disabled = false;
+        replyBtn.innerHTML = "📤 Send Reply";
+        replyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        // Set reply handler
+        replyBtn.onclick = () => agentReplyFromModal(reviewId);
+      }
+
       document.getElementById('agent-review-detail-modal').classList.remove('hidden');
     }
 
     function agentReplyFromModal(reviewId) {
+      const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      const alreadyReplied = allComments.some(c => c.reviewId === reviewId && c.authorId === (currentUser.id || currentSessionUser.id));
+
+      if (alreadyReplied && (currentUser.role === 'agent')) {
+        alert('You have already replied to this review.');
+        return;
+      }
+
       const textarea = document.getElementById('review-detail-reply-input');
       const text = textarea.value.trim();
       if (!text) return alert('Please write a reply first.');
