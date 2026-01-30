@@ -1319,6 +1319,36 @@
           Start Quality Review
         </button>
 
+        <!-- Agent Process Modal (Voice / Non-Voice) -->
+        <div id="agent-process-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-2xl font-bold">Start Quality Review</h2>
+              <button onclick="document.getElementById('agent-process-modal').classList.add('hidden')" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+            </div>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">Choose the review type for <span id="modal-agent-name" class="font-bold"></span></p>
+
+            <div class="space-y-4">
+              <button onclick="startQualityReviewWithType('voice')" class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-3">
+                <span class="text-2xl">🎙️</span>
+                <div>
+                  <div class="font-bold">Voice</div>
+                  <div class="text-sm opacity-90">Call recordings & interaction (requires file)</div>
+                </div>
+              </button>
+
+              <button onclick="startQualityReviewWithType('non-voice')" class="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-green-700 transition flex items-center justify-center gap-3">
+                <span class="text-2xl">💬</span>
+                <div>
+                  <div class="font-bold">Non-Voice</div>
+                  <div class="text-sm opacity-90">Chat / Email interactions (paste Chat/Email ID)</div>
+                </div>
+              </button>
+            </div>
+
+            <button onclick="document.getElementById('agent-process-modal').classList.add('hidden')" class="w-full mt-4 bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-400 transition">Cancel</button>
+          </div>
+        </div>
 
       </div>
 
@@ -2125,6 +2155,12 @@
               ? 'Start Quality Review'
               : `Continue Review (${pendingReviews.length}/3)`;
 
+          // Check if this agent is finalized for the current week
+          const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+          const currentWeek = state.currentWeek || 1;
+          const finalized = state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][selectedAgentForReview.id];
+          const finalizedBadge = finalized ? `<div class="text-sm text-emerald-600 font-semibold">Finalized Week ${currentWeek} ✅</div>` : '';
+
           const buttonAction = pendingReviews.length >= 3
             ? 'showFinalSubmissionOptionForSelectedAgent()'
             : 'startQualityReview()';
@@ -2134,6 +2170,7 @@
                <div class="flex items-center justify-between mb-4">
                   <div>
                      <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
+                     ${finalizedBadge}
                      <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
                      <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
                      <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
@@ -2144,25 +2181,9 @@
                   </div>
                </div>
 
-               <!-- Process Selection -->
-               <div class="mb-4">
-                 <label class="block text-sm font-semibold mb-3">Select Process Type</label>
-                 <div class="grid grid-cols-2 gap-3">
-                   <button onclick="selectProcessType('voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition text-center" id="voice-btn">
-                     <div class="text-2xl mb-1">📞</div>
-                     <div class="font-medium">Voice</div>
-                     <div class="text-xs text-slate-500">Phone calls</div>
-                   </button>
-                   <button onclick="selectProcessType('non-voice')" class="p-3 border-2 border-slate-200 dark:border-slate-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition text-center" id="non-voice-btn">
-                     <div class="text-2xl mb-1">💬</div>
-                     <div class="font-medium">Non-Voice</div>
-                     <div class="text-xs text-slate-500">Chat/Email</div>
-                   </button>
-                 </div>
-               </div>
-
+               <!-- Replaced inline process selection with modal-driven process selector -->
                <div class="flex gap-3">
-                  <button onclick="startQualityReview()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn" disabled>
+                  <button onclick="document.getElementById('agent-process-modal').classList.remove('hidden')" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn">
                      ${buttonText}
                   </button>
                   <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
@@ -2171,6 +2192,15 @@
                </div>
             </div>
           `;
+
+          // Auto-open the agent process modal when an agent is selected from the list
+          try {
+            const modalName = document.getElementById('modal-agent-name');
+            if (modalName) modalName.textContent = selectedAgentForReview.name;
+            document.getElementById('agent-process-modal').classList.remove('hidden');
+          } catch (e) {
+            /* ignore if modal not present */
+          }
         }
       } else {
         // Hide agent details section if no agent selected
@@ -4015,6 +4045,19 @@ Reviewer: ${review.reviewerId}
 
       // Initialize portal login system
       initPortal();
+
+      // Safety: Ensure session persists across refreshes. If session key exists but memory variable is not set, restore session UI.
+      try {
+        const sessionUserRaw = localStorage.getItem('gojira_session_user');
+        if (sessionUserRaw && !currentSessionUser) {
+          currentSessionUser = JSON.parse(sessionUserRaw);
+          console.info('[onload] Restoring session from localStorage for', currentSessionUser?.id);
+          showPortalContent();
+          if (currentSessionUser.role === 'admin') adminLoadAgents();
+        }
+      } catch (e) {
+        console.warn('[onload] failed to restore session safely', e);
+      }
     }
 
     // ===== NEW ADMIN DASHBOARD FUNCTIONS =====
@@ -4414,6 +4457,24 @@ Reviewer: ${review.reviewerId}
       try {
         document.getElementById('agent-qa-welcome-text').textContent = `Review - ${selectedAgentForReview.name}`;
       } catch (e) {}
+    }
+
+    function startQualityReviewWithType(type) {
+      // Close modal
+      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) {}
+
+      // Set admin current agent if QA flow started from agent list
+      if (!adminCurrentAgent && selectedAgentForReview) {
+        adminCurrentAgent = selectedAgentForReview.id;
+        adminCurrentAgentName = selectedAgentForReview.name;
+      }
+
+      // Set the selected process and launch the admin review form
+      adminReviewType = type; // used by admin form
+      selectVoiceType(type);
+
+      // Fill the agent display in the form
+      try { document.getElementById('admin-review-agent-display').textContent = adminCurrentAgentName; } catch (e) {}
     }
 
     function selectVoiceType(type) {
