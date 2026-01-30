@@ -1305,7 +1305,28 @@
         <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4">
           <h2 class="text-2xl font-bold mb-6 text-center">Select Review Type</h2>
           <p class="text-slate-600 dark:text-slate-400 text-center mb-6">Choose the type of quality check for this agent</p>
-          
+      </div>
+
+      <!-- Confirm Clear Finalizations Modal -->
+      <div id="confirm-clear-finalizations-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-2xl max-w-lg w-full mx-4">
+          <h2 class="text-2xl font-bold mb-4 text-center">Confirm Clear Finalizations</h2>
+          <div id="confirm-clear-finalizations-details" class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+            <!-- Populated with list of affected agents -->
+          </div>
+          <div class="flex gap-3 justify-end">
+            <button onclick="confirmClearFinalizationsModalCancel()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+            <button onclick="confirmClearFinalizationsModalConfirm()" id="confirm-clear-finalizations-confirm" class="px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600">Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Undo Toast for Clear Finalizations -->
+      <div id="finalization-undo-toast" class="fixed bottom-6 right-6 bg-white dark:bg-slate-800 shadow-xl rounded-lg p-3 flex items-center gap-4 hidden z-70">
+        <div class="text-sm text-slate-700 dark:text-slate-300" id="finalization-undo-text">Finalizations cleared.</div>
+        <button id="finalization-undo-btn" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Undo</button>
+        <button onclick="dismissFinalizationUndoToast()" class="text-slate-400 hover:text-slate-600">✖</button>
+      </div>          
           <div class="space-y-4">
             <button onclick="selectVoiceType('voice')" 
               class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-3">
@@ -5078,53 +5099,137 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    // ----- Confirm modal & undo flow for clearing finalizations -----
+    let _pendingFinalizationClearBuffer = null; // stores pending buffer id and expiry in localStorage
+
     function adminClearFinalizations(targetAgentId) {
-      // If a target agent id provided (or an agent is selected), clear only that agent's flag; otherwise clear for current entity
-      const agentToClear = targetAgentId || adminCurrentAgent || null;
-
-      if (agentToClear) {
-        const agentObj = USER_DB.find(u => String(u.id) === String(agentToClear));
-        const agentName = agentObj ? agentObj.name : agentToClear;
-        if (!confirm(`Clear finalized flag for ${agentName}? This will remove the blue tick for this agent.`)) return;
-
-        unmarkAgentWeekComplete('ALL', agentToClear);
-        reconcileFinalizeFlags();
-
-        // Refresh UI
-        renderAdminAgentDropdown();
-        checkAndEnableWeekFinalButton();
-        if (adminCurrentAgent && String(adminCurrentAgent) === String(agentToClear)) {
-          adminSelectAgent(agentToClear, agentName);
-        }
-
-        updateClearFinalizationsButton();
-        alert(`Finalized flag cleared for ${agentName}.`);
-        return;
+      // Build list of affected agents
+      let agents = [];
+      if (targetAgentId || adminCurrentAgent) {
+        const id = targetAgentId || adminCurrentAgent;
+        const agentObj = USER_DB.find(u => String(u.id) === String(id));
+        if (agentObj) agents.push(agentObj);
+      } else {
+        agents = USER_DB.filter(u => u.role === 'agent' && (!adminCurrentEntity || adminCurrentEntity === 'ALL' || u.entity === adminCurrentEntity));
       }
 
-      if (!confirm('Clear finalized flags for agents in this entity? This will remove blue ticks where applicable.')) return;
+      if (agents.length === 0) return alert('No agents found for this operation.');
 
-      // Collect agent IDs in current entity
-      let agents = USER_DB.filter(u => u.role === 'agent');
-      if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
-        agents = agents.filter(u => u.entity === adminCurrentEntity);
-      }
-
+      // Render modal details
+      const details = document.getElementById('confirm-clear-finalizations-details');
+      details.innerHTML = '';
+      const list = document.createElement('ul');
+      list.className = 'list-disc pl-5 space-y-2';
       agents.forEach(a => {
-        // Unmark across all entities to be safe
-        unmarkAgentWeekComplete('ALL', a.id);
+        const li = document.createElement('li');
+        const reviewCount = (JSON.parse(localStorage.getItem('adminReviews') || '[]').filter(r => String(r.agentId) === String(a.id)) || []).length;
+        li.innerHTML = `<strong>${a.name}</strong> (${a.id}) — ${reviewCount} review(s)`;
+        list.appendChild(li);
+      });
+      details.appendChild(list);
+
+      // Store pending selection in a temporary global so confirm can access
+      _pendingFinalizationClearBuffer = { id: `buf_${Date.now()}_${Math.floor(Math.random()*1000)}`, agents: agents.map(a => a.id), entity: adminCurrentEntity || 'ALL', timestamp: Date.now() };
+
+      document.getElementById('confirm-clear-finalizations-modal').classList.remove('hidden');
+    }
+
+    function confirmClearFinalizationsModalCancel() {
+      _pendingFinalizationClearBuffer = null;
+      document.getElementById('confirm-clear-finalizations-modal').classList.add('hidden');
+    }
+
+    function confirmClearFinalizationsModalConfirm() {
+      if (!_pendingFinalizationClearBuffer) return;
+      const buf = _pendingFinalizationClearBuffer;
+      document.getElementById('confirm-clear-finalizations-modal').classList.add('hidden');
+      _performClearFinalizationsWithUndo(buf);
+      _pendingFinalizationClearBuffer = null;
+    }
+
+    function _performClearFinalizationsWithUndo(buffer) {
+      // Backup all entityWeekState_* entries so we can restore on undo
+      const backups = {};
+      Object.keys(localStorage).forEach(key => {
+        if (!key.startsWith('entityWeekState_')) return;
+        backups[key] = localStorage.getItem(key);
       });
 
-      // Reconcile to remove any flags that shouldn't exist (based on review counts)
+      // Save buffer to localStorage as undo buffer
+      const undoBuffer = { id: buffer.id, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, backups };
+      localStorage.setItem('finalizationUndoBuffer', JSON.stringify(undoBuffer));
+
+      // Perform clear: unmark agents across all entities
+      buffer.agents.forEach(agentId => {
+        unmarkAgentWeekComplete('ALL', agentId);
+      });
+
       reconcileFinalizeFlags();
+
+      // Push audit entry
+      const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
+      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', timestamp: new Date().toISOString() });
+      localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
 
       // Refresh UI
       renderAdminAgentDropdown();
       checkAndEnableWeekFinalButton();
       adminLoadReviewsList();
-
       updateClearFinalizationsButton();
-      alert('Finalized flags cleared for agents in this entity (if applicable).');
+
+      // Show undo toast
+      const toast = document.getElementById('finalization-undo-toast');
+      const text = document.getElementById('finalization-undo-text');
+      const btn = document.getElementById('finalization-undo-btn');
+      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s).`;
+      toast.classList.remove('hidden');
+
+      // Wire undo button
+      btn.onclick = () => undoClearFinalizations(buffer.id);
+
+      // Auto-expire buffer after 10s
+      setTimeout(() => {
+        const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
+        if (existing && existing.id === buffer.id) {
+          localStorage.removeItem('finalizationUndoBuffer');
+          dismissFinalizationUndoToast();
+        }
+      }, 10000);
+
+      // Save the buffer reference in memory too
+      _pendingFinalizationClearBuffer = { id: buffer.id };
+    }
+
+    function undoClearFinalizations(bufferId) {
+      const buf = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
+      if (!buf || buf.id !== bufferId) return alert('Nothing to undo.');
+
+      // Restore backups
+      Object.keys(buf.backups || {}).forEach(key => {
+        localStorage.setItem(key, buf.backups[key]);
+      });
+
+      // Reconcile and refresh UI
+      reconcileFinalizeFlags();
+      renderAdminAgentDropdown();
+      checkAndEnableWeekFinalButton();
+      adminLoadReviewsList();
+
+      // Audit undo
+      const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
+      history.unshift({ id: `undo_${bufferId}`, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buf.entity, agents: buf.agents, action: 'undo', timestamp: new Date().toISOString() });
+      localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
+
+      // Remove undo buffer
+      localStorage.removeItem('finalizationUndoBuffer');
+      dismissFinalizationUndoToast();
+
+      alert('Undo complete. Finalization flags restored.');
+    }
+
+    function dismissFinalizationUndoToast() {
+      const toast = document.getElementById('finalization-undo-toast');
+      if (toast) toast.classList.add('hidden');
     }
 
     function adminDeleteAllReports() {
