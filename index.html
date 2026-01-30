@@ -1283,6 +1283,10 @@
             class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
             <option value="">-- Click to Select Agent --</option>
           </select>
+
+          <div id="admin-agent-status-list" class="mt-4 grid gap-2 grid-cols-2 lg:grid-cols-3">
+            <!-- Agent completion status will be rendered here -->
+          </div>
         </div>
 
         <button id="admin-start-review-btn" onclick="adminStartQualityReview()" disabled
@@ -4059,12 +4063,51 @@ Reviewer: ${review.reviewerId}
       state.completedAgents[week] = state.completedAgents[week] || {};
       state.completedAgents[week][agentId] = true;
       setEntityWeekState(entity, state);
+      // Refresh UI status list and controls
+      renderAdminAgentStatusList();
+      checkAndEnableWeekFinalButton();
     }
 
     function isAgentWeekComplete(entity, agentId) {
       const state = getEntityWeekState(entity);
       const week = state.currentWeek || 1;
       return !!(state.completedAgents && state.completedAgents[week] && state.completedAgents[week][agentId]);
+    }
+
+    function renderAdminAgentStatusList() {
+      const container = document.getElementById('admin-agent-status-list');
+      if (!container) return;
+      container.innerHTML = '';
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
+        agents = agents.filter(u => u.entity === adminCurrentEntity);
+      }
+      const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+      const currentWeek = state.currentWeek || 1;
+
+      agents.forEach(agent => {
+        const completed = state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][agent.id];
+        const card = document.createElement('div');
+        card.className = 'flex items-center justify-between p-2 border rounded';
+
+        const left = document.createElement('div');
+        left.className = 'flex items-center';
+        const badge = document.createElement('div');
+        badge.className = `w-6 h-6 rounded-full mr-2 flex items-center justify-center ${completed ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`;
+        badge.textContent = completed ? '✔' : '';
+        const name = document.createElement('div');
+        name.textContent = `${agent.name} ${agent.id}`;
+        left.appendChild(badge);
+        left.appendChild(name);
+
+        const right = document.createElement('div');
+        right.className = 'text-sm text-gray-500';
+        right.textContent = completed ? `Finalized Wk ${currentWeek}` : '';
+
+        card.appendChild(left);
+        card.appendChild(right);
+        container.appendChild(card);
+      });
     }
 
     function checkAndEnableWeekFinalButton() {
@@ -4186,6 +4229,9 @@ Reviewer: ${review.reviewerId}
 
       // Load reviews for the current entity
       adminLoadReviewsList();
+
+      // Render agent status badges for admin
+      renderAdminAgentStatusList();
 
       // Update week UI and final button state
       checkAndEnableWeekFinalButton();
