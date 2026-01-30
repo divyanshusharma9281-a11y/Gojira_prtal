@@ -1280,18 +1280,9 @@
             <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()" class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed" disabled>Final Submit This Week</button>
           </div>
           <!-- Hidden native select (kept for backwards compatibility) -->
-          <select id="admin-agent-selector" class="hidden">
+          <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)" class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
             <option value="">-- Click to Select Agent --</option>
-          </select>
-
-          <!-- Custom dropdown that visually replaces the select and supports badges -->
-          <div id="admin-agent-dropdown" class="relative">
-            <div id="admin-agent-dropdown-selected" class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer flex items-center justify-between">
-              <span id="admin-agent-dropdown-selected-text">-- Click to Select Agent --</span>
-              <span class="text-xl text-slate-400">▾</span>
-            </div>
-            <div id="admin-agent-dropdown-list" class="absolute z-50 mt-2 w-full bg-white dark:bg-slate-800 rounded-xl shadow max-h-60 overflow-auto hidden"></div>
-          </div> 
+          </select> 
         </div>
 
         <button id="admin-start-review-btn" onclick="adminStartQualityReview()" disabled
@@ -1309,25 +1300,7 @@
       </div>
 
       <!-- Confirm Clear Finalizations Modal -->
-      <div id="confirm-clear-finalizations-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-2xl max-w-lg w-full mx-4">
-          <h2 class="text-2xl font-bold mb-4 text-center">Confirm Clear Finalizations</h2>
-          <div id="confirm-clear-finalizations-details" class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-            <!-- Populated with list of affected agents -->
-          </div>
-          <div class="flex gap-3 justify-end">
-            <button onclick="confirmClearFinalizationsModalCancel()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-            <button onclick="confirmClearFinalizationsModalConfirm()" id="confirm-clear-finalizations-confirm" class="px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600">Confirm</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- Undo Toast for Clear Finalizations -->
-      <div id="finalization-undo-toast" class="fixed bottom-6 right-6 bg-white dark:bg-slate-800 shadow-xl rounded-lg p-3 flex items-center gap-4 hidden z-70">
-        <div class="text-sm text-slate-700 dark:text-slate-300" id="finalization-undo-text">Finalizations cleared.</div>
-        <button id="finalization-undo-btn" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Undo</button>
-        <button onclick="dismissFinalizationUndoToast()" class="text-slate-400 hover:text-slate-600">✖</button>
-      </div>
 
           <div class="space-y-4">
             <button onclick="selectVoiceType('voice')" 
@@ -4134,91 +4107,11 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    // Reconcile finalize flags across all entityWeekState entries against the current adminReviews
-    function reconcileFinalizeFlags() {
-      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const counts = {};
-      reviews.forEach(r => {
-        const id = String(r.agentId);
-        counts[id] = (counts[id] || 0) + 1;
-      });
 
-      Object.keys(localStorage).forEach(key => {
-        if (!key.startsWith('entityWeekState_')) return;
-        try {
-          const state = JSON.parse(localStorage.getItem(key) || '{}');
-          if (!state || !state.completedAgents) return;
-          let changed = false;
-          Object.keys(state.completedAgents).forEach(wk => {
-            Object.keys(state.completedAgents[wk] || {}).forEach(agentId => {
-              if (!counts[agentId] || counts[agentId] < 3) {
-                delete state.completedAgents[wk][agentId];
-                changed = true;
-              }
-            });
-          });
-          if (changed) localStorage.setItem(key, JSON.stringify(state));
-        } catch (e) {
-          console.warn('Failed to reconcile', key, e);
-        }
-      });
 
-      // Refresh UI after reconciliation
-      renderAdminAgentDropdown();
-      checkAndEnableWeekFinalButton();
-      updateClearFinalizationsButton();
-    }
 
-    function updateClearFinalizationsButton() {
-      const btn = document.getElementById('admin-clear-finalizations-btn');
-      if (!btn) return;
-      if (adminCurrentAgent) {
-        const name = adminCurrentAgentName || adminCurrentAgent;
-        btn.innerText = `✖️ Clear Finalizations for ${name}`;
-      } else {
-        btn.innerText = '✖️ Clear Finalizations';
-      }
-    }
 
-    function adminClearReviewsForAgent(agentId) {
-      if (!agentId) return alert('No agent selected');
-      const confirmClear = confirm('Clear all submitted reviews for this agent? This action cannot be undone.');
-      if (!confirmClear) return;
 
-      // Remove adminReviews entries for this agent
-      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const beforeCount = reviews.length;
-      reviews = reviews.filter(r => String(r.agentId) !== String(agentId));
-      localStorage.setItem('adminReviews', JSON.stringify(reviews));
-      const removed = beforeCount - reviews.length;
-
-      // Remove any pending reviews for this agent (cleanup)
-      const pending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
-      if (pending && pending[agentId]) {
-        delete pending[agentId];
-        localStorage.setItem('pending_agent_reviews', JSON.stringify(pending));
-      }
-
-      // Unmark week completion across all entities for this agent
-      unmarkAgentWeekComplete('ALL', agentId);
-
-      // Reconcile any remaining flags against current stored reviews
-      reconcileFinalizeFlags();
-
-      // Refresh UI
-      if (adminCurrentAgent && String(adminCurrentAgent) === String(agentId)) {
-        // Re-render selected agent card
-        adminSelectAgent(agentId, adminCurrentAgentName || agentId);
-      }
-      adminLoadReviewsList();
-      renderAdminAgentDropdown();
-      checkAndEnableWeekFinalButton();
-
-      // Update button label
-      updateClearFinalizationsButton();
-
-      alert(`Cleared ${removed} review(s) for agent ${agentId}.`);
-    }
 
     function isAgentWeekComplete(entity, agentId) {
       const state = getEntityWeekState(entity);
