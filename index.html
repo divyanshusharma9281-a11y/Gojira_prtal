@@ -3160,8 +3160,15 @@ Reviewer: ${review.reviewerId}
       const review = reviews.find(r => r.id === reviewId);
       if (review) {
         closeNotificationsModal();
-        // Scroll to or highlight the review
-        alert(`Review from ${review.reviewerName}: Score ${review.score}\n\n${review.observation}`);
+        // Navigate agent to QA dashboard and open the review detail
+        navigateTo('view-agent-qa');
+        // Ensure agent dashboard reloads
+        setTimeout(() => {
+          agentLoadQADashboard();
+          setTimeout(() => {
+            openReviewDetail(reviewId);
+          }, 200);
+        }, 200);
       }
     }
 
@@ -3232,27 +3239,56 @@ Reviewer: ${review.reviewerId}
       const review = reviews.find(r => r.id === reviewId);
       if (review) {
         closeNotificationsModal();
-        // Navigate to the admin dashboard and highlight the review
-        const entity = review.entity || review.agentEntity;
-        adminCurrentEntity = entity;
-        
-        // Mark notification as read
+
+        // Mark the related comments as read for admin
         const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
         const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
-        const newCommentIds = comments
-          .filter(c => !adminNotifications.includes(c.id))
-          .map(c => c.id);
-        adminNotifications.push(...newCommentIds);
+        const relatedCommentIds = comments.filter(c => c.reviewId === reviewId).map(c => c.id);
+        relatedCommentIds.forEach(id => { if (!adminNotifications.includes(id)) adminNotifications.push(id); });
         localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
-        
+
+        // Navigate to admin dashboard and focus the agent and review
+        adminCurrentEntity = review.entity || adminCurrentEntity || 'ALL';
+        adminCurrentAgent = review.agentId;
+        adminCurrentAgentName = review.agentName;
+
+        navigateTo('view-admin');
+        adminLoadAgents();
+
+        // Give DOM a moment to render and then load reviews and open the specific review
         setTimeout(() => {
-          navigateTo('view-admin');
-          adminLoadAgents();
-          // Navigate directly to the review details
-          const comment = comments.find(c => c.reviewId === reviewId);
-          alert(`New Reply from: ${comment?.authorName || 'Agent'}\n\nNavigating to the review in Admin Dashboard...\n\nReply: "${comment?.text.substring(0, 100) || 'Check details'}..."`);
-        }, 300);
+          // Set selector to agent
+          const sel = document.getElementById('admin-agent-selector');
+          if (sel) sel.value = adminCurrentAgent;
+          adminLoadReviewsList();
+
+          // Find index in filtered reviews
+          const filtered = JSON.parse(localStorage.getItem('adminReviews') || '[]').filter(r => r.entity === adminCurrentEntity && r.agentId === adminCurrentAgent);
+          const index = filtered.findIndex(r => r.id === reviewId);
+          if (index !== -1) {
+            setTimeout(() => {
+              adminViewReview(index);
+            }, 100);
+          } else {
+            alert('The review referenced by this notification is not available.');
+          }
+        }, 200);
       }
+    }
+
+    function showAdminComments(reviewId) {
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === reviewId);
+      if (comments.length === 0) {
+        alert('No replies yet for this review.');
+        return;
+      }
+
+      let commentsText = `Comments for the selected review:\n\n`;
+      comments.forEach(c => {
+        commentsText += `[${c.date}] ${c.authorName}:\n${c.text}\n\n`;
+      });
+
+      alert(commentsText);
     }
 
     function showNotificationsModal(notifications) {
@@ -4319,7 +4355,9 @@ Reviewer: ${review.reviewerId}
             reviewType: item.reviewType,
             score: item.score,
             observation: item.observation,
-            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
+            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+            reviewerId: currentUser?.id || currentSessionUser?.id || 'quality_team',
+            reviewerName: currentUser?.name || currentSessionUser?.name || 'Quality Team'
           };
           
           if (item.reviewType === 'voice') {
@@ -4754,6 +4792,18 @@ Reviewer: ${review.reviewerId}
       document.getElementById('review-detail-date').textContent = review.date;
       document.getElementById('review-detail-observation').textContent = review.observation;
       document.getElementById('review-detail-score').textContent = review.score;
+
+      // Show reviewer/quality team
+      if (!document.getElementById('review-detail-reviewer')) {
+        const reviewerRow = document.createElement('div');
+        reviewerRow.className = 'text-sm text-slate-500 mb-2';
+        reviewerRow.id = 'review-detail-reviewer';
+        reviewerRow.innerHTML = `<strong>Reviewed by:</strong> ${review.reviewerName || 'Quality Team'}`;
+        const container = document.querySelector('#agent-review-detail-modal .p-6');
+        if (container) container.insertBefore(reviewerRow, container.firstChild);
+      } else {
+        document.getElementById('review-detail-reviewer').innerHTML = `<strong>Reviewed by:</strong> ${review.reviewerName || 'Quality Team'}`;
+      }
 
       // Load comments for this review
       const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === reviewId);
