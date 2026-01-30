@@ -94,8 +94,30 @@
       }
     }
 
+    @keyframes slideLeft {
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes slideRight {
+      to {
+        transform: translateX(100%);
+      }
+    }
+
     .animate-zoom-in {
-      animation: zoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: zoomIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
+      /* Delayed zoom */
+      opacity: 0;
+    }
+
+    .animate-door-left {
+      animation: slideLeft 1.2s cubic-bezier(0.6, 0.05, 0.01, 1) 0.5s forwards;
+    }
+
+    .animate-door-right {
+      animation: slideRight 1.2s cubic-bezier(0.6, 0.05, 0.01, 1) 0.5s forwards;
     }
   </style>
 </head>
@@ -125,17 +147,29 @@
 
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen"
-    class="fixed inset-0 bg-gradient-to-br from-red-950 via-slate-900 to-blue-950 flex items-center justify-center z-50 overflow-hidden">
+    class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden">
+
+    <!-- The Split Doors -->
+    <div
+      class="fixed inset-y-0 left-0 w-1/2 bg-gradient-to-r from-red-950 to-red-900 z-50 animate-door-left flex items-center justify-end border-r border-red-800 shadow-2xl">
+    </div>
+    <div
+      class="fixed inset-y-0 right-0 w-1/2 bg-gradient-to-l from-blue-950 to-blue-900 z-50 animate-door-right flex items-center justify-start border-l border-blue-800 shadow-2xl">
+    </div>
+
+    <!-- Revealed Background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-red-950 via-slate-900 to-blue-950 z-0"></div>
 
     <!-- Background Typography Theme -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-20">
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-20 z-0">
       <h1
         class="text-[15rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600 transform -rotate-12 whitespace-nowrap blur-sm">
         G Gojira</h1>
     </div>
 
+    <!-- Colored Login Card -->
     <div
-      class="bg-white/95 backdrop-blur-md dark:bg-slate-900/95 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-10 border border-white/10 animate-zoom-in">
+      class="bg-gradient-to-b from-slate-900 to-indigo-950/90 backdrop-blur-md p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-10 border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20">
       <div class="text-center mb-8">
         <div
           class="w-20 h-20 bg-gradient-to-br from-red-600 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-4xl mx-auto mb-4 shadow-lg shadow-blue-900/50">
