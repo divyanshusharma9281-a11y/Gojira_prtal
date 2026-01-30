@@ -112,6 +112,10 @@
       }
     }
 
+    /* Login card stacking helper */
+    .login-card { z-index: 30; }
+    .login-card.raised { z-index: 70 !important; }
+
     /* 3D Swing Animations */
     @keyframes swingLeft {
       from {
@@ -253,8 +257,8 @@
     </div>
 
     <!-- Colored Login Card -->
-    <div
-      class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-40 overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
+    <div id="login-card"
+      class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-30 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
       style="background-color: rgba(10, 14, 22, 0.97);">
       <div class="text-center mb-8">
         <div
@@ -4366,12 +4370,16 @@ Reviewer: ${review.reviewerId}
               const heading = doorBrandEl.querySelector('.door-brand');
               heading?.addEventListener('animationend', () => {
                 doorBrandEl.classList.add('moved');
-                console.debug('[onload] door-brand animation ended, moved behind login');
+                const loginCardEl = document.getElementById('login-card');
+                if (loginCardEl) loginCardEl.classList.add('raised');
+                console.debug('[onload] door-brand animation ended, moved behind login and login-card raised');
               });
 
               // Fallback in case animationend isn't triggered
               setTimeout(() => {
                 doorBrandEl.classList.add('moved');
+                const loginCardEl = document.getElementById('login-card');
+                if (loginCardEl) loginCardEl.classList.add('raised');
               }, 2600);
             }
           } catch (e) {
