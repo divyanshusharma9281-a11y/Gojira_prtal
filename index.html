@@ -2253,11 +2253,11 @@
             </div>
           `;
 
-          // Auto-open the agent process modal when an agent is selected from the list
+          // Auto-open the admin review type modal when an agent is selected from the list
           try {
-            const modalName = document.getElementById('modal-agent-name');
+            const modalName = document.getElementById('review-type-agent-name');
             if (modalName) modalName.textContent = selectedAgentForReview.name;
-            document.getElementById('agent-process-modal').classList.remove('hidden');
+            document.getElementById('admin-review-type-modal').classList.remove('hidden');
           } catch (e) {
             /* ignore if modal not present */
           }
@@ -4546,8 +4546,24 @@ Reviewer: ${review.reviewerId}
       document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName;
     }
 
+    function startQualityReviewWithType(type) {
+      console.debug('[startQualityReviewWithType] type=', type, 'adminCurrentAgent=', adminCurrentAgent, 'selectedAgentForReview=', selectedAgentForReview?.id);
+      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) {}
+
+      if (!adminCurrentAgent && selectedAgentForReview) {
+        adminCurrentAgent = selectedAgentForReview.id;
+        adminCurrentAgentName = selectedAgentForReview.name;
+      }
+
+      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) {}
+
+      // Reuse the existing adminSelectReviewType flow
+      adminSelectReviewType(type);
+    }
+
     function adminSelectReviewType(type) {
       // type: 'voice' or 'non-voice'
+      console.debug('[adminSelectReviewType] selected type', type, 'for agent', adminCurrentAgentName);
       adminReviewType = type;
       document.getElementById('admin-review-type-modal').classList.add('hidden');
 
