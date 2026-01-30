@@ -3194,28 +3194,37 @@ Reviewer: ${review.reviewerId}
       // Filter for this week (last 7 days) and current agent
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-      const agentReviews = reviews.filter(r => r.agentId === currentUser.id);
+      // Safe Trim Comparison
+      const currentAgentId = String(currentUser.id).trim();
+      const agentReviews = reviews.filter(r => String(r.agentId).trim() === currentAgentId);
 
       const recentReviews = agentReviews.filter(r => {
-        const d = new Date(r.date);
-        return !isNaN(d.getTime()) && d >= oneWeekAgo;
+        // Try parsing ISO date first, then fallback
+        let d = new Date(r.date);
+        if (isNaN(d.getTime())) {
+          // Fallback for older locale strings (MM/DD/YYYY or DD/MM/YYYY dependent on browser)
+          // If we can't parse it, we might show it anyway if it's recent in the list?
+          // But let's assume valid date.
+          return false;
+        }
+        return d >= oneWeekAgo;
       });
 
-      const seenIds = getAgentSeenNotifications(currentUser.id);
+      const seenIds = getAgentSeenNotifications(currentAgentId);
       const unseen = recentReviews.filter(r => !seenIds.includes(r.id));
 
       const dot = document.querySelector('.notification-dot');
 
       if (unseen.length > 0) {
-        dot.classList.remove('hidden');
+        if (dot) dot.classList.remove('hidden');
         if (showPopup) {
           // Show all recent reviews but mark them as seen once shown
           showAgentNotifications(recentReviews);
-          markAgentSeenNotifications(currentUser.id, recentReviews.map(r => r.id));
-          dot.classList.add('hidden');
+          markAgentSeenNotifications(currentAgentId, recentReviews.map(r => r.id));
+          if (dot) dot.classList.add('hidden');
         }
       } else {
-        dot.classList.add('hidden');
+        if (dot) dot.classList.add('hidden');
         if (showPopup) {
           showNotificationsModal([]);
         }
@@ -3233,19 +3242,21 @@ Reviewer: ${review.reviewerId}
         notificationsList.classList.remove('hidden');
         notificationsEmpty.classList.add('hidden');
 
-        notificationsList.innerHTML = reviews.map(review => `
+        notificationsList.innerHTML = reviews.map(review => {
+          const displayDate = review.displayDate || review.date;
+          return `
           <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-purple-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="agentViewNotificationReview('${review.id}')">
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <h3 class="font-bold text-purple-900 dark:text-purple-200">Quality Review Received</h3>
                 <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">From: ${review.reviewerName || 'Quality Team'}</p>
-                <p class="text-sm text-slate-600 dark:text-slate-400">Date: ${review.date}</p>
+                <p class="text-sm text-slate-600 dark:text-slate-400">Date: ${displayDate}</p>
                 <p class="text-sm font-semibold mt-2">Score: <span class="text-indigo-600 dark:text-indigo-300">${review.score}</span></p>
               </div>
               <span class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
             </div>
           </div>
-        `).join('');
+        `}).join('');
       }
 
       document.getElementById('notifications-modal').classList.remove('hidden');
@@ -3461,7 +3472,7 @@ Reviewer: ${review.reviewerId}
         return; // Only for agents
       }
 
-      const agentId = currentSessionUser.id;
+      const agentId = String(currentSessionUser.id).trim(); // Trimming for safety
       const agentName = currentSessionUser.name;
 
       // Set welcome text
@@ -3470,8 +3481,8 @@ Reviewer: ${review.reviewerId}
       // Load reviews for this agent
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
 
-      // Filter reviews for current agent only
-      const agentReviews = reviews.filter(r => r.agentId === agentId);
+      // Filter reviews for current agent only (robust comparison)
+      const agentReviews = reviews.filter(r => String(r.agentId).trim() === agentId);
 
       // Calculate stats
       const totalReviews = agentReviews.length;
@@ -3480,8 +3491,10 @@ Reviewer: ${review.reviewerId}
       // Get last review date
       let lastReviewDate = '--';
       if (agentReviews.length > 0) {
-        const lastReview = agentReviews[0];
-        lastReviewDate = lastReview.date;
+        // Sort by actual date if possible, assuming new ones appended last usually, but let's be safe
+        // Use normalized date for sorting if needed, but for "last review" getting the last item in array is usually enough for appended logs
+        const lastReview = agentReviews[agentReviews.length - 1];
+        lastReviewDate = lastReview.displayDate || lastReview.date;
       }
 
       // Determine performance status
@@ -3522,13 +3535,15 @@ Reviewer: ${review.reviewerId}
       } else {
         noReviewsMsg.classList.add('hidden');
         // Build rows with View button to see details
-        tbody.innerHTML = agentReviews.map(review => {
+        // Reverse to show newest first
+        tbody.innerHTML = [...agentReviews].reverse().map(review => {
           const comments = (JSON.parse(localStorage.getItem('reviewComments') || '[]')).filter(c => c.reviewId === review.id);
           const replyCount = comments.length;
+          const displayDate = review.displayDate || review.date;
 
           return `
           <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-            <td class="p-6">${review.date}</td>
+            <td class="p-6">${displayDate}</td>
             <td class="p-6" title="${review.reviewerName || 'Quality Team'}">Quality Team</td>
             <td class="p-6">
               <button onclick="openReviewDetail('${review.id}')" class="text-blue-600 hover:text-blue-800 underline font-semibold">
@@ -4774,14 +4789,15 @@ Reviewer: ${review.reviewerId}
           const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 10000).toString() + '-' + idx;
           const reviewObj = {
             id: reviewId,
-            date: now.toLocaleDateString(),
+            date: now.toISOString(), // Use ISO format for consistent parsing
+            displayDate: now.toLocaleDateString(), // Keep human readable date for display
             agentId: adminCurrentAgent,
             agentName: adminCurrentAgentName,
             entity: adminCurrentEntity,
             reviewType: item.reviewType,
             score: item.score,
             observation: item.observation,
-            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             reviewerId: currentUser?.id || 'admin',
             reviewerName: currentUser?.name || 'Admin',
             // Specific fields
