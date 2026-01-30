@@ -203,22 +203,39 @@
       color: #0b0b0b !important;
     }
 
-    /* Dark mode with subtle red mix */
+    /* Dark mode with stronger red mix */
     body.dark {
-      background: linear-gradient(180deg, #061025 0%, #0b1220 40%, #160a0a 100%);
+      /* stronger red tint layered over dark gradient */
+      background: linear-gradient(180deg, rgba(185,28,28,0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
       color: rgba(255,255,255,0.95);
       transition: background 0.45s ease, color 0.25s ease;
+      background-blend-mode: overlay;
     }
 
     body.dark header,
     body.dark #top-nav {
-      background: linear-gradient(90deg, rgba(185,28,28,0.06) 0%, #0b1220 60%) !important;
+      /* stronger red overlay for header in dark mode */
+      background: linear-gradient(90deg, rgba(185,28,28,0.22) 0%, rgba(30,24,40,0.6) 30%, #0b1220 70%) !important;
       color: rgba(255,255,255,0.95) !important;
+      box-shadow: 0 6px 30px rgba(185,28,28,0.06);
     }
 
     /* Ensure headings remain readable in dark mode */
     body.dark h1, body.dark h2, body.dark h3, body.dark .font-bold, body.dark .font-extrabold {
       color: rgba(255,255,255,0.95) !important;
+    }
+
+    /* Dark mode accents: stronger red highlights */
+    body.dark .accent-btn {
+      background: linear-gradient(90deg, rgba(185,28,28,0.95), #1e3a8a) !important;
+      color: white !important;
+      box-shadow: 0 10px 30px rgba(185,28,28,0.12) !important;
+    }
+
+    body.dark .badge, body.dark .btn-outline {
+      border-color: rgba(185,28,28,0.18) !important;
+      color: rgba(255,255,255,0.95) !important;
+      background: rgba(185,28,28,0.03) !important;
     }
 
     .gojira-theme .app-view {
