@@ -4715,14 +4715,10 @@ Reviewer: ${review.reviewerId}
           file = fileInput ? fileInput.files[0] : null;
           if (!file) missingFields = true;
         } else {
-          const chatIdInput = item.querySelector('.review-chat-id');
-          chatId = chatIdInput ? chatIdInput.value.trim() : '';
-          const emailIdInput = item.querySelector('.review-email-id');
           // For non-voice, accept either Chat ID or Email ID (one required)
           const contactInput = item.querySelector('.review-contact-id');
           const contactVal = contactInput ? contactInput.value.trim() : '';
-          let chatId = '';
-          let emailId = '';
+
           if (contactVal) {
             if (contactVal.includes('@')) {
               emailId = contactVal;
