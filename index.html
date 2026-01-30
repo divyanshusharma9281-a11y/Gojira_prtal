@@ -1274,6 +1274,11 @@
         <div class="mb-6">
           <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Choose an Agent to
             Review</label>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="text-sm text-slate-700 dark:text-slate-300">Current Week: <span id="admin-week-display" class="font-bold">1</span></div>
+            <div id="admin-week-progress" class="text-sm text-slate-500">(0/0 completed)</div>
+            <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()" class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed" disabled>Final Submit This Week</button>
+          </div>
           <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
             class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
             <option value="">-- Click to Select Agent --</option>
@@ -2726,6 +2731,9 @@
 
       MockBackend.savePerformanceScore(performanceData);
 
+      // Mark this agent as completed for the current week
+      markAgentWeekComplete(adminCurrentEntity || currentEntity || 'ALL', agentId);
+
       // Clear pending reviews for this agent
       const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
       delete allPending[agentId];
@@ -2742,6 +2750,8 @@
 
       // Refresh dashboard
       renderAdminDashboard();
+      adminLoadAgents();
+      checkAndEnableWeekFinalButton();
 
       alert(`Final performance score (${finalScore}/100) submitted successfully for agent!`);
     }
@@ -4032,6 +4042,81 @@ Reviewer: ${review.reviewerId}
     let reviewerCurrentEntity = '';
     let agentCurrentEntity = '';
 
+    function getEntityWeekState(entity) {
+      if (!entity) entity = 'ALL';
+      return JSON.parse(localStorage.getItem(`entityWeekState_${entity}`) || JSON.stringify({ currentWeek: 1, completedAgents: {} }));
+    }
+
+    function setEntityWeekState(entity, state) {
+      if (!entity) entity = 'ALL';
+      localStorage.setItem(`entityWeekState_${entity}`, JSON.stringify(state));
+    }
+
+    function markAgentWeekComplete(entity, agentId) {
+      const state = getEntityWeekState(entity);
+      const week = state.currentWeek || 1;
+      state.completedAgents = state.completedAgents || {};
+      state.completedAgents[week] = state.completedAgents[week] || {};
+      state.completedAgents[week][agentId] = true;
+      setEntityWeekState(entity, state);
+    }
+
+    function isAgentWeekComplete(entity, agentId) {
+      const state = getEntityWeekState(entity);
+      const week = state.currentWeek || 1;
+      return !!(state.completedAgents && state.completedAgents[week] && state.completedAgents[week][agentId]);
+    }
+
+    function checkAndEnableWeekFinalButton() {
+      const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+      const currentWeek = state.currentWeek || 1;
+      const agentsList = USER_DB.filter(u => u.role === 'agent' && (!adminCurrentEntity || adminCurrentEntity === 'ALL' || u.entity === adminCurrentEntity));
+      const total = agentsList.length;
+      const completedCount = agentsList.filter(a => state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][a.id]).length;
+
+      const progressEl = document.getElementById('admin-week-progress');
+      const weekDisplay = document.getElementById('admin-week-display');
+      const finalBtn = document.getElementById('admin-week-final-submit-btn');
+      if (weekDisplay) weekDisplay.textContent = currentWeek;
+      if (progressEl) progressEl.textContent = `(${completedCount}/${total} completed)`;
+
+      if (completedCount > 0 && completedCount === total) {
+        if (finalBtn) {
+          finalBtn.disabled = false;
+          finalBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      } else {
+        if (finalBtn) {
+          finalBtn.disabled = true;
+          finalBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+      }
+    }
+
+    function adminFinalizeWeek() {
+      if (!adminCurrentEntity) adminCurrentEntity = 'ALL';
+      const state = getEntityWeekState(adminCurrentEntity);
+      const currentWeek = state.currentWeek || 1;
+      // Mark week as finalized
+      state.finalizedWeeks = state.finalizedWeeks || [];
+      if (!state.finalizedWeeks.includes(currentWeek)) state.finalizedWeeks.push(currentWeek);
+      // Advance week
+      if (currentWeek < 4) {
+        state.currentWeek = currentWeek + 1;
+      } else {
+        // Cycle back to week 1 after week 4
+        state.currentWeek = 1;
+      }
+      // Reset completed for new week
+      state.completedAgents[state.currentWeek] = state.completedAgents[state.currentWeek] || {};
+      setEntityWeekState(adminCurrentEntity, state);
+
+      alert(`Week ${currentWeek} finalized. Moved to Week ${state.currentWeek}.`);
+      // Refresh UI
+      adminLoadAgents();
+      checkAndEnableWeekFinalButton();
+    }
+
     function adminLoadAgents() {
       // Display current entity for admin dashboard
       const adminEntityDisplay = document.getElementById('admin-entity-display');
@@ -4071,16 +4156,39 @@ Reviewer: ${review.reviewerId}
       if (reviewerSelector) {
         reviewerSelector.innerHTML = '<option value="">-- Choose Agent --</option>';
         agents.forEach(agent => {
+          const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+          const currentWeek = state.currentWeek || 1;
+          const completed = state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][agent.id];
           const option = document.createElement('option');
           option.value = agent.id;
-          option.text = `${agent.name} ${agent.id}`;
+          option.text = `${agent.name} ${agent.id}${completed ? ' ✅' : ''}`;
+          option.title = completed ? `Finalized for Week ${currentWeek}` : '';
           option.dataset.name = agent.name;
           reviewerSelector.appendChild(option);
         });
       }
 
+      // Populate admin dropdown
+      if (adminSelector) {
+        adminSelector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
+        agents.forEach(agent => {
+          const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+          const currentWeek = state.currentWeek || 1;
+          const completed = state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][agent.id];
+          const option = document.createElement('option');
+          option.value = agent.id;
+          option.text = `${agent.name} ${agent.id}${completed ? ' ✅' : ''}`;
+          option.title = completed ? `Finalized for Week ${currentWeek}` : '';
+          option.dataset.name = agent.name;
+          adminSelector.appendChild(option);
+        });
+      }
+
       // Load reviews for the current entity
       adminLoadReviewsList();
+
+      // Update week UI and final button state
+      checkAndEnableWeekFinalButton();
     }
 
     function adminSelectAgentFromDropdown(selectElement) {
