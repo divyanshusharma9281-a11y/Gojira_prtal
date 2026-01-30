@@ -1262,52 +1262,6 @@
         <h1 id="admin-welcome-text" class="text-3xl font-bold">Welcome Siddhant Chauhan</h1>
       </div>
 
-      <!-- Section 0: Week Selection -->
-      <div class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📅</span>
-          Select Weekly Review Cycle
-        </h2>
-        
-        <!-- Week Selection Buttons -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <button onclick="selectWeekForReview(1)" id="week-1-btn"
-            class="p-6 rounded-2xl border-2 border-purple-300 bg-white dark:bg-slate-700 hover:border-purple-600 transition font-bold text-lg week-selector-btn active">
-            <div class="text-3xl mb-2">📍</div>
-            <div>Week 1</div>
-            <div class="text-xs text-slate-500 mt-1" id="week-1-status">Active</div>
-          </button>
-          
-          <button onclick="selectWeekForReview(2)" id="week-2-btn"
-            class="p-6 rounded-2xl border-2 border-slate-300 bg-white dark:bg-slate-700 opacity-50 cursor-not-allowed transition font-bold text-lg week-selector-btn disabled" disabled>
-            <div class="text-3xl mb-2 opacity-50">📍</div>
-            <div class="opacity-50">Week 2</div>
-            <div class="text-xs text-slate-500 mt-1" id="week-2-status">Locked</div>
-          </button>
-          
-          <button onclick="selectWeekForReview(3)" id="week-3-btn"
-            class="p-6 rounded-2xl border-2 border-slate-300 bg-white dark:bg-slate-700 opacity-50 cursor-not-allowed transition font-bold text-lg week-selector-btn disabled" disabled>
-            <div class="text-3xl mb-2 opacity-50">📍</div>
-            <div class="opacity-50">Week 3</div>
-            <div class="text-xs text-slate-500 mt-1" id="week-3-status">Locked</div>
-          </button>
-          
-          <button onclick="selectWeekForReview(4)" id="week-4-btn"
-            class="p-6 rounded-2xl border-2 border-slate-300 bg-white dark:bg-slate-700 opacity-50 cursor-not-allowed transition font-bold text-lg week-selector-btn disabled" disabled>
-            <div class="text-3xl mb-2 opacity-50">📍</div>
-            <div class="opacity-50">Week 4</div>
-            <div class="text-xs text-slate-500 mt-1" id="week-4-status">Locked</div>
-          </button>
-        </div>
-
-        <div class="mt-6 p-4 bg-purple-100 dark:bg-slate-700 rounded-xl border border-purple-200 dark:border-slate-600">
-          <p class="text-sm text-purple-900 dark:text-purple-200">
-            <strong>Current Week Selected:</strong> <span id="current-week-display" class="font-bold">Week 1</span>
-            <br><span class="text-xs opacity-75 mt-1 block">Complete all reviews for this week, then submit to unlock the next week.</span>
-          </p>
-        </div>
-      </div>
-
       <!-- Section 1: Select Agent Only -->
       <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -2126,96 +2080,6 @@
     let selectedAgentForReview = null;
     let selectedFileForReview = null;
     let selectedProcessType = null;
-    let selectedWeekForReview = 1; // Track selected week (1-4)
-
-    // Initialize week tracking for the current entity
-    function initializeWeekTracking() {
-      const entity = currentSessionUser?.entity || 'BharatLoan';
-      const weekKey = `entityWeekProgress_${entity}`;
-      
-      let weekProgress = JSON.parse(localStorage.getItem(weekKey) || '{}');
-      
-      // Initialize if not exists
-      if (!weekProgress.completedWeeks) {
-        weekProgress = {
-          completedWeeks: [], // Array of completed week numbers [1, 2, 3]
-          currentWeek: 1
-        };
-      }
-      
-      localStorage.setItem(weekKey, JSON.stringify(weekProgress));
-      updateWeekUIState();
-    }
-
-    // Update week button states
-    function updateWeekUIState() {
-      const entity = currentSessionUser?.entity || 'BharatLoan';
-      const weekKey = `entityWeekProgress_${entity}`;
-      const weekProgress = JSON.parse(localStorage.getItem(weekKey) || '{"completedWeeks":[],"currentWeek":1}');
-      const currentWeek = weekProgress.currentWeek || 1;
-      const completedWeeks = weekProgress.completedWeeks || [];
-
-      // Update all week buttons
-      for (let week = 1; week <= 4; week++) {
-        const btn = document.getElementById(`week-${week}-btn`);
-        const statusEl = document.getElementById(`week-${week}-status`);
-        
-        if (!btn) continue;
-
-        if (week === currentWeek) {
-          // Current active week
-          btn.classList.remove('opacity-50', 'cursor-not-allowed', 'disabled');
-          btn.classList.add('active', 'border-purple-600', 'bg-purple-100', 'dark:bg-slate-600');
-          btn.disabled = false;
-          statusEl.innerText = '🟢 Active';
-          statusEl.className = 'text-xs text-green-600 dark:text-green-400 mt-1 font-bold';
-        } else if (completedWeeks.includes(week)) {
-          // Completed week
-          btn.classList.remove('border-purple-600', 'bg-purple-100', 'dark:bg-slate-600');
-          btn.classList.add('border-emerald-600', 'bg-emerald-100', 'dark:bg-slate-600');
-          btn.disabled = false;
-          btn.classList.remove('opacity-50', 'cursor-not-allowed', 'disabled');
-          statusEl.innerText = '✅ Completed';
-          statusEl.className = 'text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-bold';
-        } else {
-          // Future week (locked)
-          btn.classList.add('opacity-50', 'cursor-not-allowed', 'disabled');
-          btn.classList.remove('border-purple-600', 'bg-purple-100', 'dark:bg-slate-600', 'border-emerald-600', 'bg-emerald-100');
-          btn.disabled = true;
-          statusEl.innerText = '🔒 Locked';
-          statusEl.className = 'text-xs text-slate-500 mt-1';
-        }
-      }
-
-      document.getElementById('current-week-display').innerText = `Week ${currentWeek}`;
-    }
-
-    // Select a week for review
-    function selectWeekForReview(week) {
-      const entity = currentSessionUser?.entity || 'BharatLoan';
-      const weekKey = `entityWeekProgress_${entity}`;
-      const weekProgress = JSON.parse(localStorage.getItem(weekKey) || '{"completedWeeks":[],"currentWeek":1}');
-      const currentWeek = weekProgress.currentWeek || 1;
-      const completedWeeks = weekProgress.completedWeeks || [];
-
-      // Allow selecting current week or completed weeks
-      if (week === currentWeek || completedWeeks.includes(week)) {
-        selectedWeekForReview = week;
-        document.getElementById('current-week-display').innerText = `Week ${week}`;
-        
-        // Highlight selected button
-        for (let w = 1; w <= 4; w++) {
-          const btn = document.getElementById(`week-${w}-btn`);
-          if (w === week) {
-            btn.classList.add('ring-2', 'ring-purple-600');
-          } else {
-            btn.classList.remove('ring-2', 'ring-purple-600');
-          }
-        }
-      } else {
-        alert('This week is locked. Complete the current week reviews first!');
-      }
-    }
 
     function onAgentSelected() {
       const agentSelector = document.getElementById('agent-selector');
@@ -2825,39 +2689,17 @@
       // Check if any review was fatal (score = 0)
       const hasFatal = pendingReviews.some(review => review.isFatal);
 
-      // Save the final performance score with week information
+      // Save the final performance score
       const performanceData = {
         agentId: agentId,
         score: finalScore,
         isFatal: hasFatal,
         feedbackData: { reviews: pendingReviews }, // Store all reviews
         timestamp: new Date().toISOString(),
-        reviewerId: currentUser.id,
-        week: selectedWeekForReview // Add week information
+        reviewerId: currentUser.id
       };
 
       MockBackend.savePerformanceScore(performanceData);
-
-      // Update week tracking to mark current week as completed
-      const entity = currentSessionUser?.entity || 'BharatLoan';
-      const weekKey = `entityWeekProgress_${entity}`;
-      let weekProgress = JSON.parse(localStorage.getItem(weekKey) || '{"completedWeeks":[],"currentWeek":1}');
-      
-      // Mark current week as completed
-      if (!weekProgress.completedWeeks.includes(selectedWeekForReview)) {
-        weekProgress.completedWeeks.push(selectedWeekForReview);
-      }
-
-      // Activate next week if available
-      if (selectedWeekForReview < 4) {
-        weekProgress.currentWeek = selectedWeekForReview + 1;
-      } else {
-        // All weeks completed - reset to week 1 for next month
-        weekProgress.currentWeek = 1;
-        weekProgress.completedWeeks = [];
-      }
-
-      localStorage.setItem(weekKey, JSON.stringify(weekProgress));
 
       // Clear pending reviews for this agent
       const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
@@ -2871,14 +2713,12 @@
       // Reset selections
       selectedAgentForReview = null;
       selectedFileForReview = null;
-      selectedWeekForReview = 1; // Reset week selection
       document.getElementById('agent-selector').value = '';
 
-      // Refresh UI
-      adminLoadAgents();
+      // Refresh dashboard
       renderAdminDashboard();
 
-      alert(`✅ Week ${selectedWeekForReview} completed! Final performance score (${finalScore}/100) submitted successfully for agent!`);
+      alert(`Final performance score (${finalScore}/100) submitted successfully for agent!`);
     }
 
     function showFinalSubmissionOptionForSelectedAgent() {
@@ -3898,28 +3738,15 @@ Reviewer: ${review.reviewerId}
     }
 
     function showLogin(entity) {
-      // Open the unified portal login screen for entity-specific login
       currentEntity = entity;
-      // Set placeholder to indicate entity context
-      const portalEmp = document.getElementById('portal-emp-id');
-      if (portalEmp) portalEmp.placeholder = `Employee ID for ${entity}`;
-      const portalPass = document.getElementById('portal-password');
-      if (portalPass) portalPass.value = '';
-
-      // Show the main portal login screen (single login UI)
-      document.getElementById('portal-login-screen').classList.remove('hidden');
-      // Also ensure the small login modal is hidden to avoid duplicate UIs
-      const smallModal = document.getElementById('login-modal');
-      if (smallModal) smallModal.classList.add('hidden');
+      document.getElementById('login-title').innerText = `Login to ${entity}`;
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('empid').value = '';
     }
 
     function handleChecklistClick(entityName) {
-      // Ensure we respect persisted sessions too (check localStorage if needed)
-      const session = currentSessionUser || (localStorage.getItem('gojira_session_user') ? JSON.parse(localStorage.getItem('gojira_session_user')) : null);
-
       // If user is logged in as admin, set entity and navigate to admin dashboard
-      if (session && session.role === 'admin') {
-        currentSessionUser = session;
+      if (currentSessionUser && currentSessionUser.role === 'admin') {
         currentEntity = entityName;
         adminCurrentEntity = entityName;
         navigateTo('view-admin');
@@ -3931,20 +3758,8 @@ Reviewer: ${review.reviewerId}
     }
 
     function hideLogin() {
-      // Hide both login UIs to ensure a single login/logout experience
-      const smallModal = document.getElementById('login-modal');
-      if (smallModal) smallModal.classList.add('hidden');
-
-      const portalScreen = document.getElementById('portal-login-screen');
-      if (portalScreen) portalScreen.classList.add('hidden');
-
-      // Clear inputs
-      const empSmall = document.getElementById('empid');
-      if (empSmall) empSmall.value = '';
-      const portalEmp = document.getElementById('portal-emp-id');
-      if (portalEmp) portalEmp.value = '';
-      const portalPass = document.getElementById('portal-password');
-      if (portalPass) portalPass.value = '';
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('empid').value = '';
     }
 
     // USER DATABASE
@@ -4098,9 +3913,6 @@ Reviewer: ${review.reviewerId}
     let agentCurrentEntity = '';
 
     function adminLoadAgents() {
-      // Initialize week tracking for this entity
-      initializeWeekTracking();
-
       // Display current entity
       const entityDisplay = document.getElementById('admin-entity-display');
       if (entityDisplay) {
@@ -4853,67 +4665,98 @@ Reviewer: ${review.reviewerId}
     }
 
     // Monthly Performance Calculation
+    // Monthly Performance Calculation
     function agentLoadMonthlyPerformance() {
       if (!currentSessionUser || currentSessionUser.role !== 'agent') return;
 
       const agentId = currentSessionUser.id;
-      const agentEntity = currentSessionUser.entity || 'BharatLoan';
       
-      // Get week completion progress for this entity
-      const weekKey = `entityWeekProgress_${agentEntity}`;
-      let weekProgress = JSON.parse(localStorage.getItem(weekKey) || '{"completedWeeks":[],"currentWeek":1}');
-      const completedWeeks = weekProgress.completedWeeks || [];
+      // Get or initialize monthly data storage
+      let monthlyData = JSON.parse(localStorage.getItem(`agentMonthlyData_${agentId}`) || '{}');
+      const now = new Date();
       
-      // Get all reviews
+      // If no data exists or month has passed, initialize new month
+      if (!monthlyData.startDate) {
+        monthlyData = {
+          startDate: now.getTime(),
+          weeks: [
+            { weekNumber: 1, audits: 0, avgScore: 0, fatalCount: 0 },
+            { weekNumber: 2, audits: 0, avgScore: 0, fatalCount: 0 },
+            { weekNumber: 3, audits: 0, avgScore: 0, fatalCount: 0 },
+            { weekNumber: 4, audits: 0, avgScore: 0, fatalCount: 0 }
+          ]
+        };
+      } else {
+        // Check if 28 days have passed since month started
+        const monthStartTime = new Date(monthlyData.startDate);
+        const daysPassed = (now - monthStartTime) / (1000 * 60 * 60 * 24);
+        
+        if (daysPassed >= 28) {
+          // Reset the month - start new cycle
+          monthlyData = {
+            startDate: now.getTime(),
+            weeks: [
+              { weekNumber: 1, audits: 0, avgScore: 0, fatalCount: 0 },
+              { weekNumber: 2, audits: 0, avgScore: 0, fatalCount: 0 },
+              { weekNumber: 3, audits: 0, avgScore: 0, fatalCount: 0 },
+              { weekNumber: 4, audits: 0, avgScore: 0, fatalCount: 0 }
+            ]
+          };
+        }
+      }
+
+      // Calculate which week we're in based on days elapsed
+      const monthStartTime = new Date(monthlyData.startDate);
+      const daysPassed = (now - monthStartTime) / (1000 * 60 * 60 * 24);
+      const currentWeekNumber = Math.floor(daysPassed / 7) + 1;
+      
+      // Get current week reviews
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const agentReviews = reviews.filter(r => r.agentId === agentId);
       
-      // Calculate data for each week based on completion
-      let monthlyData = {
-        weeks: [
-          { weekNumber: 1, audits: 0, avgScore: 0, fatalCount: 0 },
-          { weekNumber: 2, audits: 0, avgScore: 0, fatalCount: 0 },
-          { weekNumber: 3, audits: 0, avgScore: 0, fatalCount: 0 },
-          { weekNumber: 4, audits: 0, avgScore: 0, fatalCount: 0 }
-        ]
-      };
-
-      // For each completed week, calculate stats from reviews tagged with that week
-      completedWeeks.forEach(weekNum => {
-        const weekReviews = agentReviews.filter(r => {
-          // Check if review has week information
-          const reviewWeek = r.week || 1; // Default to week 1 if not specified
-          return reviewWeek === weekNum;
-        });
-        
-        if (weekReviews.length > 0) {
-          const weekAudits = weekReviews.length;
-          const totalScore = weekReviews.reduce((sum, r) => sum + r.score, 0);
-          const weekScore = Math.round((totalScore / weekAudits) / 100 * 100); // Convert score to percentage
-          const weekFatals = weekReviews.filter(r => r.score === 0).length;
-          
-          monthlyData.weeks[weekNum - 1] = {
-            weekNumber: weekNum,
-            audits: weekAudits,
-            avgScore: weekScore,
-            fatalCount: weekFatals
-          };
-        }
+      const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
+      const monthlyReviews = agentReviews.filter(r => {
+        const reviewDate = new Date(r.date);
+        return reviewDate >= fourWeeksAgo && reviewDate <= now;
       });
 
-      // Check if we have any completed weeks with data
+      // Update current week data with latest reviews
+      if (monthlyData.weeks[currentWeekNumber - 1]) {
+        const weekStart = new Date(monthStartTime.getTime() + (currentWeekNumber - 1) * 7 * 24 * 60 * 60 * 1000);
+        const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+        
+        const weekReviews = monthlyReviews.filter(r => {
+          const reviewDate = new Date(r.date);
+          return reviewDate >= weekStart && reviewDate < weekEnd;
+        });
+        
+        const weekAudits = weekReviews.length;
+        const weekScore = weekAudits > 0 ? Math.round((weekReviews.reduce((sum, r) => sum + r.score, 0) / weekAudits / 100) * 100) : 0;
+        const weekFatals = weekReviews.filter(r => r.score === 0).length;
+        
+        monthlyData.weeks[currentWeekNumber - 1] = {
+          weekNumber: currentWeekNumber,
+          audits: weekAudits,
+          avgScore: weekScore,
+          fatalCount: weekFatals
+        };
+      }
+
+      // Save updated data
+      localStorage.setItem(`agentMonthlyData_${agentId}`, JSON.stringify(monthlyData));
+
+      // Check if we have data to display
       const totalData = monthlyData.weeks.reduce((sum, w) => sum + w.audits, 0);
-      const hasEnoughData = completedWeeks.length > 0 && totalData > 0;
+      const hasEnoughData = totalData > 0;
       
       document.getElementById('agent-no-monthly-data').classList.toggle('hidden', hasEnoughData);
 
       if (hasEnoughData) {
-        // Calculate overall stats from completed weeks only
-        const completedWeekData = monthlyData.weeks.filter(w => completedWeeks.includes(w.weekNumber));
-        const totalAudits = completedWeekData.reduce((sum, w) => sum + w.audits, 0);
-        const totalScore = completedWeekData.reduce((sum, w) => sum + (w.audits > 0 ? w.avgScore * w.audits : 0), 0);
+        // Calculate overall stats from stored weeks
+        const totalAudits = monthlyData.weeks.reduce((sum, w) => sum + w.audits, 0);
+        const totalScore = monthlyData.weeks.reduce((sum, w) => sum + (w.audits > 0 ? w.avgScore * w.audits : 0), 0);
         const avgScore = totalAudits > 0 ? Math.round(totalScore / totalAudits) : 0;
-        const fatalCount = completedWeekData.reduce((sum, w) => sum + w.fatalCount, 0);
+        const fatalCount = monthlyData.weeks.reduce((sum, w) => sum + w.fatalCount, 0);
 
         let status = 'Excellent';
         if (avgScore >= 80) status = 'Excellent';
@@ -4926,21 +4769,14 @@ Reviewer: ${review.reviewerId}
         document.getElementById('agent-monthly-fatal-count').textContent = fatalCount;
         document.getElementById('agent-monthly-status').textContent = status;
 
-        // Display weekly data (show completed weeks, show dashes for non-completed)
+        // Display stored weekly data
         monthlyData.weeks.forEach((week) => {
-          if (completedWeeks.includes(week.weekNumber)) {
-            document.getElementById(`agent-monthly-week${week.weekNumber}-audits`).textContent = week.audits;
-            document.getElementById(`agent-monthly-week${week.weekNumber}-score`).textContent = week.avgScore + '%';
-            document.getElementById(`agent-monthly-week${week.weekNumber}-fatals`).textContent = week.fatalCount;
-          } else {
-            // Show dashes for non-completed weeks
-            document.getElementById(`agent-monthly-week${week.weekNumber}-audits`).textContent = '--';
-            document.getElementById(`agent-monthly-week${week.weekNumber}-score`).textContent = '--';
-            document.getElementById(`agent-monthly-week${week.weekNumber}-fatals`).textContent = '--';
-          }
+          document.getElementById(`agent-monthly-week${week.weekNumber}-audits`).textContent = week.audits;
+          document.getElementById(`agent-monthly-week${week.weekNumber}-score`).textContent = week.avgScore + '%';
+          document.getElementById(`agent-monthly-week${week.weekNumber}-fatals`).textContent = week.fatalCount;
         });
       } else {
-        // No completed weeks yet - show dashes
+        // No data yet - show dashes
         document.getElementById('agent-monthly-total-audits').textContent = '--';
         document.getElementById('agent-monthly-avg-score').textContent = '--';
         document.getElementById('agent-monthly-fatal-count').textContent = '--';
