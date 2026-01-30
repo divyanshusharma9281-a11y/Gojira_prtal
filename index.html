@@ -124,6 +124,7 @@
   <!-- CHANGE PASSWORD MODAL -->
   <div id="change-password-modal"
     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- ... content kept as is ... -->
     <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold">Change Password</h2>
@@ -157,18 +158,59 @@
     </div>
   </div>
 
+  <!-- ADMIN REVIEW TYPE MODAL (NEW) -->
+  <div id="admin-review-type-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[60] p-4">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-md w-full p-8 transform transition-all scale-100">
+      <div class="text-center mb-8">
+        <div
+          class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+          🎯</div>
+        <h2 class="text-2xl font-bold mb-2">Select Review Type</h2>
+        <p class="text-slate-600 dark:text-slate-400">Choose the type of interaction you want to review for <span
+            id="review-type-agent-name" class="font-bold text-blue-600">Agent</span>.</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <button onclick="adminSelectReviewType('voice')"
+          class="p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-700 transition group text-center">
+          <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🎙️</div>
+          <div class="font-bold text-slate-800 dark:text-white">Voice</div>
+          <p class="text-xs text-slate-500 mt-1">Upload Call Recording</p>
+        </button>
+
+        <button onclick="adminSelectReviewType('non-voice')"
+          class="p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-slate-700 transition group text-center">
+          <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">💬</div>
+          <div class="font-bold text-slate-800 dark:text-white">Non-Voice</div>
+          <p class="text-xs text-slate-500 mt-1">Chat / Email ID</p>
+        </button>
+      </div>
+
+      <div class="text-center">
+        <button onclick="document.getElementById('admin-review-type-modal').classList.add('hidden')"
+          class="text-slate-400 hover:text-slate-600 font-semibold text-sm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTIFICATIONS MODAL -->
-  <div id="notifications-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick="if(event.target.id === 'notifications-modal') closeNotificationsModal()">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
-      <div class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+  <div id="notifications-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    onclick="if(event.target.id === 'notifications-modal') closeNotificationsModal()">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+      onclick="event.stopPropagation()">
+      <div
+        class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
         <h2 class="text-2xl font-bold">Notifications</h2>
         <button onclick="closeNotificationsModal()" class="text-slate-500 hover:text-slate-700 text-2xl">✕</button>
       </div>
-      
+
       <div id="notifications-list" class="p-6 space-y-3">
         <!-- Notifications populated here -->
       </div>
-      
+
       <div id="notifications-empty" class="text-center py-12 p-6">
         <div class="text-4xl mb-4">✨</div>
         <h4 class="text-xl font-bold text-slate-600 dark:text-slate-400">All Caught Up!</h4>
@@ -203,7 +245,8 @@
           </button>
 
           <!-- Unified Notification Bell -->
-          <div class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition notification-bell"
+          <div
+            class="relative cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition notification-bell"
             onclick="checkNotifications(true)" title="Check Notifications">
             <span class="text-xl">🔔</span>
             <span
@@ -1304,14 +1347,18 @@
           <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Choose an Agent to
             Review</label>
           <div class="flex items-center gap-3 mb-3">
-            <div class="text-sm text-slate-700 dark:text-slate-300">Current Week: <span id="admin-week-display" class="font-bold">1</span></div>
+            <div class="text-sm text-slate-700 dark:text-slate-300">Current Week: <span id="admin-week-display"
+                class="font-bold">1</span></div>
             <div id="admin-week-progress" class="text-sm text-slate-500">(0/0 completed)</div>
-            <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()" class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed" disabled>Final Submit This Week</button>
+            <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()"
+              class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed"
+              disabled>Final Submit This Week</button>
           </div>
           <!-- Hidden native select (kept for backwards compatibility) -->
-          <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)" class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
+          <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
+            class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
             <option value="">-- Click to Select Agent --</option>
-          </select> 
+          </select>
         </div>
 
         <button id="admin-start-review-btn" onclick="adminStartQualityReview()" disabled
@@ -1320,16 +1367,20 @@
         </button>
 
         <!-- Agent Process Modal (Voice / Non-Voice) -->
-        <div id="agent-process-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div id="agent-process-modal"
+          class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-2xl font-bold">Start Quality Review</h2>
-              <button onclick="document.getElementById('agent-process-modal').classList.add('hidden')" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+              <button onclick="document.getElementById('agent-process-modal').classList.add('hidden')"
+                class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
             </div>
-            <p class="text-slate-600 dark:text-slate-400 mb-6">Choose the review type for <span id="modal-agent-name" class="font-bold"></span></p>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">Choose the review type for <span id="modal-agent-name"
+                class="font-bold"></span></p>
 
             <div class="space-y-4">
-              <button onclick="startQualityReviewWithType('voice')" class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-3">
+              <button onclick="startQualityReviewWithType('voice')"
+                class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-3">
                 <span class="text-2xl">🎙️</span>
                 <div>
                   <div class="font-bold">Voice</div>
@@ -1337,7 +1388,8 @@
                 </div>
               </button>
 
-              <button onclick="startQualityReviewWithType('non-voice')" class="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-green-700 transition flex items-center justify-center gap-3">
+              <button onclick="startQualityReviewWithType('non-voice')"
+                class="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-green-700 transition flex items-center justify-center gap-3">
                 <span class="text-2xl">💬</span>
                 <div>
                   <div class="font-bold">Non-Voice</div>
@@ -1346,7 +1398,8 @@
               </button>
             </div>
 
-            <button onclick="document.getElementById('agent-process-modal').classList.add('hidden')" class="w-full mt-4 bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-400 transition">Cancel</button>
+            <button onclick="document.getElementById('agent-process-modal').classList.add('hidden')"
+              class="w-full mt-4 bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-400 transition">Cancel</button>
           </div>
         </div>
 
@@ -1358,82 +1411,83 @@
 
 
 
-        </div>
-      </div>
-
-      <!-- Section 2: Quality Review Form (Hidden initially) -->
-      <div id="admin-quality-form-section"
-        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
-            Quality Review - <span id="admin-review-agent-display" class="text-emerald-600"></span>
-          </h2>
-          <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
-            Back</button>
-        </div>
-
-        <!-- File Input Section (for Voice reviews) -->
-        <div id="admin-review-file-section" class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-emerald-200 dark:border-slate-600">
-          <label class="block text-sm font-semibold mb-3">Select Call Recording or File (Max 100MB)</label>
-          <input type="file" id="admin-review-file-input" 
-            class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700">
-          <p class="text-xs text-slate-500 mt-2">Selected: <span id="admin-review-file-name">None</span></p>
-        </div>
-
-        <div id="admin-review-items-container" class="space-y-6">
-          <!-- Review items will be dynamically added here -->
-        </div>
-
-        <div class="flex gap-3 mt-8">
-          <button onclick="adminAddReviewItem()" id="admin-add-review-btn"
-            class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition">
-            ➕ Add Review (Min 3, Max 10)
-          </button>
-          <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" disabled
-            class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed">
-            ✅ Final Submit
-          </button>
-        </div>
-      </div>
-
-      <!-- Section 3: Submitted Reviews -->
-      <div id="admin-submitted-reviews-section" class="mb-12 hidden">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
-          Submitted Reviews
-        </h2>
-        <div class="mb-4 flex gap-3">
-          <button onclick="adminDeleteAllReviews()"
-            class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
-            🗑️ Delete All Reviews
-          </button>
-          <button onclick="adminClearFinalizations()" id="admin-clear-finalizations-btn"
-            class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
-            ✖️ Clear Finalizations
-          </button>
-        </div>
-        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-6">Date</th>
-                <th class="p-6">Agent</th>
-                <th class="p-6">File</th>
-                <th class="p-6">Score</th>
-                <th class="p-6">Observation</th>
-                <th class="p-6 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-
     </div>
+  </div>
+
+  <!-- Section 2: Quality Review Form (Hidden initially) -->
+  <div id="admin-quality-form-section"
+    class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold flex items-center gap-3">
+        <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
+        Quality Review - <span id="admin-review-agent-display" class="text-emerald-600"></span>
+      </h2>
+      <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
+        Back</button>
+    </div>
+
+    <!-- File Input Section (for Voice reviews) -->
+    <div id="admin-review-file-section"
+      class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-emerald-200 dark:border-slate-600">
+      <label class="block text-sm font-semibold mb-3">Select Call Recording or File (Max 100MB)</label>
+      <input type="file" id="admin-review-file-input"
+        class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700">
+      <p class="text-xs text-slate-500 mt-2">Selected: <span id="admin-review-file-name">None</span></p>
+    </div>
+
+    <div id="admin-review-items-container" class="space-y-6">
+      <!-- Review items will be dynamically added here -->
+    </div>
+
+    <div class="flex gap-3 mt-8">
+      <button onclick="adminAddReviewItem()" id="admin-add-review-btn"
+        class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition">
+        ➕ Add Review (Min 3, Max 10)
+      </button>
+      <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" disabled
+        class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed">
+        ✅ Final Submit
+      </button>
+    </div>
+  </div>
+
+  <!-- Section 3: Submitted Reviews -->
+  <div id="admin-submitted-reviews-section" class="mb-12 hidden">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+      <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
+      Submitted Reviews
+    </h2>
+    <div class="mb-4 flex gap-3">
+      <button onclick="adminDeleteAllReviews()"
+        class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
+        🗑️ Delete All Reviews
+      </button>
+      <button onclick="adminClearFinalizations()" id="admin-clear-finalizations-btn"
+        class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
+        ✖️ Clear Finalizations
+      </button>
+    </div>
+    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+          <tr>
+            <th class="p-6">Date</th>
+            <th class="p-6">Agent</th>
+            <th class="p-6">File</th>
+            <th class="p-6">Score</th>
+            <th class="p-6">Observation</th>
+            <th class="p-6 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+          <!-- JS Populates this -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  </div>
   </div>
 
   <!-- AGENT QUALITY ASSURANCE CHECKLIST -->
@@ -1457,12 +1511,16 @@
 
       <!-- Tab Navigation -->
       <div class="flex gap-4 mb-8 border-b border-slate-200 dark:border-slate-700">
-        <button onclick="agentSwitchTab('weekly')" id="tab-weekly" class="px-6 py-3 font-bold text-purple-600 border-b-2 border-purple-600">📊 Weekly Performance</button>
-        <button onclick="agentSwitchTab('monthly')" id="tab-monthly" class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">📈 Monthly Performance</button>
+        <button onclick="agentSwitchTab('weekly')" id="tab-weekly"
+          class="px-6 py-3 font-bold text-purple-600 border-b-2 border-purple-600">📊 Weekly Performance</button>
+        <button onclick="agentSwitchTab('monthly')" id="tab-monthly"
+          class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">📈 Monthly
+          Performance</button>
       </div>
 
       <!-- Weekly Performance Section -->
-      <div id="tab-content-weekly" class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
+      <div id="tab-content-weekly"
+        class="bg-purple-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-purple-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
           <span class="bg-purple-600 text-white rounded-lg p-2 text-xl">📊</span>
           Weekly Performance
@@ -1525,7 +1583,8 @@
       </div>
 
       <!-- Monthly Performance Section -->
-      <div id="tab-content-monthly" class="hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700">
+      <div id="tab-content-monthly"
+        class="hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700">
         <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
           <span class="bg-green-600 text-white rounded-lg p-2 text-xl">📈</span>
           Monthly Performance (Last 4 Weeks)
@@ -1636,7 +1695,8 @@
         <div id="agent-no-monthly-data" class="text-center py-12">
           <div class="text-4xl mb-4">📅</div>
           <h4 class="text-xl font-bold text-slate-600 dark:text-slate-400">Need More Data</h4>
-          <p class="text-slate-500 dark:text-slate-500 mt-2">Monthly performance requires at least 4 weeks of audit data.</p>
+          <p class="text-slate-500 dark:text-slate-500 mt-2">Monthly performance requires at least 4 weeks of audit
+            data.</p>
         </div>
       </div>
     </div>
@@ -3165,14 +3225,14 @@ Reviewer: ${review.reviewerId}
     function showAgentNotifications(reviews) {
       const notificationsList = document.getElementById('notifications-list');
       const notificationsEmpty = document.getElementById('notifications-empty');
-      
+
       if (reviews.length === 0) {
         notificationsList.classList.add('hidden');
         notificationsEmpty.classList.remove('hidden');
       } else {
         notificationsList.classList.remove('hidden');
         notificationsEmpty.classList.add('hidden');
-        
+
         notificationsList.innerHTML = reviews.map(review => `
           <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-purple-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="agentViewNotificationReview('${review.id}')">
             <div class="flex items-start justify-between">
@@ -3187,7 +3247,7 @@ Reviewer: ${review.reviewerId}
           </div>
         `).join('');
       }
-      
+
       document.getElementById('notifications-modal').classList.remove('hidden');
       document.querySelector('.notification-dot').classList.add('hidden');
       // Mark reviews as seen for this agent when the modal is opened
@@ -3225,12 +3285,12 @@ Reviewer: ${review.reviewerId}
 
       const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
       const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-      
+
       // Find new comments that haven't been seen by admin/reviewer
       const newComments = comments.filter(c => !adminNotifications.includes(c.id));
-      
+
       const dot = document.querySelector('.notification-dot');
-      
+
       if (newComments.length > 0) {
         dot.classList.remove('hidden');
         if (showPopup) {
@@ -3248,14 +3308,14 @@ Reviewer: ${review.reviewerId}
       const notificationsList = document.getElementById('notifications-list');
       const notificationsEmpty = document.getElementById('notifications-empty');
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      
+
       if (comments.length === 0) {
         notificationsList.classList.add('hidden');
         notificationsEmpty.classList.remove('hidden');
       } else {
         notificationsList.classList.remove('hidden');
         notificationsEmpty.classList.add('hidden');
-        
+
         notificationsList.innerHTML = comments.map(comment => {
           const review = reviews.find(r => r.id === comment.reviewId);
           return `
@@ -3272,12 +3332,12 @@ Reviewer: ${review.reviewerId}
             </div>
           `;
         }).join('');
-        
+
         // Mark all as seen
         const allCommentIds = comments.map(c => c.id);
         localStorage.setItem('adminNotifications', JSON.stringify(allCommentIds));
       }
-      
+
       document.getElementById('notifications-modal').classList.remove('hidden');
       document.querySelector('.notification-dot').classList.add('hidden');
     }
@@ -3342,12 +3402,12 @@ Reviewer: ${review.reviewerId}
     function showNotificationsModal(notifications) {
       const notificationsList = document.getElementById('notifications-list');
       const notificationsEmpty = document.getElementById('notifications-empty');
-      
+
       if (notifications.length === 0) {
         notificationsList.classList.add('hidden');
         notificationsEmpty.classList.remove('hidden');
       }
-      
+
       document.getElementById('notifications-modal').classList.remove('hidden');
     }
 
@@ -3427,7 +3487,7 @@ Reviewer: ${review.reviewerId}
       // Determine performance status
       let status = 'Pending';
       let statusColor = 'text-slate-600';
-      
+
       if (totalReviews === 0) {
         status = 'Pending';
         statusColor = 'text-slate-600';
@@ -3960,7 +4020,7 @@ Reviewer: ${review.reviewerId}
 
         // Check password
         const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
-        console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0,5));
+        console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0, 5));
         const correctPassword = savedPasswords[empId] || '1234';
 
         if (password !== correctPassword) {
@@ -4043,20 +4103,44 @@ Reviewer: ${review.reviewerId}
         document.getElementById('theme-text').innerText = 'Light';
       }
 
-      // Initialize portal login system
-      initPortal();
-
-      // Safety: Ensure session persists across refreshes. If session key exists but memory variable is not set, restore session UI.
+      // Safety: Ensure session persists across refreshes. 
       try {
         const sessionUserRaw = localStorage.getItem('gojira_session_user');
-        if (sessionUserRaw && !currentSessionUser) {
+        if (sessionUserRaw) {
           currentSessionUser = JSON.parse(sessionUserRaw);
           console.info('[onload] Restoring session from localStorage for', currentSessionUser?.id);
-          showPortalContent();
-          if (currentSessionUser.role === 'admin') adminLoadAgents();
+
+          // Restore global variables based on role
+          currentUser = currentSessionUser;
+          // initPortal will be called but we will override its default "show login" behavior if we have a user
         }
       } catch (e) {
         console.warn('[onload] failed to restore session safely', e);
+      }
+
+      // Initialize portal login system
+      // If we have a user, this function should respect it or we override it immediately after
+      initPortal();
+
+      if (currentSessionUser) {
+        showPortalContent();
+        if (currentSessionUser.role === 'admin') {
+          adminCurrentEntity = currentSessionUser.entity === 'ALL' ? (adminCurrentEntity || 'BharatLoan') : currentSessionUser.entity;
+          adminLoadAgents();
+        } else if (currentSessionUser.role === 'reviewer') {
+          adminCurrentEntity = currentSessionUser.entity === 'ALL' ? (adminCurrentEntity || 'BharatLoan') : currentSessionUser.entity;
+          adminLoadAgents();
+        } else if (currentSessionUser.role === 'agent') {
+          // Agent specific init if needed
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome ${currentSessionUser.name}`;
+          const bannerName = document.getElementById('agent-name-display');
+          if (bannerName) bannerName.innerText = currentSessionUser.name;
+        }
+
+        // Navigate to home or last view? Default to home for now to be safe, or stay on current if possible.
+        // User request: "refresh ... it shouldn't be logout"
+        // keeping it simple: just show portal content.
       }
     }
 
@@ -4408,7 +4492,7 @@ Reviewer: ${review.reviewerId}
               </div>
            </div>
         </div>
-      `; 
+      `;
 
       // Refresh reviews list for this agent
       adminLoadReviewsList();
@@ -4442,56 +4526,25 @@ Reviewer: ${review.reviewerId}
         alert('Please select an agent');
         return;
       }
-
-      // Open the Quality Assurance view and pre-select the chosen agent for review
-      selectedAgentForReview = USER_DB.find(u => u.id === adminCurrentAgent);
-      if (!selectedAgentForReview) {
-        alert('Selected agent not found.');
-        return;
-      }
-
-      // Navigate to the QA checklist view where process type (Voice/Non-Voice) is selected
-      navigateTo('view-agent-qa');
-
-      // Update QA header and any agent-specific displays (if present)
-      try {
-        document.getElementById('agent-qa-welcome-text').textContent = `Review - ${selectedAgentForReview.name}`;
-      } catch (e) {}
+      // Trigger the new modal
+      document.getElementById('admin-review-type-modal').classList.remove('hidden');
+      document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName;
     }
 
-    function startQualityReviewWithType(type) {
-      // Close modal
-      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) {}
-
-      // Set admin current agent if QA flow started from agent list
-      if (!adminCurrentAgent && selectedAgentForReview) {
-        adminCurrentAgent = selectedAgentForReview.id;
-        adminCurrentAgentName = selectedAgentForReview.name;
-      }
-
-      // Set the selected process and launch the admin review form
-      adminReviewType = type; // used by admin form
-      selectVoiceType(type);
-
-      // Fill the agent display in the form
-      try { document.getElementById('admin-review-agent-display').textContent = adminCurrentAgentName; } catch (e) {}
-    }
-
-    function selectVoiceType(type) {
+    function adminSelectReviewType(type) {
       // type: 'voice' or 'non-voice'
       adminReviewType = type;
-      try { document.getElementById('voice-type-modal').classList.add('hidden'); } catch (e) {}
-      
+      document.getElementById('admin-review-type-modal').classList.add('hidden');
+
       // Show quality review form
       adminReviewItems = [];
+      document.getElementById('admin-review-items-container').innerHTML = '';
       document.getElementById('admin-quality-form-section').classList.remove('hidden');
       document.getElementById('admin-review-agent-display').textContent = adminCurrentAgentName;
-      
-      // Add first review item
+
+      // Add first review item automatically
       adminAddReviewItem();
     }
-
-
 
     function adminCancelReview() {
       document.getElementById('admin-quality-form-section').classList.add('hidden');
@@ -4515,7 +4568,7 @@ Reviewer: ${review.reviewerId}
       const container = document.getElementById('admin-review-items-container');
 
       let itemHtml = `
-        <div class="admin-review-item bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600">
+        <div class="admin-review-item bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600 mb-4">
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-bold text-lg">Review #${itemIndex}</h4>
             ${itemIndex > 1 ? `<button onclick="adminRemoveReviewItem(${itemIndex - 1})" class="text-red-600 hover:text-red-700 text-sm">🗑️ Remove</button>` : ''}
@@ -4534,18 +4587,25 @@ Reviewer: ${review.reviewerId}
           </div>
         `;
       } else {
-        // Show Chat/Email ID input for non-voice reviews
+        // Show Chat AND Email ID input for non-voice reviews
         itemHtml += `
-          <!-- Chat/Email ID (Non-Voice) -->
-          <div class="mb-4">
-            <label class="block text-sm font-semibold mb-2">Enter Chat/Email ID or Thread ID</label>
-            <input type="text" class="review-chat-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
-              placeholder="e.g., chat123, thread456, email@example.com" data-item-index="${itemIndex - 1}">
+          <!-- Chat & Email ID (Non-Voice) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Chat ID</label>
+              <input type="text" class="review-chat-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+                placeholder="Enter Chat ID" data-item-index="${itemIndex - 1}">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">Email ID</label>
+              <input type="text" class="review-email-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+                placeholder="Enter Email ID" data-item-index="${itemIndex - 1}">
+            </div>
           </div>
         `;
       }
 
-      // Common fields for both voice and non-voice
+      // Observation and Score (Binary)
       itemHtml += `
           <!-- Observation -->
           <div class="mb-4">
@@ -4554,22 +4614,20 @@ Reviewer: ${review.reviewerId}
               rows="4" placeholder="Enter your observation for this review..." data-item-index="${itemIndex - 1}"></textarea>
           </div>
 
-          <!-- Score -->
+          <!-- Score (Binary 0 or 100) -->
           <div class="mb-4">
             <label class="block text-sm font-semibold mb-3">Performance Score</label>
             <div class="flex gap-4">
-              <label class="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-slate-600 rounded-lg border border-emerald-200 dark:border-slate-500 cursor-pointer flex-1">
-                <input type="radio" name="score-${itemIndex - 1}" value="100" class="review-score" data-item-index="${itemIndex - 1}">
+              <label class="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-slate-600 rounded-lg border border-emerald-200 dark:border-slate-500 cursor-pointer flex-1 transition hover:bg-emerald-100">
+                <input type="radio" name="score-${itemIndex - 1}" value="100" class="review-score w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300" data-item-index="${itemIndex - 1}">
                 <div>
-                  <div class="font-bold text-emerald-600">100</div>
-                  <div class="text-xs text-slate-600 dark:text-slate-300">Good</div>
+                  <div class="font-bold text-emerald-600">Good (100)</div>
                 </div>
               </label>
-              <label class="flex items-center gap-2 p-3 bg-red-50 dark:bg-slate-600 rounded-lg border border-red-200 dark:border-slate-500 cursor-pointer flex-1">
-                <input type="radio" name="score-${itemIndex - 1}" value="0" class="review-score" data-item-index="${itemIndex - 1}">
+              <label class="flex items-center gap-2 p-3 bg-red-50 dark:bg-slate-600 rounded-lg border border-red-200 dark:border-slate-500 cursor-pointer flex-1 transition hover:bg-red-100">
+                <input type="radio" name="score-${itemIndex - 1}" value="0" class="review-score w-5 h-5 text-red-600 focus:ring-red-500 border-gray-300" data-item-index="${itemIndex - 1}">
                 <div>
-                  <div class="font-bold text-red-600">0</div>
-                  <div class="text-xs text-slate-600 dark:text-slate-300">Fatal</div>
+                  <div class="font-bold text-red-600">Fatal (0)</div>
                 </div>
               </label>
             </div>
@@ -4578,7 +4636,8 @@ Reviewer: ${review.reviewerId}
       `;
 
       container.insertAdjacentHTML('beforeend', itemHtml);
-      adminReviewItems.push({ file: null, chatId: '', observation: '', score: null, reviewType: adminReviewType });
+      // Initialize with correct fields structure
+      adminReviewItems.push({ file: null, chatId: '', emailId: '', observation: '', score: null, reviewType: adminReviewType });
 
       // Update button states
       adminUpdateReviewButtons();
@@ -4607,64 +4666,83 @@ Reviewer: ${review.reviewerId}
     }
 
     function adminUpdateReviewButtons() {
-      const count = adminReviewItems.length;
+      const count = document.querySelectorAll('.admin-review-item').length; // Use DOM count for accuracy
       const addBtn = document.getElementById('admin-add-review-btn');
       const finalBtn = document.getElementById('admin-final-submit-btn');
 
-      // Disable add button if max reached
-      addBtn.disabled = count >= 10;
-      addBtn.classList.toggle('opacity-50', count >= 10);
-      addBtn.classList.toggle('cursor-not-allowed', count >= 10);
+      // Add Button: Max 10
+      if (count >= 10) {
+        addBtn.disabled = true;
+        addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        addBtn.innerText = "Max 10 Reviews Reached";
+      } else {
+        addBtn.disabled = false;
+        addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        addBtn.innerText = "+ Add Another Review";
+      }
 
-      // Enable final submit if min reached
-      // Enable final submit always (User Request)
-      const allComplete = true;
-      finalBtn.disabled = false;
-      finalBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      // Final Submit Button: Min 3
+      if (count >= 3) {
+        finalBtn.disabled = false;
+        finalBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        finalBtn.innerHTML = `✅ Final Submit (${count} reviews)`;
+      } else {
+        finalBtn.disabled = true;
+        finalBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        finalBtn.innerHTML = `Final Submit (Need ${3 - count} more)`;
+      }
     }
 
     async function adminFinalSubmit() {
-      // Collect data from form
+      // Validate again before submission
+      const itemElements = document.querySelectorAll('.admin-review-item');
+      if (itemElements.length < 3) {
+        alert('Minimum 3 reviews required.');
+        return;
+      }
+      if (itemElements.length > 10) {
+        alert('Maximum 10 reviews allowed.');
+        return;
+      }
+
       const items = [];
-      document.querySelectorAll('.admin-review-item').forEach((item, index) => {
-        const observation = item.querySelector('.review-observation').value;
-        const score = item.querySelector('.review-score:checked')?.value;
-        
-        // For voice reviews, capture file. For non-voice, capture Chat/Email ID
+      let missingFields = false;
+
+      itemElements.forEach((item, index) => {
+        const observation = item.querySelector('.review-observation').value.trim();
+        const scoreInput = item.querySelector('.review-score:checked');
+        const score = scoreInput ? parseInt(scoreInput.value) : null;
+
         let file = null;
         let chatId = '';
-        
+        let emailId = '';
+
         if (adminReviewType === 'voice') {
           const fileInput = item.querySelector('.review-file-input');
           file = fileInput ? fileInput.files[0] : null;
+          if (!file) missingFields = true;
         } else {
           const chatIdInput = item.querySelector('.review-chat-id');
           chatId = chatIdInput ? chatIdInput.value.trim() : '';
+          const emailIdInput = item.querySelector('.review-email-id');
+          emailId = emailIdInput ? emailIdInput.value.trim() : '';
+          if (!chatId || !emailId) missingFields = true;
         }
+
+        if (!observation || score === null) missingFields = true;
 
         items.push({
           file: file,
           chatId: chatId,
+          emailId: emailId, // Store email ID
           observation: observation,
-          score: parseInt(score) || null,
+          score: score,
           reviewType: adminReviewType
         });
       });
 
-      // Filter out empty items - validate based on review type
-      const validItems = items.filter(item => {
-        if (adminReviewType === 'voice') {
-          return item.file && item.observation && item.score !== null;
-        } else {
-          // Non-voice: chatId, observation and score are required
-          return item.chatId && item.observation && item.score !== null;
-        }
-      });
-
-      // Validate
-      if (validItems.length === 0) {
-        const required = adminReviewType === 'voice' ? 'file and observation' : 'Chat/Email ID and observation';
-        alert(`Please complete at least one review item with ${required} and a score`);
+      if (missingFields) {
+        alert('Please fill all fields (File/IDs, Observation, Score) for all review items.');
         return;
       }
 
@@ -4673,14 +4751,12 @@ Reviewer: ${review.reviewerId}
       submitBtn.disabled = true;
 
       try {
-        // Read all files as Data URLs (for voice reviews only)
-        const processedItems = await Promise.all(validItems.map(item => {
+        // Process files
+        const processedItems = await Promise.all(items.map(item => {
           return new Promise((resolve, reject) => {
             if (!item.file) {
-              // Non-voice review without file
               resolve({ ...item, fileContent: null, fileName: null });
             } else {
-              // Voice review with file
               const reader = new FileReader();
               reader.onload = (e) => resolve({ ...item, fileContent: e.target.result, fileName: item.file.name });
               reader.onerror = reject;
@@ -4689,12 +4765,12 @@ Reviewer: ${review.reviewerId}
           });
         }));
 
-        // Save to localStorage
+        // STORAGE: Save to localStorage
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         const now = new Date();
 
         processedItems.forEach((item, idx) => {
-          const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 1000).toString() + '-' + idx;
+          const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 10000).toString() + '-' + idx;
           const reviewObj = {
             id: reviewId,
             date: now.toLocaleDateString(),
@@ -4705,72 +4781,54 @@ Reviewer: ${review.reviewerId}
             score: item.score,
             observation: item.observation,
             expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-            reviewerId: currentUser?.id || currentSessionUser?.id || 'quality_team',
-            reviewerName: currentUser?.name || currentSessionUser?.name || 'Quality Team'
+            reviewerId: currentUser?.id || 'admin',
+            reviewerName: currentUser?.name || 'Admin',
+            // Specific fields
+            chatId: item.chatId,
+            emailId: item.emailId
           };
-          
+
           if (item.reviewType === 'voice') {
             reviewObj.fileName = item.fileName;
             reviewObj.fileContent = item.fileContent;
-          } else {
-            reviewObj.chatId = item.chatId;
           }
-          
+
           reviews.push(reviewObj);
         });
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // Add feedback to agent in gojira_comments
+        // NOTIFICATION: Add feedback to agent comments
         let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
-        const feedbackText = processedItems
-          .filter(item => item.observation)
-          .map((item, idx) => `Review ${idx + 1}: ${item.observation}`)
-          .join('\n');
+        const feedbackText = processedItems.map((item, idx) => `Review #${idx + 1} (${item.score}): ${item.observation}`).join('\n\n');
 
-        if (feedbackText.trim()) {
+        if (feedbackText) {
           comments.unshift({
             id: Date.now(),
-            text: feedbackText,
+            text: `[${adminReviewType.toUpperCase()}] Weekly Review:\n` + feedbackText,
             agentId: adminCurrentAgent,
             date: new Date().toLocaleString()
           });
           localStorage.setItem('gojira_comments', JSON.stringify(comments));
         }
 
-        // Inform admin about how many valid reviews were saved and how many items were skipped
-        const invalidCount = validItems.length - processedItems.length; // typically 0 unless file read failed
-        const savedCount = processedItems.length;
+        // FINALIZE AGENT: Mark Agent as Finalized (Blue Tick)
+        // User said: "once the admin will click on the final submit... agent... will be signed as blue tick"
+        // This implies instant finalization upon this submission.
+        markAgentWeekComplete(adminCurrentEntity || 'ALL', adminCurrentAgent);
 
-        // Determine cumulative reviews for this agent and mark week complete if threshold reached
-        const allReviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-        const totalForAgent = allReviews.filter(r => String(r.agentId) === String(adminCurrentAgent)).length;
+        alert(`Successfully submitted ${processedItems.length} reviews for ${adminCurrentAgentName}. Agent finalized.`);
 
-        if (invalidCount > 0) {
-          alert(`${savedCount} review(s) saved. ${invalidCount} item(s) could not be read/saved and were skipped.`);
-        } else {
-          alert(`${savedCount} review(s) saved successfully.`);
-        }
-
-        if (totalForAgent >= 3) {
-          // Mark agent completed for current week
-          markAgentWeekComplete(adminCurrentEntity || 'ALL', adminCurrentAgent);
-          // Inform admin
-          const state = getEntityWeekState(adminCurrentEntity || 'ALL');
-          const currentWeek = state.currentWeek || 1;
-          alert(`Total reviews for ${adminCurrentAgentName}: ${totalForAgent}. Agent finalized for Week ${currentWeek}.`);
-        }
-
-        // Store current selection, reset dialog, and re-select agent so UI remains focused
-        const preservedAgentId = adminCurrentAgent;
-        const preservedAgentName = adminCurrentAgentName;
+        // Reset UI
         adminCancelReview();
-        // Re-select agent to show updated reviews and status
-        if (preservedAgentId) {
-          adminSelectAgent(preservedAgentId, preservedAgentName || preservedAgentId);
+        // Refresh List to show Blue Tick
+        adminLoadAgents();
+
+        // Re-open agent dashboard to show the cleared state and updated list
+        if (adminCurrentAgent) {
+          adminSelectAgent(adminCurrentAgent, adminCurrentAgentName);
         }
-        // Ensure dropdown updates to show blue tick if applicable
-        renderAdminAgentDropdown();
+
       } catch (error) {
         console.error("Error submitting reviews:", error);
         alert("Failed to submit reviews. Please try again.");
@@ -5082,7 +5140,7 @@ Reviewer: ${review.reviewerId}
       details.appendChild(list);
 
       // Store pending selection in a temporary global so confirm can access
-      _pendingFinalizationClearBuffer = { id: `buf_${Date.now()}_${Math.floor(Math.random()*1000)}`, agents: agents.map(a => a.id), entity: adminCurrentEntity || 'ALL', timestamp: Date.now() };
+      _pendingFinalizationClearBuffer = { id: `buf_${Date.now()}_${Math.floor(Math.random() * 1000)}`, agents: agents.map(a => a.id), entity: adminCurrentEntity || 'ALL', timestamp: Date.now() };
 
       document.getElementById('confirm-clear-finalizations-modal').classList.remove('hidden');
     }
@@ -5327,7 +5385,7 @@ Reviewer: ${review.reviewerId}
 
       const modal = document.getElementById('agent-review-detail-modal');
       document.getElementById('review-detail-type').textContent = review.reviewType === 'voice' ? '🎙️ Voice Call' : '💬 Chat/Email';
-      
+
       if (review.reviewType === 'voice') {
         document.getElementById('review-detail-file-section').classList.remove('hidden');
         document.getElementById('review-detail-id-section').classList.add('hidden');
@@ -5434,11 +5492,11 @@ Reviewer: ${review.reviewerId}
       if (!currentSessionUser || currentSessionUser.role !== 'agent') return;
 
       const agentId = currentSessionUser.id;
-      
+
       // Get or initialize monthly data storage
       let monthlyData = JSON.parse(localStorage.getItem(`agentMonthlyData_${agentId}`) || '{}');
       const now = new Date();
-      
+
       // If no data exists or month has passed, initialize new month
       if (!monthlyData.startDate) {
         monthlyData = {
@@ -5454,7 +5512,7 @@ Reviewer: ${review.reviewerId}
         // Check if 28 days have passed since month started
         const monthStartTime = new Date(monthlyData.startDate);
         const daysPassed = (now - monthStartTime) / (1000 * 60 * 60 * 24);
-        
+
         if (daysPassed >= 28) {
           // Reset the month - start new cycle
           monthlyData = {
@@ -5473,11 +5531,11 @@ Reviewer: ${review.reviewerId}
       const monthStartTime = new Date(monthlyData.startDate);
       const daysPassed = (now - monthStartTime) / (1000 * 60 * 60 * 24);
       const currentWeekNumber = Math.floor(daysPassed / 7) + 1;
-      
+
       // Get current week reviews
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const agentReviews = reviews.filter(r => r.agentId === agentId);
-      
+
       const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
       const monthlyReviews = agentReviews.filter(r => {
         const reviewDate = new Date(r.date);
@@ -5488,16 +5546,16 @@ Reviewer: ${review.reviewerId}
       if (monthlyData.weeks[currentWeekNumber - 1]) {
         const weekStart = new Date(monthStartTime.getTime() + (currentWeekNumber - 1) * 7 * 24 * 60 * 60 * 1000);
         const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
-        
+
         const weekReviews = monthlyReviews.filter(r => {
           const reviewDate = new Date(r.date);
           return reviewDate >= weekStart && reviewDate < weekEnd;
         });
-        
+
         const weekAudits = weekReviews.length;
         const weekScore = weekAudits > 0 ? Math.round((weekReviews.reduce((sum, r) => sum + r.score, 0) / weekAudits / 100) * 100) : 0;
         const weekFatals = weekReviews.filter(r => r.score === 0).length;
-        
+
         monthlyData.weeks[currentWeekNumber - 1] = {
           weekNumber: currentWeekNumber,
           audits: weekAudits,
@@ -5512,7 +5570,7 @@ Reviewer: ${review.reviewerId}
       // Check if we have data to display
       const totalData = monthlyData.weeks.reduce((sum, w) => sum + w.audits, 0);
       const hasEnoughData = totalData > 0;
-      
+
       document.getElementById('agent-no-monthly-data').classList.toggle('hidden', hasEnoughData);
 
       if (hasEnoughData) {
@@ -5545,7 +5603,7 @@ Reviewer: ${review.reviewerId}
         document.getElementById('agent-monthly-avg-score').textContent = '--';
         document.getElementById('agent-monthly-fatal-count').textContent = '--';
         document.getElementById('agent-monthly-status').textContent = '----';
-        
+
         // Clear weekly breakdown
         for (let week = 1; week <= 4; week++) {
           document.getElementById(`agent-monthly-week${week}-audits`).textContent = '--';
@@ -5564,9 +5622,13 @@ Reviewer: ${review.reviewerId}
   </script>
 
   <!-- Agent Review Detail Modal -->
-  <div id="agent-review-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick="if(event.target.id === 'agent-review-detail-modal') closeReviewDetailModal()">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-      <div class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+  <div id="agent-review-detail-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    onclick="if(event.target.id === 'agent-review-detail-modal') closeReviewDetailModal()">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      onclick="event.stopPropagation()">
+      <div
+        class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
         <h2 class="text-2xl font-bold">Review Details</h2>
         <button onclick="closeReviewDetailModal()" class="text-slate-500 hover:text-slate-700 text-2xl">✕</button>
       </div>
@@ -5593,12 +5655,14 @@ Reviewer: ${review.reviewerId}
 
         <div id="review-detail-id-section" class="hidden">
           <label class="block text-sm font-semibold mb-2">EMAIL/CHAT ID</label>
-          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg font-mono text-sm" id="review-detail-id-value">-</div>
+          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg font-mono text-sm" id="review-detail-id-value">-
+          </div>
         </div>
 
         <div>
           <label class="block text-sm font-semibold mb-2">Observation</label>
-          <div id="review-detail-observation" class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg whitespace-pre-wrap text-sm">-</div>
+          <div id="review-detail-observation"
+            class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg whitespace-pre-wrap text-sm">-</div>
         </div>
 
         <div>
@@ -5608,20 +5672,23 @@ Reviewer: ${review.reviewerId}
 
         <div>
           <label class="block text-sm font-semibold mb-2">Replies</label>
-          <div id="review-detail-comments" class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg mb-4 max-h-48 overflow-y-auto">
+          <div id="review-detail-comments"
+            class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg mb-4 max-h-48 overflow-y-auto">
             <p class="text-slate-500 italic">Loading...</p>
           </div>
 
-          <textarea id="review-detail-reply-input" rows="3" placeholder="Write your reply..." 
+          <textarea id="review-detail-reply-input" rows="3" placeholder="Write your reply..."
             class="flex-1 w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"></textarea>
-          <button id="review-detail-reply-btn" class="mt-2 w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">
+          <button id="review-detail-reply-btn"
+            class="mt-2 w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">
             📤 Send Reply
           </button>
         </div>
       </div>
 
       <div class="p-6 border-t border-slate-200 dark:border-slate-700">
-        <button onclick="closeReviewDetailModal()" class="w-full bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-4 rounded-lg">
+        <button onclick="closeReviewDetailModal()"
+          class="w-full bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-4 rounded-lg">
           Close
         </button>
       </div>
