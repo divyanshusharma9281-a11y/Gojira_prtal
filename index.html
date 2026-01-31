@@ -4492,6 +4492,12 @@ Reviewer: ${review.reviewerId}
           showPortalContent();
           navigateTo('view-home');
         }
+
+        // Ensure any login UI is hidden and portal content is shown (covers modal and portal forms)
+        try { document.getElementById('login-modal')?.classList.add('hidden'); } catch(e) {}
+        try { document.getElementById('portal-login-screen')?.classList.add('hidden'); } catch(e) {}
+        try { document.getElementById('top-nav')?.classList.remove('hidden'); } catch(e) {}
+        showPortalContent();
       } catch (err) {
         console.error('[submitLogin] error', err);
         alert('An unexpected error occurred during login. Check console for details.');
