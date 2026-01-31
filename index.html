@@ -2186,6 +2186,18 @@
           allUsers[user.id] = '1234'; // Default password
         });
         localStorage.setItem('gojira_passwords', JSON.stringify(allUsers));
+      } else {
+        // Ensure any newly added users (e.g., added via code edits) get a default password if missing
+        let updated = false;
+        USER_DB.forEach(user => {
+          if (!savedPasswords[user.id]) {
+            savedPasswords[user.id] = '1234';
+            updated = true;
+          }
+        });
+        if (updated) {
+          localStorage.setItem('gojira_passwords', JSON.stringify(savedPasswords));
+        }
       }
 
       // Check if already logged in
@@ -4324,7 +4336,7 @@ Reviewer: ${review.reviewerId}
       { id: 'BL/GG/25/1022', name: 'Akshat', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1055', name: 'KAJAL', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1134', name: 'Isha', role: 'agent', entity: 'BharatLoan' },
-
+      { id: 'BL/GG/25/1233', name: 'BL/GG/25/1233', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1240', name: 'KUNDAN KUMAR', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1338', name: 'MOHIT KUMAR', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/26/042', name: 'MOHD. KAIF', role: 'agent', entity: 'BharatLoan' },
