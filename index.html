@@ -1974,6 +1974,11 @@
             <input id="empid" type="text" required
               class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
           </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Password</label>
+            <input id="password" type="password" placeholder="Enter password"
+              class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+          </div>
 
           <button type="submit"
             class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
@@ -3599,6 +3604,7 @@ Reviewer: ${review.reviewerId}
         document.getElementById('login-title').innerText = `Login to ${entity}`;
         document.getElementById('login-modal').classList.remove('hidden');
         document.getElementById('empid').value = '';
+        document.getElementById('password').value = '';
       }
 
 
@@ -3606,6 +3612,7 @@ Reviewer: ${review.reviewerId}
       function hideLogin() {
         document.getElementById('login-modal').classList.add('hidden');
         document.getElementById('empid').value = '';
+        document.getElementById('password').value = '';
       }
 
       // USER DATABASE
@@ -3656,6 +3663,7 @@ Reviewer: ${review.reviewerId}
       function hideLogin() {
         document.getElementById('login-modal').classList.add('hidden');
         document.getElementById('empid').value = '';
+        document.getElementById('password').value = '';
       }
 
       function submitLogin(event) {
@@ -3666,6 +3674,12 @@ Reviewer: ${review.reviewerId}
 
         if (user) {
           if (user.role === 'admin') {
+            const password = document.getElementById('password').value;
+            if (password !== '1234') {
+              alert('Invalid Admin Password');
+              return;
+            }
+
             // For admin, use the selected entity from the dropdown, fallback to currentEntity
             const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
             adminCurrentEntity = selectedEntity;
