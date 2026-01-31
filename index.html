@@ -24,14 +24,20 @@
     function createTwinkle(x, y) {
       const twinkle = document.createElement('div');
       twinkle.classList.add('twinkle');
-      twinkle.style.left = x + 'px';
-      twinkle.style.top = y + 'px';
+
+      // We will set Left/Top AFTER determining size to center them.
 
       // 30% chance to be a Shiny White Star
       if (Math.random() < 0.3) {
         twinkle.innerText = '★'; // Unicode Star
         twinkle.style.color = '#FFFFFF'; // White Color
-        twinkle.style.fontSize = (Math.random() * 10 + 10) + 'px'; // Size 10-20px
+        const size = Math.random() * 10 + 10; // Size 10-20px
+        twinkle.style.fontSize = size + 'px';
+
+        // Center the star
+        twinkle.style.left = (x - size / 2) + 'px';
+        twinkle.style.top = (y - size / 2) + 'px';
+
         twinkle.style.background = 'transparent'; // No background block
         twinkle.style.borderRadius = '0'; // No circle
         twinkle.style.boxShadow = 'none'; // No box shadow
@@ -46,6 +52,11 @@
         const size = Math.random() * 4 + 2;
         twinkle.style.width = size + 'px';
         twinkle.style.height = size + 'px';
+
+        // Center the dot
+        twinkle.style.left = (x - size / 2) + 'px';
+        twinkle.style.top = (y - size / 2) + 'px';
+
         twinkle.style.borderRadius = '50%';
 
         const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3']; // Rainbow
