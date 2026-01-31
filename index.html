@@ -113,8 +113,13 @@
     }
 
     /* Login card stacking helper */
-    .login-card { z-index: 30; }
-    .login-card.raised { z-index: 70 !important; }
+    .login-card {
+      z-index: 30;
+    }
+
+    .login-card.raised {
+      z-index: 70 !important;
+    }
 
     /* 3D Swing Animations */
     @keyframes swingLeft {
@@ -176,15 +181,17 @@
 
     /* Gojira Theme Variables and Styles */
     :root {
-      --gojira-red: #b91c1c; /* deep red */
-      --gojira-blue: #0f172a; /* dark blue */
+      --gojira-red: #b91c1c;
+      /* deep red */
+      --gojira-blue: #0f172a;
+      /* dark blue */
       --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
     }
 
     /* Theme applied after login to make pages colorful (legacy - not used when removed) */
     body.gojira-theme {
       background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
-      color: rgba(255,255,255,0.92);
+      color: rgba(255, 255, 255, 0.92);
       transition: background 0.5s ease, color 0.3s ease;
     }
 
@@ -206,8 +213,8 @@
     /* Dark mode with stronger red mix */
     body.dark {
       /* stronger red tint layered over dark gradient */
-      background: linear-gradient(180deg, rgba(185,28,28,0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
-      color: rgba(255,255,255,0.95);
+      background: linear-gradient(180deg, rgba(185, 28, 28, 0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
+      color: rgba(255, 255, 255, 0.95);
       transition: background 0.45s ease, color 0.25s ease;
       background-blend-mode: overlay;
     }
@@ -215,31 +222,36 @@
     body.dark header,
     body.dark #top-nav {
       /* stronger red overlay for header in dark mode */
-      background: linear-gradient(90deg, rgba(185,28,28,0.22) 0%, rgba(30,24,40,0.6) 30%, #0b1220 70%) !important;
-      color: rgba(255,255,255,0.95) !important;
-      box-shadow: 0 6px 30px rgba(185,28,28,0.06);
+      background: linear-gradient(90deg, rgba(185, 28, 28, 0.22) 0%, rgba(30, 24, 40, 0.6) 30%, #0b1220 70%) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 6px 30px rgba(185, 28, 28, 0.06);
     }
 
     /* Ensure headings remain readable in dark mode */
-    body.dark h1, body.dark h2, body.dark h3, body.dark .font-bold, body.dark .font-extrabold {
-      color: rgba(255,255,255,0.95) !important;
+    body.dark h1,
+    body.dark h2,
+    body.dark h3,
+    body.dark .font-bold,
+    body.dark .font-extrabold {
+      color: rgba(255, 255, 255, 0.95) !important;
     }
 
     /* Dark mode accents: stronger red highlights */
     body.dark .accent-btn {
-      background: linear-gradient(90deg, rgba(185,28,28,0.95), #1e3a8a) !important;
+      background: linear-gradient(90deg, rgba(185, 28, 28, 0.95), #1e3a8a) !important;
       color: white !important;
-      box-shadow: 0 10px 30px rgba(185,28,28,0.12) !important;
+      box-shadow: 0 10px 30px rgba(185, 28, 28, 0.12) !important;
     }
 
-    body.dark .badge, body.dark .btn-outline {
-      border-color: rgba(185,28,28,0.18) !important;
-      color: rgba(255,255,255,0.95) !important;
-      background: rgba(185,28,28,0.03) !important;
+    body.dark .badge,
+    body.dark .btn-outline {
+      border-color: rgba(185, 28, 28, 0.18) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      background: rgba(185, 28, 28, 0.03) !important;
     }
 
     .gojira-theme .app-view {
-      background: linear-gradient(180deg, rgba(185,28,28,0.03), rgba(14,42,90,0.03));
+      background: linear-gradient(180deg, rgba(185, 28, 28, 0.03), rgba(14, 42, 90, 0.03));
     }
 
     /* Ensure main page headings are dark when colored theme is active (so 'Guidelines' and 'Quality Assurance Checklist' are visible) */
@@ -253,60 +265,67 @@
 
     .gojira-theme .card,
     .gojira-theme .panel {
-      background: rgba(10,14,22,0.6);
-      color: rgba(255,255,255,0.92);
+      background: rgba(10, 14, 22, 0.6);
+      color: rgba(255, 255, 255, 0.92);
       border-radius: 12px;
       box-shadow: 0 8px 40px rgba(14, 40, 90, 0.12);
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .gojira-theme .accent-btn {
-      background: var(--gojira-grad); color: white; border: none;
-      box-shadow: 0 10px 30px rgba(30,58,138,0.18);
+      background: var(--gojira-grad);
+      color: white;
+      border: none;
+      box-shadow: 0 10px 30px rgba(30, 58, 138, 0.18);
     }
 
     /* Inputs and form elements */
     .gojira-theme input,
     .gojira-theme select,
     .gojira-theme textarea {
-      background: rgba(255,255,255,0.02) !important;
-      border: 1px solid rgba(255,255,255,0.06) !important;
-      color: rgba(255,255,255,0.95) !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
     }
 
     .gojira-theme .btn-outline {
-      border-color: rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.92);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
     }
 
     /* Accent badges */
     .gojira-theme .badge {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     /* Door branding */
     .door-brand {
       font-family: 'Montserrat', sans-serif;
-      text-shadow: 4px 5px 10px rgba(0,0,0,0.45);
+      text-shadow: 4px 5px 10px rgba(0, 0, 0, 0.45);
       letter-spacing: -2px;
     }
 
     /* Login label styling */
-    .login-label { color: var(--gojira-red); font-weight: 700; }
+    .login-label {
+      color: var(--gojira-red);
+      font-weight: 700;
+    }
 
     /* Header colored flash for smooth transition between themes */
     #top-nav.header-colored-flash,
     header.header-colored-flash {
       background: var(--gojira-grad) !important;
       color: #fff !important;
-      box-shadow: 0 8px 30px rgba(30,58,138,0.15);
+      box-shadow: 0 8px 30px rgba(30, 58, 138, 0.15);
       transition: background 0.35s ease, color 0.25s ease;
     }
 
     /* subtle pulse while flashing */
-    .header-colored-flash .glow { box-shadow: 0 14px 40px rgba(30,58,138,0.22); }
+    .header-colored-flash .glow {
+      box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
+    }
   </style>
 </head>
 
@@ -348,7 +367,8 @@
     </div>
 
     <!-- Revealed Background -->
-    <div class="absolute inset-0 z-0" style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
+    <div class="absolute inset-0 z-0"
+      style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
 
     <!-- Background Typography Theme (Door Branding) -->
     <div id="door-brand" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
@@ -2243,25 +2263,53 @@
     }
 
 
-    // Portal Login Function
+    // Portal Login Function - Robust Version
     function showPortalContent() {
-      document.getElementById('portal-login-screen').classList.add('hidden');
-      document.getElementById('top-nav').classList.remove('hidden');
+      console.log('[showPortalContent] triggered');
+      try {
+        const loginScreen = document.getElementById('portal-login-screen');
+        if (loginScreen) {
+          loginScreen.classList.add('hidden');
+          // Remove style attribute to clear any conflicting perspective/display styles
+          loginScreen.style.display = 'none';
+        }
 
-      // Set user greeting on home page
-      const firstName = currentSessionUser.name.split(' ')[0];
-      document.getElementById('home-user-greeting').innerText = `Hi ${firstName}`;
+        const topNav = document.getElementById('top-nav');
+        if (topNav) topNav.classList.remove('hidden');
 
-      // Filter entities display based on user
-      filterEntitiesDisplay();
-      filterResourcesQACard(); // Set QA card visibility based on user role
+        // Set user greeting on home page safely
+        if (currentSessionUser && currentSessionUser.name) {
+          const firstName = currentSessionUser.name.split(' ')[0] || 'User';
+          const greeting = document.getElementById('home-user-greeting');
+          if (greeting) greeting.innerText = `Hi ${firstName}`;
+        }
 
-      // Set currentUser and currentEntity for all users
-      currentUser = currentSessionUser;
-      currentEntity = currentSessionUser.entity;
+        // Filter entities display based on user
+        try { filterEntitiesDisplay(); } catch (e) { console.warn('filterEntitiesDisplay error', e); }
+        try { filterResourcesQACard(); } catch (e) { console.warn('filterResourcesQACard error', e); }
 
-      // Route all users to home page
-      navigateTo('view-home');
+        // Set currentUser and currentEntity for all users
+        currentUser = currentSessionUser;
+        if (currentSessionUser) currentEntity = currentSessionUser.entity;
+
+        // Route all users to home page
+        try {
+          navigateTo('view-home');
+        } catch (e) {
+          console.error('navigateTo error', e);
+          // Fallback: manually show home
+          document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+          const home = document.getElementById('view-home');
+          if (home) home.classList.add('active');
+        }
+
+      } catch (err) {
+        console.error('[showPortalContent] critical error', err);
+        // Emergency fallback
+        document.getElementById('portal-login-screen')?.classList.add('hidden');
+        document.getElementById('view-home')?.classList.add('active');
+        document.getElementById('top-nav')?.classList.remove('hidden');
+      }
     }
 
     // Portal Logout
@@ -4494,9 +4542,9 @@ Reviewer: ${review.reviewerId}
         }
 
         // Ensure any login UI is hidden and portal content is shown (covers modal and portal forms)
-        try { document.getElementById('login-modal')?.classList.add('hidden'); } catch(e) {}
-        try { document.getElementById('portal-login-screen')?.classList.add('hidden'); } catch(e) {}
-        try { document.getElementById('top-nav')?.classList.remove('hidden'); } catch(e) {}
+        try { document.getElementById('login-modal')?.classList.add('hidden'); } catch (e) { }
+        try { document.getElementById('portal-login-screen')?.classList.add('hidden'); } catch (e) { }
+        try { document.getElementById('top-nav')?.classList.remove('hidden'); } catch (e) { }
         showPortalContent();
       } catch (err) {
         console.error('[submitLogin] error', err);
@@ -5785,7 +5833,7 @@ Reviewer: ${review.reviewerId}
 
       // Backup entityWeekState and relevant storages for undo
       const backups = {};
-      try { backups[`entityWeekState_${matchedEntity}`] = localStorage.getItem(`entityWeekState_${matchedEntity}`); } catch(e) {}
+      try { backups[`entityWeekState_${matchedEntity}`] = localStorage.getItem(`entityWeekState_${matchedEntity}`); } catch (e) { }
       backups['adminReviews'] = localStorage.getItem('adminReviews');
       backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
       backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
@@ -5795,7 +5843,7 @@ Reviewer: ${review.reviewerId}
       const agentList = USER_DB.filter(u => u.role === 'agent' && u.entity && u.entity.toLowerCase() === matchedEntity.toLowerCase()).map(a => a.id);
 
       // Save undo buffer
-      const buf = { id: `clearweek_${Date.now()}_${Math.floor(Math.random()*1000)}`, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: matchedEntity, agents: agentList, backups };
+      const buf = { id: `clearweek_${Date.now()}_${Math.floor(Math.random() * 1000)}`, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: matchedEntity, agents: agentList, backups };
       localStorage.setItem('finalizationUndoBuffer', JSON.stringify(buf));
 
       // Perform removals
@@ -5872,33 +5920,33 @@ Reviewer: ${review.reviewerId}
       alert(`Current week data for ${matchedEntity} cleared and set to Week 1.`);
     }
 
-      // Refresh UI
-      renderAdminAgentDropdown();
-      checkAndEnableWeekFinalButton();
-      adminLoadReviewsList();
-      updateClearFinalizationsButton();
+    // Refresh UI
+    renderAdminAgentDropdown();
+    checkAndEnableWeekFinalButton();
+    adminLoadReviewsList();
+    updateClearFinalizationsButton();
 
-      // Show undo toast
-      const toast = document.getElementById('finalization-undo-toast');
-      const text = document.getElementById('finalization-undo-text');
-      const btn = document.getElementById('finalization-undo-btn');
-      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
-      toast.classList.remove('hidden');
+    // Show undo toast
+    const toast = document.getElementById('finalization-undo-toast');
+    const text = document.getElementById('finalization-undo-text');
+    const btn = document.getElementById('finalization-undo-btn');
+    text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
+    toast.classList.remove('hidden');
 
-      // Wire undo button
-      btn.onclick = () => undoClearFinalizations(buffer.id);
+    // Wire undo button
+    btn.onclick = () => undoClearFinalizations(buffer.id);
 
-      // Auto-expire buffer after 10s
-      setTimeout(() => {
-        const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
-        if (existing && existing.id === buffer.id) {
-          localStorage.removeItem('finalizationUndoBuffer');
-          dismissFinalizationUndoToast();
-        }
-      }, 10000);
+    // Auto-expire buffer after 10s
+    setTimeout(() => {
+      const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
+      if (existing && existing.id === buffer.id) {
+        localStorage.removeItem('finalizationUndoBuffer');
+        dismissFinalizationUndoToast();
+      }
+    }, 10000);
 
-      // Save the buffer reference in memory too
-      _pendingFinalizationClearBuffer = { id: buffer.id };
+    // Save the buffer reference in memory too
+    _pendingFinalizationClearBuffer = { id: buffer.id };
     }
 
     function undoClearFinalizations(bufferId) {
