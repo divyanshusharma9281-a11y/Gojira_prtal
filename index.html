@@ -83,6 +83,101 @@
         twinkle.remove();
       }, 1000);
     }
+
+    // --- BUBBLE NETWORK ANIMATION (WEB EFFECT) ---
+    class BubbleNetwork {
+      constructor() {
+        this.canvas = document.getElementById('bubble-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.bubbles = [];
+        this.resize();
+
+        // Create initial bubbles
+        this.initBubbles(50); // Number of bubbles
+
+        window.addEventListener('resize', () => this.resize());
+        this.animate();
+      }
+
+      resize() {
+        if (this.canvas) {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        }
+      }
+
+      initBubbles(count) {
+        for (let i = 0; i < count; i++) {
+          this.bubbles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * 1.5, // Slow float X
+            vy: (Math.random() - 0.5) * 1.5, // Slow float Y
+            size: Math.random() * 3 + 2, // Bubble size
+            color: `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})` // Semi-transparent white
+          });
+        }
+      }
+
+      animate() {
+        const loginView = document.getElementById('view-login');
+        // Only animate if login view is visible to save resources
+        if (!loginView || loginView.style.display === 'none') {
+          requestAnimationFrame(() => this.animate());
+          return;
+        }
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.bubbles.forEach(bubble => {
+          // Update Position
+          bubble.x += bubble.vx;
+          bubble.y += bubble.vy;
+
+          // Bounce off edges
+          if (bubble.x < 0 || bubble.x > this.canvas.width) bubble.vx *= -1;
+          if (bubble.y < 0 || bubble.y > this.canvas.height) bubble.vy *= -1;
+
+          // Draw Bubble
+          this.ctx.beginPath();
+          this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = bubble.color;
+          this.ctx.fill();
+
+          // Web Connection Logic (Cursor to Bubble)
+          const dx = mouseX - bubble.x;
+          const dy = mouseY - bubble.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const connectDistance = 150; // Web reach
+
+          if (distance < connectDistance) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / connectDistance})`; // Fade with distance
+            this.ctx.lineWidth = 1;
+            this.ctx.moveTo(bubble.x, bubble.y);
+            this.ctx.lineTo(mouseX, mouseY);
+            this.ctx.stroke();
+            this.ctx.closePath();
+
+            // Extra "Shine" on conected bubble
+            this.ctx.beginPath();
+            this.ctx.arc(bubble.x, bubble.y, bubble.size + 2, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            this.ctx.stroke();
+          }
+
+          // Optional: Connect bubbles to each other if close?
+          // Keeping it simple "Cursor to Bubble" as per "Web Shooter" description first.
+        });
+
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Initialize Bubble Effect on Load
+    window.addEventListener('load', () => {
+      new BubbleNetwork();
+    });
   </script>
 
   <!-- Fonts -->
@@ -270,6 +365,7 @@
 
   <!-- LOGIN VIEW -->
   <div id="view-login">
+    <canvas id="bubble-canvas" class="absolute inset-0 z-0 pointer-events-none"></canvas>
     <div class="door-container" id="door-container">
       <div class="door door-left"></div>
       <div class="door door-right"></div>
