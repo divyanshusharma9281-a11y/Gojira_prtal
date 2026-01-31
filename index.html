@@ -3220,6 +3220,13 @@ Reviewer: ${review.reviewerId}
         btn.parentElement.classList.toggle('active');
       }
 
+      function toggleSopSection(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.toggle('hidden');
+        }
+      }
+
       function showTab(tab, entity = '') {
         const prefix = entity ? '-' + entity : '';
         // Hide all tab contents
