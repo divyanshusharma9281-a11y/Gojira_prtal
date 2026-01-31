@@ -123,10 +123,10 @@
         const loginView = document.getElementById('view-login');
         const loginVisible = loginView && window.getComputedStyle(loginView).display !== 'none' && loginView.offsetParent !== null;
 
-        // If the login view is not visible, hide the canvas and skip drawing to avoid
+        // If the login view is not visible, fade out the canvas and skip drawing to avoid
         // the bubbles overlaying other pages (bubbles should be only on the first page).
         if (!loginVisible) {
-          if (this.canvas.style.display !== 'none') this.canvas.style.display = 'none';
+          if (this.canvas.style.opacity !== '0') this.canvas.style.opacity = '0';
           if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
           // keep the animation loop alive but do not draw until login is visible again
@@ -134,8 +134,8 @@
           return;
         }
 
-        // Ensure canvas is visible while on the login page
-        if (this.canvas.style.display === 'none') this.canvas.style.display = 'block';
+        // Ensure canvas is visible and faded in while on the login page
+        if (this.canvas.style.opacity !== '1') this.canvas.style.opacity = '1';
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -383,6 +383,18 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
+    /* Bubble Canvas (visible only on Login) */
+    #bubble-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+    
     /* Twinkle Animation */
     .twinkle {
       position: fixed;
@@ -4535,6 +4547,10 @@ Reviewer: ${review.reviewerId}
         // Fade out login content
         loginContent.style.opacity = '0';
         loginContent.style.transform = 'scale(0.5)';
+
+        // Fade out bubble canvas to match door animation
+        const bubbleCanvas = document.getElementById('bubble-canvas');
+        if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
 
         setTimeout(() => {
           // Hide login view
