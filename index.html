@@ -5640,6 +5640,12 @@ Reviewer: ${review.reviewerId}
         backups[key] = localStorage.getItem(key);
       });
 
+      // Include adminReviews, pending reviews, and performance data in backups so undo can restore removed data
+      backups['adminReviews'] = localStorage.getItem('adminReviews');
+      backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
+      backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
+      backups['gojira_performance'] = localStorage.getItem('gojira_performance');
+
       // Save buffer to localStorage as undo buffer
       const undoBuffer = { id: buffer.id, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, backups };
       localStorage.setItem('finalizationUndoBuffer', JSON.stringify(undoBuffer));
@@ -5649,11 +5655,77 @@ Reviewer: ${review.reviewerId}
         unmarkAgentWeekComplete('ALL', agentId);
       });
 
+      // Remove final reviews for affected agents and reset weeks as requested
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const agentsSet = new Set(buffer.agents.map(a => String(a)));
+      let removedCount = 0;
+
+      if (buffer.entity === 'ALL') {
+        // Remove all reviews for these agents across all entities
+        const filtered = reviews.filter(r => !agentsSet.has(String(r.agentId)));
+        removedCount = reviews.length - filtered.length;
+        reviews = filtered;
+      } else {
+        // Remove reviews for these agents within the specified entity
+        const filtered = reviews.filter(r => !(r.entity === buffer.entity && agentsSet.has(String(r.agentId))));
+        removedCount = reviews.length - filtered.length;
+        reviews = filtered;
+
+        // Reset this entity's week to 1 and clear completed agents
+        try {
+          const state = getEntityWeekState(buffer.entity);
+          state.currentWeek = 1;
+          state.completedAgents = {};
+          setEntityWeekState(buffer.entity, state);
+        } catch (e) {
+          console.warn('[clearFinalizations] failed resetting week for entity', buffer.entity, e);
+        }
+      }
+
+      localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+      // Remove any pending reviews for these agents
+      const pending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      let pendingRemoved = 0;
+      buffer.agents.forEach(agentId => {
+        if (pending[agentId]) {
+          pendingRemoved += (pending[agentId] || []).length;
+          delete pending[agentId];
+        }
+      });
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(pending));
+
+      // Remove performance scores for these agents and their current performance records
+      let perfScores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+      const perfRemoved = perfScores.filter(s => agentsSet.has(String(s.agentId))).length;
+      perfScores = perfScores.filter(s => !agentsSet.has(String(s.agentId)));
+      localStorage.setItem('gojira_performance_scores', JSON.stringify(perfScores));
+
+      const perfDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+      buffer.agents.forEach(agentId => {
+        if (perfDb[agentId]) delete perfDb[agentId];
+      });
+      localStorage.setItem('gojira_performance', JSON.stringify(perfDb));
+
+      // If clearing ALL entities, reset all entityWeekState currentWeek to 1 and clear completedAgents
+      if (buffer.entity === 'ALL') {
+        Object.keys(localStorage).forEach(key => {
+          if (!key.startsWith('entityWeekState_')) return;
+          try {
+            const state = JSON.parse(localStorage.getItem(key) || '{}');
+            state.currentWeek = 1;
+            state.completedAgents = {};
+            localStorage.setItem(key, JSON.stringify(state));
+          } catch (e) {
+            console.warn('[clearFinalizations] failed resetting week for key', key, e);
+          }
+        });
+      }
       reconcileFinalizeFlags();
 
       // Push audit entry
       const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
-      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', timestamp: new Date().toISOString() });
+      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', removedReviews: removedCount, removedPending: pendingRemoved, removedPerformanceScores: (typeof perfRemoved !== 'undefined' ? perfRemoved : 0), timestamp: new Date().toISOString() });
       localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
 
       // Refresh UI
@@ -5666,7 +5738,7 @@ Reviewer: ${review.reviewerId}
       const toast = document.getElementById('finalization-undo-toast');
       const text = document.getElementById('finalization-undo-text');
       const btn = document.getElementById('finalization-undo-btn');
-      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s).`;
+      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
       toast.classList.remove('hidden');
 
       // Wire undo button
