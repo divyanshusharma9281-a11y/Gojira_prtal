@@ -234,6 +234,67 @@
     </div>
   </div>
 
+  <!-- REVIEW DETAIL MODAL -->
+  <div id="view-review-modal"
+    class="fixed inset-0 z-[1200] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm">
+    <div
+      class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl w-full max-w-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-start mb-6">
+        <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100">Review Details</h3>
+        <button onclick="closeReviewModal()"
+          class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl">×</button>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Details -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+            <span class="text-xs font-bold text-slate-400 uppercase">File Name</span>
+            <div id="modal-review-filename" class="font-medium text-blue-600 underline cursor-pointer truncate"></div>
+          </div>
+          <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+            <span class="text-xs font-bold text-slate-400 uppercase">Score</span>
+            <div id="modal-review-score" class="font-black text-2xl"></div>
+          </div>
+        </div>
+
+        <!-- Observation -->
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase">Admin Observation</span>
+          <div id="modal-review-observation"
+            class="mt-2 p-4 bg-slate-50 dark:bg-slate-700 rounded-xl text-slate-700 dark:text-slate-300 leading-relaxed border border-slate-200 dark:border-slate-600">
+          </div>
+        </div>
+
+        <!-- Agent Reply Section -->
+        <div id="modal-reply-section" class="border-t border-slate-200 dark:border-slate-700 pt-6">
+          <h4 class="font-bold text-lg mb-4">Your Reply</h4>
+
+          <!-- Existing Reply -->
+          <div id="modal-existing-reply" class="hidden">
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+              <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2 block">You wrote:</span>
+              <p id="modal-reply-text" class="text-slate-700 dark:text-slate-300"></p>
+            </div>
+          </div>
+
+          <!-- Reply Form -->
+          <div id="modal-reply-form" class="hidden">
+            <textarea id="modal-reply-input" rows="3" placeholder="Write your reply here (One-time only)..."
+              class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none mb-3"></textarea>
+            <button onclick="submitAgentReply()"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition shadow-lg shadow-blue-500/30">
+              Send Reply
+            </button>
+            <p class="text-xs text-slate-400 mt-2">Note: You can only reply ONCE to this feedback.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+
   <div id="app-container" style="display: none; opacity: 0; transition: opacity 1s ease-in;">
     <!-- TOP NAV -->
     <nav class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
@@ -699,25 +760,15 @@
         <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
 
         <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
-          <li onclick="navigateTo('view-bharatloan')"
-            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
-            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">B</span>
-            1. BharatLoan
+          <li onclick="openAgentPerformanceModal()"
+            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
+            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">📅</span>
+            Weekly Performance
           </li>
-          <li onclick="navigateTo('view-rupeeontime')"
-            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4">
-            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">✔</span>
-            2. RupeeOnTime
-          </li>
-          <li onclick="navigateTo('view-rupee112')"
-            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-800 text-white shadow-lg hover:shadow-emerald-500/50 flex items-center gap-4">
-            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">₹</span>
-            3. Rupee112
-          </li>
-          <li onclick="navigateTo('view-loan112')"
-            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-900 text-white shadow-lg hover:shadow-indigo-500/50 flex items-center gap-4">
-            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">L</span>
-            4. Loan112
+          <li onclick="alert('Monthly Performance data is coming soon.')"
+            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4 opacity-75">
+            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">📆</span>
+            Monthly Performance
           </li>
         </ol>
       </div>
@@ -3661,15 +3712,85 @@ Reviewer: ${review.reviewerId}
         modal.classList.remove('hidden');
       }
 
+      let currentReviewIndex = null;
+
       function agentViewReviewDetail(index) {
+        currentReviewIndex = index;
         const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-        const agentId = currentUser.id;
+        const agentId = currentUser.id; // Corrected: Using global currentUser
         const agentReviews = reviews.filter(r => r.agentId === agentId);
         const review = agentReviews[index];
 
-        const choice = confirm(`📋 Review Detail\n\nFile: ${review.fileName}\nScore: ${review.score}\nObservation:\n${review.observation}\n\nClick OK to OPEN THE FILE.`);
-        if (choice && review.fileContent) {
-          openFileContent(review.fileContent, review.fileName);
+        // Find actual index in main array for saving later
+        // Because we filtered by agentId, 'index' is local. We need the real index to save reply.
+        // Simple strategy: Store the unique timestamp/ID or just iterate to find it.
+        // For now, let's just find it by properties matching since we don't have IDs on reviews yet.
+        // IMPROVEMENT: We should add IDs to reviews. But assuming uniqueness of timestamp+agent.
+
+        // Populate Modal
+        document.getElementById('modal-review-filename').innerText = review.fileName;
+        document.getElementById('modal-review-filename').onclick = () => openFileContent(review.fileContent, review.fileName);
+
+        const scoreEl = document.getElementById('modal-review-score');
+        scoreEl.innerText = review.score;
+        scoreEl.className = `font-black text-2xl ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}`;
+
+        document.getElementById('modal-review-observation').innerText = review.observation;
+
+        // Reply Logic
+        const replyForm = document.getElementById('modal-reply-form');
+        const existingReply = document.getElementById('modal-existing-reply');
+
+        if (review.agentReply) {
+          existingReply.classList.remove('hidden');
+          document.getElementById('modal-reply-text').innerText = review.agentReply;
+          replyForm.classList.add('hidden');
+        } else {
+          existingReply.classList.add('hidden');
+          replyForm.classList.remove('hidden');
+          document.getElementById('modal-reply-input').value = '';
+        }
+
+        document.getElementById('view-review-modal').classList.remove('hidden');
+      }
+
+      function closeReviewModal() {
+        document.getElementById('view-review-modal').classList.add('hidden');
+      }
+
+      function submitAgentReply() {
+        const reply = document.getElementById('modal-reply-input').value.trim();
+        if (!reply) return alert("Please write a reply.");
+
+        const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        const agentId = currentUser.id;
+
+        // Find the specific review to update. 
+        // Since we don't have IDs, we match by AgentID + Date + FileName (should be unique enough)
+        // Or getting the 'index' from the filtered list passed to ViewDetail.
+
+        // Re-get filtered list to find the match
+        let agentReviews = reviews.filter(r => r.agentId === agentId);
+        let targetReview = agentReviews[currentReviewIndex];
+
+        // Now find this object in the main 'reviews' array
+        let mainIndex = reviews.findIndex(r =>
+          r.agentId === targetReview.agentId &&
+          r.date === targetReview.date &&
+          r.fileName === targetReview.fileName
+        );
+
+        if (mainIndex !== -1) {
+          reviews[mainIndex].agentReply = reply;
+          reviews[mainIndex].agentReplyDate = new Date().toISOString();
+          localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+          // Notify Admin
+          NotificationManager.notifyAdmin(`Reply from ${currentUser.name} on review ${targetReview.fileName}: "${reply.substring(0, 20)}..."`);
+
+          alert("Reply sent successfully!");
+          closeReviewModal();
+          // Maybe refresh the modal if we want to show it immediately
         }
       }
 
