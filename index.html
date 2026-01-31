@@ -174,10 +174,17 @@
       }
     }
 
-    // Initialize Bubble Effect on Load
-    window.addEventListener('load', () => {
+    // Initialize Bubble Effect
+    function initBubbles() {
       new BubbleNetwork();
-    });
+      console.log("Bubble Network Initialized");
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBubbles);
+    } else {
+      initBubbles();
+    }
   </script>
 
   <!-- Fonts -->
@@ -365,7 +372,7 @@
 
   <!-- LOGIN VIEW -->
   <div id="view-login">
-    <canvas id="bubble-canvas" class="absolute inset-0 z-0 pointer-events-none"></canvas>
+    <canvas id="bubble-canvas" class="absolute inset-0 z-10 pointer-events-none"></canvas>
     <div class="door-container" id="door-container">
       <div class="door door-left"></div>
       <div class="door door-right"></div>
