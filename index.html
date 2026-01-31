@@ -320,49 +320,28 @@
     .door {
       flex: 1;
       background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
-      border: 4px solid #1a1a1a;
+      background-size: 200% 100%;
       transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6);
+      /* Removed borders and box-shadow for simple page look */
       position: relative;
-      /* For handles */
     }
 
     .door-left {
       transform-origin: left;
-      border-right: 2px solid #000;
+      background-position: 0% 0%;
+      /* Removed border */
     }
 
-    .door-left::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: 20px;
-      width: 12px;
-      height: 80px;
-      background: linear-gradient(to bottom, #fcd34d, #d97706);
-      border-radius: 6px;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-      transform: translateY(-50%);
-    }
+    /* Handle removed */
 
     .door-right {
       transform-origin: right;
-      border-left: 2px solid #000;
+      background-position: 100% 0%;
+      /* Removed border */
     }
 
-    .door-right::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      width: 12px;
-      height: 80px;
-      background: linear-gradient(to bottom, #fcd34d, #d97706);
-      border-radius: 6px;
-      box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.5);
-      transform: translateY(-50%);
-    }
+    /* Handle removed */
 
     .doors-open .door-left {
       transform: rotateY(-110deg);
@@ -4587,38 +4566,32 @@ Reviewer: ${review.reviewerId}
 
       function triggerDoorAnimation() {
         const loginContent = document.getElementById('login-content');
+        const loginView = document.getElementById('view-login');
+        const app = document.getElementById('app-container');
 
-        // Open doors class trigger
+        // 1. Prepare App (Show it behind doors)
+        app.style.display = 'block';
+        setTimeout(() => app.style.opacity = '1', 50);
+
+        // 2. Make login container transparent so we can see through the opening doors
+        // The DOORS themselves have the background, so the screen remains covered until they move.
+        loginView.style.background = 'transparent';
+
+        // 3. Trigger Door Opening
         document.body.classList.add('doors-open');
 
-        // Fade out login content
+        // 4. Fade out Login Form Content
         loginContent.style.opacity = '0';
-        loginContent.style.transform = 'scale(0.5)';
+        loginContent.style.transform = 'scale(0.8)';
 
-        // Fade out bubble canvas to match door animation
+        // Fade out bubble canvas
         const bubbleCanvas = document.getElementById('bubble-canvas');
         if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
 
+        // 5. Cleanup after animation
         setTimeout(() => {
-          // Hide login view
-          const loginView = document.getElementById('view-login');
-          loginView.style.opacity = '0';
-          loginView.style.transition = 'opacity 1s ease';
-
-          // Show App
-          const app = document.getElementById('app-container');
-          app.style.display = 'block';
-
-          // Small delay to allow display:block to apply before opacity transition
-          setTimeout(() => {
-            app.style.opacity = '1';
-            // Remove login view from DOM or hide completely
-            setTimeout(() => {
-              loginView.style.display = 'none';
-            }, 1000);
-          }, 50);
-
-        }, 1200); // Wait for door animation
+          loginView.style.display = 'none';
+        }, 1500); // 1.5s matches CSS transition
       }
 
       function toggleNotifications() {
