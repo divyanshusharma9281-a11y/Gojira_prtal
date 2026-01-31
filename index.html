@@ -4,12 +4,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gojira TP | Training Portal</title>
+  <title>Gojira | Training Portal</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
+
+    // Cursor Twinkle Animation Script - Global so it's ready
+    // Cursor Twinkle Animation Script
+    document.addEventListener('mousemove', function (e) {
+      const loginView = document.getElementById('view-login');
+      // Check if login view exists and is visible (not display: none)
+      if (loginView && loginView.style.display !== 'none') {
+        createTwinkle(e.clientX, e.clientY);
+      }
+    });
+
+    function createTwinkle(x, y) {
+      const twinkle = document.createElement('div');
+      twinkle.classList.add('twinkle');
+      twinkle.style.left = x + 'px';
+      twinkle.style.top = y + 'px';
+
+      const size = Math.random() * 4 + 2;
+      twinkle.style.width = size + 'px';
+      twinkle.style.height = size + 'px';
+
+      const colors = ['#ffffff', '#fbbf24', '#60a5fa']; // White, Amber, Blue
+      twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+      document.body.appendChild(twinkle);
+
+      setTimeout(() => {
+        twinkle.remove();
+      }, 1000);
+    }
   </script>
 
   <!-- Fonts -->
@@ -167,6 +197,28 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+
+    /* Twinkle Animation */
+    .twinkle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fadeDrop 1s linear forwards;
+      z-index: 9999;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    @keyframes fadeDrop {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(30px) scale(0);
+      }
+    }
   </style>
 </head>
 
@@ -180,7 +232,7 @@
     </div>
 
     <div class="login-content" id="login-content">
-      <h1 class="gojira-logo">G - GOJIRA</h1>
+      <h1 class="gojira-logo">GOJIRA</h1>
       <div class="login-form-container">
         <h2 class="text-2xl font-bold mb-6 text-white">Agent Portal</h2>
         <div class="space-y-4">
@@ -305,7 +357,7 @@
             G</div>
           <span
             class="font-['Montserrat'] text-4xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 stylish">
-            Gojira TP
+            Gojira
           </span>
         </div>
 
