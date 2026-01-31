@@ -54,7 +54,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .stylish {
@@ -108,7 +108,7 @@
       border: 4px solid #333;
       transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
-      background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+      background: linear-gradient(135deg, #450a0a, #1e1b4b);
       box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
     }
 
@@ -288,7 +288,7 @@
         </h1>
 
         <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-12">
-          Standard Operating Procedures, Knowledge Base, and Brand Guidelines for Customer Success Teams.
+          Guidelines
         </p>
 
 
@@ -327,7 +327,8 @@
             <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁
             </div>
             <h2 class="text-2xl font-bold mb-2">Resources</h2>
-            <p class="text-sm opacity-90">Downloads, templates, and tools.</p>
+            <p class="text-sm opacity-90">Customer Script Templates
+              Pre-written scripts for common customer interactions.</p>
           </div>
         </div>
       </main>
@@ -579,25 +580,9 @@
       </header>
 
       <div class="max-w-5xl mx-auto px-6 py-14">
-        <!-- Tabs -->
-        <div class="flex border-b border-slate-200 dark:border-slate-700 mb-8">
-          <button onclick="showTab('guidelines')" id="tab-guidelines"
-            class="px-6 py-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700">Guidelines</button>
-          <button onclick="showTab('tools')" id="tab-tools"
-            class="px-6 py-3 font-bold text-blue-600 border-b-2 border-blue-600">Our Operating Tools</button>
-        </div>
-
-        <!-- Guidelines Tab Content -->
-        <div id="content-guidelines" class="tab-content hidden">
-          <div
-            class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl border border-blue-100 dark:border-slate-700 text-center">
-            <div class="text-4xl mb-4">📋</div>
-            <h3 class="text-xl font-bold mb-2">Guidelines Coming Soon</h3>
-            <p class="text-slate-600 dark:text-slate-400">Comprehensive brand guidelines and procedures will be
-              available
-              shortly.</p>
-          </div>
-        </div>
+        <!-- Tabs Removed: Guidelines tab removed, defaulting to Tools -->
+        <!-- Guidelines Tab Content Removed -->
+        <h2 class="text-2xl font-bold mb-6 text-slate-700 dark:text-slate-200">Our Operating Tools</h2>
 
         <!-- Tools Tab Content -->
         <div id="content-tools" class="tab-content">
@@ -714,22 +699,22 @@
         <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
 
         <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
-          <li onclick="showLogin('BharatLoan')"
+          <li onclick="navigateTo('view-bharatloan')"
             class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
             <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">B</span>
             1. BharatLoan
           </li>
-          <li onclick="showLogin('RupeeOnTime')"
+          <li onclick="navigateTo('view-rupeeontime')"
             class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4">
             <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">✔</span>
             2. RupeeOnTime
           </li>
-          <li onclick="showLogin('Rupee112')"
+          <li onclick="navigateTo('view-rupee112')"
             class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-800 text-white shadow-lg hover:shadow-emerald-500/50 flex items-center gap-4">
             <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">₹</span>
             3. Rupee112
           </li>
-          <li onclick="showLogin('Loan112')"
+          <li onclick="navigateTo('view-loan112')"
             class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-900 text-white shadow-lg hover:shadow-indigo-500/50 flex items-center gap-4">
             <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">L</span>
             4. Loan112
@@ -1556,6 +1541,103 @@
         }
       }
 
+      // NOTIFICATION MANAGER
+      class NotificationManager {
+        static getNotifications() {
+          return JSON.parse(localStorage.getItem('gojira_notifications') || '[]');
+        }
+
+        static add(recipientRole, recipientId, message) {
+          const notifs = this.getNotifications();
+          notifs.unshift({
+            id: Date.now(),
+            recipientRole,
+            recipientId,
+            message,
+            read: false,
+            date: new Date().toLocaleString()
+          });
+          localStorage.setItem('gojira_notifications', JSON.stringify(notifs));
+          this.updateIcon();
+        }
+
+        static notifyAgent(agentId, message) {
+          this.add('agent', agentId, message);
+        }
+
+        static notifyAdmin(message) {
+          this.add('admin', 'ALL', message);
+        }
+
+        static updateIcon() {
+          if (!currentUser) return;
+          const notifs = this.getNotifications();
+          // Filter for current user
+          const myNotifs = notifs.filter(n => {
+            if (n.read) return false;
+            if (n.recipientRole === 'admin' && currentUser.role === 'admin') return true;
+            if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return true;
+            return false;
+          });
+
+          const dot = document.getElementById('nav-notification-dot');
+          if (myNotifs.length > 0) {
+            dot.classList.remove('hidden');
+          } else {
+            dot.classList.add('hidden');
+          }
+        }
+
+        static renderDropdown() {
+          const list = document.getElementById('notification-list');
+          const notifs = this.getNotifications();
+
+          // Filter for current user
+          const myNotifs = notifs.filter(n => {
+            if (n.recipientRole === 'admin' && currentUser.role === 'admin') return true;
+            if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return true;
+            return false;
+          });
+
+          if (myNotifs.length === 0) {
+            list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">No notifications</div>';
+            return;
+          }
+
+          list.innerHTML = myNotifs.map(n => `
+             <div class="p-3 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer ${n.read ? 'opacity-60' : 'font-semibold'}" onclick="NotificationManager.markRead(${n.id})">
+               <p class="text-sm">${n.message}</p>
+               <p class="text-xs text-slate-400 mt-1">${n.date}</p>
+             </div>
+           `).join('');
+        }
+
+        static markRead(id) {
+          const notifs = this.getNotifications();
+          const target = notifs.find(n => n.id === id);
+          if (target) {
+            target.read = true;
+            localStorage.setItem('gojira_notifications', JSON.stringify(notifs));
+            this.updateIcon();
+            this.renderDropdown();
+          }
+        }
+
+        static clearAll() {
+          // Only clear for this user
+          let notifs = this.getNotifications();
+          notifs = notifs.filter(n => {
+            // Keep notifications NOT for this user
+            if (n.recipientRole === 'admin' && currentUser.role === 'admin') return false;
+            if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return false;
+            return true;
+          });
+          localStorage.setItem('gojira_notifications', JSON.stringify(notifs));
+          this.updateIcon();
+          this.renderDropdown();
+        }
+      }
+
       // ADMIN & AGENT FUNCTIONS
       function renderAdminDashboard() {
         // 1. Set Entity Header
@@ -2297,7 +2379,15 @@
           reviewerId: currentUser.id
         };
 
+        // performanceData object creation removed (was duplicate)
+
         MockBackend.savePerformanceScore(performanceData);
+
+        // Notify Agent
+        NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`);
+
+        // Notify Agent
+        NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`);
 
         // Clear pending reviews for this agent
         const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
@@ -2637,7 +2727,8 @@ Reviewer: ${review.reviewerId}
 
       function logout() {
         currentUser = null;
-        navigateTo('view-home');
+        localStorage.removeItem('currentUser');
+        location.reload(); // Reload to show login screen
       }
 
 
@@ -3601,6 +3692,12 @@ Reviewer: ${review.reviewerId}
 
         localStorage.setItem('agentComments', JSON.stringify(comments));
         textarea.value = '';
+        localStorage.setItem('agentComments', JSON.stringify(comments));
+
+        // Notify Admin
+        NotificationManager.notifyAdmin(`New feedback from Agent ${currentUser.name}: "${comment.substring(0, 20)}..."`);
+
+        textarea.value = '';
         alert('Your feedback has been sent to admin!');
       }
 
@@ -3611,6 +3708,26 @@ Reviewer: ${review.reviewerId}
 
       // Load reviews on page load
       window.addEventListener('load', function () {
+        // Restore Session
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+          currentUser = JSON.parse(storedUser);
+          // Skip Login
+          document.getElementById('view-login').style.display = 'none';
+          document.getElementById('app-container').style.display = 'block';
+          document.getElementById('app-container').style.opacity = '1';
+
+          // Set Greeting
+          const greeting = document.getElementById('home-greeting');
+          if (greeting) greeting.innerText = `Hii ${currentUser.name}`;
+
+          if (currentUser.role === 'admin') {
+            renderAdminDashboard();
+          } else {
+            renderAgentDashboard();
+          }
+        }
+
         adminLoadReviewsList();
         adminLoadFeedbackList();
       });
@@ -3645,6 +3762,7 @@ Reviewer: ${review.reviewerId}
         if (user && passwordInput === globalPass) {
           // Success
           currentUser = user; // Set Global User
+          localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Session Persistence
 
           errorMsg.classList.add('hidden');
 
@@ -3747,10 +3865,11 @@ Reviewer: ${review.reviewerId}
       }
 
       function toggleNotifications() {
-        // Toggle notification logic
-        // For now, toggle the dot off
-        document.getElementById('nav-notification-dot').classList.add('hidden');
-        alert("No new notifications");
+        const dropdown = document.getElementById('notification-dropdown');
+        dropdown.classList.toggle('hidden');
+        if (!dropdown.classList.contains('hidden')) {
+          NotificationManager.renderDropdown();
+        }
       }
 
     </script>
