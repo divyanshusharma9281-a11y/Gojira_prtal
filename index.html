@@ -27,15 +27,15 @@
       twinkle.style.left = x + 'px';
       twinkle.style.top = y + 'px';
 
-      // 30% chance to be a Golden Star
+      // 30% chance to be a Shiny White Star
       if (Math.random() < 0.3) {
         twinkle.innerText = '★'; // Unicode Star
-        twinkle.style.color = '#FFD700'; // Gold Color
+        twinkle.style.color = '#FFFFFF'; // White Color
         twinkle.style.fontSize = (Math.random() * 10 + 10) + 'px'; // Size 10-20px
         twinkle.style.background = 'transparent'; // No background block
         twinkle.style.borderRadius = '0'; // No circle
         twinkle.style.boxShadow = 'none'; // No box shadow
-        twinkle.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.8)'; // Golden Glow
+        twinkle.style.textShadow = '0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.8)'; // Intense White Glow
         twinkle.style.width = 'auto';
         twinkle.style.height = 'auto';
         twinkle.style.display = 'flex';
