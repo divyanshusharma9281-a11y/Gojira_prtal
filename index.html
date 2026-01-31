@@ -4418,10 +4418,30 @@ Reviewer: ${review.reviewerId}
         const storedUser = localStorage.getItem('currentUser');
         if (storedUser) {
           currentUser = JSON.parse(storedUser);
-          // Skip Login
-          document.getElementById('view-login').style.display = 'none';
-          document.getElementById('app-container').style.display = 'block';
-          document.getElementById('app-container').style.opacity = '1';
+
+          // Smoothly transition out the login view and bubble canvas to avoid flashing
+          const loginView = document.getElementById('view-login');
+          const bubbleCanvas = document.getElementById('bubble-canvas');
+          if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
+
+          // Fade out login view (short transition) then remove it from layout
+          if (loginView) {
+            loginView.style.opacity = '0';
+            loginView.style.transition = 'opacity 0.6s ease';
+          }
+
+          // Show app immediately but keep it hidden visually until we finish fading
+          const app = document.getElementById('app-container');
+          app.style.display = 'block';
+          // tiny delay to ensure display:block is applied
+          setTimeout(() => {
+            app.style.opacity = '1';
+          }, 50);
+
+          // After fade completes, hide login from layout
+          setTimeout(() => {
+            if (loginView) loginView.style.display = 'none';
+          }, 700);
 
           // Set Greeting
           const greeting = document.getElementById('home-greeting');
