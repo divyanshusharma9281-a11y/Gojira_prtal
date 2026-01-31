@@ -92,8 +92,8 @@
         this.bubbles = [];
         this.resize();
 
-        // Create initial bubbles
-        this.initBubbles(50); // Number of bubbles
+        // Create initial bubbles (Increase count for denser web)
+        this.initBubbles(60);
 
         window.addEventListener('resize', () => this.resize());
         this.animate();
@@ -111,17 +111,16 @@
           this.bubbles.push({
             x: Math.random() * this.canvas.width,
             y: Math.random() * this.canvas.height,
-            vx: (Math.random() - 0.5) * 1.5, // Slow float X
-            vy: (Math.random() - 0.5) * 1.5, // Slow float Y
-            size: Math.random() * 3 + 2, // Bubble size
-            color: `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})` // Semi-transparent white
+            vx: (Math.random() - 0.5) * 2, // Slightly faster
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 4 + 3, // Larger bubbles (3-7px)
+            color: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.2})` // Brighter (0.2-0.6 alpha)
           });
         }
       }
 
       animate() {
         const loginView = document.getElementById('view-login');
-        // Only animate if login view is visible to save resources
         if (!loginView || loginView.style.display === 'none') {
           requestAnimationFrame(() => this.animate());
           return;
@@ -129,46 +128,71 @@
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // Update and Draw Bubbles
         this.bubbles.forEach(bubble => {
-          // Update Position
           bubble.x += bubble.vx;
           bubble.y += bubble.vy;
 
-          // Bounce off edges
+          // Bounce
           if (bubble.x < 0 || bubble.x > this.canvas.width) bubble.vx *= -1;
           if (bubble.y < 0 || bubble.y > this.canvas.height) bubble.vy *= -1;
 
-          // Draw Bubble
           this.ctx.beginPath();
           this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
           this.ctx.fillStyle = bubble.color;
           this.ctx.fill();
+        });
 
-          // Web Connection Logic (Cursor to Bubble)
-          const dx = mouseX - bubble.x;
-          const dy = mouseY - bubble.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const connectDistance = 150; // Web reach
+        // Draw Connections (Web Effect)
+        const webReach = 150; // Distance to connect
+        const cursorReach = 200; // Cursor shooter range
 
-          if (distance < connectDistance) {
+        for (let i = 0; i < this.bubbles.length; i++) {
+          const bubbleA = this.bubbles[i];
+
+          // 1. Connect to Cursor (Web Shooter)
+          const dxMouse = mouseX - bubbleA.x;
+          const dyMouse = mouseY - bubbleA.y;
+          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+          if (distMouse < cursorReach) {
             this.ctx.beginPath();
-            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / connectDistance})`; // Fade with distance
-            this.ctx.lineWidth = 1;
-            this.ctx.moveTo(bubble.x, bubble.y);
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distMouse / cursorReach})`;
+            this.ctx.lineWidth = 1.5;
+            this.ctx.moveTo(bubbleA.x, bubbleA.y);
             this.ctx.lineTo(mouseX, mouseY);
             this.ctx.stroke();
-            this.ctx.closePath();
-
-            // Extra "Shine" on conected bubble
+            // Extra shine on connected bubble
             this.ctx.beginPath();
-            this.ctx.arc(bubble.x, bubble.y, bubble.size + 2, 0, Math.PI * 2);
-            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            this.ctx.arc(bubbleA.x, bubbleA.y, bubbleA.size + 3, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
             this.ctx.stroke();
           }
 
-          // Optional: Connect bubbles to each other if close?
-          // Keeping it simple "Cursor to Bubble" as per "Web Shooter" description first.
-        });
+          // 2. Connect to Other Bubbles (The Web)
+          // "Meeting each other with the help of cursor"
+          // Logic: Only connect bubbles to each other IF they are NEAR THE CURSOR.
+          // This creates a localized web that follows the mouse.
+
+          if (distMouse < cursorReach) { // Only check connections if near cursor
+            for (let j = i + 1; j < this.bubbles.length; j++) {
+              const bubbleB = this.bubbles[j];
+              const dx = bubbleA.x - bubbleB.x;
+              const dy = bubbleA.y - bubbleB.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+
+              if (distance < webReach) {
+                this.ctx.beginPath();
+                // Opacity based on how close they are
+                this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.5 * (1 - distance / webReach)})`;
+                this.ctx.lineWidth = 0.5;
+                this.ctx.moveTo(bubbleA.x, bubbleA.y);
+                this.ctx.lineTo(bubbleB.x, bubbleB.y);
+                this.ctx.stroke();
+              }
+            }
+          }
+        }
 
         requestAnimationFrame(() => this.animate());
       }
@@ -176,6 +200,10 @@
 
     // Initialize Bubble Effect
     function initBubbles() {
+      // Prevent duplicates
+      if (window.bubbleNetworkActive) return;
+      window.bubbleNetworkActive = true;
+
       new BubbleNetwork();
       console.log("Bubble Network Initialized");
     }
