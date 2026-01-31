@@ -27,12 +27,30 @@
       twinkle.style.left = x + 'px';
       twinkle.style.top = y + 'px';
 
-      const size = Math.random() * 4 + 2;
-      twinkle.style.width = size + 'px';
-      twinkle.style.height = size + 'px';
+      // 30% chance to be a Golden Star
+      if (Math.random() < 0.3) {
+        twinkle.innerText = '★'; // Unicode Star
+        twinkle.style.color = '#FFD700'; // Gold Color
+        twinkle.style.fontSize = (Math.random() * 10 + 10) + 'px'; // Size 10-20px
+        twinkle.style.background = 'transparent'; // No background block
+        twinkle.style.borderRadius = '0'; // No circle
+        twinkle.style.boxShadow = 'none'; // No box shadow
+        twinkle.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.8)'; // Golden Glow
+        twinkle.style.width = 'auto';
+        twinkle.style.height = 'auto';
+        twinkle.style.display = 'flex';
+        twinkle.style.alignItems = 'center';
+        twinkle.style.justifyContent = 'center';
+      } else {
+        // Standard Rainbow Dot
+        const size = Math.random() * 4 + 2;
+        twinkle.style.width = size + 'px';
+        twinkle.style.height = size + 'px';
+        twinkle.style.borderRadius = '50%';
 
-      const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3']; // Rainbow Colors
-      twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3']; // Rainbow
+        twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      }
 
       document.body.appendChild(twinkle);
 
