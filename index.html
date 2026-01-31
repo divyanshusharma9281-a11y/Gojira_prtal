@@ -184,7 +184,9 @@
       <div class="login-form-container">
         <h2 class="text-2xl font-bold mb-6 text-white">Agent Portal</h2>
         <div class="space-y-4">
-          <input type="password" id="login-password" placeholder="Enter Password"
+          <input type="text" id="login-empid" placeholder="Employee ID (e.g. BL/GG/25/704)"
+            class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest uppercase">
+          <input type="password" id="login-password" placeholder="Password"
             class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest"
             onkeypress="handleLoginKey(event)">
           <button onclick="attemptLogin()"
@@ -199,7 +201,6 @@
         <p id="login-error" class="text-red-400 font-bold mt-4 hidden">Access Denied</p>
       </div>
     </div>
-  </div>
   </div>
 
   <!-- CHANGE PASSWORD MODAL -->
@@ -249,7 +250,15 @@
 
         <div class="flex flex-col items-end gap-2">
           <div class="flex items-center gap-2">
-            <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
+            <!-- Notification Bell -->
+            <button onclick="toggleNotifications()"
+              class="relative text-slate-500 hover:text-blue-600 text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+              🔔
+              <div id="nav-notification-dot" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full hidden">
+              </div>
+            </button>
+            <button onclick="toggleSearch()"
+              class="text-slate-500 hover:text-blue-600 text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">🔍</button>
             <button onclick="toggleTheme()"
               class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
               <span id="theme-icon">🌙</span>
@@ -272,9 +281,9 @@
     <div id="view-home" class="app-view active">
       <main class="max-w-7xl mx-auto px-6 py-20 text-center">
         <h1 class="text-5xl font-extrabold mb-6">
-          Welcome to
+          <div id="home-greeting" class="text-3xl text-slate-400 font-medium mb-2">Welcome</div>
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-            Training Portal
+            Training & Quality Portal
           </span>
         </h1>
 
@@ -3613,24 +3622,58 @@ Reviewer: ${review.reviewerId}
       }
 
       function attemptLogin() {
-        const password = document.getElementById('login-password').value;
+        const empidInput = document.getElementById('login-empid').value.trim();
+        const passwordInput = document.getElementById('login-password').value;
         const errorMsg = document.getElementById('login-error');
 
-        const currentPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
+        // Validate Input
+        if (!empidInput || !passwordInput) {
+          errorMsg.innerText = "Please enter Employee ID and Password";
+          errorMsg.classList.remove('hidden');
+          shakeLogin();
+          return;
+        }
 
-        if (password === currentPass) {
+        // Find User
+        const user = USER_DB.find(u => u.id === empidInput);
+
+        // Check Creds
+        // Note: Using a single pass for all for demo, or stored individual
+        // Ideally should match user.password if it existed in DB
+        const globalPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
+
+        if (user && passwordInput === globalPass) {
           // Success
+          currentUser = user; // Set Global User
+
           errorMsg.classList.add('hidden');
+
+          // Set Personalized Greeting
+          document.getElementById('home-greeting').innerText = `Hii ${user.name}`;
+
+          // Re-render dashboards based on user
+          if (user.role === 'admin') {
+            renderAdminDashboard();
+            document.getElementById('view-admin').classList.remove('hidden'); // Ensure available
+          } else {
+            renderAgentDashboard();
+          }
+
           triggerDoorAnimation();
         } else {
           // Failure
+          errorMsg.innerText = "Invalid Credenitals";
           errorMsg.classList.remove('hidden');
-          const container = document.querySelector('.login-form-container');
-          container.style.transform = 'translateX(10px)';
-          setTimeout(() => container.style.transform = 'translateX(-10px)', 100);
-          setTimeout(() => container.style.transform = 'translateX(10px)', 200);
-          setTimeout(() => container.style.transform = 'translateX(0)', 300);
+          shakeLogin();
         }
+      }
+
+      function shakeLogin() {
+        const container = document.querySelector('.login-form-container');
+        container.style.transform = 'translateX(10px)';
+        setTimeout(() => container.style.transform = 'translateX(-10px)', 100);
+        setTimeout(() => container.style.transform = 'translateX(10px)', 200);
+        setTimeout(() => container.style.transform = 'translateX(0)', 300);
       }
 
       function openChangePasswordModal() {
@@ -3701,6 +3744,13 @@ Reviewer: ${review.reviewerId}
           }, 50);
 
         }, 1200); // Wait for door animation
+      }
+
+      function toggleNotifications() {
+        // Toggle notification logic
+        // For now, toggle the dot off
+        document.getElementById('nav-notification-dot').classList.add('hidden');
+        alert("No new notifications");
       }
 
     </script>
