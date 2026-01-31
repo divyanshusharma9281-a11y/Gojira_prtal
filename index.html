@@ -319,22 +319,49 @@
 
     .door {
       flex: 1;
-      background: #1e1e1e;
-      border: 4px solid #333;
+      background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
+      border: 4px solid #1a1a1a;
       transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
-      background: linear-gradient(135deg, #450a0a, #1e1b4b);
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+      /* For handles */
     }
 
     .door-left {
       transform-origin: left;
-      border-right: 1px solid #000;
+      border-right: 2px solid #000;
+    }
+
+    .door-left::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      width: 12px;
+      height: 80px;
+      background: linear-gradient(to bottom, #fcd34d, #d97706);
+      border-radius: 6px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+      transform: translateY(-50%);
     }
 
     .door-right {
       transform-origin: right;
-      border-left: 1px solid #000;
+      border-left: 2px solid #000;
+    }
+
+    .door-right::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      width: 12px;
+      height: 80px;
+      background: linear-gradient(to bottom, #fcd34d, #d97706);
+      border-radius: 6px;
+      box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.5);
+      transform: translateY(-50%);
     }
 
     .doors-open .door-left {
@@ -394,7 +421,7 @@
       pointer-events: none;
       z-index: 10;
     }
-    
+
     /* Twinkle Animation */
     .twinkle {
       position: fixed;
