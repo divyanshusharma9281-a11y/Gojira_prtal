@@ -2143,90 +2143,68 @@
   </div>
 
   <script>
-    // ===== AUTO LOGIN BYPASS SYSTEM =====
-    // Replaces the old login system with a direct-access mechanism.
+    // ===== DIRECT ACCESS SYSTEM (Login Removed) =====
+    // Automatically initializes the application with full Admin privileges
     let currentSessionUser = null;
 
     function initPortal() {
-      console.log("Initializing Portal (Auto-Login Mode)...");
+      console.log("Initializing Portal in Direct Access Mode...");
 
-      // 1. Try to get existing session
-      let sessionUser = localStorage.getItem('gojira_session_user');
+      // Force create/overwrite session with Default Admin
+      // This ensures "everything is accessible" as requested
+      const defaultAdmin = {
+        id: 'BL/GG/25/1135', // Siddhant (Admin)
+        name: 'Siddhant Chauhan',
+        role: 'admin',
+        entity: 'ALL'
+      };
 
-      // 2. If NO session exists, create a DEFAULT ADMIN session
-      if (!sessionUser) {
-        console.log("No session found. Creating Auto-Login Admin session.");
-        const defaultUser = {
-          id: 'BL/GG/25/1135', // Siddhant (Admin)
-          name: 'Siddhant Chauhan',
-          role: 'admin',
-          entity: 'ALL'
-        };
-        localStorage.setItem('gojira_session_user', JSON.stringify(defaultUser));
-        sessionUser = JSON.stringify(defaultUser);
-      }
+      // Set session
+      localStorage.setItem('gojira_session_user', JSON.stringify(defaultAdmin));
+      currentSessionUser = defaultAdmin;
+      currentUser = defaultAdmin;
+      adminCurrentEntity = 'ALL';
 
-      // 3. Restore Session & Initialize UI
+      console.info('[initPortal] System initialized as Admin:', currentSessionUser.name);
+
+      // 1. Show Main Navigation
+      const topNav = document.getElementById('top-nav');
+      if (topNav) topNav.classList.remove('hidden');
+
+      // 2. Update all Welcome/Greeting Text
+      const firstName = currentSessionUser.name.split(' ')[0];
+      const greeting = document.getElementById('home-user-greeting');
+      if (greeting) greeting.innerText = `Hi ${firstName}`;
+
+      const adminWelcome = document.getElementById('admin-welcome-text');
+      if (adminWelcome) adminWelcome.innerText = `Welcome ${currentSessionUser.name}`;
+
+      // 3. Load All Data & Dashboards
       try {
-        currentSessionUser = JSON.parse(sessionUser);
-        currentUser = currentSessionUser;
-
-        // Ensure role-specific variables are set
-        if (currentSessionUser.role === 'admin') {
-          adminCurrentEntity = currentSessionUser.entity || 'ALL';
-        } else if (currentSessionUser.role === 'reviewer') {
-          reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
-        }
-
-        console.info('[initPortal] Auto-logged in as', currentSessionUser.name);
-
-        // Show Main Navigation
-        const topNav = document.getElementById('top-nav');
-        if (topNav) topNav.classList.remove('hidden');
-
-        // Update User Greeting
-        const greeting = document.getElementById('home-user-greeting');
-        if (greeting) greeting.innerText = `Hi ${currentSessionUser.name.split(' ')[0]}`;
-
-        // Update Admin/Reviewer Welcome Text
-        if (currentSessionUser.role === 'admin') {
-          const adminWelcome = document.getElementById('admin-welcome-text');
-          if (adminWelcome) adminWelcome.innerText = `Welcome ${currentSessionUser.name}`;
-        } else if (currentSessionUser.role === 'reviewer') {
-          const revWelcome = document.getElementById('reviewer-welcome-text');
-          if (revWelcome) revWelcome.innerText = `Welcome ${currentSessionUser.name}`;
-        }
-
-        // Load Data
-        adminLoadAgents();
-
-        // Navigate directly to Home
-        navigateTo('view-home');
-
+        adminLoadAgents(); // Loads the admin dashboard data
+        filterEntitiesDisplay(); // Ensures sidebars are correct
       } catch (e) {
-        console.error("Auto-login critical error", e);
-        alert("Login Bypass Error. Please check console.");
+        console.warn("[initPortal] Data load warning:", e);
       }
+
+      // 4. Navigate directly to Home
+      navigateTo('view-home');
     }
 
-    // kept for compatibility if referenced, but just reloads the page
+    // Disable Logout (Reloads page -> Re-initializes as Admin)
     function portalLogout() {
-      currentSessionUser = null;
-      localStorage.removeItem('gojira_session_user');
       window.location.reload();
     }
 
-    // Dummy function if referenced by old forms
-    function submitLogin(event) {
-      if (event) event.preventDefault();
-      initPortal();
-    }
+    // Dummy placeholders for compatibility
+    function submitLogin(event) { if (event) event.preventDefault(); }
+    function showPortalContent() { }
 
     window.onload = () => {
-      // Restore Theme
+      // Ensure theme is loaded
       try { setTheme(localStorage.getItem('theme') || 'light'); } catch (e) { }
 
-      // Start App Immediately
+      // Immediate start
       initPortal();
     };
 
