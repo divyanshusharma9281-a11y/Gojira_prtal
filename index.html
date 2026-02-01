@@ -4517,8 +4517,11 @@ Reviewer: ${review.reviewerId}
 
           // Re-render dashboards based on user
           if (user.role === 'admin') {
+            // Setup admin context and navigate to admin dashboard
+            adminCurrentEntity = 'ALL';
             renderAdminDashboard();
-            document.getElementById('view-admin').classList.remove('hidden'); // Ensure available
+            adminLoadAgents();
+            navigateTo('view-admin');
           } else {
             renderAgentDashboard();
           }
