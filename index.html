@@ -524,7 +524,7 @@
             <input type="password" id="login-password" placeholder="Password" value="1234"
               class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest transition-all focus:bg-white/30"
               onkeypress="handleLoginKey(event)">
-            <button onclick="attemptLogin()"
+            <button type="button" onclick="attemptLogin()"
               class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg hover:shadow-blue-500/50 transition-all transform hover:scale-105 active:scale-95">
               Unlock Access
             </button>
@@ -5051,12 +5051,16 @@ Reviewer: ${review.reviewerId}
           // Hide any modals/overlays and show main app container
           try {
             const loginView = document.getElementById('view-login'); if (loginView) loginView.style.display = 'none';
-            const appContainer = document.getElementById('app-container'); if (appContainer) { appContainer.style.display = 'block'; setTimeout(() => appContainer.style.opacity = '1', 10); }
+            const appContainer = document.getElementById('app-container'); if (appContainer) appContainer.style.display = 'block', setTimeout(() => appContainer.style.opacity = '1', 10);
             const loader = document.getElementById('login-loader-overlay'); if (loader) loader.classList.remove('active');
           } catch (e) { console.warn('UI toggle during login success failed', e); }
 
-          // Optional door animation
-          if (typeof triggerDoorAnimation === 'function') triggerDoorAnimation();
+          // Optional door animation (safe)
+          try {
+            if (typeof triggerDoorAnimation === 'function') triggerDoorAnimation();
+          } catch (e) {
+            console.warn('triggerDoorAnimation threw an error but login will continue', e);
+          }
         }
 
         function handleLoginKey(e) {
@@ -5068,6 +5072,9 @@ Reviewer: ${review.reviewerId}
           const passwordInput = document.getElementById('login-password').value;
           const errorMsg = document.getElementById('login-error');
           const loader = document.getElementById('login-loader-overlay');
+
+          console.info('attemptLogin invoked for:', empidInput);
+          try { document.getElementById('global-debug-box')?.prepend(document.createElement('div')).innerText = `[${new Date().toLocaleTimeString()}] attemptLogin: ${empidInput}`; } catch(e){}
 
           // Animation Configuration
           const LOGIN_PROCESS_TIME = 1600; // ms
