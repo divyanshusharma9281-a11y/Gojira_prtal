@@ -4034,17 +4034,8 @@ Reviewer: ${review.reviewerId}
               const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
               adminCurrentEntity = selectedEntity;
 
-              currentUser = user;
-              // Persist session for admin
-              try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); } catch(e) { console.warn('Could not persist admin session', e); }
-              console.info('Admin logged in:', user.id);
-              // Ensure notifications badge reflects any pending unread
-              if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
-              // Route admin users to the Home page first and prepare the Checklist UI in background
-              navigateTo('view-home');
-              if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
-              renderChecklistEntity(adminCurrentEntity);
-              hideLogin();
+              // Centralized admin login handling
+              loginSuccess(user, { targetView: 'view-home' });
               // Ensure main app is visible after modal login
               try {
                 const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
@@ -4060,23 +4051,8 @@ Reviewer: ${review.reviewerId}
                 return;
               }
 
-              currentUser = user;
-              // Persist session for agent
-              try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); } catch(e) { console.warn('Could not persist agent session', e); }
-              console.info('Agent logged in via modal:', user.id);
-              // Ensure notifications badge reflects any pending unread
-              if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
-
-              // Update Header Title
-              const titleSpan = document.getElementById('agent-dashboard-title');
-              if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
-
-              // Update Banner Name
-              const bannerName = document.getElementById('agent-name-display');
-              if (bannerName) bannerName.innerText = user.name;
-
-              navigateTo('view-performance');
-              hideLogin();
+              // Centralized agent login handling
+              loginSuccess(user, { targetView: 'view-checklist' });
               // Ensure main app is visible after modal login
               try {
                 const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
@@ -5006,6 +4982,43 @@ Reviewer: ${review.reviewerId}
         // ===== LOGIN SYSTEM =====
         const DEFAULT_PASSWORD = '1234';
 
+        // Centralized login success handler to unify modal/main flows
+        function loginSuccess(user, options = {}) {
+          try {
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          } catch (e) {
+            console.warn('Could not persist session', e);
+          }
+
+          console.info('User logged in:', user.id, user.role);
+
+          if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
+
+          const targetView = options.targetView || (user.role === 'admin' ? 'view-home' : 'view-checklist');
+
+          if (user.role === 'admin') {
+            adminCurrentEntity = adminCurrentEntity || 'ALL';
+            if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+            renderChecklistEntity(adminCurrentEntity);
+          } else {
+            if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
+            if (typeof initChecklistUI === 'function') initChecklistUI();
+          }
+
+          navigateTo(targetView);
+
+          // Hide any modals/overlays and show main app container
+          try {
+            const loginView = document.getElementById('view-login'); if (loginView) loginView.style.display = 'none';
+            const appContainer = document.getElementById('app-container'); if (appContainer) { appContainer.style.display = 'block'; setTimeout(() => appContainer.style.opacity = '1', 10); }
+            const loader = document.getElementById('login-loader-overlay'); if (loader) loader.classList.remove('active');
+          } catch (e) { console.warn('UI toggle during login success failed', e); }
+
+          // Optional door animation
+          if (typeof triggerDoorAnimation === 'function') triggerDoorAnimation();
+        }
+
         function handleLoginKey(e) {
           if (e.key === 'Enter') attemptLogin();
         }
@@ -5050,43 +5063,18 @@ Reviewer: ${review.reviewerId}
             // Verify Creds (Allowing 1234 as per demo)
             if (user && (passwordInput === globalPass || passwordInput === DEFAULT_PASSWORD || passwordInput === '1234')) {
               // SUCCESS
-              currentUser = user;
-              localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-              errorMsg.classList.add('hidden');
-
-              // Personal Greeting
-              const greeting = document.getElementById('home-greeting');
-              if (greeting) greeting.innerText = `Hii ${user.name}`;
-
-              console.info('User authenticated:', user.id, 'role:', user.role);
-
-              // Dashboard Routing
-              if (user.role === 'admin') {
-                adminCurrentEntity = 'ALL';
-                if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
-                renderChecklistEntity(adminCurrentEntity);
-                navigateTo('view-home');
-              } else {
-                if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
-                // Route agent users directly to the QA Checklist (agent portal)
-                navigateTo('view-checklist');
-                if (typeof initChecklistUI === 'function') initChecklistUI();
-              }
-
-              // TRIGGER PORTAL REDIRECTION (Door Effect)
-              if (typeof triggerDoorAnimation === 'function') {
-                triggerDoorAnimation();
-              } else {
-                document.getElementById('view-login').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                setTimeout(() => document.getElementById('app-container').style.opacity = '1', 10);
-              }
-
-              // Cleanup Loader
-              setTimeout(() => {
+              try {
+                if (errorMsg) errorMsg.classList.add('hidden');
+                // Centralized handling
+                loginSuccess(user);
+              } catch (e) {
+                console.error('Failed to complete login success flow', e);
                 if (loader) loader.classList.remove('active');
-              }, 1000);
+                if (errorMsg) {
+                  errorMsg.innerText = 'Login succeeded but UI failed to update. Check console.';
+                  errorMsg.classList.remove('hidden');
+                }
+              }
 
             } else {
               // FAILURE
