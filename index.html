@@ -5017,6 +5017,9 @@ Reviewer: ${review.reviewerId}
                 navigateTo('view-home');
               } else {
                 if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
+                // Route agent users directly to the QA Checklist (agent portal)
+                navigateTo('view-checklist');
+                if (typeof initChecklistUI === 'function') initChecklistUI();
               }
 
               // TRIGGER PORTAL REDIRECTION (Door Effect)
