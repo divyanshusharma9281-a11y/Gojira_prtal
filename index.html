@@ -4928,10 +4928,15 @@ Reviewer: ${review.reviewerId}
 
         // Load reviews on page load
         window.addEventListener('load', function () {
-          // Restore Session
+          // Restore Session / Auto-login (login system removed)
           const storedUser = localStorage.getItem('currentUser');
           if (storedUser) {
             currentUser = JSON.parse(storedUser);
+          } else {
+            // No stored user — auto-login as default admin (login system removed)
+            currentUser = { id: 'ADMIN', name: 'Administrator', role: 'admin', entity: 'ALL' };
+            try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); } catch (e) { console.warn('Could not persist default user', e); }
+          }
 
             // Ensure notification badge is correct on restore
             if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
@@ -4989,9 +4994,10 @@ Reviewer: ${review.reviewerId}
               app.style.transform = 'scale(1)';
             }, 50);
 
-            // After fade completes, hide login from layout
+            // After fade completes, hide login from layout and remove login-related modals
             setTimeout(() => {
-              if (loginView) loginView.style.display = 'none';
+              try { if (loginView) loginView.remove(); } catch(e) { if (loginView) loginView.style.display = 'none'; }
+              try { document.getElementById('login-modal')?.remove(); document.getElementById('modal-change-password')?.remove(); } catch(e) {}
             }, 700);
 
             // Set Greeting
@@ -5066,6 +5072,14 @@ Reviewer: ${review.reviewerId}
         function handleLoginKey(e) {
           if (e.key === 'Enter') attemptLogin();
         }
+
+        // Login system removed: override interactive login functions to no-ops
+        function attemptLogin() { console.info('Login disabled: app auto-logged-in'); }
+        function submitLogin(e) { if (e && e.preventDefault) e.preventDefault(); console.info('Login disabled: app auto-logged-in'); }
+        function hideLogin() { /* no-op - login removed */ }
+        function openChangePasswordModal() { /* no-op - login removed */ }
+        function closeChangePasswordModal() { /* no-op - login removed */ }
+        function submitChangePassword() { alert('Password management is disabled.'); }
 
         function attemptLogin() {
           const empidInput = document.getElementById('login-empid').value.trim();
