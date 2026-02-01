@@ -3547,6 +3547,7 @@ Reviewer: ${review.reviewerId}
 
       // USER DATABASE
       const USER_DB = [
+        { id: 'BL/GG/25/1135', name: 'Siddhant Chauhan', role: 'admin', entity: 'ALL' },
         { id: 'BL/GG/25/703', name: 'SHARAD ADHIKARI', role: 'agent', entity: 'BharatLoan' },
         { id: 'BL/GG/25/704', name: 'DIVYANSHU SHARMA', role: 'agent', entity: 'BharatLoan' },
         { id: 'BL/GG/25/705', name: 'AYUSHMAN TIBREWAL', role: 'agent', entity: 'BharatLoan' },
@@ -3614,8 +3615,10 @@ Reviewer: ${review.reviewerId}
             adminCurrentEntity = selectedEntity;
 
             currentUser = user;
-            navigateTo('view-admin');
-            adminLoadAgents();
+            // Route admin users to the Checklist UI (new admin flow)
+            navigateTo('view-checklist');
+            if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+            renderChecklistEntity(adminCurrentEntity);
             hideLogin();
           } else {
             // For agents, check entity match
@@ -4553,11 +4556,11 @@ Reviewer: ${review.reviewerId}
 
           // Re-render dashboards based on user
           if (user.role === 'admin') {
-            // Setup admin context and navigate to admin dashboard
+            // Setup admin context and route admin to Checklist UI
             adminCurrentEntity = 'ALL';
-            renderAdminDashboard();
-            adminLoadAgents();
-            navigateTo('view-admin');
+            if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+            renderChecklistEntity(adminCurrentEntity);
+            navigateTo('view-checklist');
           } else {
             renderAgentDashboard();
           }
