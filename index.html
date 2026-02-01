@@ -1425,16 +1425,7 @@
           <div id="qa-step-entity" class="animate-fade-in content-center">
             <h2 class="text-2xl font-bold mb-6 text-center">Select Entity</h2>
 
-            <!-- Global Agent Search Dropdown -->
-            <div class="max-w-md mx-auto mb-10">
-              <label class="block text-sm font-semibold text-slate-500 mb-2 text-center">Or jump directly to an
-                agent</label>
-              <select id="qa-global-agent-selector" onchange="qaHandleGlobalAgentSelect(this)"
-                class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <option value="">Select an agent to start review...</option>
-                <!-- JS populated -->
-              </select>
-            </div>
+
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
               <button onclick="qaSelectEntity('BharatLoan')"
@@ -1478,6 +1469,14 @@
                     title="Manage Comments">
                     💬 Comments
                   </button>
+                </div>
+
+                <!-- Entity Agent Selector Dropdown -->
+                <div class="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <select id="qa-entity-agent-selector" onchange="qaHandleEntityAgentSelect(this)"
+                    class="w-full p-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Jump to Agent --</option>
+                  </select>
                 </div>
                 <div id="qa-agent-list" class="max-h-[500px] overflow-y-auto">
                   <!-- JS populated -->
@@ -5100,7 +5099,8 @@ Reviewer: ${review.reviewerId}
             document.getElementById('qa-step-entity').classList.remove('hidden');
             document.getElementById('qa-step-agent').classList.add('hidden');
             qaUpdateGlobalSubmitButton();
-            qaRenderGlobalAgentSelector();
+            // qaRenderGlobalAgentSelector(); // Removed
+
           } else {
             document.getElementById('qa-agent-container').classList.remove('hidden');
             document.getElementById('qa-admin-container').classList.add('hidden');
@@ -5113,39 +5113,24 @@ Reviewer: ${review.reviewerId}
         let qaSessionReviews = []; // Temporary holding for current session
         let qaCurrentFile = null; // Store file for voice
 
-        function qaRenderGlobalAgentSelector() {
-          const selector = document.getElementById('qa-global-agent-selector');
+        // Global functions removed or repurposed
+        function qaRenderEntityAgentSelector() {
+          const selector = document.getElementById('qa-entity-agent-selector');
           if (!selector) return;
 
-          const entities = ['BharatLoan', 'Rupee112', 'Loan112', 'RupeeOnTime'];
-          let html = '<option value="">Select an agent to start review...</option>';
+          const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === qaCurrentEntity);
+          let html = '<option value="">-- Jump to Agent --</option>';
 
-          entities.forEach(ent => {
-            const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === ent);
-            if (agents.length > 0) {
-              html += `<optgroup label="${ent}">`;
-              agents.forEach(a => {
-                html += `<option value="${a.id}">${a.name} (${a.id})</option>`;
-              });
-              html += `</optgroup>`;
-            }
+          agents.forEach(a => {
+            html += `<option value="${a.id}">${a.name}</option>`;
           });
           selector.innerHTML = html;
         }
 
-        function qaHandleGlobalAgentSelect(el) {
+        function qaHandleEntityAgentSelect(el) {
           const id = el.value;
           if (!id) return;
-
-          const agent = USER_DB.find(u => u.id === id);
-          if (agent) {
-            qaSelectEntity(agent.entity);
-            setTimeout(() => {
-              qaSelectAgent(agent.id);
-              // Scroll to workspace
-              document.getElementById('qa-workspace-active').scrollIntoView({ behavior: 'smooth' });
-            }, 50);
-          }
+          qaSelectAgent(id);
         }
 
         function qaSelectEntity(entity) {
@@ -5154,6 +5139,7 @@ Reviewer: ${review.reviewerId}
           document.getElementById('qa-step-agent').classList.remove('hidden');
           document.getElementById('qa-entity-title').innerText = `${entity} Agents`;
           qaRenderAgentList();
+          qaRenderEntityAgentSelector(); // Populate dropdown
         }
 
         function qaBackToEntity() {
