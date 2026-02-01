@@ -707,6 +707,12 @@
               title="Logout">
               ⏻
             </button>
+
+            <!-- Quick user switcher (no password) -->
+            <select id="quick-user-switcher" onchange="quickSwitchUser(this.value)" title="Quick switch user"
+              class="ml-3 bg-slate-100 dark:bg-slate-700 rounded px-3 py-2 text-sm">
+              <option value="">Switch User</option>
+            </select>
             <button onclick="toggleSearch()"
               class="text-slate-500 hover:text-blue-600 text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">🔍</button>
             <button onclick="toggleTheme()"
@@ -5024,6 +5030,9 @@ Reviewer: ${review.reviewerId}
           if (typeof initChecklistUI === 'function') {
             try { initChecklistUI(); } catch (e) { console.error('initChecklistUI failed on load', e); }
           }
+
+          // Populate quick user switcher
+          try { if (typeof populateUserSwitcher === 'function') populateUserSwitcher(); } catch(e) { console.warn('populateUserSwitcher failed on load', e); }
         });
         // ===== LOGIN SYSTEM =====
         const DEFAULT_PASSWORD = '1234';
@@ -5066,6 +5075,71 @@ Reviewer: ${review.reviewerId}
             if (typeof triggerDoorAnimation === 'function') triggerDoorAnimation();
           } catch (e) {
             console.warn('triggerDoorAnimation threw an error but login will continue', e);
+          }
+
+          // Update quick switcher state after a successful login
+          try { if (typeof populateUserSwitcher === 'function') populateUserSwitcher(); } catch (e) { console.warn('populateUserSwitcher failed', e); }
+        }
+
+        // Quick user switcher implementation (no password)
+        function populateUserSwitcher() {
+          const sel = document.getElementById('quick-user-switcher');
+          if (!sel) return;
+          // Clear existing
+          sel.innerHTML = '';
+
+          // Default placeholder
+          const placeholder = document.createElement('option');
+          placeholder.value = '';
+          placeholder.innerText = 'Switch User';
+          sel.appendChild(placeholder);
+
+          // Admin option
+          const adminOpt = document.createElement('option');
+          adminOpt.value = 'ADMIN';
+          adminOpt.innerText = 'Administrator (ADMIN)';
+          sel.appendChild(adminOpt);
+
+          // Add all users from USER_DB
+          try {
+            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
+            db.forEach(u => {
+              const o = document.createElement('option');
+              o.value = u.id;
+              o.innerText = `${u.name} • ${u.id} [${u.role}]`;
+              sel.appendChild(o);
+            });
+          } catch (e) { console.warn('Could not populate switcher from USER_DB', e); }
+
+          // Set current selection
+          try {
+            sel.value = (currentUser && currentUser.id) ? currentUser.id : 'ADMIN';
+          } catch (e) { /* ignore */ }
+        }
+
+        function quickSwitchUser(id) {
+          if (!id) return;
+          let user = null;
+          if (id === 'ADMIN') {
+            user = { id: 'ADMIN', name: 'Administrator', role: 'admin', entity: 'ALL' };
+          } else {
+            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
+            user = db.find(u => u.id === id);
+          }
+
+          if (!user) {
+            alert('Selected user not found');
+            return;
+          }
+
+          // Use centralized loginSuccess to perform the switch
+          try {
+            loginSuccess(user, { targetView: user.role === 'admin' ? 'view-home' : 'view-checklist' });
+            // Update greeting if present
+            try { document.getElementById('home-greeting').innerText = `Hii ${user.name}`; } catch (e) {}
+          } catch (e) {
+            console.error('quickSwitchUser failed', e);
+            alert('Could not switch user. See console for details.');
           }
         }
 
