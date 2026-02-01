@@ -4036,6 +4036,7 @@ Reviewer: ${review.reviewerId}
 
               // Centralized admin login handling
               loginSuccess(user, { targetView: 'view-home' });
+              hideLogin();
               // Ensure main app is visible after modal login
               try {
                 const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
@@ -4053,6 +4054,7 @@ Reviewer: ${review.reviewerId}
 
               // Centralized agent login handling
               loginSuccess(user, { targetView: 'view-checklist' });
+              hideLogin();
               // Ensure main app is visible after modal login
               try {
                 const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
@@ -4072,6 +4074,44 @@ Reviewer: ${review.reviewerId}
             document.getElementById('theme-text').innerText = 'Light';
           }
         }
+
+        // Global error handlers — surface errors on-page for quick debugging
+        (function installGlobalErrorHandlers() {
+          function postError(msg) {
+            console.error(msg);
+            try {
+              let debugBox = document.getElementById('global-debug-box');
+              if (!debugBox) {
+                debugBox = document.createElement('div');
+                debugBox.id = 'global-debug-box';
+                debugBox.style.position = 'fixed';
+                debugBox.style.right = '12px';
+                debugBox.style.bottom = '12px';
+                debugBox.style.zIndex = '99999';
+                debugBox.style.maxWidth = '420px';
+                debugBox.style.padding = '10px 12px';
+                debugBox.style.background = 'rgba(0,0,0,0.75)';
+                debugBox.style.color = 'white';
+                debugBox.style.borderRadius = '8px';
+                debugBox.style.fontSize = '12px';
+                debugBox.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';
+                document.body.appendChild(debugBox);
+              }
+              const p = document.createElement('div');
+              p.style.marginBottom = '6px';
+              p.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+              debugBox.prepend(p);
+            } catch (e) { console.warn('Could not render debug box', e); }
+          }
+
+          window.addEventListener('error', function (event) {
+            postError(`Error: ${event.message} @ ${event.filename}:${event.lineno}`);
+          });
+
+          window.addEventListener('unhandledrejection', function (event) {
+            postError(`Unhandled Promise Rejection: ${event.reason}`);
+          });
+        })();
 
         // ===== NEW ADMIN DASHBOARD FUNCTIONS =====
         let adminCurrentEntity = '';
