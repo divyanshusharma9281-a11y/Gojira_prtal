@@ -4107,7 +4107,14 @@ Reviewer: ${review.reviewerId}
           { id: 'R112/GG/25/725', name: 'Kusum sharma', role: 'agent', entity: 'Rupee112' },
           { id: 'RDA/GG/25/038', name: 'Nippi', role: 'agent', entity: 'Loan112' },
           { id: 'R112/GG/23/168', name: 'Ruksar', role: 'agent', entity: 'Rupee112' },
-          { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' }
+          { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
+
+          // RUPEEONTIME AGENTS (Mock)
+          { id: 'ROT/GG/25/101', name: 'Rahul Verma', role: 'agent', entity: 'RupeeOnTime' },
+          { id: 'ROT/GG/25/102', name: 'Simran Kaur', role: 'agent', entity: 'RupeeOnTime' },
+          { id: 'ROT/GG/25/103', name: 'Vikram Singh', role: 'agent', entity: 'RupeeOnTime' },
+          { id: 'ROT/GG/25/104', name: 'Pooja Mehta', role: 'agent', entity: 'RupeeOnTime' },
+          { id: 'ROT/GG/25/105', name: 'Arjun Das', role: 'agent', entity: 'RupeeOnTime' }
         ];
 
         function hideLogin() {
@@ -5274,11 +5281,15 @@ Reviewer: ${review.reviewerId}
           if (!selector) return;
 
           const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === qaCurrentEntity);
-          let html = '<option value="">-- Jump to Agent --</option>';
+          let html = '<option value="">-- Select Agent --</option>';
 
-          agents.forEach(a => {
-            html += `<option value="${a.id}">${a.name}</option>`;
-          });
+          if (agents.length === 0) {
+            html += '<option value="" disabled>No agents found for this entity</option>';
+          } else {
+            agents.forEach(a => {
+              html += `<option value="${a.id}">${a.name}</option>`;
+            });
+          }
           selector.innerHTML = html;
         }
 
