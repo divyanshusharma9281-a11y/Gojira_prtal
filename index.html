@@ -3615,8 +3615,8 @@ Reviewer: ${review.reviewerId}
             adminCurrentEntity = selectedEntity;
 
             currentUser = user;
-            // Route admin users to the Checklist UI (new admin flow)
-            navigateTo('view-checklist');
+            // Route admin users to the Home page first and prepare the Checklist UI in background
+            navigateTo('view-home');
             if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
             renderChecklistEntity(adminCurrentEntity);
             hideLogin();
@@ -4505,7 +4505,11 @@ Reviewer: ${review.reviewerId}
           if (greeting) greeting.innerText = `Hii ${currentUser.name}`;
 
           if (currentUser.role === 'admin') {
-            renderAdminDashboard();
+            // Admin session: prepare checklist UI but show home as default
+            adminCurrentEntity = adminCurrentEntity || 'ALL';
+            if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+            renderChecklistEntity(adminCurrentEntity);
+            navigateTo('view-home');
           } else {
             renderAgentDashboard();
           }
@@ -4556,11 +4560,11 @@ Reviewer: ${review.reviewerId}
 
           // Re-render dashboards based on user
           if (user.role === 'admin') {
-            // Setup admin context and route admin to Checklist UI
+            // Setup admin context and route admin to Home first
             adminCurrentEntity = 'ALL';
             if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
             renderChecklistEntity(adminCurrentEntity);
-            navigateTo('view-checklist');
+            navigateTo('view-home');
           } else {
             renderAgentDashboard();
           }
