@@ -1555,14 +1555,14 @@
                         </label>
                       </div>
 
-                      <!-- Dynamic Fields -->
-                      <div class="mb-4">
-                        <label class="block text-sm font-medium mb-1" id="qa-id-label">Interaction ID</label>
+                      <!-- Dynamic Fields: Interaction ID (shown for Non-Voice only, hidden for Voice) -->
+                      <div id="qa-field-interaction-id" class="mb-4">
+                        <label class="block text-sm font-medium mb-1" id="qa-id-label">Chat / Email ID</label>
                         <input type="text" id="qa-interaction-id" placeholder="Paste ID or Link here..."
                           class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
                       </div>
 
-                      <!-- FILE UPLOAD CONTAINER (Hidden by default) -->
+                      <!-- FILE UPLOAD CONTAINER (shown for Voice only) -->
                       <div id="qa-field-file" class="hidden mb-4">
                         <label class="block text-sm font-medium mb-1">Upload Recording (Max 50MB)</label>
                         <div class="flex items-center gap-4">
@@ -5250,15 +5250,13 @@ Reviewer: ${review.reviewerId}
         function qaToggleInteractionFields() {
           const type = document.querySelector('input[name="qa-interaction-type"]:checked').value;
           const fileContainer = document.getElementById('qa-field-file');
-          const label = document.getElementById('qa-id-label');
+          const idContainer = document.getElementById('qa-field-interaction-id');
 
           if (type === 'Voice') {
-            label.innerText = "Call ID";
-            document.getElementById('qa-interaction-id').placeholder = "Enter Call ID...";
+            if (idContainer) idContainer.classList.add('hidden');
             if (fileContainer) fileContainer.classList.remove('hidden');
           } else {
-            label.innerText = "Chat / Email ID";
-            document.getElementById('qa-interaction-id').placeholder = "Paste ID or Link here...";
+            if (idContainer) idContainer.classList.remove('hidden');
             if (fileContainer) fileContainer.classList.add('hidden');
             qaCurrentFile = null;
           }
@@ -5286,10 +5284,8 @@ Reviewer: ${review.reviewerId}
           if (!typeEl) return alert("Select Interaction Type");
           const type = typeEl.value;
 
-          if (!id) return alert("Enter Interaction ID");
-          // Only require file if Voice is selected AND user actively wants to enforce it. 
-          // User asked "if admin clicked on voice then option of choose file".
-          if (type === 'Voice' && !qaCurrentFile) return alert("Please upload a file for Voice review");
+          if (type !== 'Voice' && !id) return alert("Enter Chat/Email ID");
+          if (type === 'Voice' && !qaCurrentFile) return alert("Please upload a recording for Voice review");
 
           if (!obs) return alert("Enter Observation");
           if (!scoreEl) return alert("Select Score (0 or 100)");
@@ -5316,7 +5312,7 @@ Reviewer: ${review.reviewerId}
           const review = {
             id: Date.now(),
             type: type,
-            interactionId: id,
+            interactionId: type === 'Voice' ? (id || 'Voice call') : id,
             fileMethods: { name: fileName, data: fileData },
             observation: obs,
             score: parseInt(scoreEl.value),
