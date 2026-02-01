@@ -1454,8 +1454,7 @@
             <button onclick="qaBackToEntity()" class="mb-6 text-sm text-slate-500 hover:text-blue-600">← Back to
               Entities</button>
 
-            <!-- Step 2: Agent Workstation -->
-            <div id="qa-step-agent" class="hidden animate-fade-in">
+            <div class="qa-step-agent-inner">
               <!-- Top Toolbar -->
               <div
                 class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-slate-200 dark:border-slate-700 pb-4">
@@ -1481,8 +1480,7 @@
                 <div
                   class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
                   <h3 class="text-xl font-bold mb-4" id="qa-entity-title">Select Agent</h3>
-                  <select id="qa-entity-agent-selector" onchange="qaHandleEntityAgentSelect(this)"
-                    class="w-full p-4 text-lg rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                  <select id="qa-entity-agent-selector" class="qa-entity-agent-selector w-full p-4 text-lg rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" onchange="qaHandleEntityAgentSelect(this)">
                     <option value="">-- Click to Select Agent --</option>
                   </select>
                 </div>
@@ -1662,8 +1660,7 @@
 
               <!-- Entity Agent Selector Dropdown -->
               <div class="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                <select id="qa-entity-agent-selector" onchange="qaHandleEntityAgentSelect(this)"
-                  class="w-full p-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                <select id="qa-entity-agent-selector-sidebar" class="qa-entity-agent-selector w-full p-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:ring-2 focus:ring-blue-500" onchange="qaHandleEntityAgentSelect(this)">
                   <option value="">-- Jump to Agent --</option>
                 </select>
               </div>
@@ -5270,8 +5267,8 @@ Reviewer: ${review.reviewerId}
 
         // Global functions removed or repurposed
         function qaRenderEntityAgentSelector() {
-          const selector = document.getElementById('qa-entity-agent-selector');
-          if (!selector) return;
+          // Ensure an entity is selected
+          if (!qaCurrentEntity) return;
 
           const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === qaCurrentEntity);
           let html = '<option value="">-- Select Agent --</option>';
@@ -5283,7 +5280,14 @@ Reviewer: ${review.reviewerId}
               html += `<option value="${a.id}">${a.name} (${a.id})</option>`;
             });
           }
-          selector.innerHTML = html;
+
+          // Update central and sidebar selectors
+          document.querySelectorAll('#qa-entity-agent-selector, .qa-entity-agent-selector').forEach(sel => {
+            sel.innerHTML = html;
+          });
+
+          // Populate the visible agent list as well
+          if (typeof qaRenderAgentList === 'function') qaRenderAgentList();
         }
 
         function qaHandleEntityAgentSelect(el) {
@@ -5314,6 +5318,11 @@ Reviewer: ${review.reviewerId}
 
           // Filter agents
           const agents = USER_DB.filter(u => u.entity === qaCurrentEntity && u.role === 'agent');
+
+          if (!agents || agents.length === 0) {
+            list.innerHTML = `<div class="p-4 text-slate-500">No agents found for this entity.</div>`;
+            return;
+          }
 
           list.innerHTML = agents.map(agent => {
             const isFinalized = data.finalizedAgents.includes(agent.id);
