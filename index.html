@@ -337,31 +337,25 @@
       background-position: 100% 0%;
     }
 
-    /* Inward slow motion swing keyframes */
-    @keyframes door-left-open-inward {
-      0% { transform: rotateY(0deg); }
-      40% { transform: rotateY(60deg) translateX(6%); }
-      70% { transform: rotateY(100deg) translateX(12%); }
-      90% { transform: rotateY(82deg) translateX(8%); }
-      100% { transform: rotateY(88deg) translateX(9%); }
+    /* Simpler inward swing & zoom-out effect */
+    @keyframes door-left-open-simple {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(90deg) translateX(8%); }
     }
 
-    @keyframes door-right-open-inward {
-      0% { transform: rotateY(0deg); }
-      40% { transform: rotateY(-60deg) translateX(-6%); }
-      70% { transform: rotateY(-100deg) translateX(-12%); }
-      90% { transform: rotateY(-82deg) translateX(-8%); }
-      100% { transform: rotateY(-88deg) translateX(-9%); }
+    @keyframes door-right-open-simple {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(-90deg) translateX(-8%); }
     }
 
     .doors-open .door-left {
-      animation: door-left-open-inward 1.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-      box-shadow: inset 0 36px 120px rgba(0,0,0,0.85);
+      animation: door-left-open-simple 1s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      box-shadow: inset 0 20px 60px rgba(0,0,0,0.7);
     }
 
     .doors-open .door-right {
-      animation: door-right-open-inward 1.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-      box-shadow: inset 0 36px 120px rgba(0,0,0,0.85);
+      animation: door-right-open-simple 1s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      box-shadow: inset 0 20px 60px rgba(0,0,0,0.7);
     }
 
     .login-content {
@@ -369,21 +363,21 @@
       z-index: 30;
       text-align: center;
       color: white;
-      transition: transform 1s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 1s ease-out;
+      transition: transform 0.9s ease, opacity 0.8s ease;
       transform: scale(1);
       opacity: 1;
     }
 
     .doors-open .login-content {
-      transform: scale(0.94);
+      transform: scale(0.98);
       opacity: 0;
-      transition-delay: 1.2s;
+      transition-delay: 0.9s;
     }
 
-    /* App zoom in effect */
+    /* App simple zoom-out effect */
     #app-container {
-      transform: scale(1);
-      transition: transform 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.6s ease;
+      transform: scale(1.05);
+      transition: transform 0.9s ease, opacity 0.6s ease;
       transform-origin: center center;
     }
 
@@ -4649,43 +4643,32 @@ Reviewer: ${review.reviewerId}
         const loginView = document.getElementById('view-login');
         const app = document.getElementById('app-container');
 
-        // Prepare App (keep it hidden visually, we'll zoom it in later)
+        // Show app and prepare for zoom-out (start slightly larger)
         app.style.display = 'block';
-        app.style.opacity = '0';
-        app.style.transform = 'scale(0.92)';
-        app.style.transition = 'transform 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.6s ease';
+        app.style.opacity = '1';
+        app.style.transform = 'scale(1.05)';
+        app.style.transition = 'transform 0.9s ease, opacity 0.6s ease';
 
-        // Make the login container transparent so the doors (which have the background) reveal the app
+        // Make login background transparent so doors reveal the app
         if (loginView) loginView.style.background = 'transparent';
 
-        // Start doors opening (inward, slow)
+        // Start simple door opening
         document.body.classList.add('doors-open');
 
-        // Subtle fade of login content while doors move
-        if (loginContent) {
-          loginContent.style.opacity = '0';
-          loginContent.style.transform = 'scale(0.98)';
-        }
-
-        // Fade bubble canvas early so it doesn't overlap
+        // Fade login content and bubbles for clarity
+        if (loginContent) loginContent.style.opacity = '0';
         const bubbleCanvas = document.getElementById('bubble-canvas');
         if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
 
-        // Wait for the door swing (1.8s CSS) to mostly finish, then animate app zoom-in
+        // After door animation (1s), perform a simple zoom-out to normal scale
         setTimeout(() => {
-          // Fade app in and do a slight overshoot zoom then settle
-          app.style.opacity = '1';
-          app.style.transform = 'scale(1.03)';
+          app.style.transform = 'scale(1)';
 
+          // After a brief pause, remove login from layout
           setTimeout(() => {
-            app.style.transform = 'scale(1)';
-
-            // After the zoom settles, remove login from layout
-            setTimeout(() => {
-              if (loginView) loginView.style.display = 'none';
-            }, 500);
-          }, 700);
-        }, 1600); // start zoom toward the end of the door animation
+            if (loginView) loginView.style.display = 'none';
+          }, 300);
+        }, 1000); // matches simplified door animation duration
       }
 
       function toggleNotifications() {
