@@ -1916,6 +1916,71 @@
       </div>
     </div>
 
+    <!-- CHECKLIST REVIEW MODAL (Re-uses admin review IDs) -->
+    <div id="checklist-admin-review-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[1200] flex items-center justify-center p-4">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-lg max-w-3xl w-full">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-2xl font-bold">Quality Review</h3>
+          <button onclick="adminCancelReview(); document.getElementById('checklist-admin-review-modal').classList.add('hidden')" class="text-slate-500 hover:text-slate-700 text-2xl">×</button>
+        </div>
+
+        <!-- Interaction Type -->
+        <div id="admin-interaction-type-section" class="mb-4">
+          <label class="block text-sm font-semibold mb-3">Select Interaction Type</label>
+          <div class="flex gap-4">
+            <label class="flex-1 cursor-pointer">
+              <input type="radio" name="interaction-type" value="voice" class="peer hidden" onchange="adminHandleInteractionTypeStart()">
+              <div class="p-4 rounded-2xl border bg-white dark:bg-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-50">🎤 Voice Process</div>
+            </label>
+            <label class="flex-1 cursor-pointer">
+              <input type="radio" name="interaction-type" value="non-voice" class="peer hidden" onchange="adminHandleInteractionTypeStart()">
+              <div class="p-4 rounded-2xl border bg-white dark:bg-slate-700 peer-checked:border-purple-500 peer-checked:bg-purple-50">💬 Non-Voice</div>
+            </label>
+          </div>
+        </div>
+
+        <button id="admin-start-review-btn" onclick="adminStartQualityReview()" class="hidden w-full bg-slate-800 text-white font-bold py-3 rounded-xl mb-4">Start Quality Review</button>
+
+        <!-- Review Form -->
+        <div id="admin-quality-form-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-4 rounded-2xl border mb-4">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-lg font-bold">Quality Review - <span id="admin-review-agent-display"></span></h4>
+            <button onclick="adminCancelReview()" class="text-sm text-slate-500">Cancel</button>
+          </div>
+
+          <div id="admin-review-items-container" class="space-y-4 mb-4"></div>
+
+          <div class="flex gap-3">
+            <button onclick="adminAddReviewItem()" id="admin-add-review-btn" class="bg-blue-600 text-white py-2 px-4 rounded">➕ Add Review</button>
+            <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" class="bg-green-600 text-white py-2 px-4 rounded opacity-50 cursor-not-allowed" disabled>✅ Final Submit</button>
+          </div>
+        </div>
+
+        <!-- Submitted Reviews -->
+        <div class="mb-4">
+          <h4 class="font-bold mb-2">Submitted Reviews</h4>
+          <div class="overflow-x-auto rounded-lg border">
+            <table class="w-full text-left">
+              <thead class="text-xs text-slate-500 uppercase"><tr><th class="p-3">Date</th><th class="p-3">Agent</th><th class="p-3">File</th><th class="p-3">Score</th><th class="p-3">Observation</th><th class="p-3"></th></tr></thead>
+              <tbody id="admin-reviews-list"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Agent Feedback -->
+        <div>
+          <h4 class="font-bold mb-2">Agent Feedback</h4>
+          <div class="overflow-x-auto rounded-lg border">
+            <table class="w-full text-left">
+              <thead class="text-xs text-slate-500 uppercase"><tr><th class="p-3">Date</th><th class="p-3">Agent</th><th class="p-3">Feedback</th><th class="p-3"></th></tr></thead>
+              <tbody id="admin-feedback-list"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <script>
       // MOCK BACKEND
       class MockBackend {
@@ -3596,8 +3661,9 @@ Reviewer: ${review.reviewerId}
       let adminReviewItems = [];
 
       function adminLoadAgents() {
-        // Display current entity
-        document.getElementById('admin-entity-display').textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
+        // Display current entity (guarded)
+        const entityDisplay = document.getElementById('admin-entity-display');
+        if (entityDisplay) entityDisplay.textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
 
         let agents = USER_DB.filter(u => u.role === 'agent');
         if (adminCurrentEntity !== 'ALL') {
@@ -3612,6 +3678,7 @@ Reviewer: ${review.reviewerId}
         });
 
         const selector = document.getElementById('admin-agent-selector');
+        if (!selector) return; // No selector in DOM, safe exit
         selector.innerHTML = '<option value="">-- Click to Select Agent --</option>';
 
         Object.keys(grouped).forEach(entity => {
@@ -3652,13 +3719,21 @@ Reviewer: ${review.reviewerId}
         // Populate selector and list
         const selector = document.getElementById('checklist-agent-selector');
         const list = document.getElementById('checklist-agent-list');
+        adminCurrentEntity = entity; // Track currently viewed entity for reviews
+
         const agents = USER_DB.filter(u => u.role === 'agent' && (entity === 'ALL' || u.entity === entity));
 
         selector.innerHTML = '<option value="">-- Choose Agent --</option>';
         list.innerHTML = agents.map(a => `
-          <div class="p-4 border rounded-lg bg-slate-50 dark:bg-slate-700">
-            <div class="font-bold">${a.name}</div>
-            <div class="text-xs text-slate-500 mt-1">${a.id}</div>
+          <div class="p-4 border rounded-lg bg-slate-50 dark:bg-slate-700 flex flex-col justify-between">
+            <div>
+              <div class="font-bold">${a.name}</div>
+              <div class="text-xs text-slate-500 mt-1">${a.id}</div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button onclick="handleChecklistAgentSelectById('${a.id}')" class="px-3 py-2 rounded bg-white/80 hover:bg-white text-sm">View</button>
+              <button onclick="startReviewForAgent('${a.id}')" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm">Start Review</button>
+            </div>
           </div>
         `).join('');
 
@@ -3673,6 +3748,10 @@ Reviewer: ${review.reviewerId}
       function handleChecklistAgentSelect(sel) {
         const id = sel.value;
         if (!id) return;
+        handleChecklistAgentSelectById(id);
+      }
+
+      function handleChecklistAgentSelectById(id) {
         const agent = USER_DB.find(u => u.id === id);
         if (agent) {
           // show a small summary or focus; for now, scroll to the agent card
@@ -3684,6 +3763,37 @@ Reviewer: ${review.reviewerId}
             setTimeout(() => card.classList.remove('ring-2', 'ring-blue-500'), 1200);
           }
         }
+      }
+
+      // Start review flow when clicking Start Review on agent card
+      function startReviewForAgent(id) {
+        const agent = USER_DB.find(u => u.id === id);
+        if (!agent) return alert('Agent not found');
+
+        // Set context
+        adminCurrentEntity = agent.entity || 'ALL';
+        adminCurrentAgent = agent.id;
+        adminCurrentAgentName = agent.name;
+
+        // Reset/remove any previous UI state
+        document.querySelectorAll('input[name="interaction-type"]').forEach(r => r.checked = false);
+        const typeSection = document.getElementById('admin-interaction-type-section');
+        if (typeSection) typeSection.classList.remove('hidden');
+        const startBtn = document.getElementById('admin-start-review-btn');
+        if (startBtn) { startBtn.classList.add('hidden'); startBtn.disabled = true; }
+        const formSection = document.getElementById('admin-quality-form-section');
+        if (formSection) formSection.classList.add('hidden');
+
+        // Populate some UI text and lists
+        const agentDisplay = document.getElementById('admin-review-agent-display');
+        if (agentDisplay) agentDisplay.textContent = `${agent.name} (${agent.id})`;
+
+        adminLoadReviewsList();
+        adminLoadFeedbackList();
+
+        // Show modal
+        const modal = document.getElementById('checklist-admin-review-modal');
+        if (modal) modal.classList.remove('hidden');
       }
 
       let adminCurrentInteractionType = 'voice';
@@ -3764,15 +3874,19 @@ Reviewer: ${review.reviewerId}
       function adminCancelReview() {
         document.getElementById('admin-quality-form-section').classList.add('hidden');
         adminReviewItems = [];
-        document.getElementById('admin-review-items-container').innerHTML = '';
+        const itemsContainer = document.getElementById('admin-review-items-container');
+        if (itemsContainer) itemsContainer.innerHTML = '';
 
         // Reset Selection UI
-        document.getElementById('admin-start-review-btn').classList.add('hidden');
+        const startBtn = document.getElementById('admin-start-review-btn');
+        if (startBtn) startBtn.classList.add('hidden');
         document.querySelectorAll('input[name="interaction-type"]').forEach(r => r.checked = false);
 
         adminCurrentAgent = '';
-        document.getElementById('admin-agent-selector').value = "";
-        document.getElementById('admin-interaction-type-section').classList.add('hidden');
+        const agentSel = document.getElementById('admin-agent-selector');
+        if (agentSel) agentSel.value = "";
+        const typeSection = document.getElementById('admin-interaction-type-section');
+        if (typeSection) typeSection.classList.add('hidden');
       }
 
       function adminAddReviewItem() {
@@ -4396,6 +4510,8 @@ Reviewer: ${review.reviewerId}
 
         adminLoadReviewsList();
         adminLoadFeedbackList();
+        // Initialize checklist admin UI (entity tabs + agent selector)
+        if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
       });
       // ===== LOGIN SYSTEM =====
       const DEFAULT_PASSWORD = '1234';
