@@ -1451,9 +1451,6 @@
 
           <!-- Step 2: Agent Workstation -->
           <div id="qa-step-agent" class="hidden animate-fade-in">
-            <button onclick="qaBackToEntity()" class="mb-6 text-sm text-slate-500 hover:text-blue-600">← Back to
-              Entities</button>
-
             <div class="qa-step-agent-inner">
               <!-- Top Toolbar -->
               <div
@@ -1638,161 +1635,6 @@
                 </div>
               </div>
             </div>
-            <!-- 
-          OLD CONTENT DEACTIVATED
-
-
-            <!-- Sidebar: Agent List -->
-            <div
-              class="col-span-1 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden h-fit">
-              <div
-                class="p-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <div>
-                  <h3 class="font-bold text-lg" id="qa-entity-title">Entity Agents</h3>
-                  <p class="text-xs text-slate-500">Select an agent to review</p>
-                </div>
-                <button onclick="qaOpenCommentsManager()"
-                  class="text-xs bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 px-2 py-1 rounded transition"
-                  title="Manage Comments">
-                  💬 Comments
-                </button>
-              </div>
-
-              <!-- Entity Agent Selector Dropdown -->
-              <div class="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                <select id="qa-entity-agent-selector-sidebar" class="qa-entity-agent-selector w-full p-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:ring-2 focus:ring-blue-500" onchange="qaHandleEntityAgentSelect(this)">
-                  <option value="">-- Jump to Agent --</option>
-                </select>
-              </div>
-              <div id="qa-agent-list" class="max-h-[500px] overflow-y-auto">
-                <!-- JS populated -->
-              </div>
-
-
-              <!-- Start Button -->
-              <div id="qa-start-screen"
-                class="text-center py-10 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <button onclick="qaStartReviewSession()"
-                  class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition">
-                  Start Quality Review
-                </button>
-              </div>
-
-              <!-- Review Form Area -->
-              <!-- Review Form Area (Inside qa-workspace-active) -->
-              <div id="qa-review-form-container" class="hidden mt-6">
-
-                <!-- Pending Reviews List -->
-                <div id="qa-pending-list" class="mb-6 space-y-3">
-                  <!-- Populated by JS -->
-                </div>
-
-                <!-- Input Form -->
-                <div id="qa-input-form"
-                  class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 relative">
-                  <h3 class="font-bold text-lg mb-4">New Review Entry</h3>
-
-                  <!-- Interaction Type -->
-                  <div class="grid grid-cols-2 gap-4 mb-4">
-                    <label class="cursor-pointer">
-                      <input type="radio" name="qa-interaction-type" value="Voice" class="peer sr-only"
-                        onchange="qaToggleInteractionFields()">
-                      <div
-                        class="p-3 text-center rounded-xl border-2 border-slate-200 dark:border-slate-600 peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 peer-checked:text-blue-600 transition">
-                        🎤 Voice
-                      </div>
-                    </label>
-                    <label class="cursor-pointer">
-                      <input type="radio" name="qa-interaction-type" value="Non-Voice" class="peer sr-only"
-                        onchange="qaToggleInteractionFields()">
-                      <div
-                        class="p-3 text-center rounded-xl border-2 border-slate-200 dark:border-slate-600 peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 peer-checked:text-blue-600 transition">
-                        💬 Non-Voice (Chat/Email)
-                      </div>
-                    </label>
-                  </div>
-
-                  <!-- Dynamic Fields -->
-                  <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1" id="qa-id-label">Interaction ID</label>
-                    <input type="text" id="qa-interaction-id" placeholder="Paste ID or Link here..."
-                      class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
-                  </div>
-
-                  <!-- FILE UPLOAD CONTAINER (Hidden by default) -->
-                  <div id="qa-field-file" class="hidden mb-4">
-                    <label class="block text-sm font-medium mb-1">Upload Recording (Max 50MB)</label>
-                    <div class="flex items-center gap-4">
-                      <label
-                        class="cursor-pointer bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-medium border border-slate-300 dark:border-slate-600">
-                        <span>Choose File</span>
-                        <input type="file" name="qa-voice-file" class="hidden" accept="audio/*,video/*,.mp3,.wav,.m4a"
-                          onchange="qaHandleFileUpload(this)">
-                      </label>
-                      <span id="qa-voice-file-name"
-                        class="text-xs text-slate-500 font-mono text-ellipsis overflow-hidden whitespace-nowrap max-w-[200px]"></span>
-                    </div>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">Observation</label>
-                    <textarea id="qa-observation" rows="3" placeholder="Enter specific feedback..."
-                      class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                  </div>
-
-                  <!-- Simple Scoring -->
-                  <div class="mb-6">
-                    <label class="block text-sm font-medium mb-2">Score Assessment</label>
-                    <div class="flex gap-4">
-                      <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="qa-score" value="0" class="peer sr-only">
-                        <div
-                          class="p-4 rounded-xl border-2 border-red-200 bg-red-50 text-red-600 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 transition text-center font-bold">
-                          0 (Fatal)
-                        </div>
-                      </label>
-                      <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="qa-score" value="100" class="peer sr-only">
-                        <div
-                          class="p-4 rounded-xl border-2 border-emerald-200 bg-emerald-50 text-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition text-center font-bold">
-                          100 (Good)
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div class="flex justify-end">
-                    <button onclick="qaSubmitSingleReview()"
-                      class="px-6 py-2 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-lg hover:opacity-90 transition">
-                      Add Review
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Final Submission Area -->
-                <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-700 pt-6">
-                  <div class="text-sm text-slate-500">
-                    Reviews added: <span id="qa-review-count"
-                      class="font-bold text-slate-900 dark:text-white">0</span>/3 (Min required)
-                  </div>
-                  <div class="flex gap-3">
-                    <button onclick="qaAddMoreReviews()" id="qa-btn-add-more"
-                      class="hidden px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium transition">
-                      + Add More
-                    </button>
-                    <button onclick="qaFinalizeAgent()" id="qa-btn-finalize-agent" disabled
-                      class="px-8 py-3 bg-slate-200 text-slate-400 font-bold rounded-xl cursor-not-allowed transition flex items-center gap-2">
-                      Finalize Agent ✅
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-
-              -->
-
-            </div>
-
           </div>
 
           <!-- AGENT VIEW CONTAINER -->
@@ -5314,6 +5156,7 @@ Reviewer: ${review.reviewerId}
 
         function qaRenderAgentList() {
           const list = document.getElementById('qa-agent-list');
+          if (!list) return; // Sidebar agent list was removed
           const data = getQAData();
 
           // Filter agents
