@@ -4469,6 +4469,7 @@ Reviewer: ${review.reviewerId}
               if (item) {
                 reviews.push({
                   date: now.toLocaleDateString(),
+                  timestamp: now.toISOString(),
                   agentId: adminCurrentAgent,
                   agentName: adminCurrentAgentName,
                   entity: adminCurrentEntity,
@@ -4894,6 +4895,17 @@ Reviewer: ${review.reviewerId}
             // Ensure notification badge is correct on restore
             if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
 
+            // Ensure QA store has weekStart for filtering; backfill if missing
+            try {
+              const qa = getQAData();
+              if (!qa.weekStart) {
+                qa.weekStart = new Date().toISOString();
+                localStorage.setItem(QA_STORE_KEY, JSON.stringify(qa));
+              }
+            } catch (e) {
+              console.error('Failed to ensure QA weekStart', e);
+            }
+
             // Smoothly transition out the login view and bubble canvas to avoid flashing
             const loginView = document.getElementById('view-login');
             const bubbleCanvas = document.getElementById('bubble-canvas');
@@ -5129,6 +5141,7 @@ Reviewer: ${review.reviewerId}
         function getQAData() {
           return JSON.parse(localStorage.getItem(QA_STORE_KEY) || JSON.stringify({
             weekNumber: 1,
+            weekStart: new Date().toISOString(), // ISO timestamp for start of current week window
             finalizedAgents: [], // List of finalized Agent IDs for current week
             reviews: {}, // Map: AgentID -> Array of Review Objects
             history: [] // Archived weeks
@@ -5378,7 +5391,8 @@ Reviewer: ${review.reviewerId}
             fileMethods: { name: fileName, data: fileData },
             observation: obs,
             score: parseInt(scoreEl.value),
-            date: new Date().toISOString(),
+            date: new Date().toLocaleDateString(),
+            timestamp: new Date().toISOString(),
             agentComment: null
           };
 
@@ -5610,6 +5624,8 @@ Reviewer: ${review.reviewerId}
           data.weekNumber += 1;
           data.reviews = {};
           data.finalizedAgents = [];
+          // Set start time for the NEW week
+          data.weekStart = new Date().toISOString();
 
           saveQAData(data);
 
@@ -5634,7 +5650,32 @@ Reviewer: ${review.reviewerId}
 
           const data = getQAData();
           const agentId = currentUser.id;
-          const reviews = data.reviews[agentId] || [];
+
+          // Reviews added via QA flow
+          const qaReviews = (data.reviews[agentId] || []).map(r => ({ ...r, source: 'qa' }));
+
+          // Admin-submitted reviews saved separately
+          const adminReviewsRaw = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+          const weekStart = data.weekStart ? new Date(data.weekStart) : new Date(0);
+
+          const adminReviews = adminReviewsRaw.filter(r => r.agentId === agentId).filter(r => {
+            const rt = r.timestamp ? new Date(r.timestamp) : (r.date ? new Date(r.date) : null);
+            return rt && rt >= weekStart;
+          }).map(r => ({
+            type: 'Admin Submission',
+            interactionId: r.fileName || 'Report',
+            fileMethods: r.fileContent ? { name: r.fileName, data: r.fileContent } : null,
+            observation: r.observation,
+            score: r.score || 0,
+            agentComment: null,
+            timestamp: r.timestamp || new Date(r.date).toISOString(),
+            source: 'admin'
+          }));
+
+          const reviews = [...qaReviews, ...adminReviews];
+
+          // Sort by timestamp desc if available
+          reviews.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
 
           // --- CALCULATE AGENT STATS ---
           const totalReviews = reviews.length;
@@ -5643,27 +5684,14 @@ Reviewer: ${review.reviewerId}
 
           let totalScore = 0;
           if (totalReviews > 0) {
-            const sum = reviews.reduce((a, b) => a + b.score, 0);
+            const sum = reviews.reduce((a, b) => a + (parseInt(b.score) || 0), 0);
             totalScore = Math.round(sum / totalReviews);
           }
 
           document.getElementById('qa-weekly-agent-name').innerText = currentUser.name;
           document.getElementById('qa-weekly-date').innerText = `Week ${data.weekNumber} Report`;
 
-          // Inject Stats
-          const listInfoCard = document.querySelector('#qa-agent-weekly-view .bg-slate-50.dark\\:bg-slate-900.border-b');
-          // We need to inject the stats grid we designed. 
-          // Since we can't easily query selectors that don't exist yet, we'll replace the innerHTML of that header container.
-          // Or finding a stable container. 
-          // The previous code had specific IDs. Let's look at the structure we wrote in HTML replacement tool earlier.
-          // Container: #qa-agent-weekly-view > div > div (Header)
-          // We'll trust the ID injection strategy. The HTML replacer added the skeleton.
-          // We will update stats via ID or re-render the header here.
-
-          // Let's assume we have to render it into 'qa-weekly-reviews-list' preceding sibling or similar.
-          // Actually, let's update the header section completely via JS to ensure format matches request.
-          // Target: The first child of the card inside #qa-agent-weekly-view.
-
+          // Inject Stats (same container as before)
           const container = document.querySelector('#qa-agent-weekly-view > .bg-white >div:first-child');
           if (container) {
             container.innerHTML = `
@@ -5724,8 +5752,12 @@ Reviewer: ${review.reviewerId}
                       <div class="text-xs text-slate-400 font-mono">ID: ${r.interactionId}</div>
                       <div>
                          ${r.agentComment ?
-                `<span class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Comment Sent ✅</span>` :
-                `<button onclick="qaOpenCommentModal(${i})" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-3 py-1 rounded-lg">+ Add Comment</button>`
+                `<span class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Comment Sent ✅</span>` : (
+                  (r.source && r.source.startsWith('qa')) ?
+                    `<button onclick="qaOpenCommentModal(${data.reviews[agentId].findIndex(x => x.id === r.id)})" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-3 py-1 rounded-lg">+ Add Comment</button>`
+                    :
+                    `<button onclick="qaSendFeedbackToAdmin('${encodeURIComponent(r.timestamp || r.interactionId || (r.fileMethods && r.fileMethods.name) || '')}')" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-3 py-1 rounded-lg">Send Feedback</button>`
+                )
               }
                       </div>
                    </div>
@@ -5773,9 +5805,147 @@ Reviewer: ${review.reviewerId}
           }
         }
 
+        // Send feedback to Admin for admin-submitted reports
+        function qaSendFeedbackToAdmin(key) {
+          const decoded = decodeURIComponent(key || '');
+          const text = prompt('Enter your feedback for the Admin (this will be sent to admin):');
+          if (!text) return;
+
+          let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+          // Try to find by timestamp, then by fileName
+          const target = reviews.find(r => (r.timestamp && r.timestamp === decoded) || (r.fileName && encodeURIComponent(r.fileName) === decoded));
+
+          NotificationManager.notifyAdmin(`Feedback from Agent ${currentUser.name} on ${target ? (target.fileName || 'report') : 'report'}: "${text.substring(0,200)}"`);
+
+          alert('Feedback sent to Admin!');
+        }
+
         function qaShowAgentMonthly() {
           document.getElementById('qa-agent-landing').classList.add('hidden');
           document.getElementById('qa-agent-monthly-view').classList.remove('hidden');
+
+          const data = getQAData();
+          const agentId = currentUser.id;
+
+          // Month range (start-of-month to start-of-next-month)
+          const monthStart = new Date();
+          monthStart.setDate(1);
+          monthStart.setHours(0,0,0,0);
+          const monthEnd = new Date(monthStart);
+          monthEnd.setMonth(monthStart.getMonth() + 1);
+
+          // Collect current QA reviews (include those without timestamp assuming current week)
+          const currentQAReviews = (data.reviews[agentId] || []).map(r => ({ ...r, source: 'qa' })).filter(r => {
+            if (!r.timestamp) return true; // assume current week
+            const rt = new Date(r.timestamp);
+            return rt >= monthStart && rt < monthEnd;
+          });
+
+          // Collect archived reviews from history for the month
+          const history = data.history || [];
+          let historyReviews = [];
+          history.forEach(w => {
+            const wDate = new Date(w.date);
+            if (wDate >= monthStart && wDate < monthEnd) {
+              const revs = (w.reviews && w.reviews[agentId]) ? w.reviews[agentId].map(r => ({ ...r, source: 'qa-archive' })) : [];
+              historyReviews = historyReviews.concat(revs);
+            }
+          });
+
+          // Admin submitted reviews in the month
+          const adminRaw = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+          const adminMonth = adminRaw.filter(r => r.agentId === agentId).filter(r => {
+            const rt = r.timestamp ? new Date(r.timestamp) : (r.date ? new Date(r.date) : null);
+            return rt && rt >= monthStart && rt < monthEnd;
+          }).map(r => ({
+            type: 'Admin Submission',
+            interactionId: r.fileName || 'Report',
+            fileMethods: r.fileContent ? { name: r.fileName, data: r.fileContent } : null,
+            observation: r.observation,
+            score: r.score || 0,
+            agentComment: null,
+            timestamp: r.timestamp || new Date(r.date).toISOString(),
+            source: 'admin'
+          }));
+
+          const all = [...historyReviews, ...currentQAReviews, ...adminMonth];
+          all.sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+          // Stats
+          const totalReviews = all.length;
+          const fatalCount = all.filter(r => parseInt(r.score) === 0).length;
+          const goodCount = all.filter(r => parseInt(r.score) === 100).length;
+          let totalScore = 0;
+          if (totalReviews > 0) {
+            const sum = all.reduce((s, r) => s + (parseInt(r.score) || 0), 0);
+            totalScore = Math.round(sum / totalReviews);
+          }
+
+          // Render header
+          const monthName = monthStart.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+          const container = document.querySelector('#qa-agent-monthly-view');
+          if (container) {
+            container.innerHTML = `
+              <button onclick="qaBackToAgentLanding()" class="mb-6 text-slate-500 hover:text-blue-600">← Back to Selection</button>
+              <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700 p-8">
+                <div class="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 class="text-2xl font-bold">${currentUser.name}</h2>
+                    <p class="text-slate-500">${monthName} Report</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-6">
+                  <div class="p-4 bg-white dark:bg-slate-800 rounded-xl text-center border border-slate-200 dark:border-slate-600 shadow-sm">
+                    <div class="text-xs text-slate-500 uppercase font-bold">Total Audits</div>
+                    <div class="text-2xl font-black text-slate-800 dark:text-white">${totalReviews}</div>
+                  </div>
+                  <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl text-center border border-red-100 dark:border-red-900/30">
+                    <div class="text-xs text-red-500 uppercase font-bold">Fatals</div>
+                    <div class="text-2xl font-black text-red-600">${fatalCount}</div>
+                  </div>
+                  <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-center border border-emerald-100 dark:border-emerald-900/30">
+                    <div class="text-xs text-emerald-500 uppercase font-bold">Total 100s</div>
+                    <div class="text-2xl font-black text-emerald-600">${goodCount}</div>
+                  </div>
+                  <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl text-center border border-indigo-100 dark:border-indigo-900/30">
+                    <div class="text-xs text-indigo-500 uppercase font-bold">Average Score</div>
+                    <div class="text-2xl font-black text-indigo-600">${totalScore}%</div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 class="font-bold text-lg mb-4">Reviews & Reports</h3>
+                  <div id="qa-monthly-reviews-list" class="space-y-4">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
+            `;
+
+            const list = document.getElementById('qa-monthly-reviews-list');
+            if (!list || all.length === 0) {
+              if (list) list.innerHTML = `<div class="text-center text-slate-400 py-10 italic">No reports found for this month.</div>`;
+              return;
+            }
+
+            list.innerHTML = all.map((r, i) => `
+              <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 transition animate-fade-in hover:shadow-md">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">${r.type || (r.source === 'admin' ? 'Admin' : 'QA')}</span>
+                    ${r.fileMethods && r.fileMethods.name ? `<button onclick="qaDownloadFile('${r.fileMethods.name}', '${r.fileMethods.data}')" class="text-xs flex items-center gap-1 bg-white dark:bg-slate-800 border px-2 py-1 rounded hover:bg-slate-100 text-blue-600">📎 ${r.fileMethods.name}</button>` : ''}
+                  </div>
+                  <div class="font-black text-xl ${(parseInt(r.score) === 100) ? 'text-emerald-500' : 'text-red-500'}">${r.score}</div>
+                </div>
+                <div class="text-xs text-slate-400 mt-1">Received: ${new Date(r.timestamp || r.date || Date.now()).toLocaleString()}</div>
+                <div class="mb-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mt-3">
+                  <span class="text-xs text-slate-400 uppercase font-bold block mb-1">Observation</span>
+                  <p class="text-slate-800 dark:text-slate-200 leading-relaxed">${r.observation}</p>
+                </div>
+              </div>
+            `).join('');
+          }
         }
 
         function qaBackToAgentLanding() {
