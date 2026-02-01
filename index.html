@@ -20,6 +20,34 @@
       mouseX = e.clientX;
       mouseY = e.clientY;
 
+      const loginView = document.getElementById('view-login');
+      // Check if login view exists and is visible (not display: none)
+      if (loginView && loginView.style.display !== 'none') {
+        createTwinkle(e.clientX, e.clientY);
+      }
+    });
+
+    document.addEventListener('mousedown', function () {
+      const loginView = document.getElementById('view-login');
+      if (loginView && loginView.style.display !== 'none') {
+        if (!pourInterval) {
+          pourInterval = setInterval(() => {
+            createTwinkle(mouseX, mouseY);
+          }, 50); // Pour every 50ms
+        }
+      }
+    });
+
+    document.addEventListener('mouseup', stopPouring);
+    document.addEventListener('mouseleave', stopPouring);
+
+    function stopPouring() {
+      if (pourInterval) {
+        clearInterval(pourInterval);
+        pourInterval = null;
+      }
+    }
+
     function createTwinkle(x, y) {
       const twinkle = document.createElement('div');
       twinkle.classList.add('twinkle');
@@ -90,6 +118,68 @@
           });
         }
       }
+
+      animate() {
+        const loginView = document.getElementById('view-login');
+        const loginVisible = loginView && window.getComputedStyle(loginView).display !== 'none' && loginView.offsetParent !== null;
+
+        // If the login view is not visible, fade out the canvas and skip drawing to avoid
+        // the bubbles overlaying other pages (bubbles should be only on the first page).
+        if (!loginVisible) {
+          if (this.canvas.style.opacity !== '0') this.canvas.style.opacity = '0';
+          if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+          // keep the animation loop alive but do not draw until login is visible again
+          requestAnimationFrame(() => this.animate());
+          return;
+        }
+
+        // Ensure canvas is visible and faded in while on the login page
+        if (this.canvas.style.opacity !== '1') this.canvas.style.opacity = '1';
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Update and Draw Bubbles
+        this.bubbles.forEach(bubble => {
+          bubble.x += bubble.vx;
+          bubble.y += bubble.vy;
+
+          // Bounce
+          if (bubble.x < 0 || bubble.x > this.canvas.width) bubble.vx *= -1;
+          if (bubble.y < 0 || bubble.y > this.canvas.height) bubble.vy *= -1;
+
+          this.ctx.beginPath();
+          this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = bubble.color;
+          this.ctx.fill();
+        });
+
+        // Draw Connections (Web Effect)
+        const webReach = 150; // Distance to connect
+        const cursorReach = 200; // Cursor shooter range
+
+        for (let i = 0; i < this.bubbles.length; i++) {
+          const bubbleA = this.bubbles[i];
+
+          // 1. Connect to Cursor (Web Shooter)
+          const dxMouse = mouseX - bubbleA.x;
+          const dyMouse = mouseY - bubbleA.y;
+          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+          if (distMouse < cursorReach) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distMouse / cursorReach})`;
+            this.ctx.lineWidth = 1.5;
+            this.ctx.moveTo(bubbleA.x, bubbleA.y);
+            this.ctx.lineTo(mouseX, mouseY);
+            this.ctx.stroke();
+            // Extra shine on connected bubble
+            this.ctx.beginPath();
+            this.ctx.arc(bubbleA.x, bubbleA.y, bubbleA.size + 3, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            this.ctx.stroke();
+          }
+
           // 2. Connect to Other Bubbles (The Web)
           // "Meeting each other with the help of cursor"
           // Logic: Only connect bubbles to each other IF they are NEAR THE CURSOR.
@@ -205,33 +295,8 @@
       }
     }
 
-    /* Login & Door Animation Styles */
-    #view-login {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
-      overflow-y: auto;
-      /* Enable vertical scrolling */
-      display: block;
-      /* Remove flex to allow scrolling flow */
-      perspective: 1400px;
-    }
-
-    .door-container {
-      position: fixed;
-      /* Fix doors to viewport so they stay put during scroll */
-      inset: 0;
-      display: flex;
-      pointer-events: none;
-      z-index: 20;
-    }
-
-    .door {
-      flex: 1;
-      background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
-      background-size: 200% 100%;
-      transform-style: preserve-3d;
+    /* Removed: Login and door animation CSS */
+    /* Legacy login/door styles removed to simplify UI */
       transform-origin: center;
       position: relative;
       box-shadow: inset 0 8px 30px rgba(0, 0, 0, 0.55);
@@ -363,157 +428,17 @@
       }
     }
 
-    /* Gradient Loading Animation Variables & Styles */
-    :root {
-      --loader-bg-start: #a855f7;
-      --loader-bg-end: #ec4899;
-    }
-
-    .login-loader-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--loader-bg-start) 0%, var(--loader-bg-end) 100%);
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-      border-radius: 2rem;
-    }
-
-    .login-loader-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .loader-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(255, 255, 255, 0.2);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
+    /* Removed: Legacy login loader styles */
+    /* The login overlay and loader spin styles were removed with the login UI */
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-  <!-- LOGIN VIEW -->
-  <div id="view-login">
-    <canvas id="bubble-canvas" class="absolute inset-0 z-10 pointer-events-none"></canvas>
-    <div class="door-container" id="door-container">
-      <div class="door door-left"></div>
-      <div class="door door-right"></div>
-    </div>
+  <!-- Removed: Legacy Login UI and contact block -->
+  <!-- Login UI removed to present the app directly -->
 
-    <div class="relative z-30 min-h-screen flex flex-col">
-      <!-- Login Section -->
-      <div class="flex-grow flex flex-col items-center justify-center min-h-screen login-content" id="login-content">
-        <h1 class="gojira-logo">GOJIRA</h1>
-        <div class="login-form-container relative overflow-hidden">
-          <!-- Loading Overlay -->
-          <div id="login-loader-overlay" class="login-loader-overlay">
-            <div class="loader-spinner mb-4"></div>
-            <p class="text-white font-bold text-lg tracking-wider animate-pulse">AUTHENTICATING...</p>
-          </div>
-
-          <h2 class="text-2xl font-bold mb-6 text-white">Agent Portal</h2>
-          <div class="space-y-4">
-            <input type="text" id="login-empid" placeholder="Employee ID (e.g. BL/GG/25/704)" value="BL/GG/25/704"
-              class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest uppercase transition-all focus:bg-white/30">
-            <input type="password" id="login-password" placeholder="Password" value="1234"
-              class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest transition-all focus:bg-white/30"
-              onkeypress="handleLoginKey(event)">
-            <button type="button" onclick="attemptLogin()"
-              class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg hover:shadow-blue-500/50 transition-all transform hover:scale-105 active:scale-95">
-              Unlock Access
-            </button>
-            <button onclick="openChangePasswordModal()"
-              class="text-white/70 hover:text-white text-sm underline mt-2 block w-full transition-colors">
-              Change Password
-            </button>
-          </div>
-          <p id="login-error" class="text-red-400 font-bold mt-4 hidden bg-black/20 p-2 rounded animate-bounce">Access
-            Denied</p>
-        </div>
-
-        <!-- Scroll Hint -->
-        <div class="mt-12 animate-bounce text-white/50 text-sm">
-          <p>Scroll Down for Contact details</p>
-          <p class="text-2xl">⬇️</p>
-        </div>
-      </div>
-
-      <!-- Contact Details Section -->
-      <div class="py-16 bg-black/40 backdrop-blur-md text-center text-white border-t border-white/10">
-        <h3 class="text-2xl font-bold mb-8">Contact Information</h3>
-
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
-          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
-            <div class="text-4xl mb-4">📍</div>
-            <p class="font-medium text-lg">Address</p>
-            <p class="text-white/70 mt-2">Plot no. 516, 1st floor,<br>Udyog Vihar Phase 3<br>Gurgaon, (Haryana) 122016
-            </p>
-          </div>
-
-          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
-            <div class="text-4xl mb-4">📞</div>
-            <p class="font-medium text-lg">Call Us</p>
-            <p class="text-white/70 mt-2 text-xl font-bold">9220912305</p>
-          </div>
-
-          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
-            <div class="text-4xl mb-4">✉️</div>
-            <p class="font-medium text-lg">Email Us</p>
-            <p class="text-white/70 mt-2">divyanshu.sharma@bharatloan.com</p>
-          </div>
-        </div>
-
-        <p class="mt-12 text-white/30 text-sm">© 2026 BharatLoan. All rights reserved.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- CHANGE PASSWORD MODAL -->
-  <div id="modal-change-password"
-    class="fixed inset-0 z-[1100] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm">
-    <div class="bg-gray-900 border border-gray-700 p-8 rounded-2xl w-full max-w-md shadow-2xl relative">
-      <h3 class="text-2xl font-bold text-white mb-6">Change Password</h3>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-gray-400 mb-1 text-sm">Current Password</label>
-          <input type="password" id="cp-current"
-            class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
-        </div>
-        <div>
-          <label class="block text-gray-400 mb-1 text-sm">New Password</label>
-          <input type="password" id="cp-new"
-            class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
-        </div>
-        <div>
-          <label class="block text-gray-400 mb-1 text-sm">Confirm New Password</label>
-          <input type="password" id="cp-confirm"
-            class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
-        </div>
-
-        <button onclick="submitChangePassword()"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold mt-4 transition">Update
-          Password</button>
-        <button onclick="closeChangePasswordModal()" class="w-full text-gray-400 hover:text-white py-2">Cancel</button>
-      </div>
-    </div>
-  </div>
+  <!-- Removed: Change Password Modal (login system cleaned) -->
 
   <!-- REVIEW DETAIL MODAL -->
   <div id="view-review-modal"
@@ -2079,30 +2004,7 @@
         </div>
       </div>
 
-      <!-- LOGIN MODAL -->
-      <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
-          <div class="flex justify-between items-center mb-6">
-            <h2 id="login-title" class="text-2xl font-bold">Login</h2>
-            <button onclick="hideLogin()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
-          </div>
-          <form onsubmit="submitLogin(event)">
-            <div class="mb-6">
-              <label class="block text-sm font-medium mb-2">Employee ID</label>
-              <input id="empid" type="text" required
-                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
-            </div>
-            <div class="mb-6">
-              <label class="block text-sm font-medium mb-2">Password</label>
-              <input id="password" type="password" placeholder="Enter password"
-                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
-            </div>
-
-            <button type="submit"
-              class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
-          </form>
-        </div>
-      </div>
+      <!-- Removed: login modal (login system removed) -->
 
       <!-- ACCESS DENIED MODAL -->
       <div id="access-denied-modal"
@@ -5057,174 +4959,13 @@ Reviewer: ${review.reviewerId}
           if (e.key === 'Enter') attemptLogin();
         }
 
-        // Login system removed: override interactive login functions to no-ops
-        function attemptLogin() { console.info('Login disabled: app auto-logged-in'); }
-        function submitLogin(e) { if (e && e.preventDefault) e.preventDefault(); console.info('Login disabled: app auto-logged-in'); }
-        function hideLogin() { /* no-op - login removed */ }
-        function openChangePasswordModal() { /* no-op - login removed */ }
-        function closeChangePasswordModal() { /* no-op - login removed */ }
-        function submitChangePassword() { alert('Password management is disabled.'); }
+        // Removed: legacy login function overrides (login system fully removed)
 
-        function attemptLogin() {
-          const empidInput = document.getElementById('login-empid').value.trim();
-          const passwordInput = document.getElementById('login-password').value;
-          const errorMsg = document.getElementById('login-error');
-          const loader = document.getElementById('login-loader-overlay');
+        // Removed: legacy attemptLogin implementation (login system removed)
 
-          console.info('attemptLogin invoked for:', empidInput);
-          try { document.getElementById('global-debug-box')?.prepend(document.createElement('div')).innerText = `[${new Date().toLocaleTimeString()}] attemptLogin: ${empidInput}`; } catch(e){}
+        // Removed: login shake & change-password handlers (login system removed)
 
-          // Animation Configuration
-          const LOGIN_PROCESS_TIME = 1600; // ms
-
-          // Validate Input
-          if (!empidInput || !passwordInput) {
-            if (errorMsg) {
-              errorMsg.innerText = "Please enter Employee ID and Password";
-              errorMsg.classList.remove('hidden');
-            }
-            shakeLogin();
-            return;
-          }
-
-          // START ANIMATION: Show Loading Overlay
-          if (loader) loader.classList.add('active');
-          if (errorMsg) errorMsg.classList.add('hidden');
-
-          // Simulate Processing Delay
-          setTimeout(() => {
-            try {
-              // Check Database (Safe Access)
-              const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
-              let user = db.find(u => u.id === empidInput);
-
-              // DEMO FALLBACK: Ensure this specific ID works for the video demo if not in DB
-              if (!user && empidInput === 'BL/GG/25/704') {
-                user = { id: 'BL/GG/25/704', name: 'Agent', role: 'agent' };
-              }
-
-            const globalPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
-
-            // Verify Creds (Allowing 1234 as per demo)
-            if (user && (passwordInput === globalPass || passwordInput === DEFAULT_PASSWORD || passwordInput === '1234')) {
-              // SUCCESS
-              try {
-                if (errorMsg) errorMsg.classList.add('hidden');
-                // Centralized handling
-                loginSuccess(user);
-              } catch (e) {
-                console.error('Failed to complete login success flow', e);
-                if (loader) loader.classList.remove('active');
-                if (errorMsg) {
-                  errorMsg.innerText = 'Login succeeded but UI failed to update. Check console.';
-                  errorMsg.classList.remove('hidden');
-                }
-              }
-
-            } else {
-              // FAILURE
-              if (loader) loader.classList.remove('active');
-              console.warn('Login failed for', empidInput);
-              if (errorMsg) {
-                errorMsg.innerText = "Invalid Credentials";
-                errorMsg.classList.remove('hidden');
-              } else {
-                alert('Invalid Credentials');
-              }
-              shakeLogin();
-            }
-          } catch (err) {
-              console.error('Error during login attempt:', err);
-              if (loader) loader.classList.remove('active');
-              if (errorMsg) {
-                errorMsg.innerText = 'An unexpected error occurred. Please check console for details.';
-                errorMsg.classList.remove('hidden');
-              } else {
-                alert('An unexpected error occurred. See console.');
-              }
-            }
-          }, LOGIN_PROCESS_TIME);
-        }
-
-        function shakeLogin() {
-          const container = document.querySelector('.login-form-container');
-          container.style.transform = 'translateX(10px)';
-          setTimeout(() => container.style.transform = 'translateX(-10px)', 100);
-          setTimeout(() => container.style.transform = 'translateX(10px)', 200);
-          setTimeout(() => container.style.transform = 'translateX(0)', 300);
-        }
-
-        function openChangePasswordModal() {
-          document.getElementById('modal-change-password').classList.remove('hidden');
-        }
-
-        function closeChangePasswordModal() {
-          document.getElementById('modal-change-password').classList.add('hidden');
-          document.getElementById('cp-current').value = '';
-          document.getElementById('cp-new').value = '';
-          document.getElementById('cp-confirm').value = '';
-        }
-
-        function submitChangePassword() {
-          const currentInput = document.getElementById('cp-current').value;
-          const newPass = document.getElementById('cp-new').value;
-          const confirmPass = document.getElementById('cp-confirm').value;
-
-          const storedPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
-
-          if (currentInput !== storedPass) {
-            alert('Current password is incorrect.');
-            return;
-          }
-
-          if (newPass.length < 4) {
-            alert('New password must be at least 4 characters.');
-            return;
-          }
-
-          if (newPass !== confirmPass) {
-            alert('New passwords do not match.');
-            return;
-          }
-
-          localStorage.setItem('agentPassword', newPass);
-          alert('Password changed successfully!');
-          closeChangePasswordModal();
-        }
-
-        function triggerDoorAnimation() {
-          const loginContent = document.getElementById('login-content');
-          const loginView = document.getElementById('view-login');
-          const app = document.getElementById('app-container');
-
-          // Show app and prepare for "Coming Out" (Zoom In effect)
-          app.style.display = 'block';
-          app.style.opacity = '1';
-          app.style.transform = 'scale(0.5)'; // Start much smaller for dramatic effect
-          app.style.transition = 'transform 2.0s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.5s ease-out';
-
-          // Make login background transparent so doors reveal the app
-          if (loginView) loginView.style.background = 'transparent';
-
-          // Start simple door opening
-          document.body.classList.add('doors-open');
-
-          // Fade login content and bubbles immediately
-          if (loginContent) loginContent.style.opacity = '0';
-          const bubbleCanvas = document.getElementById('bubble-canvas');
-          if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
-
-          // Animate Homepage "Coming Out" shortly after doors start opening
-          setTimeout(() => {
-            app.style.transform = 'scale(1)'; // Zoom to normal
-          }, 100);
-
-          // Cleanup
-          setTimeout(() => {
-            // Remove login from layout
-            if (loginView) loginView.style.display = 'none';
-          }, 2200); // Wait for door animation (2.0s) to fully finish
-        }
+        // Removed: triggerDoorAnimation (login visuals removed)
 
         function toggleNotifications() {
           const dropdown = document.getElementById('notification-dropdown');
