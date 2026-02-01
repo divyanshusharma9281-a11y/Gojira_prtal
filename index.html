@@ -1501,8 +1501,8 @@
                     </div>
                     <div class="flex flex-col items-end gap-2">
                       <div id="qa-agent-status-badge"
-                        class="hidden px-4 py-2 bg-green-100 text-green-700 rounded-lg font-bold border border-green-200 flex items-center gap-2">
-                        <span>✅</span> Custom Week Finalized
+                        class="hidden px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold border border-blue-200 flex items-center gap-2">
+                        <span class="text-blue-600">✓</span> Review Complete
                       </div>
                       <button onclick="qaDeleteAgentReviews()" class="text-xs text-red-500 hover:underline">Delete
                         Reviews</button>
@@ -2471,26 +2471,36 @@
             return JSON.parse(localStorage.getItem('gojira_notifications') || '[]');
           }
 
-          static add(recipientRole, recipientId, message) {
+          // Add a notification. options may contain { action, subView, meta }
+          static add(recipientRole, recipientId, message, options = {}) {
             const notifs = this.getNotifications();
+            const timestamp = new Date().toISOString();
             notifs.unshift({
               id: Date.now(),
               recipientRole,
               recipientId,
               message,
               read: false,
-              date: new Date().toLocaleString()
+              date: new Date().toLocaleString(),
+              timestamp,
+              action: options.action || null,
+              subView: options.subView || null,
+              meta: options.meta || null
             });
             localStorage.setItem('gojira_notifications', JSON.stringify(notifs));
+            // Update icon for current user (if relevant)
             this.updateIcon();
+            // If notification dropdown is currently open, refresh it so user sees the new notification immediately
+            const dropdown = document.getElementById('notification-dropdown');
+            if (dropdown && !dropdown.classList.contains('hidden')) this.renderDropdown();
           }
 
-          static notifyAgent(agentId, message) {
-            this.add('agent', agentId, message);
+          static notifyAgent(agentId, message, options = {}) {
+            this.add('agent', agentId, message, options);
           }
 
-          static notifyAdmin(message) {
-            this.add('admin', 'ALL', message);
+          static notifyAdmin(message, options = {}) {
+            this.add('admin', 'ALL', message, options);
           }
 
           static updateIcon() {
@@ -2514,24 +2524,26 @@
 
           static renderDropdown() {
             const list = document.getElementById('notification-list');
-            const notifs = this.getNotifications();
+            if (!list) return;
 
+            const notifs = this.getNotifications();
             // Filter for current user
             const myNotifs = notifs.filter(n => {
+              if (!currentUser) return false;
               if (n.recipientRole === 'admin' && currentUser.role === 'admin') return true;
               if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return true;
               return false;
             });
 
             if (myNotifs.length === 0) {
-              list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">✨there\'s no any notifications.</div>';
+              list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">No new notifications</div>';
               return;
             }
 
             list.innerHTML = myNotifs.map(n => `
-             <div class="p-3 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer ${n.read ? 'opacity-60' : 'font-semibold'}" onclick="NotificationManager.markRead(${n.id})">
+             <div class="p-3 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer ${n.read ? 'opacity-60' : 'font-semibold'}" onclick="NotificationManager.handleClick(${n.id})">
                <p class="text-sm">${n.message}</p>
-               <p class="text-xs text-slate-400 mt-1">${n.date}</p>
+               <p class="text-xs text-slate-400 mt-1">${new Date(n.timestamp || n.date).toLocaleString()}</p>
              </div>
            `).join('');
           }
@@ -2547,13 +2559,37 @@
             }
           }
 
+          static handleClick(id) {
+            const notifs = this.getNotifications();
+            const target = notifs.find(n => n.id === id);
+            if (!target) return;
+
+            // Mark read first
+            this.markRead(id);
+
+            // Route based on action/meta
+            if (target.action === 'view-checklist') {
+              navigateTo('view-checklist');
+              if (currentUser && currentUser.role === 'agent') {
+                if (target.subView === 'monthly') qaShowAgentMonthly();
+                else qaShowAgentWeekly();
+              }
+            } else if (target.action === 'open-review' && target.meta && target.meta.agentId !== undefined) {
+              // Future: open specific review modal or admin view
+              navigateTo('view-checklist');
+            }
+
+            // Re-render after action
+            setTimeout(() => this.renderDropdown(), 300);
+          }
+
           static clearAll() {
             // Only clear for this user
             let notifs = this.getNotifications();
             notifs = notifs.filter(n => {
               // Keep notifications NOT for this user
-              if (n.recipientRole === 'admin' && currentUser.role === 'admin') return false;
-              if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return false;
+              if (n.recipientRole === 'admin' && currentUser && currentUser.role === 'admin') return false;
+              if (n.recipientRole === 'agent' && currentUser && n.recipientId === currentUser.id) return false;
               return true;
             });
             localStorage.setItem('gojira_notifications', JSON.stringify(notifs));
@@ -3307,11 +3343,27 @@
 
           MockBackend.savePerformanceScore(performanceData);
 
-          // Notify Agent
-          NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`);
+          // Also add a QA-style entry so the agent dashboard (weekly view) shows the admin-submitted report
+          try {
+            const qaData = getQAData();
+            if (!qaData.reviews[agentId]) qaData.reviews[agentId] = [];
+            qaData.reviews[agentId].push({
+              type: 'Admin Finalized',
+              interactionId: `AUTO-${Date.now()}`,
+              fileMethods: null,
+              observation: `Weekly Performance Finalized by Admin. Final Score: ${finalScore}`,
+              score: finalScore,
+              agentComment: null,
+              timestamp: new Date().toISOString()
+            });
+            if (!qaData.finalizedAgents.includes(agentId)) qaData.finalizedAgents.push(agentId);
+            saveQAData(qaData);
+          } catch (e) {
+            console.error('Failed to push admin finalization into QA store', e);
+          }
 
-          // Notify Agent
-          NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`);
+          // Notify Agent (single)
+          NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`, { action: 'view-checklist', subView: 'weekly' });
 
           // Clear pending reviews for this agent
           const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
@@ -3974,6 +4026,8 @@ Reviewer: ${review.reviewerId}
               adminCurrentEntity = selectedEntity;
 
               currentUser = user;
+              // Ensure notifications badge reflects any pending unread
+              if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
               // Route admin users to the Home page first and prepare the Checklist UI in background
               navigateTo('view-home');
               if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
@@ -3990,6 +4044,8 @@ Reviewer: ${review.reviewerId}
               }
 
               currentUser = user;
+              // Ensure notifications badge reflects any pending unread
+              if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
 
               // Update Header Title
               const titleSpan = document.getElementById('agent-dashboard-title');
@@ -4835,6 +4891,9 @@ Reviewer: ${review.reviewerId}
           if (storedUser) {
             currentUser = JSON.parse(storedUser);
 
+            // Ensure notification badge is correct on restore
+            if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
+
             // Smoothly transition out the login view and bubble canvas to avoid flashing
             const loginView = document.getElementById('view-login');
             const bubbleCanvas = document.getElementById('bubble-canvas');
@@ -5112,6 +5171,7 @@ Reviewer: ${review.reviewerId}
           // Ensure an entity is selected
           if (!qaCurrentEntity) return;
 
+          const data = getQAData();
           const agents = USER_DB.filter(u => u.role === 'agent' && u.entity === qaCurrentEntity);
           let html = '<option value="">-- Select Agent --</option>';
 
@@ -5119,7 +5179,9 @@ Reviewer: ${review.reviewerId}
             html += '<option value="" disabled>No agents found for this entity</option>';
           } else {
             agents.forEach(a => {
-              html += `<option value="${a.id}">${a.name} (${a.id})</option>`;
+              const isFinalized = data.finalizedAgents.includes(a.id);
+              const tick = isFinalized ? ' ✓' : '';
+              html += `<option value="${a.id}">${a.name} (${a.id})${tick}</option>`;
             });
           }
 
@@ -5418,6 +5480,7 @@ Reviewer: ${review.reviewerId}
 
           alert(`Agent ${qaCurrentAgent.name} Finalized Successfully! Notification Sent.`);
 
+          qaRenderEntityAgentSelector();
           qaSelectAgent(qaCurrentAgent.id);
           qaRenderAgentList();
           qaCheckWeekCompletion();
@@ -5433,6 +5496,7 @@ Reviewer: ${review.reviewerId}
           saveQAData(data);
 
           alert("Reviews deleted.");
+          qaRenderEntityAgentSelector();
           qaSelectAgent(qaCurrentAgent.id);
           qaRenderAgentList();
         }
@@ -5651,8 +5715,7 @@ Reviewer: ${review.reviewerId}
                       </div>
                       <span class="font-black text-xl ${r.score === 100 ? 'text-emerald-500' : 'text-red-500'} self-end md:self-auto">${r.score}</span>
                    </div>
-                   
-                   <div class="mb-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                   <div class="text-xs text-slate-400 mt-1">Received: ${new Date(r.timestamp || r.date || Date.now()).toLocaleString()}</div>
                       <span class="text-xs text-slate-400 uppercase font-bold block mb-1">Observation</span>
                       <p class="text-slate-800 dark:text-slate-200 leading-relaxed">${r.observation}</p>
                    </div>
@@ -5731,23 +5794,30 @@ Reviewer: ${review.reviewerId}
           }
         };
 
-        // Patch Notification Render to support click
+        // Patch Notification Render to support click (filtered per user)
         const originalNotifyRender = NotificationManager.renderDropdown;
         NotificationManager.renderDropdown = function () {
           const list = document.getElementById('notification-list');
           if (!list) return;
 
-          const notifications = NotificationManager.getNotifications();
+          const notifications = NotificationManager.getNotifications().filter(n => {
+            if (!currentUser) return false;
+            if (n.recipientRole === 'admin' && currentUser.role === 'admin') return true;
+            if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return true;
+            return false;
+          });
+
           if (notifications.length === 0) {
             list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">No new notifications</div>';
-          } else {
-            list.innerHTML = notifications.map((n, i) => `
-                <div onclick="qaHandleNotificationClick(${i}, '${n.action || ''}')" class="p-4 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
+            return;
+          }
+
+          list.innerHTML = notifications.map(n => `
+                <div onclick="NotificationManager.handleClick(${n.id})" class="p-4 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition ${n.read ? 'opacity-60' : 'font-semibold'}">
                   <p class="text-sm text-slate-800 dark:text-slate-200 font-medium">${n.message}</p>
-                  <p class="text-xs text-slate-400 mt-1">${new Date(n.timestamp).toLocaleTimeString()}</p>
+                  <p class="text-xs text-slate-400 mt-1">${new Date(n.timestamp || n.date).toLocaleString()}</p>
                 </div>
               `).join('');
-          }
         };
 
         // Monkey patch navigateTo to trigger init
