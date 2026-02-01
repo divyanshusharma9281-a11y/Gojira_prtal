@@ -1427,23 +1427,19 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
               <button onclick="qaSelectEntity('BharatLoan')"
                 class="p-8 rounded-2xl bg-blue-600 text-white hover:bg-blue-700 hover-lift transition shadow-lg">
-                <div class="text-3xl mb-2">🏦</div>
-                <div class="font-bold">BharatLoan</div>
+                <div class="font-bold text-xl">BharatLoan</div>
               </button>
               <button onclick="qaSelectEntity('Rupee112')"
                 class="p-8 rounded-2xl bg-indigo-600 text-white hover:bg-indigo-700 hover-lift transition shadow-lg">
-                <div class="text-3xl mb-2">💸</div>
-                <div class="font-bold">Rupee112</div>
+                <div class="font-bold text-xl">Rupee112</div>
               </button>
               <button onclick="qaSelectEntity('Loan112')"
                 class="p-8 rounded-2xl bg-purple-600 text-white hover:bg-purple-700 hover-lift transition shadow-lg">
-                <div class="text-3xl mb-2">💳</div>
-                <div class="font-bold">Loan112</div>
+                <div class="font-bold text-xl">Loan112</div>
               </button>
               <button onclick="qaSelectEntity('RupeeOnTime')"
                 class="p-8 rounded-2xl bg-emerald-600 text-white hover:bg-emerald-700 hover-lift transition shadow-lg">
-                <div class="text-3xl mb-2">⏳</div>
-                <div class="font-bold">RupeeOnTime</div>
+                <div class="font-bold text-xl">RupeeOnTime</div>
               </button>
             </div>
 
@@ -1452,10 +1448,7 @@
               <div class="flex flex-wrap gap-4 justify-between items-center">
                 <h3 class="font-bold text-slate-500">Weekly Management</h3>
                 <div class="flex gap-4">
-                  <button onclick="qaResetWeeklyData()"
-                    class="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition text-sm font-medium border border-transparent hover:border-red-200">
-                    ⚠️ Reset Week Data
-                  </button>
+                  <!-- Reset removed -->
                   <button id="btn-final-submit-week" onclick="qaSubmitWeek()" disabled
                     class="px-6 py-2 bg-slate-200 text-slate-400 font-bold rounded-xl cursor-not-allowed transition flex items-center gap-2">
                     <span>📅</span> Submit Week
@@ -1558,6 +1551,21 @@
                           class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
                       </div>
 
+                      <!-- FILE UPLOAD CONTAINER (Hidden by default) -->
+                      <div id="qa-field-file" class="hidden mb-4">
+                        <label class="block text-sm font-medium mb-1">Upload Recording (Max 50MB)</label>
+                        <div class="flex items-center gap-4">
+                          <label
+                            class="cursor-pointer bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-medium border border-slate-300 dark:border-slate-600">
+                            <span>Choose File</span>
+                            <input type="file" name="qa-voice-file" class="hidden"
+                              accept="audio/*,video/*,.mp3,.wav,.m4a" onchange="qaHandleFileUpload(this)">
+                          </label>
+                          <span id="qa-voice-file-name"
+                            class="text-xs text-slate-500 font-mono text-ellipsis overflow-hidden whitespace-nowrap max-w-[200px]"></span>
+                        </div>
+                      </div>
+
                       <div class="mb-4">
                         <label class="block text-sm font-medium mb-1">Observation</label>
                         <textarea id="qa-observation" rows="3" placeholder="Enter specific feedback..."
@@ -1657,32 +1665,18 @@
             </div>
           </div>
 
-          <!-- Agent Weekly View (Reusing components logic simply) -->
+          <!-- Agent Weekly View -->
           <div id="qa-agent-weekly-view" class="hidden animate-fade-in">
             <button onclick="qaBackToAgentLanding()" class="mb-6 text-slate-500 hover:text-blue-600">← Back to
               Selection</button>
 
             <div
               class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-              <!-- Stats Header -->
+              <!-- Stats Header Container - Dynamically Populated by JS -->
               <div class="p-8 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                  <div class="text-center md:text-left">
-                    <h2 class="text-2xl font-bold" id="qa-weekly-agent-name">Agent Name</h2>
-                    <p class="text-slate-500" id="qa-weekly-date">Week 1 Data</p>
-                  </div>
-                  <div class="flex gap-4">
-                    <div
-                      class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600 text-center min-w-[100px]">
-                      <div class="text-xs text-slate-400 uppercase font-bold">Score</div>
-                      <div class="text-3xl font-black text-blue-600" id="qa-weekly-score">--%</div>
-                    </div>
-                    <div
-                      class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600 text-center min-w-[100px]">
-                      <div class="text-xs text-slate-400 uppercase font-bold">Fatals</div>
-                      <div class="text-3xl font-black text-red-500" id="qa-weekly-fatals">0</div>
-                    </div>
-                  </div>
+                <!-- JS will inject the detailed stats here -->
+                <div class="flex justify-between items-center">
+                  <h2 class="text-2xl font-bold">Loading Stats...</h2>
                 </div>
               </div>
 
@@ -1696,6 +1690,8 @@
               </div>
             </div>
           </div>
+
+
 
           <!-- Agent Monthly View (Placeholder) -->
           <div id="qa-agent-monthly-view" class="hidden animate-fade-in text-center py-20">
@@ -5108,6 +5104,7 @@ Reviewer: ${review.reviewerId}
       let qaCurrentEntity = null;
       let qaCurrentAgent = null;
       let qaSessionReviews = []; // Temporary holding for current session
+      let qaCurrentFile = null; // Store file for voice
 
       function qaSelectEntity(entity) {
         qaCurrentEntity = entity;
@@ -5165,10 +5162,6 @@ Reviewer: ${review.reviewerId}
 
         if (isFinalized) {
           document.getElementById('qa-agent-status-badge').classList.remove('hidden');
-          // If finalized, maybe show summary instead of start button?
-          // For now, let's allow "viewing" but maybe disable editing unless deleted?
-          // User requirement: "finalized... blue tick...". 
-          // Let's reset the session reviews to what's in DB so they can see it
           qaSessionReviews = data.reviews[agentId] || [];
           qaRenderPendingList();
           document.getElementById('qa-start-screen').classList.add('hidden');
@@ -5192,10 +5185,16 @@ Reviewer: ${review.reviewerId}
           document.getElementById('qa-workspace-active').classList.add('hidden');
         }
         qaSessionReviews = [];
+        qaCurrentFile = null;
         document.getElementById('qa-input-form').classList.remove('hidden');
         document.getElementById('qa-btn-finalize-agent').innerText = "Finalize Agent ✅";
 
         // Reset Inputs
+        const fileInput = document.querySelector('input[name="qa-voice-file"]');
+        if (fileInput) fileInput.value = '';
+        const fileNameDisp = document.getElementById('qa-voice-file-name');
+        if (fileNameDisp) fileNameDisp.innerText = '';
+
         document.getElementById('qa-interaction-id').value = '';
         document.getElementById('qa-observation').value = '';
         const radios = document.getElementsByName('qa-score');
@@ -5210,46 +5209,88 @@ Reviewer: ${review.reviewerId}
 
       function qaToggleInteractionFields() {
         const type = document.querySelector('input[name="qa-interaction-type"]:checked').value;
+        const fileContainer = document.getElementById('qa-field-file');
         const label = document.getElementById('qa-id-label');
+
         if (type === 'Voice') {
-          label.innerText = "Call ID / Recording Link";
+          label.innerText = "Call ID";
           document.getElementById('qa-interaction-id').placeholder = "Enter Call ID...";
+          if (fileContainer) fileContainer.classList.remove('hidden');
         } else {
           label.innerText = "Chat / Email ID";
           document.getElementById('qa-interaction-id').placeholder = "Paste ID or Link here...";
+          if (fileContainer) fileContainer.classList.add('hidden');
+          qaCurrentFile = null;
         }
       }
 
-      function qaSubmitSingleReview() {
-        // Validation
+      function qaHandleFileUpload(input) {
+        if (input.files.length > 0) {
+          const file = input.files[0];
+          if (file.size > 50 * 1024 * 1024) {
+            alert("File size exceeds 50MB limit.");
+            input.value = '';
+            return;
+          }
+          qaCurrentFile = file;
+          document.getElementById('qa-voice-file-name').innerText = `Selected: ${file.name}`;
+        }
+      }
+
+      async function qaSubmitSingleReview() {
         const typeEl = document.querySelector('input[name="qa-interaction-type"]:checked');
         const id = document.getElementById('qa-interaction-id').value.trim();
         const obs = document.getElementById('qa-observation').value.trim();
         const scoreEl = document.querySelector('input[name="qa-score"]:checked');
 
         if (!typeEl) return alert("Select Interaction Type");
+        const type = typeEl.value;
+
         if (!id) return alert("Enter Interaction ID");
+        // Only require file if Voice is selected AND user actively wants to enforce it. 
+        // User asked "if admin clicked on voice then option of choose file".
+        if (type === 'Voice' && !qaCurrentFile) return alert("Please upload a file for Voice review");
+
         if (!obs) return alert("Enter Observation");
         if (!scoreEl) return alert("Select Score (0 or 100)");
 
+        // Processing File
+        let fileData = null;
+        let fileName = null;
+        if (type === 'Voice' && qaCurrentFile) {
+          fileName = qaCurrentFile.name;
+          try {
+            // Limit storage for demo to avoid quota
+            if (qaCurrentFile.size < 3 * 1024 * 1024) {
+              fileData = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsDataURL(qaCurrentFile);
+              });
+            } else {
+              fileData = "FILE_TOO_LARGE_FOR_DEMO";
+            }
+          } catch (e) { console.error(e); }
+        }
+
         const review = {
           id: Date.now(),
-          type: typeEl.value,
+          type: type,
           interactionId: id,
+          fileMethods: { name: fileName, data: fileData },
           observation: obs,
           score: parseInt(scoreEl.value),
-          date: new Date().toISOString()
+          date: new Date().toISOString(),
+          agentComment: null
         };
 
         qaSessionReviews.push(review);
         qaRenderPendingList();
 
-        // Check if we reached 3
         if (qaSessionReviews.length >= 1) {
           document.getElementById('qa-btn-add-more').classList.remove('hidden');
         }
 
-        // Update Finalize Button
         const btn = document.getElementById('qa-btn-finalize-agent');
         if (qaSessionReviews.length >= 3) {
           btn.disabled = false;
@@ -5260,9 +5301,14 @@ Reviewer: ${review.reviewerId}
         // Reset Form
         document.getElementById('qa-interaction-id').value = '';
         document.getElementById('qa-observation').value = '';
+        const fileInput = document.querySelector('input[name="qa-voice-file"]');
+        if (fileInput) fileInput.value = '';
+        const fileNameDisp = document.getElementById('qa-voice-file-name');
+        if (fileNameDisp) fileNameDisp.innerText = '';
+        qaCurrentFile = null;
         scoreEl.checked = false;
 
-        alert("Review Added!");
+        alert("Review Added successfully!");
       }
 
       function qaRenderPendingList() {
@@ -5279,6 +5325,7 @@ Reviewer: ${review.reviewerId}
                <div>
                   <div class="flex items-center gap-2 mb-1">
                      <span class="text-xs font-bold uppercase ${r.type === 'Voice' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'} px-2 py-0.5 rounded">${r.type}</span>
+                     ${r.fileMethods && r.fileMethods.name ? `<span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500">📎 ${r.fileMethods.name}</span>` : ''}
                      <span class="font-mono text-xs text-slate-500">${r.interactionId}</span>
                   </div>
                   <p class="text-sm font-medium text-slate-800 dark:text-slate-200">${r.observation}</p>
@@ -5294,7 +5341,6 @@ Reviewer: ${review.reviewerId}
       }
 
       function qaAddMoreReviews() {
-        // Just focuses the form essentially
         document.querySelector('input[name="qa-interaction-type"]').focus();
       }
 
@@ -5302,7 +5348,6 @@ Reviewer: ${review.reviewerId}
         qaSessionReviews.splice(index, 1);
         qaRenderPendingList();
 
-        // Re-check finalized button state
         const btn = document.getElementById('qa-btn-finalize-agent');
         if (qaSessionReviews.length < 3) {
           btn.disabled = true;
@@ -5315,24 +5360,24 @@ Reviewer: ${review.reviewerId}
         if (!qaCurrentAgent) return;
 
         const data = getQAData();
-
-        // Save Reviews
         data.reviews[qaCurrentAgent.id] = qaSessionReviews;
 
-        // Mark Finalized
         if (!data.finalizedAgents.includes(qaCurrentAgent.id)) {
           data.finalizedAgents.push(qaCurrentAgent.id);
         }
 
         saveQAData(data);
 
-        alert(`Agent ${qaCurrentAgent.name} Finalized Successfully!`);
+        // Send Notification
+        NotificationManager.notifyAgent(qaCurrentAgent.id, `Weekly Performance Finalized! Click to view details.`, {
+          action: 'view-checklist',
+          subView: 'weekly'
+        });
 
-        // Refresh UI
-        qaSelectAgent(qaCurrentAgent.id); // Reload view as "Read Only/Finalized"
-        qaRenderAgentList(); // Update Sidebar Tick
+        alert(`Agent ${qaCurrentAgent.name} Finalized Successfully! Notification Sent.`);
 
-        // Check Global
+        qaSelectAgent(qaCurrentAgent.id);
+        qaRenderAgentList();
         qaCheckWeekCompletion();
       }
 
@@ -5341,15 +5386,10 @@ Reviewer: ${review.reviewerId}
         if (!confirm(`Are you sure you want to delete ALL reviews for ${qaCurrentAgent.name}? This will un-finalize them.`)) return;
 
         const data = getQAData();
-
-        // Remove from finalized
         data.finalizedAgents = data.finalizedAgents.filter(id => id !== qaCurrentAgent.id);
-        // Delete reviews
         delete data.reviews[qaCurrentAgent.id];
-
         saveQAData(data);
 
-        // Refresh
         alert("Reviews deleted.");
         qaSelectAgent(qaCurrentAgent.id);
         qaRenderAgentList();
@@ -5358,18 +5398,9 @@ Reviewer: ${review.reviewerId}
       // --- GLOBAL WEEKLY MANAGEMENT ---
 
       function qaUpdateGlobalSubmitButton() {
-        // Logic: Check if ALL agents in the current entity are finalized?
-        // User said: "once the all agents will be finalized... for this week will be enable"
-        // Assuming "all agents" means all agents in the currently selected entity OR all agents globally?
-        // Given the UI flows entity by entity, let's check Current Entity first, or global.
-        // Let's implement Global Check for safety.
-
         const data = getQAData();
-        const allAgents = USER_DB.filter(u => u.role === 'agent'); // Global list
-
-        // Are all agents in the "finalizedAgents" list?
+        const allAgents = USER_DB.filter(u => u.role === 'agent');
         const allDone = allAgents.every(a => data.finalizedAgents.includes(a.id));
-
         const btn = document.getElementById('btn-final-submit-week');
 
         if (allDone && allAgents.length > 0) {
@@ -5391,8 +5422,6 @@ Reviewer: ${review.reviewerId}
         if (!confirm("Are you sure you want to FINAL SUBMIT FOR THIS WEEK? This will archive all data and start a new week.")) return;
 
         const data = getQAData();
-
-        // Archive
         const weekArchive = {
           week: data.weekNumber,
           reviews: data.reviews,
@@ -5400,25 +5429,18 @@ Reviewer: ${review.reviewerId}
         };
 
         data.history.push(weekArchive);
-
-        // Reset
         data.weekNumber += 1;
         data.reviews = {};
         data.finalizedAgents = [];
 
         saveQAData(data);
-
         alert("Week Submitted! Welcome to Week " + data.weekNumber);
-        location.reload(); // Refresh everything
+        location.reload();
       }
 
       function qaResetWeeklyData() {
-        if (!confirm("WARNING: This will delete ALL progress for the current week. Continue?")) return;
-        const data = getQAData();
-        data.reviews = {};
-        data.finalizedAgents = [];
-        saveQAData(data);
-        location.reload();
+        // Disabled as per user request
+        // alert("Week Reset manually disabled.");
       }
 
 
@@ -5429,28 +5451,68 @@ Reviewer: ${review.reviewerId}
 
         const data = getQAData();
         const agentId = currentUser.id;
-
         const reviews = data.reviews[agentId] || [];
 
-        // Stats
+        // --- CALCULATE AGENT STATS ---
         const totalReviews = reviews.length;
         const fatalCount = reviews.filter(r => r.score === 0).length;
+        const goodCount = reviews.filter(r => r.score === 100).length;
 
         let totalScore = 0;
         if (totalReviews > 0) {
-          // Average score? Or if ANY fatal, then 0? 
-          // Usually: (Sum of scores) / Count
           const sum = reviews.reduce((a, b) => a + b.score, 0);
           totalScore = Math.round(sum / totalReviews);
-
-          // Override: If any fatal, implies failure? User didn't specify calc logic, just "0 fatal and 100 good".
-          // Let's stick to average for now.
         }
 
         document.getElementById('qa-weekly-agent-name').innerText = currentUser.name;
         document.getElementById('qa-weekly-date').innerText = `Week ${data.weekNumber} Report`;
-        document.getElementById('qa-weekly-score').innerText = totalReviews > 0 ? `${totalScore}%` : '--';
-        document.getElementById('qa-weekly-fatals').innerText = fatalCount;
+
+        // Inject Stats
+        const listInfoCard = document.querySelector('#qa-agent-weekly-view .bg-slate-50.dark\\:bg-slate-900.border-b');
+        // We need to inject the stats grid we designed. 
+        // Since we can't easily query selectors that don't exist yet, we'll replace the innerHTML of that header container.
+        // Or finding a stable container. 
+        // The previous code had specific IDs. Let's look at the structure we wrote in HTML replacement tool earlier.
+        // Container: #qa-agent-weekly-view > div > div (Header)
+        // We'll trust the ID injection strategy. The HTML replacer added the skeleton.
+        // We will update stats via ID or re-render the header here.
+
+        // Let's assume we have to render it into 'qa-weekly-reviews-list' preceding sibling or similar.
+        // Actually, let's update the header section completely via JS to ensure format matches request.
+        // Target: The first child of the card inside #qa-agent-weekly-view.
+
+        const container = document.querySelector('#qa-agent-weekly-view > .bg-white >div:first-child');
+        if (container) {
+          container.innerHTML = `
+                <div class="flex flex-col gap-6">
+                   <div class="flex justify-between items-center">
+                      <div>
+                          <h2 class="text-2xl font-bold">${currentUser.name}</h2>
+                          <p class="text-slate-500">Week ${data.weekNumber} Report</p>
+                      </div>
+                   </div>
+                   
+                   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                        <div class="p-4 bg-white dark:bg-slate-800 rounded-xl text-center border border-slate-200 dark:border-slate-600 shadow-sm">
+                            <div class="text-xs text-slate-500 uppercase font-bold">Total Audits</div>
+                            <div class="text-2xl font-black text-slate-800 dark:text-white">${totalReviews}</div>
+                        </div>
+                        <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl text-center border border-red-100 dark:border-red-900/30">
+                            <div class="text-xs text-red-500 uppercase font-bold">Fatals</div>
+                            <div class="text-2xl font-black text-red-600">${fatalCount}</div>
+                        </div>
+                        <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-center border border-emerald-100 dark:border-emerald-900/30">
+                            <div class="text-xs text-emerald-500 uppercase font-bold">Total 100s</div>
+                            <div class="text-2xl font-black text-emerald-600">${goodCount}</div>
+                        </div>
+                        <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl text-center border border-indigo-100 dark:border-indigo-900/30">
+                            <div class="text-xs text-indigo-500 uppercase font-bold">Total Score</div>
+                            <div class="text-2xl font-black text-indigo-600">${totalScore}%</div>
+                        </div>
+                    </div>
+                </div>
+              `;
+        }
 
         // Render List
         const list = document.getElementById('qa-weekly-reviews-list');
@@ -5458,20 +5520,74 @@ Reviewer: ${review.reviewerId}
           list.innerHTML = `<div class="text-center text-slate-400 py-10 italic">No reviews finalized for this week yet.</div>`;
         } else {
           list.innerHTML = reviews.map((r, i) => `
-                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
-                   <div class="flex justify-between mb-4">
-                      <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">${r.type}</span>
-                      <span class="font-black text-xl ${r.score === 100 ? 'text-emerald-500' : 'text-red-500'}">${r.score}</span>
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 transition animate-fade-in hover:shadow-md">
+                   <div class="flex flex-col md:flex-row justify-between mb-4 gap-4">
+                      <div class="flex items-center gap-3">
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">${r.type}</span>
+                        ${r.fileMethods && r.fileMethods.name ?
+              `<button onclick="qaDownloadFile('${r.fileMethods.name}', '${r.fileMethods.data}')" class="text-xs flex items-center gap-1 bg-white dark:bg-slate-800 border px-2 py-1 rounded hover:bg-slate-100 text-blue-600">
+                               📎 ${r.fileMethods.name}
+                             </button>`
+              : ''}
+                      </div>
+                      <span class="font-black text-xl ${r.score === 100 ? 'text-emerald-500' : 'text-red-500'} self-end md:self-auto">${r.score}</span>
                    </div>
-                   <div class="mb-2">
-                      <span class="text-xs text-slate-400 uppercase font-bold">Observation</span>
-                      <p class="text-slate-800 dark:text-slate-200 mt-1">${r.observation}</p>
+                   
+                   <div class="mb-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                      <span class="text-xs text-slate-400 uppercase font-bold block mb-1">Observation</span>
+                      <p class="text-slate-800 dark:text-slate-200 leading-relaxed">${r.observation}</p>
                    </div>
-                   <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 font-mono">
-                      ID: ${r.interactionId}
+                   
+                   <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div class="text-xs text-slate-400 font-mono">ID: ${r.interactionId}</div>
+                      <div>
+                         ${r.agentComment ?
+              `<span class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Comment Sent ✅</span>` :
+              `<button onclick="qaOpenCommentModal(${i})" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-3 py-1 rounded-lg">+ Add Comment</button>`
+            }
+                      </div>
                    </div>
                 </div>
               `).join('');
+        }
+      }
+
+      // File Download Helper
+      function qaDownloadFile(name, data) {
+        if (!data || data === "FILE_TOO_LARGE_FOR_DEMO") {
+          alert("File content is not available in mode.");
+          return;
+        }
+        const a = document.createElement('a');
+        a.href = data;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      let qaCommentIndex = null;
+      function qaOpenCommentModal(index) {
+        qaCommentIndex = index;
+        const comment = prompt("Enter your comment for the Admin (Note: You can only submit once):");
+        if (comment) {
+          qaSubmitAgentComment(index, comment);
+        }
+      }
+
+      function qaSubmitAgentComment(index, text) {
+        const data = getQAData();
+        const agentId = currentUser.id;
+
+        if (data.reviews[agentId] && data.reviews[agentId][index]) {
+          data.reviews[agentId][index].agentComment = text;
+          saveQAData(data);
+
+          // Notify Admin
+          NotificationManager.notifyAdmin(`Agent ${currentUser.name} commented on review #${index + 1}: "${text}"`);
+
+          alert("Comment submitted to Admin!");
+          qaShowAgentWeekly();
         }
       }
 
@@ -5486,9 +5602,34 @@ Reviewer: ${review.reviewerId}
         document.getElementById('qa-agent-landing').classList.remove('hidden');
       }
 
-      // Initialize on view load (hook into existing modify if needed, or rely on navigateTo)
-      // We will hook this into the 'navigateTo' function in the previous block if possible, 
-      // or just call it when 'view-checklist' becomes active.
+      // Handling Notifications Clicks (Global)
+      window.qaHandleNotificationClick = function (index, action) {
+        if (action === 'view-checklist') {
+          navigateTo('view-checklist');
+          if (currentUser.role === 'agent') {
+            setTimeout(() => qaShowAgentWeekly(), 500);
+          }
+        }
+      };
+
+      // Patch Notification Render to support click
+      const originalNotifyRender = NotificationManager.renderDropdown;
+      NotificationManager.renderDropdown = function () {
+        const list = document.getElementById('notification-list');
+        if (!list) return;
+
+        const notifications = NotificationManager.getNotifications();
+        if (notifications.length === 0) {
+          list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">No new notifications</div>';
+        } else {
+          list.innerHTML = notifications.map((n, i) => `
+                <div onclick="qaHandleNotificationClick(${i}, '${n.action || ''}')" class="p-4 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
+                  <p class="text-sm text-slate-800 dark:text-slate-200 font-medium">${n.message}</p>
+                  <p class="text-xs text-slate-400 mt-1">${new Date(n.timestamp).toLocaleTimeString()}</p>
+                </div>
+              `).join('');
+        }
+      };
 
       // Monkey patch navigateTo to trigger init
       const originalNavigate = window.navigateTo || function () { };
