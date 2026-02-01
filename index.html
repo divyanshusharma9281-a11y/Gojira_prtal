@@ -324,7 +324,7 @@
       transform-style: preserve-3d;
       transform-origin: center;
       position: relative;
-      box-shadow: inset 0 8px 30px rgba(0,0,0,0.55);
+      box-shadow: inset 0 8px 30px rgba(0, 0, 0, 0.55);
     }
 
     .door-left {
@@ -337,29 +337,49 @@
       background-position: 100% 0%;
     }
 
-    /* Slow inward swing & simple zoom-out */
+    /* Slow inward swing & fade out */
     @keyframes door-left-open-slow {
-      0% { transform: rotateY(0deg); }
-      60% { transform: rotateY(78deg) translateX(6.5%); }
-      85% { transform: rotateY(92deg) translateX(8.5%); }
-      100% { transform: rotateY(100deg) translateX(9%); }
+      0% {
+        transform: rotateY(0deg);
+        opacity: 1;
+      }
+
+      60% {
+        transform: rotateY(78deg) translateX(6.5%);
+        opacity: 1;
+      }
+
+      100% {
+        transform: rotateY(110deg) translateX(15%);
+        opacity: 0;
+      }
     }
 
     @keyframes door-right-open-slow {
-      0% { transform: rotateY(0deg); }
-      60% { transform: rotateY(-78deg) translateX(-6.5%); }
-      85% { transform: rotateY(-92deg) translateX(-8.5%); }
-      100% { transform: rotateY(-100deg) translateX(-9%); }
+      0% {
+        transform: rotateY(0deg);
+        opacity: 1;
+      }
+
+      60% {
+        transform: rotateY(-78deg) translateX(-6.5%);
+        opacity: 1;
+      }
+
+      100% {
+        transform: rotateY(-110deg) translateX(-15%);
+        opacity: 0;
+      }
     }
 
     .doors-open .door-left {
       animation: door-left-open-slow 1.8s cubic-bezier(0.22, 0.7, 0.2, 1) forwards;
-      box-shadow: inset 0 24px 80px rgba(0,0,0,0.75);
+      box-shadow: inset 0 24px 80px rgba(0, 0, 0, 0.75);
     }
 
     .doors-open .door-right {
       animation: door-right-open-slow 1.8s cubic-bezier(0.22, 0.7, 0.2, 1) forwards;
-      box-shadow: inset 0 24px 80px rgba(0,0,0,0.75);
+      box-shadow: inset 0 24px 80px rgba(0, 0, 0, 0.75);
     }
 
     .login-content {
@@ -440,12 +460,13 @@
         transform: translateY(30px) scale(0);
       }
     }
+
     /* Gradient Loading Animation Variables & Styles */
     :root {
       --loader-bg-start: #a855f7;
       --loader-bg-end: #ec4899;
     }
-    
+
     .login-loader-overlay {
       position: absolute;
       inset: 0;
@@ -475,7 +496,11 @@
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
@@ -516,7 +541,8 @@
               Change Password
             </button>
           </div>
-          <p id="login-error" class="text-red-400 font-bold mt-4 hidden bg-black/20 p-2 rounded animate-bounce">Access Denied</p>
+          <p id="login-error" class="text-red-400 font-bold mt-4 hidden bg-black/20 p-2 rounded animate-bounce">Access
+            Denied</p>
         </div>
 
         <!-- Scroll Hint -->
@@ -1401,16 +1427,22 @@
         <!-- Admin-style Checklist Controls: Entity Tabs + Agent Selector -->
         <div id="checklist-admin-ui" class="max-w-4xl mx-auto mb-8">
           <div id="entity-tabs" class="flex gap-2 justify-center mb-4">
-            <button onclick="renderChecklistEntity('ALL')" class="entity-tab px-4 py-2 rounded-md bg-slate-100 dark:bg-slate-700 font-semibold">All</button>
-            <button onclick="renderChecklistEntity('BharatLoan')" class="entity-tab px-4 py-2 rounded-md">BharatLoan</button>
+            <button onclick="renderChecklistEntity('ALL')"
+              class="entity-tab px-4 py-2 rounded-md bg-slate-100 dark:bg-slate-700 font-semibold">All</button>
+            <button onclick="renderChecklistEntity('BharatLoan')"
+              class="entity-tab px-4 py-2 rounded-md">BharatLoan</button>
             <button onclick="renderChecklistEntity('Loan112')" class="entity-tab px-4 py-2 rounded-md">Loan112</button>
-            <button onclick="renderChecklistEntity('Rupee112')" class="entity-tab px-4 py-2 rounded-md">Rupee112</button>
-            <button onclick="renderChecklistEntity('RupeeOnTime')" class="entity-tab px-4 py-2 rounded-md">RupeeOnTime</button>
+            <button onclick="renderChecklistEntity('Rupee112')"
+              class="entity-tab px-4 py-2 rounded-md">Rupee112</button>
+            <button onclick="renderChecklistEntity('RupeeOnTime')"
+              class="entity-tab px-4 py-2 rounded-md">RupeeOnTime</button>
           </div>
 
-          <div id="entity-content" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div id="entity-content"
+            class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
             <label class="block text-sm font-semibold mb-2">Select Agent</label>
-            <select id="checklist-agent-selector" onchange="handleChecklistAgentSelect(this)" class="w-full p-3 rounded-lg border bg-slate-50 dark:bg-slate-700 mb-4">
+            <select id="checklist-agent-selector" onchange="handleChecklistAgentSelect(this)"
+              class="w-full p-3 rounded-lg border bg-slate-50 dark:bg-slate-700 mb-4">
               <option value="">-- Choose Agent --</option>
             </select>
 
@@ -1977,11 +2009,14 @@
     </div>
 
     <!-- CHECKLIST REVIEW MODAL (Re-uses admin review IDs) -->
-    <div id="checklist-admin-review-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[1200] flex items-center justify-center p-4">
+    <div id="checklist-admin-review-modal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 z-[1200] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-lg max-w-3xl w-full">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-2xl font-bold">Quality Review</h3>
-          <button onclick="adminCancelReview(); document.getElementById('checklist-admin-review-modal').classList.add('hidden')" class="text-slate-500 hover:text-slate-700 text-2xl">×</button>
+          <button
+            onclick="adminCancelReview(); document.getElementById('checklist-admin-review-modal').classList.add('hidden')"
+            class="text-slate-500 hover:text-slate-700 text-2xl">×</button>
         </div>
 
         <!-- Interaction Type -->
@@ -1989,17 +2024,24 @@
           <label class="block text-sm font-semibold mb-3">Select Interaction Type</label>
           <div class="flex gap-4">
             <label class="flex-1 cursor-pointer">
-              <input type="radio" name="interaction-type" value="voice" class="peer hidden" onchange="adminHandleInteractionTypeStart()">
-              <div class="p-4 rounded-2xl border bg-white dark:bg-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-50">🎤 Voice Process</div>
+              <input type="radio" name="interaction-type" value="voice" class="peer hidden"
+                onchange="adminHandleInteractionTypeStart()">
+              <div
+                class="p-4 rounded-2xl border bg-white dark:bg-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                🎤 Voice Process</div>
             </label>
             <label class="flex-1 cursor-pointer">
-              <input type="radio" name="interaction-type" value="non-voice" class="peer hidden" onchange="adminHandleInteractionTypeStart()">
-              <div class="p-4 rounded-2xl border bg-white dark:bg-slate-700 peer-checked:border-purple-500 peer-checked:bg-purple-50">💬 Non-Voice</div>
+              <input type="radio" name="interaction-type" value="non-voice" class="peer hidden"
+                onchange="adminHandleInteractionTypeStart()">
+              <div
+                class="p-4 rounded-2xl border bg-white dark:bg-slate-700 peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                💬 Non-Voice</div>
             </label>
           </div>
         </div>
 
-        <button id="admin-start-review-btn" onclick="adminStartQualityReview()" class="hidden w-full bg-slate-800 text-white font-bold py-3 rounded-xl mb-4">Start Quality Review</button>
+        <button id="admin-start-review-btn" onclick="adminStartQualityReview()"
+          class="hidden w-full bg-slate-800 text-white font-bold py-3 rounded-xl mb-4">Start Quality Review</button>
 
         <!-- Review Form -->
         <div id="admin-quality-form-section" class="hidden bg-emerald-50 dark:bg-slate-800 p-4 rounded-2xl border mb-4">
@@ -2011,8 +2053,11 @@
           <div id="admin-review-items-container" class="space-y-4 mb-4"></div>
 
           <div class="flex gap-3">
-            <button onclick="adminAddReviewItem()" id="admin-add-review-btn" class="bg-blue-600 text-white py-2 px-4 rounded">➕ Add Review</button>
-            <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" class="bg-green-600 text-white py-2 px-4 rounded opacity-50 cursor-not-allowed" disabled>✅ Final Submit</button>
+            <button onclick="adminAddReviewItem()" id="admin-add-review-btn"
+              class="bg-blue-600 text-white py-2 px-4 rounded">➕ Add Review</button>
+            <button onclick="adminFinalSubmit()" id="admin-final-submit-btn"
+              class="bg-green-600 text-white py-2 px-4 rounded opacity-50 cursor-not-allowed" disabled>✅ Final
+              Submit</button>
           </div>
         </div>
 
@@ -2021,7 +2066,16 @@
           <h4 class="font-bold mb-2">Submitted Reviews</h4>
           <div class="overflow-x-auto rounded-lg border">
             <table class="w-full text-left">
-              <thead class="text-xs text-slate-500 uppercase"><tr><th class="p-3">Date</th><th class="p-3">Agent</th><th class="p-3">File</th><th class="p-3">Score</th><th class="p-3">Observation</th><th class="p-3"></th></tr></thead>
+              <thead class="text-xs text-slate-500 uppercase">
+                <tr>
+                  <th class="p-3">Date</th>
+                  <th class="p-3">Agent</th>
+                  <th class="p-3">File</th>
+                  <th class="p-3">Score</th>
+                  <th class="p-3">Observation</th>
+                  <th class="p-3"></th>
+                </tr>
+              </thead>
               <tbody id="admin-reviews-list"></tbody>
             </table>
           </div>
@@ -2032,7 +2086,14 @@
           <h4 class="font-bold mb-2">Agent Feedback</h4>
           <div class="overflow-x-auto rounded-lg border">
             <table class="w-full text-left">
-              <thead class="text-xs text-slate-500 uppercase"><tr><th class="p-3">Date</th><th class="p-3">Agent</th><th class="p-3">Feedback</th><th class="p-3"></th></tr></thead>
+              <thead class="text-xs text-slate-500 uppercase">
+                <tr>
+                  <th class="p-3">Date</th>
+                  <th class="p-3">Agent</th>
+                  <th class="p-3">Feedback</th>
+                  <th class="p-3"></th>
+                </tr>
+              </thead>
               <tbody id="admin-feedback-list"></tbody>
             </table>
           </div>
@@ -4610,60 +4671,60 @@ Reviewer: ${review.reviewerId}
 
         // Simulate Processing Delay
         setTimeout(() => {
-            // Check Database (Safe Access)
-            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
-            let user = db.find(u => u.id === empidInput);
+          // Check Database (Safe Access)
+          const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
+          let user = db.find(u => u.id === empidInput);
 
-            // DEMO FALLBACK: Ensure this specific ID works for the video demo if not in DB
-            if (!user && empidInput === 'BL/GG/25/704') {
-                user = { id: 'BL/GG/25/704', name: 'Agent', role: 'agent' };
-            }
+          // DEMO FALLBACK: Ensure this specific ID works for the video demo if not in DB
+          if (!user && empidInput === 'BL/GG/25/704') {
+            user = { id: 'BL/GG/25/704', name: 'Agent', role: 'agent' };
+          }
 
-            const globalPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
+          const globalPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
 
-            // Verify Creds (Allowing 1234 as per demo)
-            if (user && (passwordInput === globalPass || passwordInput === DEFAULT_PASSWORD || passwordInput === '1234')) {
-              // SUCCESS
-              currentUser = user;
-              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          // Verify Creds (Allowing 1234 as per demo)
+          if (user && (passwordInput === globalPass || passwordInput === DEFAULT_PASSWORD || passwordInput === '1234')) {
+            // SUCCESS
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-              errorMsg.classList.add('hidden');
+            errorMsg.classList.add('hidden');
 
-              // Personal Greeting
-              const greeting = document.getElementById('home-greeting');
-              if (greeting) greeting.innerText = `Hii ${user.name}`;
+            // Personal Greeting
+            const greeting = document.getElementById('home-greeting');
+            if (greeting) greeting.innerText = `Hii ${user.name}`;
 
-              // Dashboard Routing
-              if (user.role === 'admin') {
-                adminCurrentEntity = 'ALL';
-                if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
-                renderChecklistEntity(adminCurrentEntity);
-                navigateTo('view-home');
-              } else {
-                if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
-              }
-
-              // TRIGGER PORTAL REDIRECTION (Door Effect)
-              if (typeof triggerDoorAnimation === 'function') {
-                  triggerDoorAnimation();
-              } else {
-                  document.getElementById('view-login').style.display = 'none';
-                  document.getElementById('app-container').style.display = 'block';
-                  setTimeout(() => document.getElementById('app-container').style.opacity = '1', 10);
-              }
-
-              // Cleanup Loader
-              setTimeout(() => {
-                 if (loader) loader.classList.remove('active');
-              }, 1000);
-
+            // Dashboard Routing
+            if (user.role === 'admin') {
+              adminCurrentEntity = 'ALL';
+              if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+              renderChecklistEntity(adminCurrentEntity);
+              navigateTo('view-home');
             } else {
-              // FAILURE
-              if (loader) loader.classList.remove('active');
-              errorMsg.innerText = "Invalid Credenitals";
-              errorMsg.classList.remove('hidden');
-              shakeLogin();
+              if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
             }
+
+            // TRIGGER PORTAL REDIRECTION (Door Effect)
+            if (typeof triggerDoorAnimation === 'function') {
+              triggerDoorAnimation();
+            } else {
+              document.getElementById('view-login').style.display = 'none';
+              document.getElementById('app-container').style.display = 'block';
+              setTimeout(() => document.getElementById('app-container').style.opacity = '1', 10);
+            }
+
+            // Cleanup Loader
+            setTimeout(() => {
+              if (loader) loader.classList.remove('active');
+            }, 1000);
+
+          } else {
+            // FAILURE
+            if (loader) loader.classList.remove('active');
+            errorMsg.innerText = "Invalid Credenitals";
+            errorMsg.classList.remove('hidden');
+            shakeLogin();
+          }
         }, LOGIN_PROCESS_TIME);
       }
 
@@ -4718,11 +4779,11 @@ Reviewer: ${review.reviewerId}
         const loginView = document.getElementById('view-login');
         const app = document.getElementById('app-container');
 
-        // Show app and prepare for zoom-out (start slightly larger)
+        // Show app and prepare for "Coming Out" (Zoom In effect)
         app.style.display = 'block';
         app.style.opacity = '1';
-        app.style.transform = 'scale(1.05)';
-        app.style.transition = 'transform 0.9s ease, opacity 0.6s ease';
+        app.style.transform = 'scale(0.85)'; // Start smaller
+        app.style.transition = 'transform 1.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease'; // Smooth cubic bezier
 
         // Make login background transparent so doors reveal the app
         if (loginView) loginView.style.background = 'transparent';
@@ -4735,15 +4796,16 @@ Reviewer: ${review.reviewerId}
         const bubbleCanvas = document.getElementById('bubble-canvas');
         if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
 
-        // After slow door animation (1.8s), perform a simple zoom-out to normal scale
+        // Animate Homepage "Coming Out" shortly after doors start opening
         setTimeout(() => {
-          app.style.transform = 'scale(1)';
+          app.style.transform = 'scale(1)'; // Zoom to normal
+        }, 200);
 
-          // After a brief pause, remove login from layout
-          setTimeout(() => {
-            if (loginView) loginView.style.display = 'none';
-          }, 400);
-        }, 1800); // matches slow door animation duration
+        // Cleanup
+        setTimeout(() => {
+          // Remove login from layout
+          if (loginView) loginView.style.display = 'none';
+        }, 2000);
       }
 
       function toggleNotifications() {
