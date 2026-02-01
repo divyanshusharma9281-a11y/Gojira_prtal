@@ -1639,6 +1639,15 @@
 
           <!-- AGENT VIEW CONTAINER -->
           <div id="qa-agent-container" class="hidden">
+            <!-- Agent Tab Bar (persistent) -->
+            <div class="max-w-4xl mx-auto text-center py-6">
+              <div class="inline-flex rounded-lg shadow-sm bg-slate-50 dark:bg-slate-800 p-1" role="tablist" aria-label="Agent Performance Tabs">
+                <button id="qa-tab-weekly" onclick="qaShowAgentWeekly()" class="px-4 py-2 rounded-md font-bold text-sm text-slate-700 dark:text-slate-200">Weekly Performance</button>
+                <button id="qa-tab-monthly" onclick="qaShowAgentMonthly()" class="px-4 py-2 rounded-md font-bold text-sm text-slate-700 dark:text-slate-200">Monthly Performance</button>
+                <button id="qa-tab-landing" onclick="qaBackToAgentLanding()" class="px-4 py-2 rounded-md font-bold text-sm text-slate-500">Home</button>
+              </div>
+            </div>
+
             <div id="qa-agent-landing" class="max-w-4xl mx-auto text-center py-10">
               <h1 class="text-3xl font-bold mb-2">My Performance Portal</h1>
               <p class="text-slate-500 mb-12">Select a view to check your quality scores</p>
@@ -5686,8 +5695,12 @@ Reviewer: ${review.reviewerId}
 
         // --- AGENT LOGIC ---
         function qaShowAgentWeekly() {
+          // Set tab active state
+          qaSetAgentTab('weekly');
+
           document.getElementById('qa-agent-landing').classList.add('hidden');
           document.getElementById('qa-agent-weekly-view').classList.remove('hidden');
+          document.getElementById('qa-agent-monthly-view').classList.add('hidden');
 
           const data = getQAData();
           const agentId = currentUser.id;
@@ -5862,10 +5875,17 @@ Reviewer: ${review.reviewerId}
         }
 
         function qaShowAgentMonthly() {
+          // Set tab active state
+          qaSetAgentTab('monthly');
+
           document.getElementById('qa-agent-landing').classList.add('hidden');
           document.getElementById('qa-agent-monthly-view').classList.remove('hidden');
+          document.getElementById('qa-agent-weekly-view').classList.add('hidden');
 
           const data = getQAData();
+
+          // allow reuse of existing rendering logic by delegating to qaShowAgentMonthly (itself) - already handled
+        }
           const agentId = currentUser.id;
 
           // Month range (start-of-month to start-of-next-month)
@@ -5990,20 +6010,51 @@ Reviewer: ${review.reviewerId}
         }
 
         function qaBackToAgentLanding() {
+          // Reset tabs
+          qaSetAgentTab('landing');
+
           document.getElementById('qa-agent-weekly-view').classList.add('hidden');
           document.getElementById('qa-agent-monthly-view').classList.add('hidden');
           document.getElementById('qa-agent-landing').classList.remove('hidden');
         }
 
         // Handling Notifications Clicks (Global)
-        window.qaHandleNotificationClick = function (index, action) {
+        window.qaHandleNotificationClick = function (index, action, subView) {
           if (action === 'view-checklist') {
             navigateTo('view-checklist');
-            if (currentUser.role === 'agent') {
-              setTimeout(() => qaShowAgentWeekly(), 500);
+            if (currentUser && currentUser.role === 'agent') {
+              setTimeout(() => {
+                if (subView === 'monthly') qaShowAgentMonthly();
+                else qaShowAgentWeekly();
+              }, 500);
             }
           }
         };
+
+        // Simple helper to set the active tab UI for agent view
+        function qaSetAgentTab(tab) {
+          const tabs = ['weekly', 'monthly', 'landing'];
+          tabs.forEach(t => {
+            const el = document.getElementById('qa-tab-' + t);
+            if (!el) return;
+            el.classList.remove('bg-blue-600', 'text-white', 'ring-2', 'ring-blue-400');
+            el.classList.remove('bg-purple-600', 'text-white', 'ring-2', 'ring-purple-400');
+            // reset neutral styles
+            el.classList.remove('opacity-60');
+            el.classList.add('text-slate-700');
+          });
+
+          if (tab === 'weekly') {
+            const w = document.getElementById('qa-tab-weekly');
+            if (w) { w.classList.add('bg-blue-600', 'text-white', 'ring-2', 'ring-blue-400'); w.classList.remove('text-slate-700'); }
+          } else if (tab === 'monthly') {
+            const m = document.getElementById('qa-tab-monthly');
+            if (m) { m.classList.add('bg-purple-600', 'text-white', 'ring-2', 'ring-purple-400'); m.classList.remove('text-slate-700'); }
+          } else {
+            const l = document.getElementById('qa-tab-landing');
+            if (l) { l.classList.add('opacity-60'); l.classList.remove('text-slate-700'); }
+          }
+        }
 
         // Patch Notification Render to support click (filtered per user)
         const originalNotifyRender = NotificationManager.renderDropdown;
