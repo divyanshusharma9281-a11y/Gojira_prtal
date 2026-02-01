@@ -4603,9 +4603,15 @@ Reviewer: ${review.reviewerId}
           // Show app immediately but keep it hidden visually until we finish fading
           const app = document.getElementById('app-container');
           app.style.display = 'block';
+
+          // Reset scale to 1 immediately for session restore, but allow a quick fade/zoom check
+          // Override the long CSS transition used for the door effect
+          app.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+
           // tiny delay to ensure display:block is applied
           setTimeout(() => {
             app.style.opacity = '1';
+            app.style.transform = 'scale(1)';
           }, 50);
 
           // After fade completes, hide login from layout
@@ -4808,8 +4814,439 @@ Reviewer: ${review.reviewerId}
         }
       }
 
-    </script>
-  </div> <!-- Close app-container -->
-</body>
+      // ==========================================
+      // QA CHECKLIST MODULE
+      // ==========================================
 
-</html>
+      const QA_STORE_KEY = 'gojira_qa_data';
+
+      // Initial State Wrapper
+      function getQAData() {
+        return JSON.parse(localStorage.getItem(QA_STORE_KEY) || JSON.stringify({
+          weekNumber: 1,
+          finalizedAgents: [], // List of finalized Agent IDs for current week
+          reviews: {}, // Map: AgentID -> Array of Review Objects
+          history: [] // Archived weeks
+        }));
+      }
+
+      function saveQAData(data) {
+        localStorage.setItem(QA_STORE_KEY, JSON.stringify(data));
+      }
+
+      // --- ROUTING ---
+      function initChecklistUI() {
+        const qaData = getQAData();
+        const weekDisplay = document.getElementById('checklist-week-display');
+        if (weekDisplay) weekDisplay.innerText = `Week ${qaData.weekNumber}`;
+
+        if (currentUser.role === 'admin') {
+          document.getElementById('qa-admin-container').classList.remove('hidden');
+          document.getElementById('qa-agent-container').classList.add('hidden');
+          // Reset View
+          document.getElementById('qa-step-entity').classList.remove('hidden');
+          document.getElementById('qa-step-agent').classList.add('hidden');
+          qaUpdateGlobalSubmitButton();
+        } else {
+          document.getElementById('qa-agent-container').classList.remove('hidden');
+          document.getElementById('qa-admin-container').classList.add('hidden');
+        }
+      }
+
+      // --- ADMIN LOGIC ---
+      let qaCurrentEntity = null;
+      let qaCurrentAgent = null;
+      let qaSessionReviews = []; // Temporary holding for current session
+
+      function qaSelectEntity(entity) {
+        qaCurrentEntity = entity;
+        document.getElementById('qa-step-entity').classList.add('hidden');
+        document.getElementById('qa-step-agent').classList.remove('hidden');
+        document.getElementById('qa-entity-title').innerText = `${entity} Agents`;
+        qaRenderAgentList();
+      }
+
+      function qaBackToEntity() {
+        document.getElementById('qa-step-agent').classList.add('hidden');
+        document.getElementById('qa-step-entity').classList.remove('hidden');
+        qaResetWorkspace();
+        qaUpdateGlobalSubmitButton(); // Re-check on back
+      }
+
+      function qaRenderAgentList() {
+        const list = document.getElementById('qa-agent-list');
+        const data = getQAData();
+
+        // Filter agents
+        const agents = USER_DB.filter(u => u.entity === qaCurrentEntity && u.role === 'agent');
+
+        list.innerHTML = agents.map(agent => {
+          const isFinalized = data.finalizedAgents.includes(agent.id);
+          const activeClass = (qaCurrentAgent && qaCurrentAgent.id === agent.id) ? 'bg-blue-50 dark:bg-blue-900/30' : '';
+
+          return `
+            <div onclick="qaSelectAgent('${agent.id}')" 
+                 class="p-4 border-b border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition flex justify-between items-center ${activeClass}">
+              <div>
+                <p class="font-bold text-slate-800 dark:text-slate-200">${agent.name}</p>
+                <p class="text-xs text-slate-500 font-mono">${agent.id}</p>
+              </div>
+              ${isFinalized ? '<span class="text-blue-600 text-xl">✅</span>' : ''}
+            </div>
+          `;
+        }).join('');
+      }
+
+      function qaSelectAgent(agentId) {
+        qaCurrentAgent = USER_DB.find(u => u.id === agentId);
+        qaRenderAgentList(); // Re-render to highlight selection
+
+        // Setup Workspace
+        document.getElementById('qa-workspace-placeholder').classList.add('hidden');
+        document.getElementById('qa-workspace-active').classList.remove('hidden');
+
+        document.getElementById('qa-selected-agent-name').innerText = qaCurrentAgent.name;
+        document.getElementById('qa-selected-agent-id').innerText = `ID: ${qaCurrentAgent.id}`;
+
+        // Check Status
+        const data = getQAData();
+        const isFinalized = data.finalizedAgents.includes(agentId);
+
+        if (isFinalized) {
+          document.getElementById('qa-agent-status-badge').classList.remove('hidden');
+          // If finalized, maybe show summary instead of start button?
+          // For now, let's allow "viewing" but maybe disable editing unless deleted?
+          // User requirement: "finalized... blue tick...". 
+          // Let's reset the session reviews to what's in DB so they can see it
+          qaSessionReviews = data.reviews[agentId] || [];
+          qaRenderPendingList();
+          document.getElementById('qa-start-screen').classList.add('hidden');
+          document.getElementById('qa-review-form-container').classList.remove('hidden');
+          document.getElementById('qa-input-form').classList.add('hidden'); // Hide input
+          document.getElementById('qa-btn-finalize-agent').disabled = true;
+          document.getElementById('qa-btn-finalize-agent').innerText = "Already Finalized";
+          document.getElementById('qa-btn-add-more').classList.add('hidden');
+        } else {
+          document.getElementById('qa-agent-status-badge').classList.add('hidden');
+          qaResetWorkspace(false); // Reset internal state but keep selection
+          document.getElementById('qa-start-screen').classList.remove('hidden');
+          document.getElementById('qa-review-form-container').classList.add('hidden');
+        }
+      }
+
+      function qaResetWorkspace(full = true) {
+        if (full) {
+          qaCurrentAgent = null;
+          document.getElementById('qa-workspace-placeholder').classList.remove('hidden');
+          document.getElementById('qa-workspace-active').classList.add('hidden');
+        }
+        qaSessionReviews = [];
+        document.getElementById('qa-input-form').classList.remove('hidden');
+        document.getElementById('qa-btn-finalize-agent').innerText = "Finalize Agent ✅";
+
+        // Reset Inputs
+        document.getElementById('qa-interaction-id').value = '';
+        document.getElementById('qa-observation').value = '';
+        const radios = document.getElementsByName('qa-score');
+        radios.forEach(r => r.checked = false);
+      }
+
+      function qaStartReviewSession() {
+        document.getElementById('qa-start-screen').classList.add('hidden');
+        document.getElementById('qa-review-form-container').classList.remove('hidden');
+        qaRenderPendingList();
+      }
+
+      function qaToggleInteractionFields() {
+        const type = document.querySelector('input[name="qa-interaction-type"]:checked').value;
+        const label = document.getElementById('qa-id-label');
+        if (type === 'Voice') {
+          label.innerText = "Call ID / Recording Link";
+          document.getElementById('qa-interaction-id').placeholder = "Enter Call ID...";
+        } else {
+          label.innerText = "Chat / Email ID";
+          document.getElementById('qa-interaction-id').placeholder = "Paste ID or Link here...";
+        }
+      }
+
+      function qaSubmitSingleReview() {
+        // Validation
+        const typeEl = document.querySelector('input[name="qa-interaction-type"]:checked');
+        const id = document.getElementById('qa-interaction-id').value.trim();
+        const obs = document.getElementById('qa-observation').value.trim();
+        const scoreEl = document.querySelector('input[name="qa-score"]:checked');
+
+        if (!typeEl) return alert("Select Interaction Type");
+        if (!id) return alert("Enter Interaction ID");
+        if (!obs) return alert("Enter Observation");
+        if (!scoreEl) return alert("Select Score (0 or 100)");
+
+        const review = {
+          id: Date.now(),
+          type: typeEl.value,
+          interactionId: id,
+          observation: obs,
+          score: parseInt(scoreEl.value),
+          date: new Date().toISOString()
+        };
+
+        qaSessionReviews.push(review);
+        qaRenderPendingList();
+
+        // Check if we reached 3
+        if (qaSessionReviews.length >= 1) {
+          document.getElementById('qa-btn-add-more').classList.remove('hidden');
+        }
+
+        // Update Finalize Button
+        const btn = document.getElementById('qa-btn-finalize-agent');
+        if (qaSessionReviews.length >= 3) {
+          btn.disabled = false;
+          btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+          btn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+        }
+
+        // Reset Form
+        document.getElementById('qa-interaction-id').value = '';
+        document.getElementById('qa-observation').value = '';
+        scoreEl.checked = false;
+
+        alert("Review Added!");
+      }
+
+      function qaRenderPendingList() {
+        const list = document.getElementById('qa-pending-list');
+        document.getElementById('qa-review-count').innerText = qaSessionReviews.length;
+
+        if (qaSessionReviews.length === 0) {
+          list.innerHTML = `<div class="text-center text-slate-400 italic py-4">No reviews yet</div>`;
+          return;
+        }
+
+        list.innerHTML = qaSessionReviews.map((r, i) => `
+            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 flex justify-between items-start">
+               <div>
+                  <div class="flex items-center gap-2 mb-1">
+                     <span class="text-xs font-bold uppercase ${r.type === 'Voice' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'} px-2 py-0.5 rounded">${r.type}</span>
+                     <span class="font-mono text-xs text-slate-500">${r.interactionId}</span>
+                  </div>
+                  <p class="text-sm font-medium text-slate-800 dark:text-slate-200">${r.observation}</p>
+               </div>
+               <div class="text-right">
+                  <span class="font-black text-xl ${r.score === 100 ? 'text-emerald-500' : 'text-red-500'}">${r.score}</span>
+                  ${!getQAData().finalizedAgents.includes(qaCurrentAgent?.id) ?
+            `<button onclick="qaRemoveLocalReview(${i})" class="block text-xs text-red-400 hover:text-red-600 mt-1">Remove</button>`
+            : ''}
+               </div>
+            </div>
+         `).join('');
+      }
+
+      function qaAddMoreReviews() {
+        // Just focuses the form essentially
+        document.querySelector('input[name="qa-interaction-type"]').focus();
+      }
+
+      function qaRemoveLocalReview(index) {
+        qaSessionReviews.splice(index, 1);
+        qaRenderPendingList();
+
+        // Re-check finalized button state
+        const btn = document.getElementById('qa-btn-finalize-agent');
+        if (qaSessionReviews.length < 3) {
+          btn.disabled = true;
+          btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+          btn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+        }
+      }
+
+      function qaFinalizeAgent() {
+        if (!qaCurrentAgent) return;
+
+        const data = getQAData();
+
+        // Save Reviews
+        data.reviews[qaCurrentAgent.id] = qaSessionReviews;
+
+        // Mark Finalized
+        if (!data.finalizedAgents.includes(qaCurrentAgent.id)) {
+          data.finalizedAgents.push(qaCurrentAgent.id);
+        }
+
+        saveQAData(data);
+
+        alert(`Agent ${qaCurrentAgent.name} Finalized Successfully!`);
+
+        // Refresh UI
+        qaSelectAgent(qaCurrentAgent.id); // Reload view as "Read Only/Finalized"
+        qaRenderAgentList(); // Update Sidebar Tick
+
+        // Check Global
+        qaCheckWeekCompletion();
+      }
+
+      function qaDeleteAgentReviews() {
+        if (!qaCurrentAgent) return;
+        if (!confirm(`Are you sure you want to delete ALL reviews for ${qaCurrentAgent.name}? This will un-finalize them.`)) return;
+
+        const data = getQAData();
+
+        // Remove from finalized
+        data.finalizedAgents = data.finalizedAgents.filter(id => id !== qaCurrentAgent.id);
+        // Delete reviews
+        delete data.reviews[qaCurrentAgent.id];
+
+        saveQAData(data);
+
+        // Refresh
+        alert("Reviews deleted.");
+        qaSelectAgent(qaCurrentAgent.id);
+        qaRenderAgentList();
+      }
+
+      // --- GLOBAL WEEKLY MANAGEMENT ---
+
+      function qaUpdateGlobalSubmitButton() {
+        // Logic: Check if ALL agents in the current entity are finalized?
+        // User said: "once the all agents will be finalized... for this week will be enable"
+        // Assuming "all agents" means all agents in the currently selected entity OR all agents globally?
+        // Given the UI flows entity by entity, let's check Current Entity first, or global.
+        // Let's implement Global Check for safety.
+
+        const data = getQAData();
+        const allAgents = USER_DB.filter(u => u.role === 'agent'); // Global list
+
+        // Are all agents in the "finalizedAgents" list?
+        const allDone = allAgents.every(a => data.finalizedAgents.includes(a.id));
+
+        const btn = document.getElementById('btn-final-submit-week');
+
+        if (allDone && allAgents.length > 0) {
+          btn.disabled = false;
+          btn.classList.remove('cursor-not-allowed', 'bg-slate-200', 'text-slate-400');
+          btn.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700', 'shadow-lg');
+        } else {
+          btn.disabled = true;
+          btn.classList.add('cursor-not-allowed', 'bg-slate-200', 'text-slate-400');
+          btn.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700', 'shadow-lg');
+        }
+      }
+
+      function qaCheckWeekCompletion() {
+        qaUpdateGlobalSubmitButton();
+      }
+
+      function qaSubmitWeek() {
+        if (!confirm("Are you sure you want to FINAL SUBMIT FOR THIS WEEK? This will archive all data and start a new week.")) return;
+
+        const data = getQAData();
+
+        // Archive
+        const weekArchive = {
+          week: data.weekNumber,
+          reviews: data.reviews,
+          date: new Date().toISOString()
+        };
+
+        data.history.push(weekArchive);
+
+        // Reset
+        data.weekNumber += 1;
+        data.reviews = {};
+        data.finalizedAgents = [];
+
+        saveQAData(data);
+
+        alert("Week Submitted! Welcome to Week " + data.weekNumber);
+        location.reload(); // Refresh everything
+      }
+
+      function qaResetWeeklyData() {
+        if (!confirm("WARNING: This will delete ALL progress for the current week. Continue?")) return;
+        const data = getQAData();
+        data.reviews = {};
+        data.finalizedAgents = [];
+        saveQAData(data);
+        location.reload();
+      }
+
+
+      // --- AGENT LOGIC ---
+      function qaShowAgentWeekly() {
+        document.getElementById('qa-agent-landing').classList.add('hidden');
+        document.getElementById('qa-agent-weekly-view').classList.remove('hidden');
+
+        const data = getQAData();
+        const agentId = currentUser.id;
+
+        const reviews = data.reviews[agentId] || [];
+
+        // Stats
+        const totalReviews = reviews.length;
+        const fatalCount = reviews.filter(r => r.score === 0).length;
+
+        let totalScore = 0;
+        if (totalReviews > 0) {
+          // Average score? Or if ANY fatal, then 0? 
+          // Usually: (Sum of scores) / Count
+          const sum = reviews.reduce((a, b) => a + b.score, 0);
+          totalScore = Math.round(sum / totalReviews);
+
+          // Override: If any fatal, implies failure? User didn't specify calc logic, just "0 fatal and 100 good".
+          // Let's stick to average for now.
+        }
+
+        document.getElementById('qa-weekly-agent-name').innerText = currentUser.name;
+        document.getElementById('qa-weekly-date').innerText = `Week ${data.weekNumber} Report`;
+        document.getElementById('qa-weekly-score').innerText = totalReviews > 0 ? `${totalScore}%` : '--';
+        document.getElementById('qa-weekly-fatals').innerText = fatalCount;
+
+        // Render List
+        const list = document.getElementById('qa-weekly-reviews-list');
+        if (totalReviews === 0) {
+          list.innerHTML = `<div class="text-center text-slate-400 py-10 italic">No reviews finalized for this week yet.</div>`;
+        } else {
+          list.innerHTML = reviews.map((r, i) => `
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
+                   <div class="flex justify-between mb-4">
+                      <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">${r.type}</span>
+                      <span class="font-black text-xl ${r.score === 100 ? 'text-emerald-500' : 'text-red-500'}">${r.score}</span>
+                   </div>
+                   <div class="mb-2">
+                      <span class="text-xs text-slate-400 uppercase font-bold">Observation</span>
+                      <p class="text-slate-800 dark:text-slate-200 mt-1">${r.observation}</p>
+                   </div>
+                   <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 font-mono">
+                      ID: ${r.interactionId}
+                   </div>
+                </div>
+              `).join('');
+        }
+      }
+
+      function qaShowAgentMonthly() {
+        document.getElementById('qa-agent-landing').classList.add('hidden');
+        document.getElementById('qa-agent-monthly-view').classList.remove('hidden');
+      }
+
+      function qaBackToAgentLanding() {
+        document.getElementById('qa-agent-weekly-view').classList.add('hidden');
+        document.getElementById('qa-agent-monthly-view').classList.add('hidden');
+        document.getElementById('qa-agent-landing').classList.remove('hidden');
+      }
+
+      // Initialize on view load (hook into existing modify if needed, or rely on navigateTo)
+      // We will hook this into the 'navigateTo' function in the previous block if possible, 
+      // or just call it when 'view-checklist' becomes active.
+
+      // Monkey patch navigateTo to trigger init
+      const originalNavigate = window.navigateTo || function () { };
+      window.navigateTo = function (id) {
+        originalNavigate(id);
+        if (id === 'view-checklist') {
+          initChecklistUI();
+        }
+      };
+
+      // End Script Wrapper
+    </script>
