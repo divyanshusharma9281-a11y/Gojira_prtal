@@ -1336,7 +1336,29 @@
       </header>
 
       <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-        <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
+        <h1 class="text-3xl font-extrabold mb-6">Quality Assurance Checklist</h1>
+
+        <!-- Admin-style Checklist Controls: Entity Tabs + Agent Selector -->
+        <div id="checklist-admin-ui" class="max-w-4xl mx-auto mb-8">
+          <div id="entity-tabs" class="flex gap-2 justify-center mb-4">
+            <button onclick="renderChecklistEntity('ALL')" class="entity-tab px-4 py-2 rounded-md bg-slate-100 dark:bg-slate-700 font-semibold">All</button>
+            <button onclick="renderChecklistEntity('BharatLoan')" class="entity-tab px-4 py-2 rounded-md">BharatLoan</button>
+            <button onclick="renderChecklistEntity('Loan112')" class="entity-tab px-4 py-2 rounded-md">Loan112</button>
+            <button onclick="renderChecklistEntity('Rupee112')" class="entity-tab px-4 py-2 rounded-md">Rupee112</button>
+            <button onclick="renderChecklistEntity('RupeeOnTime')" class="entity-tab px-4 py-2 rounded-md">RupeeOnTime</button>
+          </div>
+
+          <div id="entity-content" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <label class="block text-sm font-semibold mb-2">Select Agent</label>
+            <select id="checklist-agent-selector" onchange="handleChecklistAgentSelect(this)" class="w-full p-3 rounded-lg border bg-slate-50 dark:bg-slate-700 mb-4">
+              <option value="">-- Choose Agent --</option>
+            </select>
+
+            <div id="checklist-agent-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          </div>
+        </div>
+
+        <h2 class="text-xl font-bold mb-4">Checklist Actions</h2>
 
         <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
           <li onclick="openAgentPerformanceModal()"
@@ -1802,164 +1824,7 @@
       </div>
     </div>
 
-    <!-- ADMIN DASHBOARD -->
-    <div id="view-admin" class="app-view bg-white dark:bg-slate-900">
-      <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 justify-between">
-        <div class="flex items-center gap-4">
-          <span class="font-bold text-xl text-indigo-600">Admin Dashboard - <span
-              id="admin-entity-display">--</span></span>
-        </div>
-        <button onclick="logout()" class="text-slate-500 hover:text-red-500 font-medium">Logout</button>
-      </header>
-
-      <div class="max-w-6xl mx-auto px-6 py-10">
-        <!-- Week Management -->
-        <div class="flex flex-wrap justify-end gap-4 mb-8">
-          <button onclick="adminResetWeeklyData()"
-            class="bg-red-100 text-red-700 border border-red-200 font-bold py-3 px-6 rounded-xl hover:bg-red-200 transition flex items-center gap-2">
-            <span>🔄</span> Reset Data for This Week
-          </button>
-          <button onclick="adminFinalSubmitWeek()" id="btn-final-submit-week" disabled
-            class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed flex items-center gap-2 shadow-lg">
-            <span>📅</span> Final Submit for This Week
-          </button>
-        </div>
-
-        <!-- Section 1: Select Agent Only -->
-        <div class="bg-blue-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-blue-200 dark:border-slate-700">
-          <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-            <span class="bg-blue-600 text-white rounded-lg p-2 text-xl">👥</span>
-            Select Agent
-          </h2>
-
-          <!-- Agent Selection -->
-          <!-- Agent Selection Dropdown -->
-          <div class="mb-6">
-            <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Choose an Agent to
-              Review</label>
-            <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
-              class="w-full p-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-bold text-lg focus:border-blue-500 outline-none transition cursor-pointer">
-              <option value="">-- Click to Select Agent --</option>
-            </select>
-          </div>
-
-          <!-- Interaction Type Selection -->
-          <div id="admin-interaction-type-section" class="hidden mb-8 animate-fade-in">
-            <label class="block text-sm font-semibold mb-3 text-slate-600 dark:text-slate-400">Select Interaction
-              Type</label>
-            <div class="flex gap-4">
-              <label class="flex-1 cursor-pointer group">
-                <input type="radio" name="interaction-type" value="voice" class="peer hidden"
-                  onchange="adminHandleInteractionTypeStart()">
-                <div
-                  class="p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 peer-checked:shadow-lg transition flex flex-col items-center gap-2 group-hover:border-blue-300">
-                  <span class="text-3xl">🎤</span>
-                  <span class="font-bold text-lg">Voice Process</span>
-                  <span class="text-xs text-slate-500">Audio Recording</span>
-                </div>
-              </label>
-              <label class="flex-1 cursor-pointer group">
-                <input type="radio" name="interaction-type" value="non-voice" class="peer hidden"
-                  onchange="adminHandleInteractionTypeStart()">
-                <div
-                  class="p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 peer-checked:border-purple-500 peer-checked:bg-purple-50 dark:peer-checked:bg-purple-900/20 peer-checked:shadow-lg transition flex flex-col items-center gap-2 group-hover:border-purple-300">
-                  <span class="text-3xl">💬</span>
-                  <span class="font-bold text-lg">Non-Voice Process</span>
-                  <span class="text-xs text-slate-500">Chat / Email</span>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <button id="admin-start-review-btn" onclick="adminStartQualityReview()" disabled
-            class="hidden w-full bg-slate-800 text-white font-bold py-4 px-8 rounded-xl hover:bg-slate-900 transition shadow-xl">
-            Start Quality Review Check
-          </button>
-        </div>
-
-        <!-- Section 2: Quality Review Form (Hidden initially) -->
-        <div id="admin-quality-form-section"
-          class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold flex items-center gap-3">
-              <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
-              Quality Review - <span id="admin-review-agent-display" class="text-emerald-600"></span>
-            </h2>
-            <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
-              Back</button>
-          </div>
-
-          <div id="admin-review-items-container" class="space-y-6">
-            <!-- Review items will be dynamically added here -->
-          </div>
-
-          <div class="flex gap-3 mt-8">
-            <button onclick="adminAddReviewItem()" id="admin-add-review-btn"
-              class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition">
-              ➕ Add Review (Min 3, Max 10)
-            </button>
-            <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" disabled
-              class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed">
-              ✅ Final Submit
-            </button>
-          </div>
-        </div>
-
-        <!-- Section 3: Submitted Reviews -->
-        <div class="mb-12">
-          <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-            <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
-            Submitted Reviews
-          </h2>
-          <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-            <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-              <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-                <tr>
-                  <th class="p-6">Date</th>
-                  <th class="p-6">Agent</th>
-                  <th class="p-6">File</th>
-                  <th class="p-6">Score</th>
-                  <th class="p-6">Observation</th>
-                  <th class="p-6 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-                <!-- JS Populates this -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Section 4: Agent Feedback -->
-        <div>
-          <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-            <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
-            Agent Comments
-          </h2>
-          <div class="mb-4">
-            <button onclick="adminDeleteAllFeedback()"
-              class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
-              🗑️ Delete All Feedback
-            </button>
-          </div>
-          <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-            <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-              <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-                <tr>
-                  <th class="p-6">Date</th>
-                  <th class="p-6">Agent</th>
-                  <th class="p-6">Feedback</th>
-                  <th class="p-6 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody id="admin-feedback-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-                <!-- JS Populates this -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ADMIN DASHBOARD REMOVED - Replaced by Checklist-based Admin UI -->
 
     <!-- LOGIN MODAL -->
     <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -3617,7 +3482,6 @@ Reviewer: ${review.reviewerId}
 
       // USER DATABASE
       const USER_DB = [
-        { id: 'BL/GG/25/1135', name: 'Siddhant Chauhan', role: 'admin', entity: 'ALL' },
         { id: 'BL/GG/25/703', name: 'SHARAD ADHIKARI', role: 'agent', entity: 'BharatLoan' },
         { id: 'BL/GG/25/704', name: 'DIVYANSHU SHARMA', role: 'agent', entity: 'BharatLoan' },
         { id: 'BL/GG/25/705', name: 'AYUSHMAN TIBREWAL', role: 'agent', entity: 'BharatLoan' },
@@ -3764,6 +3628,62 @@ Reviewer: ${review.reviewerId}
 
           selector.appendChild(optgroup);
         });
+      }
+
+      // ===== New Checklist-based Admin UI Helpers =====
+      function initChecklistAdminUI() {
+        // Set default active tab to ALL
+        renderChecklistEntity('ALL');
+        // mark the first tab active
+        document.querySelectorAll('#entity-tabs .entity-tab').forEach(btn => btn.classList.remove('bg-slate-100', 'dark:bg-slate-700'));
+        const first = document.querySelector('#entity-tabs .entity-tab');
+        if (first) first.classList.add('bg-slate-100', 'dark:bg-slate-700');
+      }
+
+      function renderChecklistEntity(entity) {
+        // Update active tab classes
+        document.querySelectorAll('#entity-tabs .entity-tab').forEach(btn => {
+          btn.classList.remove('bg-slate-100', 'dark:bg-slate-700');
+          if (btn.textContent.trim() === entity || (entity === 'ALL' && btn.textContent.trim() === 'All')) {
+            btn.classList.add('bg-slate-100', 'dark:bg-slate-700');
+          }
+        });
+
+        // Populate selector and list
+        const selector = document.getElementById('checklist-agent-selector');
+        const list = document.getElementById('checklist-agent-list');
+        const agents = USER_DB.filter(u => u.role === 'agent' && (entity === 'ALL' || u.entity === entity));
+
+        selector.innerHTML = '<option value="">-- Choose Agent --</option>';
+        list.innerHTML = agents.map(a => `
+          <div class="p-4 border rounded-lg bg-slate-50 dark:bg-slate-700">
+            <div class="font-bold">${a.name}</div>
+            <div class="text-xs text-slate-500 mt-1">${a.id}</div>
+          </div>
+        `).join('');
+
+        agents.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a.id;
+          opt.textContent = `${a.name} (${a.id})`;
+          selector.appendChild(opt);
+        });
+      }
+
+      function handleChecklistAgentSelect(sel) {
+        const id = sel.value;
+        if (!id) return;
+        const agent = USER_DB.find(u => u.id === id);
+        if (agent) {
+          // show a small summary or focus; for now, scroll to the agent card
+          const cards = Array.from(document.querySelectorAll('#checklist-agent-list > div'));
+          const card = cards.find(c => c.textContent.includes(id));
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.add('ring-2', 'ring-blue-500');
+            setTimeout(() => card.classList.remove('ring-2', 'ring-blue-500'), 1200);
+          }
+        }
       }
 
       let adminCurrentInteractionType = 'voice';
