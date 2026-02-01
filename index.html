@@ -20,34 +20,6 @@
       mouseX = e.clientX;
       mouseY = e.clientY;
 
-      const loginView = document.getElementById('view-login');
-      // Check if login view exists and is visible (not display: none)
-      if (loginView && loginView.style.display !== 'none') {
-        createTwinkle(e.clientX, e.clientY);
-      }
-    });
-
-    document.addEventListener('mousedown', function () {
-      const loginView = document.getElementById('view-login');
-      if (loginView && loginView.style.display !== 'none') {
-        if (!pourInterval) {
-          pourInterval = setInterval(() => {
-            createTwinkle(mouseX, mouseY);
-          }, 50); // Pour every 50ms
-        }
-      }
-    });
-
-    document.addEventListener('mouseup', stopPouring);
-    document.addEventListener('mouseleave', stopPouring);
-
-    function stopPouring() {
-      if (pourInterval) {
-        clearInterval(pourInterval);
-        pourInterval = null;
-      }
-    }
-
     function createTwinkle(x, y) {
       const twinkle = document.createElement('div');
       twinkle.classList.add('twinkle');
