@@ -295,8 +295,33 @@
       }
     }
 
-    /* Removed: Login and door animation CSS */
-    /* Legacy login/door styles removed to simplify UI */
+    /* Login & Door Animation Styles */
+    #view-login {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
+      overflow-y: auto;
+      /* Enable vertical scrolling */
+      display: block;
+      /* Remove flex to allow scrolling flow */
+      perspective: 1400px;
+    }
+
+    .door-container {
+      position: fixed;
+      /* Fix doors to viewport so they stay put during scroll */
+      inset: 0;
+      display: flex;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .door {
+      flex: 1;
+      background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
+      background-size: 200% 100%;
+      transform-style: preserve-3d;
       transform-origin: center;
       position: relative;
       box-shadow: inset 0 8px 30px rgba(0, 0, 0, 0.55);
@@ -428,17 +453,157 @@
       }
     }
 
-    /* Removed: Legacy login loader styles */
-    /* The login overlay and loader spin styles were removed with the login UI */
+    /* Gradient Loading Animation Variables & Styles */
+    :root {
+      --loader-bg-start: #a855f7;
+      --loader-bg-end: #ec4899;
+    }
+
+    .login-loader-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--loader-bg-start) 0%, var(--loader-bg-end) 100%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      border-radius: 2rem;
+    }
+
+    .login-loader-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-  <!-- Removed: Legacy Login UI and contact block -->
-  <!-- Login UI removed to present the app directly -->
+  <!-- LOGIN VIEW -->
+  <div id="view-login">
+    <canvas id="bubble-canvas" class="absolute inset-0 z-10 pointer-events-none"></canvas>
+    <div class="door-container" id="door-container">
+      <div class="door door-left"></div>
+      <div class="door door-right"></div>
+    </div>
 
-  <!-- Removed: Change Password Modal (login system cleaned) -->
+    <div class="relative z-30 min-h-screen flex flex-col">
+      <!-- Login Section -->
+      <div class="flex-grow flex flex-col items-center justify-center min-h-screen login-content" id="login-content">
+        <h1 class="gojira-logo">GOJIRA</h1>
+        <div class="login-form-container relative overflow-hidden">
+          <!-- Loading Overlay -->
+          <div id="login-loader-overlay" class="login-loader-overlay">
+            <div class="loader-spinner mb-4"></div>
+            <p class="text-white font-bold text-lg tracking-wider animate-pulse">AUTHENTICATING...</p>
+          </div>
+
+          <h2 class="text-2xl font-bold mb-6 text-white">Agent Portal</h2>
+          <div class="space-y-4">
+            <input type="text" id="login-empid" placeholder="Employee ID (e.g. BL/GG/25/704)" value="BL/GG/25/704"
+              class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest uppercase transition-all focus:bg-white/30">
+            <input type="password" id="login-password" placeholder="Password" value="1234"
+              class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest transition-all focus:bg-white/30"
+              onkeypress="handleLoginKey(event)">
+            <button onclick="attemptLogin()"
+              class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg hover:shadow-blue-500/50 transition-all transform hover:scale-105 active:scale-95">
+              Unlock Access
+            </button>
+            <button onclick="openChangePasswordModal()"
+              class="text-white/70 hover:text-white text-sm underline mt-2 block w-full transition-colors">
+              Change Password
+            </button>
+          </div>
+          <p id="login-error" class="text-red-400 font-bold mt-4 hidden bg-black/20 p-2 rounded animate-bounce">Access
+            Denied</p>
+        </div>
+
+        <!-- Scroll Hint -->
+        <div class="mt-12 animate-bounce text-white/50 text-sm">
+          <p>Scroll Down for Contact details</p>
+          <p class="text-2xl">⬇️</p>
+        </div>
+      </div>
+
+      <!-- Contact Details Section -->
+      <div class="py-16 bg-black/40 backdrop-blur-md text-center text-white border-t border-white/10">
+        <h3 class="text-2xl font-bold mb-8">Contact Information</h3>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
+          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+            <div class="text-4xl mb-4">📍</div>
+            <p class="font-medium text-lg">Address</p>
+            <p class="text-white/70 mt-2">Plot no. 516, 1st floor,<br>Udyog Vihar Phase 3<br>Gurgaon, (Haryana) 122016
+            </p>
+          </div>
+
+          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+            <div class="text-4xl mb-4">📞</div>
+            <p class="font-medium text-lg">Call Us</p>
+            <p class="text-white/70 mt-2 text-xl font-bold">9220912305</p>
+          </div>
+
+          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+            <div class="text-4xl mb-4">✉️</div>
+            <p class="font-medium text-lg">Email Us</p>
+            <p class="text-white/70 mt-2">divyanshu.sharma@bharatloan.com</p>
+          </div>
+        </div>
+
+        <p class="mt-12 text-white/30 text-sm">© 2026 BharatLoan. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL -->
+  <div id="modal-change-password"
+    class="fixed inset-0 z-[1100] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm">
+    <div class="bg-gray-900 border border-gray-700 p-8 rounded-2xl w-full max-w-md shadow-2xl relative">
+      <h3 class="text-2xl font-bold text-white mb-6">Change Password</h3>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-gray-400 mb-1 text-sm">Current Password</label>
+          <input type="password" id="cp-current"
+            class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1 text-sm">New Password</label>
+          <input type="password" id="cp-new"
+            class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1 text-sm">Confirm New Password</label>
+          <input type="password" id="cp-confirm"
+            class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
+        </div>
+
+        <button onclick="submitChangePassword()"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold mt-4 transition">Update
+          Password</button>
+        <button onclick="closeChangePasswordModal()" class="w-full text-gray-400 hover:text-white py-2">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- REVIEW DETAIL MODAL -->
   <div id="view-review-modal"
@@ -542,12 +707,6 @@
               title="Logout">
               ⏻
             </button>
-
-            <!-- Quick user switcher (no password) -->
-            <select id="quick-user-switcher" onchange="quickSwitchUser(this.value)" title="Quick switch user"
-              class="ml-3 bg-slate-100 dark:bg-slate-700 rounded px-3 py-2 text-sm">
-              <option value="">Switch User</option>
-            </select>
             <button onclick="toggleSearch()"
               class="text-slate-500 hover:text-blue-600 text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">🔍</button>
             <button onclick="toggleTheme()"
@@ -1480,15 +1639,6 @@
 
           <!-- AGENT VIEW CONTAINER -->
           <div id="qa-agent-container" class="hidden">
-            <!-- Agent Tab Bar (persistent) -->
-            <div class="max-w-4xl mx-auto text-center py-6">
-              <div class="inline-flex rounded-lg shadow-sm bg-slate-50 dark:bg-slate-800 p-1" role="tablist" aria-label="Agent Performance Tabs">
-                <button id="qa-tab-weekly" onclick="qaShowAgentWeekly()" class="px-4 py-2 rounded-md font-bold text-sm text-slate-700 dark:text-slate-200">Weekly Performance</button>
-                <button id="qa-tab-monthly" onclick="qaShowAgentMonthly()" class="px-4 py-2 rounded-md font-bold text-sm text-slate-700 dark:text-slate-200">Monthly Performance</button>
-                <button id="qa-tab-landing" onclick="qaBackToAgentLanding()" class="px-4 py-2 rounded-md font-bold text-sm text-slate-500">Home</button>
-              </div>
-            </div>
-
             <div id="qa-agent-landing" class="max-w-4xl mx-auto text-center py-10">
               <h1 class="text-3xl font-bold mb-2">My Performance Portal</h1>
               <p class="text-slate-500 mb-12">Select a view to check your quality scores</p>
@@ -2004,7 +2154,30 @@
         </div>
       </div>
 
-      <!-- Removed: login modal (login system removed) -->
+      <!-- LOGIN MODAL -->
+      <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg max-w-md w-full mx-4">
+          <div class="flex justify-between items-center mb-6">
+            <h2 id="login-title" class="text-2xl font-bold">Login</h2>
+            <button onclick="hideLogin()" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+          </div>
+          <form onsubmit="submitLogin(event)">
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-2">Employee ID</label>
+              <input id="empid" type="text" required
+                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-2">Password</label>
+              <input id="password" type="password" placeholder="Enter password"
+                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+            </div>
+
+            <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
+          </form>
+        </div>
+      </div>
 
       <!-- ACCESS DENIED MODAL -->
       <div id="access-denied-modal"
@@ -3852,14 +4025,14 @@ Reviewer: ${review.reviewerId}
               const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
               adminCurrentEntity = selectedEntity;
 
-              // Centralized admin login handling
-              loginSuccess(user, { targetView: 'view-home' });
+              currentUser = user;
+              // Ensure notifications badge reflects any pending unread
+              if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
+              // Route admin users to the Home page first and prepare the Checklist UI in background
+              navigateTo('view-home');
+              if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+              renderChecklistEntity(adminCurrentEntity);
               hideLogin();
-              // Ensure main app is visible after modal login
-              try {
-                const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
-                const appContainer = document.getElementById('app-container'); if (appContainer) { appContainer.style.display = 'block'; setTimeout(() => appContainer.style.opacity = '1', 10); }
-              } catch (e) { console.warn('Could not toggle main app visibility', e); }
             } else {
               // For agents, check entity match
               if (currentEntity && user.entity !== currentEntity) {
@@ -3870,14 +4043,20 @@ Reviewer: ${review.reviewerId}
                 return;
               }
 
-              // Centralized agent login handling
-              loginSuccess(user, { targetView: 'view-checklist' });
+              currentUser = user;
+              // Ensure notifications badge reflects any pending unread
+              if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
+
+              // Update Header Title
+              const titleSpan = document.getElementById('agent-dashboard-title');
+              if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+
+              // Update Banner Name
+              const bannerName = document.getElementById('agent-name-display');
+              if (bannerName) bannerName.innerText = user.name;
+
+              navigateTo('view-performance');
               hideLogin();
-              // Ensure main app is visible after modal login
-              try {
-                const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
-                const appContainer = document.getElementById('app-container'); if (appContainer) { appContainer.style.display = 'block'; setTimeout(() => appContainer.style.opacity = '1', 10); }
-              } catch (e) { console.warn('Could not toggle main app visibility', e); }
             }
           } else {
             alert('Invalid Employee ID. Please check your credentials.');
@@ -3892,44 +4071,6 @@ Reviewer: ${review.reviewerId}
             document.getElementById('theme-text').innerText = 'Light';
           }
         }
-
-        // Global error handlers — surface errors on-page for quick debugging
-        (function installGlobalErrorHandlers() {
-          function postError(msg) {
-            console.error(msg);
-            try {
-              let debugBox = document.getElementById('global-debug-box');
-              if (!debugBox) {
-                debugBox = document.createElement('div');
-                debugBox.id = 'global-debug-box';
-                debugBox.style.position = 'fixed';
-                debugBox.style.right = '12px';
-                debugBox.style.bottom = '12px';
-                debugBox.style.zIndex = '99999';
-                debugBox.style.maxWidth = '420px';
-                debugBox.style.padding = '10px 12px';
-                debugBox.style.background = 'rgba(0,0,0,0.75)';
-                debugBox.style.color = 'white';
-                debugBox.style.borderRadius = '8px';
-                debugBox.style.fontSize = '12px';
-                debugBox.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';
-                document.body.appendChild(debugBox);
-              }
-              const p = document.createElement('div');
-              p.style.marginBottom = '6px';
-              p.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
-              debugBox.prepend(p);
-            } catch (e) { console.warn('Could not render debug box', e); }
-          }
-
-          window.addEventListener('error', function (event) {
-            postError(`Error: ${event.message} @ ${event.filename}:${event.lineno}`);
-          });
-
-          window.addEventListener('unhandledrejection', function (event) {
-            postError(`Unhandled Promise Rejection: ${event.reason}`);
-          });
-        })();
 
         // ===== NEW ADMIN DASHBOARD FUNCTIONS =====
         let adminCurrentEntity = '';
@@ -4746,15 +4887,10 @@ Reviewer: ${review.reviewerId}
 
         // Load reviews on page load
         window.addEventListener('load', function () {
-          // Restore Session / Auto-login (login system removed)
+          // Restore Session
           const storedUser = localStorage.getItem('currentUser');
           if (storedUser) {
             currentUser = JSON.parse(storedUser);
-          } else {
-            // No stored user — auto-login as default admin (login system removed)
-            currentUser = { id: 'ADMIN', name: 'Administrator', role: 'admin', entity: 'ALL' };
-            try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); } catch (e) { console.warn('Could not persist default user', e); }
-          }
 
             // Ensure notification badge is correct on restore
             if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
@@ -4768,23 +4904,6 @@ Reviewer: ${review.reviewerId}
               }
             } catch (e) {
               console.error('Failed to ensure QA weekStart', e);
-            }
-
-            // Restore UI for the logged-in user
-            try {
-              if (currentUser.role === 'admin') {
-                console.info('Restoring admin session:', currentUser.id);
-                if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
-                renderChecklistEntity(adminCurrentEntity || 'ALL');
-                navigateTo('view-home');
-              } else {
-                console.info('Restoring agent session:', currentUser.id);
-                if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
-                navigateTo('view-checklist');
-                if (typeof initChecklistUI === 'function') initChecklistUI();
-              }
-            } catch (e) {
-              console.error('Failed to restore UI for stored user', e);
             }
 
             // Smoothly transition out the login view and bubble canvas to avoid flashing
@@ -4812,10 +4931,9 @@ Reviewer: ${review.reviewerId}
               app.style.transform = 'scale(1)';
             }, 50);
 
-            // After fade completes, hide login from layout and remove login-related modals
+            // After fade completes, hide login from layout
             setTimeout(() => {
-              try { if (loginView) loginView.remove(); } catch(e) { if (loginView) loginView.style.display = 'none'; }
-              try { document.getElementById('login-modal')?.remove(); document.getElementById('modal-change-password')?.remove(); } catch(e) {}
+              if (loginView) loginView.style.display = 'none';
             }, 700);
 
             // Set Greeting
@@ -4837,135 +4955,176 @@ Reviewer: ${review.reviewerId}
           adminLoadFeedbackList();
           // Initialize checklist admin UI (entity tabs + agent selector)
           if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
-
-          // Ensure checklist UI is initialized for current user (agent or admin) on page load
-          if (typeof initChecklistUI === 'function') {
-            try { initChecklistUI(); } catch (e) { console.error('initChecklistUI failed on load', e); }
-          }
-
-          // Populate quick user switcher
-          try { if (typeof populateUserSwitcher === 'function') populateUserSwitcher(); } catch(e) { console.warn('populateUserSwitcher failed on load', e); }
         });
         // ===== LOGIN SYSTEM =====
         const DEFAULT_PASSWORD = '1234';
-
-        // Centralized login success handler to unify modal/main flows
-        function loginSuccess(user, options = {}) {
-          try {
-            currentUser = user;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-          } catch (e) {
-            console.warn('Could not persist session', e);
-          }
-
-          console.info('User logged in:', user.id, user.role);
-
-          if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
-
-          const targetView = options.targetView || (user.role === 'admin' ? 'view-home' : 'view-checklist');
-
-          if (user.role === 'admin') {
-            adminCurrentEntity = adminCurrentEntity || 'ALL';
-            if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
-            renderChecklistEntity(adminCurrentEntity);
-          } else {
-            if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
-            if (typeof initChecklistUI === 'function') initChecklistUI();
-          }
-
-          navigateTo(targetView);
-
-          // Hide any modals/overlays and show main app container
-          try {
-            const loginView = document.getElementById('view-login'); if (loginView) loginView.style.display = 'none';
-            const appContainer = document.getElementById('app-container'); if (appContainer) appContainer.style.display = 'block', setTimeout(() => appContainer.style.opacity = '1', 10);
-            const loader = document.getElementById('login-loader-overlay'); if (loader) loader.classList.remove('active');
-          } catch (e) { console.warn('UI toggle during login success failed', e); }
-
-          // Optional door animation (safe)
-          try {
-            if (typeof triggerDoorAnimation === 'function') triggerDoorAnimation();
-          } catch (e) {
-            console.warn('triggerDoorAnimation threw an error but login will continue', e);
-          }
-
-          // Update quick switcher state after a successful login
-          try { if (typeof populateUserSwitcher === 'function') populateUserSwitcher(); } catch (e) { console.warn('populateUserSwitcher failed', e); }
-        }
-
-        // Quick user switcher implementation (no password)
-        function populateUserSwitcher() {
-          const sel = document.getElementById('quick-user-switcher');
-          if (!sel) return;
-          // Clear existing
-          sel.innerHTML = '';
-
-          // Default placeholder
-          const placeholder = document.createElement('option');
-          placeholder.value = '';
-          placeholder.innerText = 'Switch User';
-          sel.appendChild(placeholder);
-
-          // Admin option
-          const adminOpt = document.createElement('option');
-          adminOpt.value = 'ADMIN';
-          adminOpt.innerText = 'Administrator (ADMIN)';
-          sel.appendChild(adminOpt);
-
-          // Add all users from USER_DB
-          try {
-            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
-            db.forEach(u => {
-              const o = document.createElement('option');
-              o.value = u.id;
-              o.innerText = `${u.name} • ${u.id} [${u.role}]`;
-              sel.appendChild(o);
-            });
-          } catch (e) { console.warn('Could not populate switcher from USER_DB', e); }
-
-          // Set current selection
-          try {
-            sel.value = (currentUser && currentUser.id) ? currentUser.id : 'ADMIN';
-          } catch (e) { /* ignore */ }
-        }
-
-        function quickSwitchUser(id) {
-          if (!id) return;
-          let user = null;
-          if (id === 'ADMIN') {
-            user = { id: 'ADMIN', name: 'Administrator', role: 'admin', entity: 'ALL' };
-          } else {
-            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
-            user = db.find(u => u.id === id);
-          }
-
-          if (!user) {
-            alert('Selected user not found');
-            return;
-          }
-
-          // Use centralized loginSuccess to perform the switch
-          try {
-            loginSuccess(user, { targetView: user.role === 'admin' ? 'view-home' : 'view-checklist' });
-            // Update greeting if present
-            try { document.getElementById('home-greeting').innerText = `Hii ${user.name}`; } catch (e) {}
-          } catch (e) {
-            console.error('quickSwitchUser failed', e);
-            alert('Could not switch user. See console for details.');
-          }
-        }
 
         function handleLoginKey(e) {
           if (e.key === 'Enter') attemptLogin();
         }
 
-        // Removed: legacy login function overrides (login system fully removed)
+        function attemptLogin() {
+          const empidInput = document.getElementById('login-empid').value.trim();
+          const passwordInput = document.getElementById('login-password').value;
+          const errorMsg = document.getElementById('login-error');
+          const loader = document.getElementById('login-loader-overlay');
 
-        // Removed: legacy attemptLogin implementation (login system removed)
+          // Animation Configuration
+          const LOGIN_PROCESS_TIME = 1600; // ms
 
-        // Removed: login shake & change-password handlers (login system removed)
+          // Validate Input
+          if (!empidInput || !passwordInput) {
+            errorMsg.innerText = "Please enter Employee ID and Password";
+            errorMsg.classList.remove('hidden');
+            shakeLogin();
+            return;
+          }
 
-        // Removed: triggerDoorAnimation (login visuals removed)
+          // START ANIMATION: Show Loading Overlay
+          if (loader) loader.classList.add('active');
+          if (errorMsg) errorMsg.classList.add('hidden');
+
+          // Simulate Processing Delay
+          setTimeout(() => {
+            // Check Database (Safe Access)
+            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
+            let user = db.find(u => u.id === empidInput);
+
+            // DEMO FALLBACK: Ensure this specific ID works for the video demo if not in DB
+            if (!user && empidInput === 'BL/GG/25/704') {
+              user = { id: 'BL/GG/25/704', name: 'Agent', role: 'agent' };
+            }
+
+            const globalPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
+
+            // Verify Creds (Allowing 1234 as per demo)
+            if (user && (passwordInput === globalPass || passwordInput === DEFAULT_PASSWORD || passwordInput === '1234')) {
+              // SUCCESS
+              currentUser = user;
+              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+              errorMsg.classList.add('hidden');
+
+              // Personal Greeting
+              const greeting = document.getElementById('home-greeting');
+              if (greeting) greeting.innerText = `Hii ${user.name}`;
+
+              // Dashboard Routing
+              if (user.role === 'admin') {
+                adminCurrentEntity = 'ALL';
+                if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+                renderChecklistEntity(adminCurrentEntity);
+                navigateTo('view-home');
+              } else {
+                if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
+                // Route agent users directly to the QA Checklist (agent portal)
+                navigateTo('view-checklist');
+                if (typeof initChecklistUI === 'function') initChecklistUI();
+              }
+
+              // TRIGGER PORTAL REDIRECTION (Door Effect)
+              if (typeof triggerDoorAnimation === 'function') {
+                triggerDoorAnimation();
+              } else {
+                document.getElementById('view-login').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                setTimeout(() => document.getElementById('app-container').style.opacity = '1', 10);
+              }
+
+              // Cleanup Loader
+              setTimeout(() => {
+                if (loader) loader.classList.remove('active');
+              }, 1000);
+
+            } else {
+              // FAILURE
+              if (loader) loader.classList.remove('active');
+              errorMsg.innerText = "Invalid Credenitals";
+              errorMsg.classList.remove('hidden');
+              shakeLogin();
+            }
+          }, LOGIN_PROCESS_TIME);
+        }
+
+        function shakeLogin() {
+          const container = document.querySelector('.login-form-container');
+          container.style.transform = 'translateX(10px)';
+          setTimeout(() => container.style.transform = 'translateX(-10px)', 100);
+          setTimeout(() => container.style.transform = 'translateX(10px)', 200);
+          setTimeout(() => container.style.transform = 'translateX(0)', 300);
+        }
+
+        function openChangePasswordModal() {
+          document.getElementById('modal-change-password').classList.remove('hidden');
+        }
+
+        function closeChangePasswordModal() {
+          document.getElementById('modal-change-password').classList.add('hidden');
+          document.getElementById('cp-current').value = '';
+          document.getElementById('cp-new').value = '';
+          document.getElementById('cp-confirm').value = '';
+        }
+
+        function submitChangePassword() {
+          const currentInput = document.getElementById('cp-current').value;
+          const newPass = document.getElementById('cp-new').value;
+          const confirmPass = document.getElementById('cp-confirm').value;
+
+          const storedPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
+
+          if (currentInput !== storedPass) {
+            alert('Current password is incorrect.');
+            return;
+          }
+
+          if (newPass.length < 4) {
+            alert('New password must be at least 4 characters.');
+            return;
+          }
+
+          if (newPass !== confirmPass) {
+            alert('New passwords do not match.');
+            return;
+          }
+
+          localStorage.setItem('agentPassword', newPass);
+          alert('Password changed successfully!');
+          closeChangePasswordModal();
+        }
+
+        function triggerDoorAnimation() {
+          const loginContent = document.getElementById('login-content');
+          const loginView = document.getElementById('view-login');
+          const app = document.getElementById('app-container');
+
+          // Show app and prepare for "Coming Out" (Zoom In effect)
+          app.style.display = 'block';
+          app.style.opacity = '1';
+          app.style.transform = 'scale(0.5)'; // Start much smaller for dramatic effect
+          app.style.transition = 'transform 2.0s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.5s ease-out';
+
+          // Make login background transparent so doors reveal the app
+          if (loginView) loginView.style.background = 'transparent';
+
+          // Start simple door opening
+          document.body.classList.add('doors-open');
+
+          // Fade login content and bubbles immediately
+          if (loginContent) loginContent.style.opacity = '0';
+          const bubbleCanvas = document.getElementById('bubble-canvas');
+          if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
+
+          // Animate Homepage "Coming Out" shortly after doors start opening
+          setTimeout(() => {
+            app.style.transform = 'scale(1)'; // Zoom to normal
+          }, 100);
+
+          // Cleanup
+          setTimeout(() => {
+            // Remove login from layout
+            if (loginView) loginView.style.display = 'none';
+          }, 2200); // Wait for door animation (2.0s) to fully finish
+        }
 
         function toggleNotifications() {
           const dropdown = document.getElementById('notification-dropdown');
@@ -5002,51 +5161,18 @@ Reviewer: ${review.reviewerId}
           const weekDisplay = document.getElementById('checklist-week-display');
           if (weekDisplay) weekDisplay.innerText = `Week ${qaData.weekNumber}`;
 
-          // Defensive checks — ensure currentUser exists
-          console.log('initChecklistUI called', { currentUser });
-
-          // Clear previous debug message
-          const agentContainer = document.getElementById('qa-agent-container');
-          const adminContainer = document.getElementById('qa-admin-container');
-          if (agentContainer) {
-            let debug = agentContainer.querySelector('#qa-agent-debug');
-            if (!debug) {
-              debug = document.createElement('div');
-              debug.id = 'qa-agent-debug';
-              debug.className = 'text-sm text-red-500 italic mb-4';
-              agentContainer.prepend(debug);
-            }
-            debug.innerText = '';
-          }
-
-          if (!currentUser) {
-            // Not logged in or session expired — hide both and show friendly message
-            if (agentContainer) {
-              agentContainer.classList.add('hidden');
-              const debug = document.getElementById('qa-agent-debug');
-              if (debug) debug.innerText = 'Please login to view your Performance Portal.';
-            }
-            if (adminContainer) adminContainer.classList.add('hidden');
-            return;
-          }
-
           if (currentUser.role === 'admin') {
-            if (adminContainer) adminContainer.classList.remove('hidden');
-            if (agentContainer) agentContainer.classList.add('hidden');
+            document.getElementById('qa-admin-container').classList.remove('hidden');
+            document.getElementById('qa-agent-container').classList.add('hidden');
             // Reset View
-            const stepEntity = document.getElementById('qa-step-entity');
-            const stepAgent = document.getElementById('qa-step-agent');
-            if (stepEntity) stepEntity.classList.remove('hidden');
-            if (stepAgent) stepAgent.classList.add('hidden');
+            document.getElementById('qa-step-entity').classList.remove('hidden');
+            document.getElementById('qa-step-agent').classList.add('hidden');
             qaUpdateGlobalSubmitButton();
-          } else if (currentUser.role === 'agent') {
-            if (agentContainer) agentContainer.classList.remove('hidden');
-            if (adminContainer) adminContainer.classList.add('hidden');
+            // qaRenderGlobalAgentSelector(); // Removed
+
           } else {
-            // Unknown role — show message
-            if (agentContainer) agentContainer.classList.add('hidden');
-            if (adminContainer) adminContainer.classList.add('hidden');
-            console.warn('initChecklistUI: currentUser has unknown role', currentUser);
+            document.getElementById('qa-agent-container').classList.remove('hidden');
+            document.getElementById('qa-admin-container').classList.add('hidden');
           }
         }
 
@@ -5522,12 +5648,8 @@ Reviewer: ${review.reviewerId}
 
         // --- AGENT LOGIC ---
         function qaShowAgentWeekly() {
-          // Set tab active state
-          qaSetAgentTab('weekly');
-
           document.getElementById('qa-agent-landing').classList.add('hidden');
           document.getElementById('qa-agent-weekly-view').classList.remove('hidden');
-          document.getElementById('qa-agent-monthly-view').classList.add('hidden');
 
           const data = getQAData();
           const agentId = currentUser.id;
@@ -5702,17 +5824,10 @@ Reviewer: ${review.reviewerId}
         }
 
         function qaShowAgentMonthly() {
-          // Set tab active state
-          qaSetAgentTab('monthly');
-
           document.getElementById('qa-agent-landing').classList.add('hidden');
           document.getElementById('qa-agent-monthly-view').classList.remove('hidden');
-          document.getElementById('qa-agent-weekly-view').classList.add('hidden');
 
           const data = getQAData();
-
-          // allow reuse of existing rendering logic by delegating to qaShowAgentMonthly (itself) - already handled
-        }
           const agentId = currentUser.id;
 
           // Month range (start-of-month to start-of-next-month)
@@ -5837,51 +5952,20 @@ Reviewer: ${review.reviewerId}
         }
 
         function qaBackToAgentLanding() {
-          // Reset tabs
-          qaSetAgentTab('landing');
-
           document.getElementById('qa-agent-weekly-view').classList.add('hidden');
           document.getElementById('qa-agent-monthly-view').classList.add('hidden');
           document.getElementById('qa-agent-landing').classList.remove('hidden');
         }
 
         // Handling Notifications Clicks (Global)
-        window.qaHandleNotificationClick = function (index, action, subView) {
+        window.qaHandleNotificationClick = function (index, action) {
           if (action === 'view-checklist') {
             navigateTo('view-checklist');
-            if (currentUser && currentUser.role === 'agent') {
-              setTimeout(() => {
-                if (subView === 'monthly') qaShowAgentMonthly();
-                else qaShowAgentWeekly();
-              }, 500);
+            if (currentUser.role === 'agent') {
+              setTimeout(() => qaShowAgentWeekly(), 500);
             }
           }
         };
-
-        // Simple helper to set the active tab UI for agent view
-        function qaSetAgentTab(tab) {
-          const tabs = ['weekly', 'monthly', 'landing'];
-          tabs.forEach(t => {
-            const el = document.getElementById('qa-tab-' + t);
-            if (!el) return;
-            el.classList.remove('bg-blue-600', 'text-white', 'ring-2', 'ring-blue-400');
-            el.classList.remove('bg-purple-600', 'text-white', 'ring-2', 'ring-purple-400');
-            // reset neutral styles
-            el.classList.remove('opacity-60');
-            el.classList.add('text-slate-700');
-          });
-
-          if (tab === 'weekly') {
-            const w = document.getElementById('qa-tab-weekly');
-            if (w) { w.classList.add('bg-blue-600', 'text-white', 'ring-2', 'ring-blue-400'); w.classList.remove('text-slate-700'); }
-          } else if (tab === 'monthly') {
-            const m = document.getElementById('qa-tab-monthly');
-            if (m) { m.classList.add('bg-purple-600', 'text-white', 'ring-2', 'ring-purple-400'); m.classList.remove('text-slate-700'); }
-          } else {
-            const l = document.getElementById('qa-tab-landing');
-            if (l) { l.classList.add('opacity-60'); l.classList.remove('text-slate-700'); }
-          }
-        }
 
         // Patch Notification Render to support click (filtered per user)
         const originalNotifyRender = NotificationManager.renderDropdown;
