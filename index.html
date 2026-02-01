@@ -90,68 +90,6 @@
           });
         }
       }
-
-      animate() {
-        const loginView = document.getElementById('view-login');
-        const loginVisible = loginView && window.getComputedStyle(loginView).display !== 'none' && loginView.offsetParent !== null;
-
-        // If the login view is not visible, fade out the canvas and skip drawing to avoid
-        // the bubbles overlaying other pages (bubbles should be only on the first page).
-        if (!loginVisible) {
-          if (this.canvas.style.opacity !== '0') this.canvas.style.opacity = '0';
-          if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-          // keep the animation loop alive but do not draw until login is visible again
-          requestAnimationFrame(() => this.animate());
-          return;
-        }
-
-        // Ensure canvas is visible and faded in while on the login page
-        if (this.canvas.style.opacity !== '1') this.canvas.style.opacity = '1';
-
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Update and Draw Bubbles
-        this.bubbles.forEach(bubble => {
-          bubble.x += bubble.vx;
-          bubble.y += bubble.vy;
-
-          // Bounce
-          if (bubble.x < 0 || bubble.x > this.canvas.width) bubble.vx *= -1;
-          if (bubble.y < 0 || bubble.y > this.canvas.height) bubble.vy *= -1;
-
-          this.ctx.beginPath();
-          this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
-          this.ctx.fillStyle = bubble.color;
-          this.ctx.fill();
-        });
-
-        // Draw Connections (Web Effect)
-        const webReach = 150; // Distance to connect
-        const cursorReach = 200; // Cursor shooter range
-
-        for (let i = 0; i < this.bubbles.length; i++) {
-          const bubbleA = this.bubbles[i];
-
-          // 1. Connect to Cursor (Web Shooter)
-          const dxMouse = mouseX - bubbleA.x;
-          const dyMouse = mouseY - bubbleA.y;
-          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-
-          if (distMouse < cursorReach) {
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distMouse / cursorReach})`;
-            this.ctx.lineWidth = 1.5;
-            this.ctx.moveTo(bubbleA.x, bubbleA.y);
-            this.ctx.lineTo(mouseX, mouseY);
-            this.ctx.stroke();
-            // Extra shine on connected bubble
-            this.ctx.beginPath();
-            this.ctx.arc(bubbleA.x, bubbleA.y, bubbleA.size + 3, 0, Math.PI * 2);
-            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-            this.ctx.stroke();
-          }
-
           // 2. Connect to Other Bubbles (The Web)
           // "Meeting each other with the help of cursor"
           // Logic: Only connect bubbles to each other IF they are NEAR THE CURSOR.
