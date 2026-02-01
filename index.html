@@ -4035,6 +4035,9 @@ Reviewer: ${review.reviewerId}
               adminCurrentEntity = selectedEntity;
 
               currentUser = user;
+              // Persist session for admin
+              try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); } catch(e) { console.warn('Could not persist admin session', e); }
+              console.info('Admin logged in:', user.id);
               // Ensure notifications badge reflects any pending unread
               if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
               // Route admin users to the Home page first and prepare the Checklist UI in background
@@ -4042,6 +4045,11 @@ Reviewer: ${review.reviewerId}
               if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
               renderChecklistEntity(adminCurrentEntity);
               hideLogin();
+              // Ensure main app is visible after modal login
+              try {
+                const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
+                const appContainer = document.getElementById('app-container'); if (appContainer) { appContainer.style.display = 'block'; setTimeout(() => appContainer.style.opacity = '1', 10); }
+              } catch (e) { console.warn('Could not toggle main app visibility', e); }
             } else {
               // For agents, check entity match
               if (currentEntity && user.entity !== currentEntity) {
@@ -4053,6 +4061,9 @@ Reviewer: ${review.reviewerId}
               }
 
               currentUser = user;
+              // Persist session for agent
+              try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); } catch(e) { console.warn('Could not persist agent session', e); }
+              console.info('Agent logged in via modal:', user.id);
               // Ensure notifications badge reflects any pending unread
               if (typeof NotificationManager !== 'undefined') NotificationManager.updateIcon();
 
@@ -4066,6 +4077,11 @@ Reviewer: ${review.reviewerId}
 
               navigateTo('view-performance');
               hideLogin();
+              // Ensure main app is visible after modal login
+              try {
+                const viewLoginEl = document.getElementById('view-login'); if (viewLoginEl) viewLoginEl.style.display = 'none';
+                const appContainer = document.getElementById('app-container'); if (appContainer) { appContainer.style.display = 'block'; setTimeout(() => appContainer.style.opacity = '1', 10); }
+              } catch (e) { console.warn('Could not toggle main app visibility', e); }
             }
           } else {
             alert('Invalid Employee ID. Please check your credentials.');
@@ -4915,6 +4931,23 @@ Reviewer: ${review.reviewerId}
               console.error('Failed to ensure QA weekStart', e);
             }
 
+            // Restore UI for the logged-in user
+            try {
+              if (currentUser.role === 'admin') {
+                console.info('Restoring admin session:', currentUser.id);
+                if (typeof initChecklistAdminUI === 'function') initChecklistAdminUI();
+                renderChecklistEntity(adminCurrentEntity || 'ALL');
+                navigateTo('view-home');
+              } else {
+                console.info('Restoring agent session:', currentUser.id);
+                if (typeof renderAgentDashboard === 'function') renderAgentDashboard();
+                navigateTo('view-checklist');
+                if (typeof initChecklistUI === 'function') initChecklistUI();
+              }
+            } catch (e) {
+              console.error('Failed to restore UI for stored user', e);
+            }
+
             // Smoothly transition out the login view and bubble canvas to avoid flashing
             const loginView = document.getElementById('view-login');
             const bubbleCanvas = document.getElementById('bubble-canvas');
@@ -4988,8 +5021,10 @@ Reviewer: ${review.reviewerId}
 
           // Validate Input
           if (!empidInput || !passwordInput) {
-            errorMsg.innerText = "Please enter Employee ID and Password";
-            errorMsg.classList.remove('hidden');
+            if (errorMsg) {
+              errorMsg.innerText = "Please enter Employee ID and Password";
+              errorMsg.classList.remove('hidden');
+            }
             shakeLogin();
             return;
           }
@@ -5000,14 +5035,15 @@ Reviewer: ${review.reviewerId}
 
           // Simulate Processing Delay
           setTimeout(() => {
-            // Check Database (Safe Access)
-            const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
-            let user = db.find(u => u.id === empidInput);
+            try {
+              // Check Database (Safe Access)
+              const db = (typeof USER_DB !== 'undefined') ? USER_DB : [];
+              let user = db.find(u => u.id === empidInput);
 
-            // DEMO FALLBACK: Ensure this specific ID works for the video demo if not in DB
-            if (!user && empidInput === 'BL/GG/25/704') {
-              user = { id: 'BL/GG/25/704', name: 'Agent', role: 'agent' };
-            }
+              // DEMO FALLBACK: Ensure this specific ID works for the video demo if not in DB
+              if (!user && empidInput === 'BL/GG/25/704') {
+                user = { id: 'BL/GG/25/704', name: 'Agent', role: 'agent' };
+              }
 
             const globalPass = localStorage.getItem('agentPassword') || DEFAULT_PASSWORD;
 
@@ -5022,6 +5058,8 @@ Reviewer: ${review.reviewerId}
               // Personal Greeting
               const greeting = document.getElementById('home-greeting');
               if (greeting) greeting.innerText = `Hii ${user.name}`;
+
+              console.info('User authenticated:', user.id, 'role:', user.role);
 
               // Dashboard Routing
               if (user.role === 'admin') {
@@ -5053,9 +5091,24 @@ Reviewer: ${review.reviewerId}
             } else {
               // FAILURE
               if (loader) loader.classList.remove('active');
-              errorMsg.innerText = "Invalid Credenitals";
-              errorMsg.classList.remove('hidden');
+              console.warn('Login failed for', empidInput);
+              if (errorMsg) {
+                errorMsg.innerText = "Invalid Credentials";
+                errorMsg.classList.remove('hidden');
+              } else {
+                alert('Invalid Credentials');
+              }
               shakeLogin();
+            }
+          } catch (err) {
+              console.error('Error during login attempt:', err);
+              if (loader) loader.classList.remove('active');
+              if (errorMsg) {
+                errorMsg.innerText = 'An unexpected error occurred. Please check console for details.';
+                errorMsg.classList.remove('hidden');
+              } else {
+                alert('An unexpected error occurred. See console.');
+              }
             }
           }, LOGIN_PROCESS_TIME);
         }
