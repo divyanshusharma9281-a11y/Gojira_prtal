@@ -1405,57 +1405,308 @@
       </div>
     </div>
 
-    <!-- CHECKLIST VIEW -->
+    <!-- CHECKLIST VIEW (New Architecture) -->
     <div id="view-checklist" class="app-view bg-white dark:bg-slate-900">
-      <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800">
-        <button onclick="navigateTo('view-resources')" class="font-bold text-slate-500 hover:text-blue-600">← Back to
-          Resources</button>
-        <span class="mx-auto font-bold">Quality Assurance Checklist</span>
+      <header
+        class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 sticky top-0 z-40">
+        <button onclick="navigateTo('view-home')" class="font-bold text-slate-500 hover:text-blue-600">← Home</button>
+        <span class="mx-auto font-bold text-lg">Quality Assurance Checklist</span>
+        <div id="checklist-week-display" class="text-xs font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
+          Week 1
+        </div>
       </header>
 
-      <div class="max-w-6xl mx-auto px-6 py-14 text-center">
-        <h1 class="text-3xl font-extrabold mb-6">Quality Assurance Checklist</h1>
+      <div class="max-w-7xl mx-auto px-6 py-10">
 
-        <!-- Admin-style Checklist Controls: Entity Tabs + Agent Selector -->
-        <div id="checklist-admin-ui" class="max-w-4xl mx-auto mb-8">
-          <div id="entity-tabs" class="flex gap-2 justify-center mb-4">
-            <button onclick="renderChecklistEntity('ALL')"
-              class="entity-tab px-4 py-2 rounded-md bg-slate-100 dark:bg-slate-700 font-semibold">All</button>
-            <button onclick="renderChecklistEntity('BharatLoan')"
-              class="entity-tab px-4 py-2 rounded-md">BharatLoan</button>
-            <button onclick="renderChecklistEntity('Loan112')" class="entity-tab px-4 py-2 rounded-md">Loan112</button>
-            <button onclick="renderChecklistEntity('Rupee112')"
-              class="entity-tab px-4 py-2 rounded-md">Rupee112</button>
-            <button onclick="renderChecklistEntity('RupeeOnTime')"
-              class="entity-tab px-4 py-2 rounded-md">RupeeOnTime</button>
+        <!-- ADMIN VIEW CONTAINER -->
+        <div id="qa-admin-container" class="hidden">
+
+          <!-- Step 1: Entity Selection -->
+          <div id="qa-step-entity" class="animate-fade-in content-center">
+            <h2 class="text-2xl font-bold mb-6 text-center">Select Entity</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <button onclick="qaSelectEntity('BharatLoan')"
+                class="p-8 rounded-2xl bg-blue-600 text-white hover:bg-blue-700 hover-lift transition shadow-lg">
+                <div class="text-3xl mb-2">🏦</div>
+                <div class="font-bold">BharatLoan</div>
+              </button>
+              <button onclick="qaSelectEntity('Rupee112')"
+                class="p-8 rounded-2xl bg-indigo-600 text-white hover:bg-indigo-700 hover-lift transition shadow-lg">
+                <div class="text-3xl mb-2">💸</div>
+                <div class="font-bold">Rupee112</div>
+              </button>
+              <button onclick="qaSelectEntity('Loan112')"
+                class="p-8 rounded-2xl bg-purple-600 text-white hover:bg-purple-700 hover-lift transition shadow-lg">
+                <div class="text-3xl mb-2">💳</div>
+                <div class="font-bold">Loan112</div>
+              </button>
+              <button onclick="qaSelectEntity('RupeeOnTime')"
+                class="p-8 rounded-2xl bg-emerald-600 text-white hover:bg-emerald-700 hover-lift transition shadow-lg">
+                <div class="text-3xl mb-2">⏳</div>
+                <div class="font-bold">RupeeOnTime</div>
+              </button>
+            </div>
+
+            <!-- Global Admin Controls -->
+            <div class="mt-12 border-t border-slate-200 dark:border-slate-700 pt-8">
+              <div class="flex flex-wrap gap-4 justify-between items-center">
+                <h3 class="font-bold text-slate-500">Weekly Management</h3>
+                <div class="flex gap-4">
+                  <button onclick="qaResetWeeklyData()"
+                    class="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition text-sm font-medium border border-transparent hover:border-red-200">
+                    ⚠️ Reset Week Data
+                  </button>
+                  <button id="btn-final-submit-week" onclick="qaSubmitWeek()" disabled
+                    class="px-6 py-2 bg-slate-200 text-slate-400 font-bold rounded-xl cursor-not-allowed transition flex items-center gap-2">
+                    <span>📅</span> Submit Week
+                  </button>
+                </div>
+              </div>
+              <p class="text-xs text-slate-400 mt-2">* "Submit Week" enables when ALL agents in the selected entity are
+                finalized.</p>
+            </div>
           </div>
 
-          <div id="entity-content"
-            class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <label class="block text-sm font-semibold mb-2">Select Agent</label>
-            <select id="checklist-agent-selector" onchange="handleChecklistAgentSelect(this)"
-              class="w-full p-3 rounded-lg border bg-slate-50 dark:bg-slate-700 mb-4">
-              <option value="">-- Choose Agent --</option>
-            </select>
+          <!-- Step 2: Agent Workstation -->
+          <div id="qa-step-agent" class="hidden animate-fade-in">
+            <button onclick="qaBackToEntity()" class="mb-6 text-sm text-slate-500 hover:text-blue-600">← Back to
+              Entities</button>
 
-            <div id="checklist-agent-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <!-- Sidebar: Agent List -->
+              <div
+                class="col-span-1 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden h-fit">
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+                  <h3 class="font-bold text-lg" id="qa-entity-title">Entity Agents</h3>
+                  <p class="text-xs text-slate-500">Select an agent to review</p>
+                </div>
+                <div id="qa-agent-list" class="max-h-[600px] overflow-y-auto">
+                  <!-- JS populated -->
+                </div>
+              </div>
+
+              <!-- Main: Review Workspace -->
+              <div class="col-span-2">
+                <div id="qa-workspace-placeholder"
+                  class="h-full flex flex-col items-center justify-center text-slate-400 p-12 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
+                  <div class="text-4xl mb-4">👷</div>
+                  <p>Select an agent from the list to start.</p>
+                </div>
+
+                <div id="qa-workspace-active" class="hidden">
+                  <!-- Header -->
+                  <div class="flex justify-between items-start mb-6">
+                    <div>
+                      <h2 class="text-2xl font-bold flex items-center gap-2">
+                        <span id="qa-selected-agent-name">Agent Name</span>
+                        <span id="qa-agent-status-badge"
+                          class="hidden text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">Finalized</span>
+                      </h2>
+                      <p class="text-slate-500 font-mono text-sm" id="qa-selected-agent-id">ID: 000</p>
+
+                    </div>
+                    <button onclick="qaDeleteAgentReviews()" class="text-xs text-red-500 hover:underline">Delete
+                      Reviews</button>
+                  </div>
+
+                  <!-- Start Button -->
+                  <div id="qa-start-screen"
+                    class="text-center py-10 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <button onclick="qaStartReviewSession()"
+                      class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition">
+                      Start Quality Review
+                    </button>
+                  </div>
+
+                  <!-- Review Form Area -->
+                  <div id="qa-review-form-container" class="hidden">
+
+                    <!-- Pending Reviews List -->
+                    <div id="qa-pending-list" class="mb-6 space-y-3">
+                      <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Input Form -->
+                    <div id="qa-input-form"
+                      class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 relative">
+                      <h3 class="font-bold text-lg mb-4">New Review Entry</h3>
+
+                      <!-- Interaction Type -->
+                      <div class="grid grid-cols-2 gap-4 mb-4">
+                        <label class="cursor-pointer">
+                          <input type="radio" name="qa-interaction-type" value="Voice" class="peer sr-only"
+                            onchange="qaToggleInteractionFields()">
+                          <div
+                            class="p-3 text-center rounded-xl border-2 border-slate-200 dark:border-slate-600 peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 peer-checked:text-blue-600 transition">
+                            🎤 Voice
+                          </div>
+                        </label>
+                        <label class="cursor-pointer">
+                          <input type="radio" name="qa-interaction-type" value="Non-Voice" class="peer sr-only"
+                            onchange="qaToggleInteractionFields()">
+                          <div
+                            class="p-3 text-center rounded-xl border-2 border-slate-200 dark:border-slate-600 peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 peer-checked:text-blue-600 transition">
+                            💬 Non-Voice (Chat/Email)
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Dynamic Fields -->
+                      <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1" id="qa-id-label">Interaction ID</label>
+                        <input type="text" id="qa-interaction-id" placeholder="Paste ID or Link here..."
+                          class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Observation</label>
+                        <textarea id="qa-observation" rows="3" placeholder="Enter specific feedback..."
+                          class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                      </div>
+
+                      <!-- Simple Scoring -->
+                      <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Score Assessment</label>
+                        <div class="flex gap-4">
+                          <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="qa-score" value="0" class="peer sr-only">
+                            <div
+                              class="p-4 rounded-xl border-2 border-red-200 bg-red-50 text-red-600 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 transition text-center font-bold">
+                              0 (Fatal)
+                            </div>
+                          </label>
+                          <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="qa-score" value="100" class="peer sr-only">
+                            <div
+                              class="p-4 rounded-xl border-2 border-emerald-200 bg-emerald-50 text-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition text-center font-bold">
+                              100 (Good)
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="flex justify-end">
+                        <button onclick="qaSubmitSingleReview()"
+                          class="px-6 py-2 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-lg hover:opacity-90 transition">
+                          Add Review
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Final Submission Area -->
+                    <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-700 pt-6">
+                      <div class="text-sm text-slate-500">
+                        Reviews added: <span id="qa-review-count"
+                          class="font-bold text-slate-900 dark:text-white">0</span>/3 (Min required)
+                      </div>
+                      <div class="flex gap-3">
+                        <button onclick="qaAddMoreReviews()" id="qa-btn-add-more"
+                          class="hidden px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium transition">
+                          + Add More
+                        </button>
+                        <button onclick="qaFinalizeAgent()" id="qa-btn-finalize-agent" disabled
+                          class="px-8 py-3 bg-slate-200 text-slate-400 font-bold rounded-xl cursor-not-allowed transition flex items-center gap-2">
+                          Finalize Agent ✅
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AGENT VIEW CONTAINER -->
+        <div id="qa-agent-container" class="hidden">
+          <div id="qa-agent-landing" class="max-w-4xl mx-auto text-center py-10">
+            <h1 class="text-3xl font-bold mb-2">My Performance Portal</h1>
+            <p class="text-slate-500 mb-12">Select a view to check your quality scores</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <button onclick="qaShowAgentWeekly()"
+                class="group relative p-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl text-white shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+                <div
+                  class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-500 text-9xl">
+                  📅</div>
+                <div class="relative z-10 text-left">
+                  <h2 class="text-3xl font-bold mb-2">Weekly Performance</h2>
+                  <p class="opacity-90">View this week's audit scores, feedback, and fatal error reports.</p>
+                  <div
+                    class="mt-8 inline-block bg-white/20 px-4 py-2 rounded-lg text-sm font-bold group-hover:bg-white group-hover:text-blue-600 transition">
+                    Check Now →</div>
+                </div>
+              </button>
+
+              <button onclick="qaShowAgentMonthly()"
+                class="group relative p-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl text-white shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+                <div
+                  class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-500 text-9xl">
+                  📊</div>
+                <div class="relative z-10 text-left">
+                  <h2 class="text-3xl font-bold mb-2">Monthly Performance</h2>
+                  <p class="opacity-90">Comprehensive analysis of your monthly trends and improvement areas.</p>
+                  <div
+                    class="mt-8 inline-block bg-white/20 px-4 py-2 rounded-lg text-sm font-bold group-hover:bg-white group-hover:text-purple-600 transition">
+                    View Report →</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Agent Weekly View (Reusing components logic simply) -->
+          <div id="qa-agent-weekly-view" class="hidden animate-fade-in">
+            <button onclick="qaBackToAgentLanding()" class="mb-6 text-slate-500 hover:text-blue-600">← Back to
+              Selection</button>
+
+            <div
+              class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+              <!-- Stats Header -->
+              <div class="p-8 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                  <div class="text-center md:text-left">
+                    <h2 class="text-2xl font-bold" id="qa-weekly-agent-name">Agent Name</h2>
+                    <p class="text-slate-500" id="qa-weekly-date">Week 1 Data</p>
+                  </div>
+                  <div class="flex gap-4">
+                    <div
+                      class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600 text-center min-w-[100px]">
+                      <div class="text-xs text-slate-400 uppercase font-bold">Score</div>
+                      <div class="text-3xl font-black text-blue-600" id="qa-weekly-score">--%</div>
+                    </div>
+                    <div
+                      class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600 text-center min-w-[100px]">
+                      <div class="text-xs text-slate-400 uppercase font-bold">Fatals</div>
+                      <div class="text-3xl font-black text-red-500" id="qa-weekly-fatals">0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Detailed Reviews -->
+              <div class="p-8">
+                <h3 class="font-bold text-lg mb-6">Admin Feedback</h3>
+                <div id="qa-weekly-reviews-list" class="space-y-4">
+                  <!-- Populated by JS -->
+                  <div class="text-center text-slate-400 py-10 italic">No reviews published for this week yet.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agent Monthly View (Placeholder) -->
+          <div id="qa-agent-monthly-view" class="hidden animate-fade-in text-center py-20">
+            <button onclick="qaBackToAgentLanding()" class="mb-6 text-slate-500 hover:text-blue-600">← Back to
+              Selection</button>
+            <div class="text-6xl mb-4">🚧</div>
+            <h2 class="text-2xl font-bold mb-2">Monthly Report Coming Soon</h2>
+            <p class="text-slate-500">This feature is currently under development.</p>
           </div>
         </div>
 
-        <h2 class="text-xl font-bold mb-4">Checklist Actions</h2>
-
-        <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
-          <li onclick="openAgentPerformanceModal()"
-            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
-            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">📅</span>
-            Weekly Performance
-          </li>
-          <li onclick="alert('Monthly Performance data is coming soon.')"
-            class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4 opacity-75">
-            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">📆</span>
-            Monthly Performance
-          </li>
-        </ol>
       </div>
     </div>
 
