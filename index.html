@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="light">
 
@@ -32,7 +31,7 @@
       twinkle.style.width = size + 'px';
       twinkle.style.height = size + 'px';
 
-      const colors = ['#ffffff', '#fbbf24', '#60a5fa']; // White, Amber, Blue
+      const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3']; // Rainbow Colors
       twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
 
       document.body.appendChild(twinkle);
@@ -117,16 +116,17 @@
       position: fixed;
       inset: 0;
       z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
-      overflow: hidden;
+      overflow-y: auto;
+      /* Enable vertical scrolling */
+      display: block;
+      /* Remove flex to allow scrolling flow */
       perspective: 1000px;
     }
 
     .door-container {
-      position: absolute;
+      position: fixed;
+      /* Fix doors to viewport so they stay put during scroll */
       inset: 0;
       display: flex;
       pointer-events: none;
@@ -232,26 +232,63 @@
       <div class="door door-right"></div>
     </div>
 
-    <div class="login-content" id="login-content">
-      <h1 class="gojira-logo">GOJIRA</h1>
-      <div class="login-form-container">
-        <h2 class="text-2xl font-bold mb-6 text-white">Agent Portal</h2>
-        <div class="space-y-4">
-          <input type="text" id="login-empid" placeholder="Employee ID (e.g. BL/GG/25/704)"
-            class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest uppercase">
-          <input type="password" id="login-password" placeholder="Password"
-            class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest"
-            onkeypress="handleLoginKey(event)">
-          <button onclick="attemptLogin()"
-            class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg hover:shadow-blue-500/50 transition-all transform hover:scale-105">
-            Unlock Access
-          </button>
-          <button onclick="openChangePasswordModal()"
-            class="text-white/70 hover:text-white text-sm underline mt-2 block w-full">
-            Change Password
-          </button>
+    <div class="relative z-30 min-h-screen flex flex-col">
+      <!-- Login Section -->
+      <div class="flex-grow flex flex-col items-center justify-center min-h-screen login-content" id="login-content">
+        <h1 class="gojira-logo">GOJIRA</h1>
+        <div class="login-form-container">
+          <h2 class="text-2xl font-bold mb-6 text-white">Agent Portal</h2>
+          <div class="space-y-4">
+            <input type="text" id="login-empid" placeholder="Employee ID (e.g. BL/GG/25/704)"
+              class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest uppercase">
+            <input type="password" id="login-password" placeholder="Password"
+              class="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-xl tracking-widest"
+              onkeypress="handleLoginKey(event)">
+            <button onclick="attemptLogin()"
+              class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg hover:shadow-blue-500/50 transition-all transform hover:scale-105">
+              Unlock Access
+            </button>
+            <button onclick="openChangePasswordModal()"
+              class="text-white/70 hover:text-white text-sm underline mt-2 block w-full">
+              Change Password
+            </button>
+          </div>
+          <p id="login-error" class="text-red-400 font-bold mt-4 hidden">Access Denied</p>
         </div>
-        <p id="login-error" class="text-red-400 font-bold mt-4 hidden">Access Denied</p>
+
+        <!-- Scroll Hint -->
+        <div class="mt-12 animate-bounce text-white/50 text-sm">
+          <p>Scroll Down for Contact details</p>
+          <p class="text-2xl">⬇️</p>
+        </div>
+      </div>
+
+      <!-- Contact Details Section -->
+      <div class="py-16 bg-black/40 backdrop-blur-md text-center text-white border-t border-white/10">
+        <h3 class="text-2xl font-bold mb-8">Contact Information</h3>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
+          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+            <div class="text-4xl mb-4">📍</div>
+            <p class="font-medium text-lg">Address</p>
+            <p class="text-white/70 mt-2">Plot no. 516, 1st floor,<br>Udyog Vihar Phase 3<br>Gurgaon, (Haryana) 122016
+            </p>
+          </div>
+
+          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+            <div class="text-4xl mb-4">📞</div>
+            <p class="font-medium text-lg">Call Us</p>
+            <p class="text-white/70 mt-2 text-xl font-bold">9220912305</p>
+          </div>
+
+          <div class="p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+            <div class="text-4xl mb-4">✉️</div>
+            <p class="font-medium text-lg">Email Us</p>
+            <p class="text-white/70 mt-2">divyanshu.sharma@bharatloan.com</p>
+          </div>
+        </div>
+
+        <p class="mt-12 text-white/30 text-sm">© 2026 BharatLoan. All rights reserved.</p>
       </div>
     </div>
   </div>
