@@ -379,8 +379,6 @@
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
     style="perspective: 1500px;">
-    <!-- CANVAS FOR TWINKLES -->
-    <canvas id="twinkle-canvas" class="absolute inset-0 pointer-events-none" style="z-index: 51;"></canvas>
 
 
     <!-- The Split Doors (3D Swing) -->
@@ -448,6 +446,8 @@
            * Handles mouse trail and continuous stream on click-hold
            */
           (function () {
+            // Twinkle animation disabled — early return to prevent registration/animation
+            return;
             const canvas = document.getElementById('twinkle-canvas');
             const ctx = canvas.getContext('2d');
             let width, height;
@@ -1830,45 +1830,7 @@
             </div>
           </div>
 
-          <!-- Comment Section -->
-          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <h3 class="text-lg font-bold mb-4">💬 Add Your Feedback/Comments</h3>
-            <textarea id="agent-comment-input" rows="4"
-              class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition mb-4"
-              placeholder="Write your comments or feedback regarding these reviews..."></textarea>
-            <button onclick="agentSubmitComment()"
-              class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Send
-              Feedback</button>
-          </div>
 
-          <!-- Agent Feedback (moved here from Admin homepage) -->
-          <div class="mt-6">
-            <h3 class="text-lg font-bold mb-4 flex items-center gap-3">
-              <span class="bg-amber-600 text-white rounded-lg p-2 text-xl">💬</span>
-              Agent Comments
-            </h3>
-            <div class="mb-4">
-              <button onclick="adminDeleteAllFeedback()"
-                class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
-                🗑️ Delete All Feedback
-              </button>
-            </div>
-            <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-              <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-                <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-                  <tr>
-                    <th class="p-6">Date</th>
-                    <th class="p-6">Agent</th>
-                    <th class="p-6">Feedback</th>
-                    <th class="p-6 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-feedback-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-                  <!-- JS Populates this -->
-                </tbody>
-              </table>
-            </div>
-          </div>
 
         </div>
 
@@ -2636,15 +2598,20 @@
         return JSON.parse(localStorage.getItem('gojira_comments') || '[]');
       }
 
-      static addComment(text, agentId) {
+      static addComment(text, agentId, entity = null) {
         const comments = this.getComments();
         comments.unshift({
           id: Date.now(),
           text,
           agentId,
+          entity, // optional, can be null
           date: new Date().toLocaleString()
         });
         localStorage.setItem('gojira_comments', JSON.stringify(comments));
+      }
+
+      static clearComments() {
+        localStorage.setItem('gojira_comments', JSON.stringify([]));
       }
 
       static deleteComment(id) {
@@ -4150,16 +4117,20 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    function handleCommentSubmit() {
-      const input = document.getElementById('agent-comment-input');
+    // Submit a comment from the QA checklist per-entity
+    function handleCommentSubmitForEntity(entity) {
+      const input = document.getElementById(`agent-comment-input-${entity}`);
+      if (!input) return;
       const text = input.value.trim();
 
       if (!text) return alert('Please write a comment first.');
       if (!currentUser) return alert('You must be logged in.');
 
-      MockBackend.addComment(text, currentUser.id);
-      alert('Feedback sent to Admin successfully!');
+      MockBackend.addComment(text, currentUser.id, entity);
+      // Refresh the checklist comments to show the new comment
+      renderChecklistComments();
       input.value = '';
+      alert('Feedback sent successfully!');
     }
 
     function logout() {
@@ -6105,37 +6076,52 @@ Reviewer: ${review.reviewerId}
 
     function adminDeleteAllFeedback() {
       if (confirm('Delete all feedback? This action cannot be undone.')) {
-        localStorage.removeItem('agentComments');
+        // Clear unified comment storage
+        if (typeof MockBackend !== 'undefined' && MockBackend.clearComments) {
+          MockBackend.clearComments();
+        } else {
+          localStorage.removeItem('gojira_comments');
+        }
         adminLoadFeedbackList();
       }
     }
 
     function adminLoadFeedbackList() {
-      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      const comments = (typeof MockBackend !== 'undefined' && MockBackend.getComments) ? MockBackend.getComments() : [];
       const tbody = document.getElementById('admin-feedback-list');
 
       if (comments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No agent replies yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-slate-400">No agent replies yet.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = comments.map((comment, idx) => `
+      // Map agent ids to names & entities
+      const agents = (typeof USER_DB !== 'undefined') ? USER_DB.filter(u => u.role === 'agent') : [];
+
+      tbody.innerHTML = comments.map((comment) => {
+        const ag = agents.find(a => String(a.id) === String(comment.agentId));
+        const agentName = ag ? ag.name : comment.agentId;
+        const entity = comment.entity || (ag ? ag.entity : 'Unknown');
+        return `
         <tr>
           <td class="p-6">${comment.date}</td>
-          <td class="p-6">${comment.authorName}</td>
+          <td class="p-6">${agentName}</td>
+          <td class="p-6">${entity}</td>
           <td class="p-6">${comment.text.substring(0, 80)}...</td>
           <td class="p-6 text-right">
-            <button onclick="adminDeleteFeedback(${idx})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
+            <button onclick="adminDeleteCommentById(${comment.id})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
     }
 
-    function adminDeleteFeedback(index) {
-      let comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
-      comments.splice(index, 1);
-      localStorage.setItem('reviewComments', JSON.stringify(comments));
-      adminLoadFeedbackList();
+    function adminDeleteCommentById(id) {
+      if (!confirm('Delete this comment?')) return;
+      if (typeof MockBackend !== 'undefined' && MockBackend.deleteComment) {
+        MockBackend.deleteComment(id);
+        adminLoadFeedbackList();
+      }
     }
 
     // ===== NEW AGENT DASHBOARD FUNCTIONS =====
@@ -6838,18 +6824,31 @@ Reviewer: ${review.reviewerId}
         const countSpan = document.getElementById(`count-comments-${entity}`);
         if (!container) return;
 
+        // Build the input area (per-entity)
+        const inputHtml = `
+          <div class="mb-4">
+            <textarea id="agent-comment-input-${entity}" rows="3" placeholder="Write a comment for ${entity}..."
+              class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+            <div class="mt-3 text-right">
+              <button onclick="handleCommentSubmitForEntity('${entity}'); event.stopPropagation()" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-indigo-700 transition">Send Feedback</button>
+            </div>
+          </div>`;
+
         // Filter comments for this entity
         const entityComments = comments.filter(c => {
+          // If the comment has entity, use it; otherwise fallback to agent->entity mapping
+          if (c.entity) return c.entity === entity;
           const ent = getEntity(c.agentId);
           return ent === entity;
         });
 
         if (countSpan) countSpan.textContent = entityComments.length;
 
+        let commentsHtml = '';
         if (entityComments.length === 0) {
-          container.innerHTML = '<p class="text-sm text-slate-500 italic">No feedback yet.</p>';
+          commentsHtml = '<p class="text-sm text-slate-500 italic">No feedback yet.</p>';
         } else {
-          container.innerHTML = entityComments.map(c => {
+          commentsHtml = entityComments.map(c => {
             const ag = agents.find(a => String(a.id) === String(c.agentId));
             const agentName = ag ? ag.name : c.agentId;
             return `
@@ -6864,25 +6863,9 @@ Reviewer: ${review.reviewerId}
              `;
           }).join('');
         }
-      });
-    }
 
-    function handleDeleteChecklistComment(id) {
-      if (!confirm('Delete this comment?')) return;
-      if (typeof MockBackend !== 'undefined') {
-        MockBackend.deleteComment(id);
-        renderChecklistComments();
-      }
-    }
-
-    // Call on load and on navigation to checklist
-    window.addEventListener('load', renderChecklistComments);
-
-    // Hook navigation for refresh
-    const _oldNavigateToChecklist = window.navigateTo;
-    window.navigateTo = function (id) {
-      if (_oldNavigateToChecklist) _oldNavigateToChecklist(id);
-      if (id === 'view-checklist') {
+        // Combine input area and comments list
+        container.innerHTML = inputHtml + commentsHtml;
         setTimeout(renderChecklistComments, 50);
       }
     };
