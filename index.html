@@ -2166,28 +2166,42 @@
         }
       }
 
+      // XSS: Escape user content before inserting into HTML
+      function escapeHtml(str) {
+        if (str == null || typeof str !== 'string') return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
       // NOTIFICATION MANAGER
       class NotificationManager {
         static getNotifications() {
-          return JSON.parse(localStorage.getItem('gojira_notifications') || '[]');
+          try {
+            return JSON.parse(localStorage.getItem('gojira_notifications') || '[]');
+          } catch (e) { return []; }
         }
 
-        static add(recipientRole, recipientId, message) {
+        static add(recipientRole, recipientId, message, options = {}) {
           const notifs = this.getNotifications();
+          const date = new Date();
           notifs.unshift({
             id: Date.now(),
             recipientRole,
             recipientId,
             message,
             read: false,
-            date: new Date().toLocaleString()
+            date: date.toISOString(),
+            dateDisplay: date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }),
+            action: options.action || null,
+            subView: options.subView || null
           });
           localStorage.setItem('gojira_notifications', JSON.stringify(notifs));
           this.updateIcon();
         }
 
-        static notifyAgent(agentId, message) {
-          this.add('agent', agentId, message);
+        static notifyAgent(agentId, message, options = {}) {
+          this.add('agent', agentId, message, options);
         }
 
         static notifyAdmin(message) {
@@ -2197,7 +2211,6 @@
         static updateIcon() {
           if (!currentUser) return;
           const notifs = this.getNotifications();
-          // Filter for current user
           const myNotifs = notifs.filter(n => {
             if (n.read) return false;
             if (n.recipientRole === 'admin' && currentUser.role === 'admin') return true;
@@ -2206,35 +2219,53 @@
           });
 
           const dot = document.getElementById('nav-notification-dot');
-          if (myNotifs.length > 0) {
-            dot.classList.remove('hidden');
-          } else {
-            dot.classList.add('hidden');
+          if (dot) {
+            if (myNotifs.length > 0) dot.classList.remove('hidden');
+            else dot.classList.add('hidden');
           }
         }
 
         static renderDropdown() {
           const list = document.getElementById('notification-list');
+          if (!list) return;
           const notifs = this.getNotifications();
 
-          // Filter for current user
           const myNotifs = notifs.filter(n => {
-            if (n.recipientRole === 'admin' && currentUser.role === 'admin') return true;
-            if (n.recipientRole === 'agent' && n.recipientId === currentUser.id) return true;
+            if (n.recipientRole === 'admin' && currentUser && currentUser.role === 'admin') return true;
+            if (n.recipientRole === 'agent' && currentUser && n.recipientId === currentUser.id) return true;
             return false;
           });
 
           if (myNotifs.length === 0) {
-            list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">✨there\'s no any notifications.</div>';
+            list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">✨ No notifications.</div>';
             return;
           }
 
-          list.innerHTML = myNotifs.map(n => `
-             <div class="p-3 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer ${n.read ? 'opacity-60' : 'font-semibold'}" onclick="NotificationManager.markRead(${n.id})">
-               <p class="text-sm">${n.message}</p>
-               <p class="text-xs text-slate-400 mt-1">${n.date}</p>
-             </div>
-           `).join('');
+          list.innerHTML = myNotifs.map(n => {
+            const msg = escapeHtml(n.message);
+            const dateStr = n.dateDisplay || (n.date ? new Date(n.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '');
+            const safeDate = escapeHtml(dateStr);
+            return `<div class="p-3 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer ${n.read ? 'opacity-60' : 'font-semibold'}" data-id="${n.id}" data-action="${escapeHtml(n.action || '')}" data-subview="${escapeHtml(n.subView || '')}">
+               <p class="text-sm">${msg}</p>
+               <p class="text-xs text-slate-400 mt-1">${safeDate}</p>
+             </div>`;
+          }).join('');
+
+          list.querySelectorAll('[data-id]').forEach(el => {
+            el.addEventListener('click', () => this.handleNotificationClick(Number(el.dataset.id), el.dataset.action, el.dataset.subview));
+          });
+        }
+
+        static handleNotificationClick(id, action, subView) {
+          this.markRead(id);
+          const dropdown = document.getElementById('notification-dropdown');
+          if (dropdown) dropdown.classList.add('hidden');
+          if (action && typeof navigateTo === 'function') {
+            navigateTo(action);
+            if (subView === 'weekly' && typeof qaShowAgentWeekly === 'function') {
+              setTimeout(() => qaShowAgentWeekly(), 300);
+            }
+          }
         }
 
         static markRead(id) {
@@ -3008,11 +3039,8 @@
 
         MockBackend.savePerformanceScore(performanceData);
 
-        // Notify Agent
-        NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`);
-
-        // Notify Agent
-        NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`);
+        // Notify Agent (with route so clicking notification opens checklist weekly view)
+        NotificationManager.notifyAgent(agentId, `Weekly Performance Reviewed. Final Score: ${finalScore}%`, { action: 'view-checklist', subView: 'weekly' });
 
         // Clear pending reviews for this agent
         const allPending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
@@ -3490,8 +3518,12 @@ Reviewer: ${review.reviewerId}
         'view-rupeeontime': 'RupeeOnTime'
       };
 
+      const PROTECTED_VIEWS = ['view-admin', 'view-performance', 'view-checklist'];
+
       function navigateTo(id) {
-        // CHECK ACCESS PERMISSION
+        if (!currentUser && PROTECTED_VIEWS.includes(id)) {
+          return;
+        }
         if (currentUser) {
           if (currentUser.entity !== 'ALL') {
             const targetEntity = ENTITY_VIEW_MAP[id];
@@ -4415,28 +4447,37 @@ Reviewer: ${review.reviewerId}
 
       // Load reviews on page load
       window.addEventListener('load', function () {
-        // Restore Session
+        // Restore Session (with validation - user must still exist in USER_DB)
         const storedUser = localStorage.getItem('currentUser');
         if (storedUser) {
-          currentUser = JSON.parse(storedUser);
-          // Skip Login
-          document.getElementById('view-login').style.display = 'none';
-          document.getElementById('app-container').style.display = 'block';
-          document.getElementById('app-container').style.opacity = '1';
+          try {
+            const parsed = JSON.parse(storedUser);
+            const validUser = typeof USER_DB !== 'undefined' && USER_DB.find(u => u.id === parsed.id && u.role === parsed.role);
+            if (validUser) {
+              currentUser = validUser;
+              document.getElementById('view-login').style.display = 'none';
+              document.getElementById('app-container').style.display = 'block';
+              document.getElementById('app-container').style.opacity = '1';
 
-          // Set Greeting
-          const greeting = document.getElementById('home-greeting');
-          if (greeting) greeting.innerText = `Hii ${currentUser.name}`;
+              const greeting = document.getElementById('home-greeting');
+              if (greeting) greeting.innerText = `Hii ${currentUser.name}`;
 
-          if (currentUser.role === 'admin') {
-            renderAdminDashboard();
-          } else {
-            renderAgentDashboard();
+              if (currentUser.role === 'admin') {
+                renderAdminDashboard();
+              } else {
+                renderAgentDashboard();
+              }
+              NotificationManager.updateIcon();
+            } else {
+              localStorage.removeItem('currentUser');
+            }
+          } catch (e) {
+            localStorage.removeItem('currentUser');
           }
         }
 
-        adminLoadReviewsList();
-        adminLoadFeedbackList();
+        if (typeof adminLoadReviewsList === 'function') adminLoadReviewsList();
+        if (typeof adminLoadFeedbackList === 'function') adminLoadFeedbackList();
       });
       // ===== LOGIN SYSTEM =====
       const DEFAULT_PASSWORD = '1234';
@@ -4487,7 +4528,7 @@ Reviewer: ${review.reviewerId}
           triggerDoorAnimation();
         } else {
           // Failure
-          errorMsg.innerText = "Invalid Credenitals";
+          errorMsg.innerText = "Invalid Credentials";
           errorMsg.classList.remove('hidden');
           shakeLogin();
         }
