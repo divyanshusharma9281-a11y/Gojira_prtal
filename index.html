@@ -327,15 +327,15 @@
       box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
     }
 
-    /* Zoom-in entrance for home page after login */
+    /* Zoom-in entrance for home page after login (smoother, slower) */
     @keyframes zoomInEntrance {
-      0% { opacity: 0; transform: scale(0.86) translateY(8px); }
-      60% { opacity: 1; transform: scale(1.03) translateY(0); }
+      0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+      60% { opacity: 1; transform: scale(1.012) translateY(4px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .zoom-in-enter {
-      animation: zoomInEntrance 640ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+      animation: zoomInEntrance 980ms cubic-bezier(0.16, 0.84, 0.24, 1) both;
       transform-origin: center top;
       will-change: transform, opacity;
     }
@@ -496,14 +496,15 @@
               constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                // Trail behavior: slower motion and brighter flashes
+                // Smoother motion: low initial speed + friction to damp movement
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.9 + 0.04; // slower speed for a gentle trail
+                const speed = Math.random() * 0.35 + 0.02; // very gentle speed
                 this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed + 0.2; // gentle downward drift
-                this.maxLife = this.life = Math.random() * 60 + 120; // longer life for smooth fade
-                this.decay = Math.random() * 0.35 + 0.35; // slower decay
-                this.size = Math.random() * 3 + 1.2; // visible but not overpowering
+                this.vy = Math.sin(angle) * speed + 0.06; // tiny downward drift
+                this.friction = 0.965; // damping for smooth slow motion
+                this.maxLife = this.life = Math.random() * 80 + 140; // longer life for gentle fade
+                this.decay = Math.random() * 0.18 + 0.24; // slow decay for smoothing
+                this.size = Math.random() * 2 + 0.9; // visible but subtle
 
                 // Choose color from palette most of the time, otherwise random HSL
                 if (Math.random() < 0.72) {
@@ -516,10 +517,13 @@
               }
 
               update() {
+                // Apply friction to smooth motion and avoid abrupt stops
+                this.vx *= this.friction;
+                this.vy *= this.friction;
                 this.x += this.vx;
                 this.y += this.vy;
                 this.life -= this.decay;
-                this.size *= 0.98; // shrink slower for a more visible trail
+                this.size *= 0.993; // shrink even slower for a smoother trail
               }
 
               draw(ctx) {
@@ -529,15 +533,16 @@
                 const alpha = Math.max(0, this.life / this.maxLife);
 
                 ctx.globalAlpha = alpha * 0.98;
-                ctx.globalCompositeOperation = 'lighter';
+                // Use a softer blend so multiple twinkles stack smoothly
+                ctx.globalCompositeOperation = 'screen';
                 ctx.fillStyle = this.color;
 
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
 
-                // brighter glow
-                ctx.shadowBlur = 20;
+                // softer, smoother glow
+                ctx.shadowBlur = 14;
                 ctx.shadowColor = this.color;
                 ctx.fill();
 
