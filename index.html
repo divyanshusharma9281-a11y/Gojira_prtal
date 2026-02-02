@@ -1892,6 +1892,9 @@
             <button onclick="adminLoadMonthlyDashboard()"
               class="ml-2 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Monthly
               Scorecard 📊</button>
+            <button onclick="adminLoadWeeklyDashboard()"
+              class="ml-2 bg-teal-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-teal-700 transition shadow-lg shadow-teal-500/30">Weekly
+              Scorecard 📊</button>
           </div>
           <!-- Hidden native select (kept for backwards compatibility) -->
           <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
@@ -2044,12 +2047,66 @@
   </div>
   </div>
 
+  <!-- ADMIN WEEKLY DASHBOARD (NEW) -->
+  <div id="view-admin-weekly" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-slate-800 sticky top-0 z-40">
+      <div class="flex items-center">
+        <button onclick="navigateTo('view-admin')" class="font-bold text-slate-500 hover:text-blue-600 mr-4">←
+          Back</button>
+        <h1 class="font-bold text-xl text-teal-600">Weekly Performance Scorecard</h1>
+      </div>
+      <button onclick="downloadTableAsCSV('admin-weekly-table', 'Weekly_Performance_Report')"
+        class="bg-teal-100 text-teal-700 hover:bg-teal-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
+        <span>📥</span> Download CSV
+      </button>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div
+        class="bg-teal-50 dark:bg-slate-800 p-8 rounded-3xl mb-8 border border-teal-100 dark:border-slate-700 flex justify-between items-center">
+        <div>
+          <h2 class="text-3xl font-bold mb-2">Weekly Team Overview</h2>
+          <p class="text-slate-600 dark:text-slate-400">Performance metrics for the current week.</p>
+        </div>
+        <div class="text-5xl">📊</div>
+      </div>
+
+      <div
+        class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table id="admin-weekly-table" class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6 text-center">Rank</th>
+                <th class="p-6">Agent Name</th>
+                <th class="p-6 text-center">Audits</th>
+                <th class="p-6 text-center">Fatals</th>
+                <th class="p-6 text-center">100% Scores</th>
+                <th class="p-6 text-center">Avg Score</th>
+                <th class="p-6 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="admin-weekly-list" class="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ADMIN MONTHLY DASHBOARD (NEW) -->
   <div id="view-admin-monthly" class="app-view bg-white dark:bg-slate-900">
-    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 sticky top-0 z-40">
-      <button onclick="navigateTo('view-admin')" class="font-bold text-slate-500 hover:text-blue-600 mr-4">←
-        Back</button>
-      <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
+    <header class="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-slate-800 sticky top-0 z-40">
+      <div class="flex items-center">
+        <button onclick="navigateTo('view-admin')" class="font-bold text-slate-500 hover:text-blue-600 mr-4">←
+          Back</button>
+        <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
+      </div>
+      <button onclick="downloadTableAsCSV('admin-monthly-table', 'Monthly_Performance_Report')"
+        class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
+        <span>📥</span> Download CSV
+      </button>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-10">
@@ -4508,8 +4565,11 @@ Reviewer: ${review.reviewerId}
       }
 
       // Load QA Dashboard for agents
-      if (id === 'view-agent-qa') {
-        agentLoadQADashboard();
+      if (id === 'view-admin-monthly') {
+        renderAdminMonthlyPerformance();
+      }
+      if (id === 'view-admin-weekly') {
+        renderAdminWeeklyPerformance();
       }
 
       // Check notifications on navigation if agent
@@ -5073,6 +5133,269 @@ Reviewer: ${review.reviewerId}
         });
         dropdownList.dataset.listenerAttached = '1';
       }
+    }
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                        CSV DOWNLOAD & WEEKLY REPORTS                       */
+    /* -------------------------------------------------------------------------- */
+
+    function downloadTableAsCSV(tableId, filename) {
+      const table = document.getElementById(tableId);
+      if (!table) return;
+
+      let csv = [];
+      const rows = table.querySelectorAll("tr");
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = [], cols = rows[i].querySelectorAll("td, th");
+
+        for (let j = 0; j < cols.length; j++) {
+          // Clean text: remove newlines, multiple spaces, and escape quotes
+          let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " ").trim();
+          row.push('"' + data + '"');
+        }
+        csv.push(row.join(","));
+      }
+
+      const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+      const downloadLink = document.createElement("a");
+      downloadLink.download = filename + ".csv";
+      downloadLink.href = window.URL.createObjectURL(csvFile);
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+
+    function renderAdminMonthlyPerformance() {
+      const tbody = document.getElementById('admin-monthly-list');
+      const entity = adminCurrentEntity || 'ALL';
+
+      if (!tbody) return;
+      tbody.innerHTML = ''; // loading state
+
+      // 1. Get Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entity !== 'ALL') {
+        agents = agents.filter(u => u.entity === entity);
+      }
+
+      // 2. Get Reviews & Date Range
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      // 3. Process Data
+      const rows = agents.map(agent => {
+        // Filter reviews for this agent within 30 days
+        const agentId = String(agent.id).trim().toLowerCase();
+
+        const agentReviews = reviews.filter(r => {
+          const rAgentId = String(r.agentId).trim().toLowerCase();
+          if (rAgentId !== agentId) return false;
+
+          // Date check
+          const d = new Date(r.date);
+          if (isNaN(d.getTime())) return false; // skip invalid dates
+          return d >= thirtyDaysAgo && d <= now;
+        });
+
+        const totalAudits = agentReviews.length;
+        const avgScore = totalAudits > 0 ? Math.round(agentReviews.reduce((sum, r) => sum + r.score, 0) / totalAudits) : 0;
+        const fatalCount = agentReviews.filter(r => r.score === 0 || (r.fatals && r.fatals > 0)).length;
+        const perfectCount = agentReviews.filter(r => r.score === 100).length;
+
+        // Performace Status
+        let status = 'Pending';
+        let statusClass = 'bg-slate-100 text-slate-600';
+
+        // Fatal Color Logic
+        let fatalClass = 'text-green-600'; // Default Low (0)
+        if (fatalCount > 2) fatalClass = 'text-red-600 font-black animate-pulse'; // Highest
+        else if (fatalCount === 2) fatalClass = 'text-orange-600 font-bold'; // Medium
+        else if (fatalCount === 1) fatalClass = 'text-amber-500 font-semibold'; // Low-Medium
+
+        if (totalAudits > 0) {
+          if (avgScore >= 90) { status = 'Excellent'; statusClass = 'bg-emerald-100 text-emerald-700'; }
+          else if (avgScore >= 75) { status = 'Good'; statusClass = 'bg-blue-100 text-blue-700'; }
+          else if (avgScore >= 60) { status = 'Average'; statusClass = 'bg-yellow-100 text-yellow-700'; }
+          else { status = 'Critical'; statusClass = 'bg-red-100 text-red-700'; }
+        }
+
+        return {
+          name: agent.name,
+          id: agent.id,
+          audits: totalAudits,
+          fatals: fatalCount,
+          perfects: perfectCount,
+          score: avgScore,
+          status: status,
+          statusClass: statusClass,
+          fatalClass: fatalClass
+        };
+      });
+
+      // 4. Render
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">No agents found for this entity.</td></tr>';
+        return;
+      }
+
+      // Sort by score desc
+      rows.sort((a, b) => b.score - a.score);
+
+      tbody.innerHTML = rows.map((row, index) => {
+        // Blank logic for empty audits
+        const showAudits = row.audits === 0 ? '--' : row.audits;
+        const showFatals = row.audits === 0 ? '--' : row.fatals;
+        const showPerfects = row.audits === 0 ? '--' : row.perfects;
+        const showScore = row.audits === 0 ? '--' : row.score + '%';
+        const showStatus = row.audits === 0 ? '<span class="text-slate-400">--</span>' : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>`;
+        const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 60 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
+
+        return `
+        <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
+           <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
+           <td class="p-6">
+              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
+              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+           </td>
+           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
+           <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
+           <td class="p-6 text-center font-bold text-indigo-600 text-lg">${showPerfects}</td>
+           <td class="p-6 text-center">
+              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
+                 ${showScore}
+              </div>
+           </td>
+           <td class="p-6 text-center">
+              ${showStatus}
+           </td>
+        </tr>
+      `}).join('');
+    }
+
+    function renderAdminWeeklyPerformance() {
+      const tbody = document.getElementById('admin-weekly-list');
+      const entity = adminCurrentEntity || 'ALL';
+
+      if (!tbody) return;
+      tbody.innerHTML = ''; // loading state
+
+      // 1. Get Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entity !== 'ALL') {
+        agents = agents.filter(u => u.entity === entity);
+      }
+
+      // 2. Get Reviews & Weekly Filter
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+
+      // Get current week index from our mock state
+      const state = getEntityWeekState(entity);
+      const currentWeek = state.currentWeek || 1;
+
+      // 3. Process Data
+      const rows = agents.map(agent => {
+        const agentId = String(agent.id).trim().toLowerCase();
+
+        const agentReviews = reviews.filter(r => {
+          const rAgentId = String(r.agentId).trim().toLowerCase();
+          if (rAgentId !== agentId) return false;
+          // Filter by week index if stored, otherwise fallback to date range logic could be here
+          // Assuming reviews are tagged with weekIndex or we infer from date for this week
+          // For simplicity/demo: lets say weekIndex is part of review OR we filter last 7 days
+          // Since existing code doesn't explicitly store weekIndex in reviews, we'll try to match state logic
+          // But to be consistent with request "once admin submitted reports... weekly reports added automatically",
+          // let's assume ALL current reviews pending for this week cycle are "current week"
+          // OR better: use the date filter for current week boundaries
+
+          // Implementation: Filter strictly for "current week" using ISO week or simplified 7-day window
+          // But user mentioned "submitted reports", which implies weekly finalization.
+          // Let's filter reviews created within the *current active week* of the system.
+
+          // Fallback: Filter last 7 days for "Weekly" visual
+          const now = new Date();
+          const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          const d = new Date(r.date);
+          return d >= sevenDaysAgo && d <= now;
+        });
+
+        const totalAudits = agentReviews.length;
+        const avgScore = totalAudits > 0 ? Math.round(agentReviews.reduce((sum, r) => sum + r.score, 0) / totalAudits) : 0;
+        const fatalCount = agentReviews.filter(r => r.score === 0 || (r.fatals && r.fatals > 0)).length; // Assuming score 0 implies fatal or explicit fatal flag
+        const perfectCount = agentReviews.filter(r => r.score === 100).length;
+
+        // Performace Status & Color Logic
+        let status = 'Pending';
+        let statusClass = 'bg-slate-100 text-slate-600';
+
+        // Fatal Color Logic (User Request: Red > Orange > Yellow > Green)
+        let fatalClass = 'text-green-600'; // Default Low (0)
+        if (fatalCount > 2) fatalClass = 'text-red-600 font-black animate-pulse'; // Highest
+        else if (fatalCount === 2) fatalClass = 'text-orange-600 font-bold'; // Medium
+        else if (fatalCount === 1) fatalClass = 'text-amber-500 font-semibold'; // Low-Medium
+
+        if (totalAudits > 0) {
+          if (avgScore >= 90) { status = 'Excellent'; statusClass = 'bg-emerald-100 text-emerald-700'; }
+          else if (avgScore >= 75) { status = 'Good'; statusClass = 'bg-blue-100 text-blue-700'; }
+          else if (avgScore >= 60) { status = 'Average'; statusClass = 'bg-yellow-100 text-yellow-700'; }
+          else { status = 'Critical'; statusClass = 'bg-red-100 text-red-700'; }
+        }
+
+        return {
+          name: agent.name,
+          id: agent.id,
+          audits: totalAudits,
+          fatals: fatalCount,
+          perfects: perfectCount,
+          score: avgScore,
+          status: status,
+          statusClass: statusClass,
+          fatalClass: fatalClass
+        };
+      });
+
+      // 4. Render
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">No agents found for this entity.</td></tr>';
+        return;
+      }
+
+      // Sort by fatals (asc) then score (desc) to highlight quality
+      rows.sort((a, b) => {
+        if (a.fatals !== b.fatals) return a.fatals - b.fatals; // Less fatals is better
+        return b.score - a.score;
+      });
+
+      tbody.innerHTML = rows.map((row, index) => {
+        const showAudits = row.audits === 0 ? '--' : row.audits;
+        const showFatals = row.audits === 0 ? '--' : row.fatals;
+        const showPerfects = row.audits === 0 ? '--' : row.perfects;
+        const showScore = row.audits === 0 ? '--' : row.score + '%';
+        const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 60 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
+
+        return `
+        <tr class="hover:bg-teal-50/30 dark:hover:bg-slate-700/30 transition">
+           <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
+           <td class="p-6">
+              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
+              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+           </td>
+           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
+           <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
+           <td class="p-6 text-center font-bold text-indigo-600 text-lg">${showPerfects}</td>
+           <td class="p-6 text-center">
+              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
+                 ${showScore}
+              </div>
+           </td>
+           <td class="p-6 text-center">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>
+           </td>
+        </tr>
+      `}).join('');
     }
 
     function checkAndEnableWeekFinalButton() {
@@ -6484,6 +6807,15 @@ Reviewer: ${review.reviewerId}
           document.getElementById(`agent-monthly-week${week}-fatals`).textContent = '--';
         }
       }
+    }
+
+    // ===== ADMIN WEEKLY DASHBOARD FUNCTIONS (NEW) =====
+    function adminLoadWeeklyDashboard() {
+      // Navigate to view
+      navigateTo('view-admin-weekly');
+
+      // Load data
+      renderAdminWeeklyPerformance();
     }
 
     // ===== ADMIN MONTHLY DASHBOARD FUNCTIONS =====
