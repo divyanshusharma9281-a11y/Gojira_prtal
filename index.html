@@ -327,15 +327,15 @@
       box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
     }
 
-    /* Zoom-out entrance for home page after login */
-    @keyframes zoomOutEntrance {
-      0% { opacity: 0; transform: scale(1.18) translateY(12px); }
-      60% { opacity: 1; transform: scale(1.02) translateY(4px); }
+    /* Zoom-in entrance for home page after login */
+    @keyframes zoomInEntrance {
+      0% { opacity: 0; transform: scale(0.86) translateY(8px); }
+      60% { opacity: 1; transform: scale(1.03) translateY(0); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .zoom-out-enter {
-      animation: zoomOutEntrance 640ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    .zoom-in-enter {
+      animation: zoomInEntrance 640ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
       transform-origin: center top;
       will-change: transform, opacity;
     }
@@ -4425,14 +4425,14 @@ Reviewer: ${review.reviewerId}
       const targetEl = document.getElementById(id);
       targetEl.classList.add('active');
 
-      // Play a zoom-out entrance when arriving at the home view to make the transition feel dynamic
+      // Play a zoom-in entrance when arriving at the home view to make the transition feel dynamic
       if (id === 'view-home') {
-        targetEl.classList.remove('zoom-out-enter');
+        targetEl.classList.remove('zoom-in-enter');
         // Force reflow so repeated navigations replay the animation
         void targetEl.offsetWidth;
-        targetEl.classList.add('zoom-out-enter');
+        targetEl.classList.add('zoom-in-enter');
         const onEnd = () => {
-          targetEl.classList.remove('zoom-out-enter');
+          targetEl.classList.remove('zoom-in-enter');
           targetEl.removeEventListener('animationend', onEnd);
         };
         targetEl.addEventListener('animationend', onEnd);
