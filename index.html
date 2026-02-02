@@ -480,18 +480,18 @@
               constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                // REFINED PHYSICS: Faster & More Colorful
+                // REFINED PHYSICS: Faster & More Colorful (subtler visuals)
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 2 + 0.5; // Increased speed (was 0.5+0.2)
+                const speed = Math.random() * 2 + 0.5;
                 this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed + 1; // Increased gravity (was 0.5)
-                this.life = 100;
-                this.decay = Math.random() * 2 + 1; // Faster decay for snappier feel
-                this.size = Math.random() * 4 + 2;
+                this.vy = Math.sin(angle) * speed + 1;
+                this.life = 80; // slightly lower starting alpha/life for less intense flashes
+                this.decay = Math.random() * 2 + 1.5; // slightly faster decay
+                this.size = Math.random() * 3 + 1; // smaller particles to reduce glare
 
-                // VIBRANT COLORS
+                // SUBTLER COLORS
                 const hue = Math.floor(Math.random() * 360);
-                const lightness = Math.floor(Math.random() * 30 + 50); // 50-80% for variety
+                const lightness = Math.floor(Math.random() * 20 + 40); // 40-60% for subtler brightness
                 this.color = `hsla(${hue}, 100%, ${lightness}%, 1)`;
               }
 
@@ -504,8 +504,8 @@
 
               draw(ctx) {
                 ctx.save();
-                ctx.globalAlpha = this.life / 100;
-                // ADDITIVE BLENDING for "Shiny" look
+                ctx.globalAlpha = (this.life / 100) * 0.7; // reduce overall opacity slightly
+                // ADDITIVE BLENDING for "Shiny" look (kept but softened)
                 ctx.globalCompositeOperation = 'lighter';
                 ctx.fillStyle = this.color;
 
@@ -513,8 +513,8 @@
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
 
-                // GLOW
-                ctx.shadowBlur = 15;
+                // GLOW (softer)
+                ctx.shadowBlur = 8;
                 ctx.shadowColor = this.color;
                 ctx.fill();
 
