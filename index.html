@@ -13,7 +13,13 @@
 
     // Cursor Twinkle Animation Script - Global so it's ready
     // Cursor Twinkle Animation Script
+    let mouseX = 0, mouseY = 0;
+    let pourInterval = null;
+
     document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
       const loginView = document.getElementById('view-login');
       // Check if login view exists and is visible (not display: none)
       if (loginView && loginView.style.display !== 'none') {
@@ -21,47 +27,55 @@
       }
     });
 
+    document.addEventListener('mousedown', function () {
+      const loginView = document.getElementById('view-login');
+      if (loginView && loginView.style.display !== 'none') {
+        if (!pourInterval) {
+          pourInterval = setInterval(() => {
+            createTwinkle(mouseX, mouseY);
+          }, 50); // Pour every 50ms
+        }
+      }
+    });
+
+    document.addEventListener('mouseup', stopPouring);
+    document.addEventListener('mouseleave', stopPouring);
+
+    function stopPouring() {
+      if (pourInterval) {
+        clearInterval(pourInterval);
+        pourInterval = null;
+      }
+    }
+
     function createTwinkle(x, y) {
       const twinkle = document.createElement('div');
       twinkle.classList.add('twinkle');
 
-      // We will set Left/Top AFTER determining size to center them.
+      // Standard Rainbow Dot + Extra Vibrant Colors
+      const size = Math.random() * 4 + 2;
+      twinkle.style.width = size + 'px';
+      twinkle.style.height = size + 'px';
 
-      // 30% chance to be a Shiny White Star
-      if (Math.random() < 0.3) {
-        twinkle.innerText = '★'; // Unicode Star
-        twinkle.style.color = '#FFFFFF'; // White Color
-        const size = Math.random() * 10 + 10; // Size 10-20px
-        twinkle.style.fontSize = size + 'px';
+      // Center the dot offset by half size
+      twinkle.style.left = (x - size / 2) + 'px';
+      twinkle.style.top = (y - size / 2) + 'px';
 
-        // Center the star
-        twinkle.style.left = (x - size / 2) + 'px';
-        twinkle.style.top = (y - size / 2) + 'px';
+      twinkle.style.borderRadius = '50%';
 
-        twinkle.style.background = 'transparent'; // No background block
-        twinkle.style.borderRadius = '0'; // No circle
-        twinkle.style.boxShadow = 'none'; // No box shadow
-        twinkle.style.textShadow = '0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.8)'; // Intense White Glow
-        twinkle.style.width = 'auto';
-        twinkle.style.height = 'auto';
-        twinkle.style.display = 'flex';
-        twinkle.style.alignItems = 'center';
-        twinkle.style.justifyContent = 'center';
-      } else {
-        // Standard Rainbow Dot
-        const size = Math.random() * 4 + 2;
-        twinkle.style.width = size + 'px';
-        twinkle.style.height = size + 'px';
-
-        // Center the dot
-        twinkle.style.left = (x - size / 2) + 'px';
-        twinkle.style.top = (y - size / 2) + 'px';
-
-        twinkle.style.borderRadius = '50%';
-
-        const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3']; // Rainbow
-        twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
-      }
+      // Extended Rainbow Palette
+      const colors = [
+        '#ff0000', '#ff4d4d', // Reds
+        '#ff7f00', '#ff9f43', // Oranges
+        '#ffff00', '#fff200', // Yellows
+        '#00ff00', '#32ff7e', // Greens
+        '#00fff7', '#17c0eb', // Cyans/Teals
+        '#0000ff', '#18dcff', // Blues
+        '#4b0082', '#7d5fff', // Indigos
+        '#9400d3', '#c56cf0', // Violets
+        '#ff1493', '#ff00ff'  // Pinks/Magentas
+      ];
+      twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
 
       document.body.appendChild(twinkle);
 
@@ -69,6 +83,101 @@
         twinkle.remove();
       }, 1000);
     }
+
+    // --- BUBBLE NETWORK ANIMATION (WEB EFFECT) ---
+    class BubbleNetwork {
+      constructor() {
+        this.canvas = document.getElementById('bubble-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.bubbles = [];
+        this.resize();
+
+        // Create initial bubbles
+        this.initBubbles(50); // Number of bubbles
+
+        window.addEventListener('resize', () => this.resize());
+        this.animate();
+      }
+
+      resize() {
+        if (this.canvas) {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        }
+      }
+
+      initBubbles(count) {
+        for (let i = 0; i < count; i++) {
+          this.bubbles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * 1.5, // Slow float X
+            vy: (Math.random() - 0.5) * 1.5, // Slow float Y
+            size: Math.random() * 3 + 2, // Bubble size
+            color: `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})` // Semi-transparent white
+          });
+        }
+      }
+
+      animate() {
+        const loginView = document.getElementById('view-login');
+        // Only animate if login view is visible to save resources
+        if (!loginView || loginView.style.display === 'none') {
+          requestAnimationFrame(() => this.animate());
+          return;
+        }
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.bubbles.forEach(bubble => {
+          // Update Position
+          bubble.x += bubble.vx;
+          bubble.y += bubble.vy;
+
+          // Bounce off edges
+          if (bubble.x < 0 || bubble.x > this.canvas.width) bubble.vx *= -1;
+          if (bubble.y < 0 || bubble.y > this.canvas.height) bubble.vy *= -1;
+
+          // Draw Bubble
+          this.ctx.beginPath();
+          this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = bubble.color;
+          this.ctx.fill();
+
+          // Web Connection Logic (Cursor to Bubble)
+          const dx = mouseX - bubble.x;
+          const dy = mouseY - bubble.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const connectDistance = 150; // Web reach
+
+          if (distance < connectDistance) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / connectDistance})`; // Fade with distance
+            this.ctx.lineWidth = 1;
+            this.ctx.moveTo(bubble.x, bubble.y);
+            this.ctx.lineTo(mouseX, mouseY);
+            this.ctx.stroke();
+            this.ctx.closePath();
+
+            // Extra "Shine" on conected bubble
+            this.ctx.beginPath();
+            this.ctx.arc(bubble.x, bubble.y, bubble.size + 2, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            this.ctx.stroke();
+          }
+
+          // Optional: Connect bubbles to each other if close?
+          // Keeping it simple "Cursor to Bubble" as per "Web Shooter" description first.
+        });
+
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Initialize Bubble Effect on Load
+    window.addEventListener('load', () => {
+      new BubbleNetwork();
+    });
   </script>
 
   <!-- Fonts -->
@@ -256,6 +365,7 @@
 
   <!-- LOGIN VIEW -->
   <div id="view-login">
+    <canvas id="bubble-canvas" class="absolute inset-0 z-0 pointer-events-none"></canvas>
     <div class="door-container" id="door-container">
       <div class="door door-left"></div>
       <div class="door door-right"></div>
