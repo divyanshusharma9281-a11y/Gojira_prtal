@@ -318,6 +318,11 @@
               <div id="nav-notification-dot" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full hidden">
               </div>
             </button>
+            <button onclick="logout()"
+              class="text-slate-500 hover:text-red-600 text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+              title="Logout">
+              ⏻
+            </button>
             <button onclick="toggleSearch()"
               class="text-slate-500 hover:text-blue-600 text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">🔍</button>
             <button onclick="toggleTheme()"
@@ -344,13 +349,11 @@
         <h1 class="text-5xl font-extrabold mb-6">
           <div id="home-greeting" class="text-3xl text-slate-400 font-medium mb-2">Welcome</div>
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-            Training & Quality Portal
+            Welcome to Training & Quality Portal
           </span>
         </h1>
 
-        <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-12">
-          Guidelines
-        </p>
+        <!-- Guidelines Subtitle Removed -->
 
 
 
@@ -387,9 +390,8 @@
             style="pointer-events: auto;">
             <div class="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl">📁
             </div>
-            <h2 class="text-2xl font-bold mb-2">Resources</h2>
-            <p class="text-sm opacity-90">Customer Script Templates
-              Pre-written scripts for common customer interactions.</p>
+            <h2 class="text-2xl font-bold mb-2">Quality Performance and Guidelines</h2>
+            <p class="text-sm opacity-90"></p>
           </div>
         </div>
       </main>
@@ -722,13 +724,237 @@
       </header>
       <div class="max-w-4xl mx-auto px-6 py-14">
         <div class="space-y-6">
-          <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄
+          <div
+            class="bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div
+              class="p-6 cursor-pointer flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700/50 transition"
+              onclick="toggleGuidelinesDropdown()">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center text-xl">📄
+                </div>
+                <h3 class="text-xl font-bold">Guidelines</h3>
               </div>
-              <div>
-                <h3 class="text-xl font-bold">Customer Script Templates</h3>
-                <p class="text-slate-600 dark:text-slate-300">Pre-written scripts for common customer interactions.</p>
+              <span class="text-2xl text-slate-400">▼</span>
+            </div>
+
+            <div id="guidelines-dropdown-content"
+              class="hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 text-slate-700 dark:text-slate-300">
+              <h2 class="text-2xl font-extrabold mb-4 text-blue-600">Customer Query Handling – All Brands</h2>
+              <p class="mb-6 font-medium text-slate-500">Applicable Brands: Bharat Loan, Loan 112, Rupee 112, Rupee On
+                Time</p>
+
+              <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 mb-8">
+                <p class="font-bold text-yellow-800 dark:text-yellow-200">⚠️ These SOPs are mandatory and must be
+                  followed without exception.</p>
+                <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">From today onwards, the same format,
+                  language, and rules must be used while handling emails and calls.</p>
+              </div>
+
+              <div class="mb-10">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">🔐 GENERAL INSTRUCTIONS <span
+                    class="text-sm font-normal text-slate-500">(APPLICABLE TO ALL CASES)</span></h3>
+                <ul class="space-y-2 list-disc ml-5">
+                  <li>Follow only approved responses mentioned in this SOP.</li>
+                  <li>Do not provide false assurance or timelines outside what is defined.</li>
+                  <li>Do not address customers as “Sir/Ma’am”.</li>
+                  <li><strong>Always address customers by their name.</strong></li>
+                  <li>Maintain professional, clear, and consistent communication.</li>
+                  <li>Escalations must follow defined conditions only.</li>
+                </ul>
+              </div>
+
+              <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+              <div class="space-y-12">
+                <!-- SECTION 1 -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">1️⃣ PAYMENT-RELATED QUERIES</h3>
+
+                  <div class="mb-6">
+                    <h4 class="font-bold text-lg mb-2">A. Payment Done but NOT Reflecting on Portal</h4>
+                    <div class="pl-4 border-l-2 border-purple-200 dark:border-slate-700 space-y-3">
+                      <p><strong>Mandatory Steps:</strong></p>
+                      <ul class="list-disc ml-5 space-y-1">
+                        <li>Ask the customer to confirm the exact payment amount.</li>
+                        <li>Verify the details provided by the customer.</li>
+                      </ul>
+                      <p><strong>While escalating or emailing:</strong></p>
+                      <ul class="list-disc ml-5 space-y-1">
+                        <li>Mention the confirmed payment amount clearly.</li>
+                        <li>Update the WhatsApp group with the same confirmed amount.</li>
+                      </ul>
+                      <div
+                        class="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-green-800 dark:text-green-300 text-sm">
+                        ✅ Payment amount confirmation is compulsory before any escalation.<br>
+                        🚫 Do not escalate without confirming the amount.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-bold text-lg mb-2">B. Payment Done and Reflecting on Portal but Not Updated</h4>
+                    <div class="pl-4 border-l-2 border-purple-200 dark:border-slate-700 space-y-3">
+                      <p><strong>Steps:</strong> Check amount on portal > Confirm with customer > Inform using format:
+                      </p>
+                      <div
+                        class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                        <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Approved Response</span>
+                        <p class="mt-2 italic">“We have received your payment of ₹40,000. Your payment is currently
+                          under verification and will be updated within 24 hours (maximum).”</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 2 -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">2️⃣ APPLICATION-RELATED QUERIES</h3>
+
+                  <div class="mb-6">
+                    <h4 class="font-bold text-lg mb-2">A. Application NOT Completed (Lead / Partial Status)</h4>
+                    <p class="text-sm mb-3 text-slate-500">Examples: OCR error, Registration success, eKYC pending, Bank
+                      statement req, OTP verified.</p>
+
+                    <div
+                      class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600 mb-3">
+                      <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Approved Customer
+                        Response</span>
+                      <p class="mt-2 italic">“Your application is currently in process. Kindly complete the remaining
+                        steps 100% through the Bharat Loan application. If you are facing any issues, please visit our
+                        website or contact us at care@bharatloan.com and try again after some time.”</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                      <div class="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg text-red-800 dark:text-red-300 text-sm">
+                        🚫 <strong>Do NOT say:</strong> “Our team will contact you within 24 hours”
+                      </div>
+                      <div
+                        class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-blue-800 dark:text-blue-300 text-sm">
+                        ⏳ <strong>If asked about time:</strong> “Maximum processing time is 24 hours after successful
+                        completion. A credit manager will be assigned then.”
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-6">
+                    <h4 class="font-bold text-lg mb-2">B. Application Submitted Successfully</h4>
+                    <p class="text-sm mb-2 text-slate-500">Condition: Ref number generated (e.g., #BLVD9E7E)</p>
+                    <div
+                      class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                      <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Approved Response</span>
+                      <p class="mt-2 italic">“Your application has been submitted successfully. Our team will contact
+                        you within 24 hours.”</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-bold text-lg mb-2">C. Repeat Customer – Bank Statement Required</h4>
+                    <div
+                      class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                      <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Approved Response</span>
+                      <p class="mt-2 italic">“Since you are an existing customer, your application status is in process.
+                        Kindly wait while a credit manager is assigned. They will contact you within 24 hours.”</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 3 -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">3️⃣ CREDIT MANAGER-RELATED QUERIES
+                  </h3>
+
+                  <div class="mb-4">
+                    <h4 class="font-bold text-lg mb-2">Issue: Credit Manager Not Responding</h4>
+                    <ul class="list-disc ml-5 space-y-2">
+                      <li><strong>First Time:</strong> Check if raised > If not, escalate & inform 24h timeline.</li>
+                      <li><strong>Same Day (Already Raised):</strong> “An executive has already escalated your concern.
+                        Our team will contact you within 24 hours.”</li>
+                      <li><strong>Raised Twice Already:</strong> Tag manager while escalating. Ensure history is clear.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- SECTION 4 -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">4️⃣ COLLECTION-RELATED QUERIES</h3>
+
+                  <div class="mb-6">
+                    <h4 class="font-bold text-lg mb-2">A. Extension Request Due to Medical Reasons</h4>
+                    <div
+                      class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600 mb-3">
+                      <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Approved Response</span>
+                      <p class="mt-2 italic">“We do not have the authority to grant extensions. Your case has been
+                        forwarded to the collection team. If payment is not made on time, it may impact your CIBIL
+                        score, and a charge of 2% per day (1% interest + 1% penalty) will apply. If you have a medical
+                        issue, please share valid medical documents at care@bharatloan.com. Our email team will review
+                        within 24 hours.”</p>
+                    </div>
+                    <p class="text-sm">📌 If documents already shared: Confirm receipt & forward case.</p>
+                  </div>
+
+                  <div>
+                    <h4 class="font-bold text-lg mb-2">B. Penalty Waiver / Settlement Requests</h4>
+                    <div
+                      class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                      <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Approved Response</span>
+                      <p class="mt-2 italic">“We do not have the authority to approve penalty waivers or settlements.
+                        Please email care@bharatloan.com with valid reasons. Your concern will be escalated, and the
+                        team will update you within 24 hours.”</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 5 -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">5️⃣ DISBURSEMENT-RELATED QUERIES
+                  </h3>
+
+                  <div class="mb-6">
+                    <h4 class="font-bold text-lg mb-2">A. Disbursement Showing but Amount NOT Credited</h4>
+                    <div class="pl-4 border-l-2 border-purple-200 dark:border-slate-700 space-y-2">
+                      <p><strong>
+                          < 24 Hours:</strong> Do not escalate. Do not email.</p>
+                      <p><strong>> 24 Hours:</strong> Request bank statement via email.</p>
+                      <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-sm inline-block">✅ Always guide
+                        broadly based on 24-hour timeline.</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-bold text-lg mb-2">B. Loan Cancellation After Disbursement</h4>
+                    <p>Update case in <strong>Refund Tracker</strong> (Sheet: “Cancel After Disbursement”). Ensure
+                      complete details.</p>
+                  </div>
+                </div>
+
+                <!-- SECTION 6 -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">6️⃣ REFUND-RELATED QUERIES</h3>
+                  <ul class="list-disc ml-5 space-y-2">
+                    <li>Confirm refund amount.</li>
+                    <li>Raise concern with email team.</li>
+                    <li><strong>Timeline:</strong> 🕒 7–10 working days.</li>
+                  </ul>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- EMAIL TEAM -->
+                <div>
+                  <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">📧 IMPORTANT UPDATE – EMAIL TEAM
+                  </h3>
+                  <div class="bg-slate-900 text-slate-100 p-6 rounded-2xl font-mono text-sm leading-relaxed">
+                    <p class="font-bold text-yellow-400 mb-2">✅ PAYMENT CONFIRMATION EMAIL FORMAT (MANDATORY)</p>
+                    <p>This is to confirm that we have received your payment as per the details below:</p>
+                    <p class="mt-2">Loan Number: {{Loan Number}}<br>
+                      Amount Paid: {{Amount}}<br>
+                      Date of Payment: {{Payment Date}}</p>
+                  </div>
+                  <p class="mt-4 text-sm text-slate-500"><strong>Rules:</strong> Follow SOP, Consistent Format, No
+                    Sir/Ma'am, Greet by Name.</p>
+                </div>
+
               </div>
             </div>
           </div>
@@ -1651,7 +1877,7 @@
           });
 
           if (myNotifs.length === 0) {
-            list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">No notifications</div>';
+            list.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">✨there\'s no any notifications.</div>';
             return;
           }
 
@@ -3501,6 +3727,11 @@ Reviewer: ${review.reviewerId}
       }
 
       let currentEditIndex = -1;
+
+      function toggleGuidelinesDropdown() {
+        const content = document.getElementById('guidelines-dropdown-content');
+        content.classList.toggle('hidden');
+      }
 
       function adminEditReview(index) {
         currentEditIndex = index;
