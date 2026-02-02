@@ -444,6 +444,9 @@
             let isMouseDown = false;
             let mouseX = 0, mouseY = 0;
 
+            // Palette of extra colors for twinkles (chosen to be bright & pleasant)
+            const TWINKLE_PALETTE = ['#FFC857', '#FF6B6B', '#4ECDC4', '#00B4D8', '#9B5DE5', '#C7F464', '#FF9F1C'];
+
             // Resize canvas
             function resize() {
               width = canvas.width = window.innerWidth;
@@ -495,20 +498,21 @@
                 this.y = y;
                 // Trail behavior: slower motion and brighter flashes
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.8 + 0.08; // much slower speed for a gentle trail
+                const speed = Math.random() * 0.9 + 0.04; // slower speed for a gentle trail
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed + 0.2; // gentle downward drift
-                this.maxLife = this.life = Math.random() * 80 + 140; // longer life (140-220 frames)
-                this.decay = Math.random() * 0.4 + 0.4; // slower decay for smooth fade
-                this.size = Math.random() * 3 + 1.5; // slightly larger so glow reads brighter
+                this.maxLife = this.life = Math.random() * 60 + 120; // longer life for smooth fade
+                this.decay = Math.random() * 0.35 + 0.35; // slower decay
+                this.size = Math.random() * 3 + 1.2; // visible but not overpowering
 
-                // Add occasional sparkle glyphs in the same trail
-                this.isSparkle = Math.random() < 0.14; // ~14% are sparkle emojis
-
-                // BRIGHTER COLORS
-                const hue = Math.floor(Math.random() * 360);
-                const lightness = Math.floor(Math.random() * 30 + 60); // 60-90% for brighter tones
-                this.color = `hsla(${hue}, 100%, ${lightness}%, 1)`;
+                // Choose color from palette most of the time, otherwise random HSL
+                if (Math.random() < 0.72) {
+                  this.color = TWINKLE_PALETTE[Math.floor(Math.random() * TWINKLE_PALETTE.length)];
+                } else {
+                  const hue = Math.floor(Math.random() * 360);
+                  const lightness = Math.floor(Math.random() * 18 + 56);
+                  this.color = `hsl(${hue}, 100%, ${lightness}%)`;
+                }
               }
 
               update() {
@@ -524,33 +528,18 @@
                 // compute normalized alpha so fade-out is smooth over maxLife
                 const alpha = Math.max(0, this.life / this.maxLife);
 
-                if (this.isSparkle) {
-                  // Draw an emoji sparkle (centered)
-                  ctx.globalAlpha = alpha * 1.0;
-                  ctx.globalCompositeOperation = 'lighter';
-                  const fontSize = Math.max(12, Math.round(this.size * 6));
-                  ctx.font = `${fontSize}px serif`;
-                  ctx.textAlign = 'center';
-                  ctx.textBaseline = 'middle';
-                  ctx.fillStyle = this.color;
-                  // stronger glow for sparkles
-                  ctx.shadowBlur = 28;
-                  ctx.shadowColor = this.color;
-                  ctx.fillText('✨', this.x, this.y);
-                } else {
-                  ctx.globalAlpha = alpha * 0.95;
-                  ctx.globalCompositeOperation = 'lighter';
-                  ctx.fillStyle = this.color;
+                ctx.globalAlpha = alpha * 0.98;
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.fillStyle = this.color;
 
-                  ctx.beginPath();
-                  ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                  ctx.fill();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
 
-                  // brighter glow
-                  ctx.shadowBlur = 20;
-                  ctx.shadowColor = this.color;
-                  ctx.fill();
-                }
+                // brighter glow
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = this.color;
+                ctx.fill();
 
                 ctx.restore();
               }
