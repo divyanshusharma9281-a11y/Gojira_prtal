@@ -1953,105 +1953,104 @@
 
 
 
-    </div>
-  </div>
-
-  <!-- Section 2: Quality Review Form (Hidden initially) -->
-  <div id="admin-quality-form-section"
-    class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold flex items-center gap-3">
-        <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
-        Quality Review - <span id="admin-review-agent-display" class="text-emerald-600"></span>
-      </h2>
-      <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
-        Back</button>
-    </div>
-
-    <!-- File Input Section (for Voice reviews) -->
-    <div id="admin-review-file-section"
-      class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-emerald-200 dark:border-slate-600">
-      <label class="block text-sm font-semibold mb-3">Select Call Recording or File (Max 100MB)</label>
-      <input type="file" id="admin-review-file-input"
-        class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700">
-      <p class="text-xs text-slate-500 mt-2">Selected: <span id="admin-review-file-name">None</span></p>
-    </div>
-
-    <div id="admin-review-items-container" class="space-y-6">
-      <!-- Review items will be dynamically added here -->
-    </div>
-
-    <div class="flex gap-3 mt-8">
-      <button onclick="adminAddReviewItem()" id="admin-add-review-btn"
-        class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition">
-        ➕ Add Review (Min 3, Max 10)
-      </button>
-      <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" disabled
-        class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed">
-        ✅ Final Submit
-      </button>
-    </div>
-  </div>
-
-  <!-- Section 3: Submitted Reviews -->
-  <div id="admin-submitted-reviews-section" class="mb-12 hidden">
-    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-      <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
-      Submitted Reviews
-    </h2>
-    <div class="mb-4 flex gap-3">
-      <button onclick="adminDeleteAllReviews()"
-        class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
-        🗑️ Delete All Reviews
-      </button>
-      <button onclick="adminClearFinalizations()" id="admin-clear-finalizations-btn"
-        class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
-        ✖️ Clear Finalizations
-      </button>
-    </div>
-    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-          <tr>
-            <th class="p-6">Date</th>
-            <th class="p-6">Agent</th>
-            <th class="p-6">File</th>
-            <th class="p-6">Score</th>
-            <th class="p-6">Observation</th>
-            <th class="p-6 text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-          <!-- JS Populates this -->
-        </tbody>
-      </table>
-    </div>
-  </div>
 
 
+      <!-- Section 2: Quality Review Form (Hidden initially) -->
+      <div id="admin-quality-form-section"
+        class="hidden bg-emerald-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-emerald-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-emerald-600 text-white rounded-lg p-2 text-xl">📝</span>
+            Quality Review - <span id="admin-review-agent-display" class="text-emerald-600"></span>
+          </h2>
+          <button onclick="adminCancelReview()" class="text-slate-500 hover:text-slate-700 text-sm font-medium">←
+            Back</button>
+        </div>
 
-  <!-- Comments Management Section (NEW) -->
-  <div id="admin-comments-management-section" class="mb-12">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold flex items-center gap-3">
-        <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">💬</span>
-        Review Comments (<span id="admin-comments-count">0</span>)
-      </h2>
-      <button onclick="adminDeleteAllComments()"
-        class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
-        <span>🗑️</span> Delete All Comments
-      </button>
-    </div>
+        <!-- File Input Section (for Voice reviews) -->
+        <div id="admin-review-file-section"
+          class="hidden mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-emerald-200 dark:border-slate-600">
+          <label class="block text-sm font-semibold mb-3">Select Call Recording or File (Max 100MB)</label>
+          <input type="file" id="admin-review-file-input"
+            class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700">
+          <p class="text-xs text-slate-500 mt-2">Selected: <span id="admin-review-file-name">None</span></p>
+        </div>
 
-    <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-      <div id="admin-comments-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-        <!-- Comments populated here -->
-        <p class="text-sm text-slate-500 italic text-center py-8">No comments found.</p>
+        <div id="admin-review-items-container" class="space-y-6">
+          <!-- Review items will be dynamically added here -->
+        </div>
+
+        <div class="flex gap-3 mt-8">
+          <button onclick="adminAddReviewItem()" id="admin-add-review-btn"
+            class="flex-1 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition">
+            ➕ Add Review (Min 3, Max 10)
+          </button>
+          <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" disabled
+            class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed">
+            ✅ Final Submit
+          </button>
+        </div>
       </div>
-    </div>
-  </div>
 
-  </div>
+      <!-- Section 3: Submitted Reviews -->
+      <div id="admin-submitted-reviews-section" class="mb-12 hidden">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">📋</span>
+          Submitted Reviews
+        </h2>
+        <div class="mb-4 flex gap-3">
+          <button onclick="adminDeleteAllReviews()"
+            class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition text-sm">
+            🗑️ Delete All Reviews
+          </button>
+          <button onclick="adminClearFinalizations()" id="admin-clear-finalizations-btn"
+            class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
+            ✖️ Clear Finalizations
+          </button>
+        </div>
+        <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-6">Date</th>
+                <th class="p-6">Agent</th>
+                <th class="p-6">File</th>
+                <th class="p-6">Score</th>
+                <th class="p-6">Observation</th>
+                <th class="p-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+
+      <!-- Comments Management Section (NEW) -->
+      <div id="admin-comments-management-section" class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span class="bg-indigo-600 text-white rounded-lg p-2 text-xl">💬</span>
+            Review Comments (<span id="admin-comments-count">0</span>)
+          </h2>
+          <button onclick="adminDeleteAllComments()"
+            class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
+            <span>🗑️</span> Delete All Comments
+          </button>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
+          <div id="admin-comments-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            <!-- Comments populated here -->
+            <p class="text-sm text-slate-500 italic text-center py-8">No comments found.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- ADMIN WEEKLY DASHBOARD (NEW) -->
