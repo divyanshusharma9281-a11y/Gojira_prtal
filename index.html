@@ -326,6 +326,19 @@
     .header-colored-flash .glow {
       box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
     }
+
+    /* Zoom-out entrance for home page after login */
+    @keyframes zoomOutEntrance {
+      0% { opacity: 0; transform: scale(1.18) translateY(12px); }
+      60% { opacity: 1; transform: scale(1.02) translateY(4px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .zoom-out-enter {
+      animation: zoomOutEntrance 640ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+      transform-origin: center top;
+      will-change: transform, opacity;
+    }
   </style>
 </head>
 
@@ -378,7 +391,7 @@
       <h1
         class="door-brand text-[18rem] font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 whitespace-nowrap drop-shadow-lg"
         style="pointer-events: none; will-change: transform, opacity; transform: translateY(0) rotate(0deg);">
-        G - Gojira</h1>
+        Gojira</h1>
     </div>
 
     <!-- Colored Login Card -->
@@ -4420,7 +4433,21 @@ Reviewer: ${review.reviewerId}
       }
 
       document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+      const targetEl = document.getElementById(id);
+      targetEl.classList.add('active');
+
+      // Play a zoom-out entrance when arriving at the home view to make the transition feel dynamic
+      if (id === 'view-home') {
+        targetEl.classList.remove('zoom-out-enter');
+        // Force reflow so repeated navigations replay the animation
+        void targetEl.offsetWidth;
+        targetEl.classList.add('zoom-out-enter');
+        const onEnd = () => {
+          targetEl.classList.remove('zoom-out-enter');
+          targetEl.removeEventListener('animationend', onEnd);
+        };
+        targetEl.addEventListener('animationend', onEnd);
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // Close search after navigation
       document.getElementById('search-bar').classList.add('hidden');
