@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="light">
 
@@ -379,7 +378,7 @@
           <label class="block text-sm font-semibold mb-2 login-label">Employee ID</label>
           <input id="portal-emp-id" type="text" required placeholder="Enter your Employee ID"
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
-        </div>"
+        </div>
 
         <div class="mb-6">
           <label class="block text-sm font-semibold mb-2 login-label">Password</label>
@@ -1746,6 +1745,10 @@
         class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
         ✖️ Clear Finalizations
       </button>
+      <button onclick="adminClearEntityWeek()" id="admin-clear-week-btn"
+        class="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition text-sm">
+        🔁 Clear This Week
+      </button>
     </div>
     <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
       <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
@@ -2102,6 +2105,12 @@
             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
         </div>
 
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Password</label>
+          <input id="login-modal-password" type="password" placeholder="Enter your password"
+            class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
+        </div>
+
         <button type="submit"
           class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
       </form>
@@ -2187,6 +2196,18 @@
           allUsers[user.id] = '1234'; // Default password
         });
         localStorage.setItem('gojira_passwords', JSON.stringify(allUsers));
+      } else {
+        // Ensure any newly added users (e.g., added via code edits) get a default password if missing
+        let updated = false;
+        USER_DB.forEach(user => {
+          if (!savedPasswords[user.id]) {
+            savedPasswords[user.id] = '1234';
+            updated = true;
+          }
+        });
+        if (updated) {
+          localStorage.setItem('gojira_passwords', JSON.stringify(savedPasswords));
+        }
       }
 
       // Check if already logged in
@@ -4325,7 +4346,7 @@ Reviewer: ${review.reviewerId}
       { id: 'BL/GG/25/1022', name: 'Akshat', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1055', name: 'KAJAL', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1134', name: 'Isha', role: 'agent', entity: 'BharatLoan' },
-
+      { id: 'BL/GG/25/1233', name: 'BL/GG/25/1233', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1240', name: 'KUNDAN KUMAR', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1338', name: 'MOHIT KUMAR', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/26/042', name: 'MOHD. KAIF', role: 'agent', entity: 'BharatLoan' },
@@ -4369,9 +4390,18 @@ Reviewer: ${review.reviewerId}
     function submitLogin(event) {
       try {
         event.preventDefault();
-        const empId = document.getElementById('portal-emp-id').value.trim();
-        const password = document.getElementById('portal-password').value;
-        console.debug('[submitLogin] empId:', empId);
+        // Support both portal login (portal-emp-id + portal-password) and modal login (empid + login-modal-password)
+        const empEl = document.getElementById('portal-emp-id') || document.getElementById('empid');
+        const empId = (empEl && empEl.value) ? empEl.value.trim() : '';
+        const passwordEl = document.getElementById('portal-password') || document.getElementById('login-modal-password');
+        let password = passwordEl ? (passwordEl.value || '') : '';
+        console.debug('[submitLogin] empId:', empId, 'passwordProvided:', !!password);
+
+        if (!empId) {
+          console.warn('[submitLogin] Missing Employee ID');
+          alert('❌ Please enter Employee ID');
+          return;
+        }
 
         // Check if employee exists
         const user = USER_DB.find(u => u.id === empId);
@@ -4385,6 +4415,11 @@ Reviewer: ${review.reviewerId}
         const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
         console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0, 5));
         const correctPassword = savedPasswords[empId] || '1234';
+
+        // If no password field was available or user left it empty, prompt for it (helps modal login)
+        if (!password) {
+          password = prompt(`Enter password for ${empId} (default is 1234):`) || '';
+        }
 
         if (password !== correctPassword) {
           console.warn('[submitLogin] Invalid Password for', empId);
@@ -4400,9 +4435,11 @@ Reviewer: ${review.reviewerId}
         // Apply dark theme after login (colored option removed)
         setTheme('dark');
 
-        // Clear login form
-        document.getElementById('portal-emp-id').value = '';
-        document.getElementById('portal-password').value = '';
+        // Clear login form(s) if present
+        const pe = document.getElementById('portal-emp-id'); if (pe) pe.value = '';
+        const pp = document.getElementById('portal-password'); if (pp) pp.value = '';
+        const me = document.getElementById('empid'); if (me) me.value = '';
+        const mp = document.getElementById('login-modal-password'); if (mp) mp.value = '';
 
         // Route users based on role
         if (user.role === 'admin') {
@@ -4455,6 +4492,12 @@ Reviewer: ${review.reviewerId}
           showPortalContent();
           navigateTo('view-home');
         }
+
+        // Ensure any login UI is hidden and portal content is shown (covers modal and portal forms)
+        try { document.getElementById('login-modal')?.classList.add('hidden'); } catch(e) {}
+        try { document.getElementById('portal-login-screen')?.classList.add('hidden'); } catch(e) {}
+        try { document.getElementById('top-nav')?.classList.remove('hidden'); } catch(e) {}
+        showPortalContent();
       } catch (err) {
         console.error('[submitLogin] error', err);
         alert('An unexpected error occurred during login. Check console for details.');
@@ -5629,6 +5672,12 @@ Reviewer: ${review.reviewerId}
         backups[key] = localStorage.getItem(key);
       });
 
+      // Include adminReviews, pending reviews, and performance data in backups so undo can restore removed data
+      backups['adminReviews'] = localStorage.getItem('adminReviews');
+      backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
+      backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
+      backups['gojira_performance'] = localStorage.getItem('gojira_performance');
+
       // Save buffer to localStorage as undo buffer
       const undoBuffer = { id: buffer.id, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, backups };
       localStorage.setItem('finalizationUndoBuffer', JSON.stringify(undoBuffer));
@@ -5638,12 +5687,190 @@ Reviewer: ${review.reviewerId}
         unmarkAgentWeekComplete('ALL', agentId);
       });
 
+      // Remove final reviews for affected agents and reset weeks as requested
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const agentsSet = new Set(buffer.agents.map(a => String(a)));
+      let removedCount = 0;
+
+      if (buffer.entity === 'ALL') {
+        // Remove all reviews for these agents across all entities
+        const filtered = reviews.filter(r => !agentsSet.has(String(r.agentId)));
+        removedCount = reviews.length - filtered.length;
+        reviews = filtered;
+      } else {
+        // Remove reviews for these agents within the specified entity
+        const filtered = reviews.filter(r => !(r.entity === buffer.entity && agentsSet.has(String(r.agentId))));
+        removedCount = reviews.length - filtered.length;
+        reviews = filtered;
+
+        // Reset this entity's week to 1 and clear completed agents
+        try {
+          const state = getEntityWeekState(buffer.entity);
+          state.currentWeek = 1;
+          state.completedAgents = {};
+          setEntityWeekState(buffer.entity, state);
+        } catch (e) {
+          console.warn('[clearFinalizations] failed resetting week for entity', buffer.entity, e);
+        }
+      }
+
+      localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+      // Remove any pending reviews for these agents
+      const pending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      let pendingRemoved = 0;
+      buffer.agents.forEach(agentId => {
+        if (pending[agentId]) {
+          pendingRemoved += (pending[agentId] || []).length;
+          delete pending[agentId];
+        }
+      });
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(pending));
+
+      // Remove performance scores for these agents and their current performance records
+      let perfScores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+      const perfRemoved = perfScores.filter(s => agentsSet.has(String(s.agentId))).length;
+      perfScores = perfScores.filter(s => !agentsSet.has(String(s.agentId)));
+      localStorage.setItem('gojira_performance_scores', JSON.stringify(perfScores));
+
+      const perfDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+      buffer.agents.forEach(agentId => {
+        if (perfDb[agentId]) delete perfDb[agentId];
+      });
+      localStorage.setItem('gojira_performance', JSON.stringify(perfDb));
+
+      // If clearing ALL entities, reset all entityWeekState currentWeek to 1 and clear completedAgents
+      if (buffer.entity === 'ALL') {
+        Object.keys(localStorage).forEach(key => {
+          if (!key.startsWith('entityWeekState_')) return;
+          try {
+            const state = JSON.parse(localStorage.getItem(key) || '{}');
+            state.currentWeek = 1;
+            state.completedAgents = {};
+            localStorage.setItem(key, JSON.stringify(state));
+          } catch (e) {
+            console.warn('[clearFinalizations] failed resetting week for key', key, e);
+          }
+        });
+      }
       reconcileFinalizeFlags();
 
       // Push audit entry
       const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
-      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', timestamp: new Date().toISOString() });
+      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', removedReviews: removedCount, removedPending: pendingRemoved, removedPerformanceScores: (typeof perfRemoved !== 'undefined' ? perfRemoved : 0), timestamp: new Date().toISOString() });
       localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
+    }
+
+    // Clear current week for a specific entity (removes reviews/pending/perf for that entity and resets week to 1)
+    function adminClearEntityWeek(entity) {
+      if (!entity) entity = adminCurrentEntity || prompt('Enter entity name to clear week (e.g., RupeeOnTime):');
+      if (!entity) return;
+
+      // Normalize entity name by matching existing entityWeekState keys or USER_DB entries (case-insensitive)
+      const lower = entity.toLowerCase();
+      let matchedEntity = entity;
+      // Try to find existing entityWeekState_<suffix> key that matches case-insensitively
+      Object.keys(localStorage).forEach(k => {
+        if (!k.startsWith('entityWeekState_')) return;
+        const suffix = k.replace('entityWeekState_', '');
+        if (suffix && suffix.toLowerCase() === lower) matchedEntity = suffix;
+      });
+      // Try to match against USER_DB entities if nothing found
+      if (matchedEntity === entity) {
+        const ud = USER_DB.find(u => u.entity && u.entity.toLowerCase() === lower);
+        if (ud) matchedEntity = ud.entity;
+      }
+
+      if (!confirm(`Clear all data for current week of entity "${matchedEntity}"? This will remove submitted reviews, pending reviews and performance scores for agents under ${matchedEntity} and reset the week to 1.`)) return;
+
+      // Backup entityWeekState and relevant storages for undo
+      const backups = {};
+      try { backups[`entityWeekState_${matchedEntity}`] = localStorage.getItem(`entityWeekState_${matchedEntity}`); } catch(e) {}
+      backups['adminReviews'] = localStorage.getItem('adminReviews');
+      backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
+      backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
+      backups['gojira_performance'] = localStorage.getItem('gojira_performance');
+
+      // Build agent list for this entity (case-insensitive match)
+      const agentList = USER_DB.filter(u => u.role === 'agent' && u.entity && u.entity.toLowerCase() === matchedEntity.toLowerCase()).map(a => a.id);
+
+      // Save undo buffer
+      const buf = { id: `clearweek_${Date.now()}_${Math.floor(Math.random()*1000)}`, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: matchedEntity, agents: agentList, backups };
+      localStorage.setItem('finalizationUndoBuffer', JSON.stringify(buf));
+
+      // Perform removals
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const beforeCount = reviews.length;
+      reviews = reviews.filter(r => !(r.entity && r.entity.toLowerCase() === matchedEntity.toLowerCase()));
+      const removedCount = beforeCount - reviews.length;
+      localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+      // Remove pending reviews for agents of this entity
+      const pending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
+      let pendingRemoved = 0;
+      agentList.forEach(agentId => {
+        if (pending[agentId]) {
+          pendingRemoved += (pending[agentId] || []).length;
+          delete pending[agentId];
+        }
+      });
+      localStorage.setItem('pending_agent_reviews', JSON.stringify(pending));
+
+      // Remove performance entries for these agents
+      let perfScores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
+      const perfRemoved = perfScores.filter(s => agentList.includes(String(s.agentId))).length;
+      perfScores = perfScores.filter(s => !agentList.includes(String(s.agentId)));
+      localStorage.setItem('gojira_performance_scores', JSON.stringify(perfScores));
+
+      const perfDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
+      agentList.forEach(agentId => { if (perfDb[agentId]) delete perfDb[agentId]; });
+      localStorage.setItem('gojira_performance', JSON.stringify(perfDb));
+
+      // Reset the entity week to 1 and clear completed agents
+      try {
+        const state = getEntityWeekState(matchedEntity);
+        state.currentWeek = 1;
+        state.completedAgents = {};
+        state.finalizedWeeks = [];
+        setEntityWeekState(matchedEntity, state);
+      } catch (e) {
+        console.warn('[clearEntityWeek] failed resetting week for entity', matchedEntity, e);
+      }
+
+      // Unmark agents globally
+      agentList.forEach(aid => unmarkAgentWeekComplete('ALL', aid));
+
+      reconcileFinalizeFlags();
+
+      // Audit and UI updates
+      const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
+      history.unshift({ id: buf.id, actor: buf.actor, entity: buf.entity, agents: buf.agents, action: 'clear_week', removedReviews: removedCount, removedPending: pendingRemoved, removedPerformanceScores: perfRemoved, timestamp: new Date().toISOString() });
+      localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
+
+      // Refresh UI
+      renderAdminAgentDropdown();
+      checkAndEnableWeekFinalButton();
+      adminLoadReviewsList();
+
+      // Show undo toast using existing UI
+      const toast = document.getElementById('finalization-undo-toast');
+      const text = document.getElementById('finalization-undo-text');
+      const btn = document.getElementById('finalization-undo-btn');
+      text.innerText = `Cleared current week for ${matchedEntity}. Removed ${removedCount} reviews, ${pendingRemoved} pending reviews and ${perfRemoved} performance score(s).`;
+      toast.classList.remove('hidden');
+      btn.onclick = () => undoClearFinalizations(buf.id);
+
+      // Auto-expire buffer after 10s
+      setTimeout(() => {
+        const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
+        if (existing && existing.id === buf.id) {
+          localStorage.removeItem('finalizationUndoBuffer');
+          dismissFinalizationUndoToast();
+        }
+      }, 10000);
+
+      alert(`Current week data for ${matchedEntity} cleared and set to Week 1.`);
+    }
 
       // Refresh UI
       renderAdminAgentDropdown();
@@ -5655,7 +5882,7 @@ Reviewer: ${review.reviewerId}
       const toast = document.getElementById('finalization-undo-toast');
       const text = document.getElementById('finalization-undo-text');
       const btn = document.getElementById('finalization-undo-btn');
-      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s).`;
+      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
       toast.classList.remove('hidden');
 
       // Wire undo button
