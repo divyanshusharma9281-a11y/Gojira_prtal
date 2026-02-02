@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="light">
 
@@ -5,6 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gojira TP | Training Portal</title>
+  <!-- APP_VERSION: 20260130-001 -->
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -80,32 +82,307 @@
         transform: translateY(0);
       }
     }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.7);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Door brand descent animation: keeps same size but moves down behind the login card */
+    @keyframes doorBrandDescend {
+      0% {
+        transform: translateY(0) scale(1) rotate(-8deg);
+        opacity: 1;
+      }
+
+      60% {
+        transform: translateY(7rem) scale(0.96) rotate(-8deg);
+        opacity: 0.6;
+      }
+
+      100% {
+        transform: translateY(14rem) scale(0.85) rotate(-8deg);
+        opacity: 0.18;
+      }
+    }
+
+    /* Login card stacking helper */
+    .login-card { z-index: 30; }
+    .login-card.raised { z-index: 70 !important; }
+
+    /* 3D Swing Animations */
+    @keyframes swingLeft {
+      from {
+        transform: rotateY(0deg);
+      }
+
+      to {
+        transform: rotateY(95deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes swingRight {
+      from {
+        transform: rotateY(0deg);
+      }
+
+      to {
+        transform: rotateY(-95deg);
+        opacity: 0;
+      }
+    }
+
+    .animate-zoom-in {
+      animation: zoomIn 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s forwards;
+      /* Slightly longer, slower zoom out */
+      opacity: 0;
+    }
+
+    /* Apply door-brand descent to the big heading so it moves when doors swing */
+    #door-brand .door-brand {
+      transform-origin: center;
+      will-change: transform, opacity;
+      transform: translateY(0) rotate(0deg);
+    }
+
+    /* Class to start the descent animation on demand */
+    .door-descend {
+      animation: doorBrandDescend 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+    }
+
+    #door-brand.moved {
+      z-index: 0 !important;
+      opacity: 0.18 !important;
+      pointer-events: none;
+      transform: translateY(14rem) scale(0.85) rotate(0deg);
+    }
+
+    .animate-door-left {
+      transform-origin: left;
+      animation: swingLeft 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+    }
+
+    .animate-door-right {
+      transform-origin: right;
+      animation: swingRight 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+    }
+
+    /* Gojira Theme Variables and Styles */
+    :root {
+      --gojira-red: #b91c1c; /* deep red */
+      --gojira-blue: #0f172a; /* dark blue */
+      --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
+    }
+
+    /* Theme applied after login to make pages colorful (legacy - not used when removed) */
+    body.gojira-theme {
+      background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
+      color: rgba(255,255,255,0.92);
+      transition: background 0.5s ease, color 0.3s ease;
+    }
+
+    .gojira-theme header,
+    .gojira-theme #top-nav {
+      background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%) !important;
+      /* For the colored theme we show headers with dark text (per request) */
+      color: #0b0b0b !important;
+      border: none !important;
+      transition: background 0.4s ease, color 0.25s ease;
+    }
+
+    /* Ensure any white-text inside header elements is forced to dark in colored mode */
+    .gojira-theme header .text-white,
+    .gojira-theme #top-nav .text-white {
+      color: #0b0b0b !important;
+    }
+
+    /* Dark mode with stronger red mix */
+    body.dark {
+      /* stronger red tint layered over dark gradient */
+      background: linear-gradient(180deg, rgba(185,28,28,0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
+      color: rgba(255,255,255,0.95);
+      transition: background 0.45s ease, color 0.25s ease;
+      background-blend-mode: overlay;
+    }
+
+    body.dark header,
+    body.dark #top-nav {
+      /* stronger red overlay for header in dark mode */
+      background: linear-gradient(90deg, rgba(185,28,28,0.22) 0%, rgba(30,24,40,0.6) 30%, #0b1220 70%) !important;
+      color: rgba(255,255,255,0.95) !important;
+      box-shadow: 0 6px 30px rgba(185,28,28,0.06);
+    }
+
+    /* Ensure headings remain readable in dark mode */
+    body.dark h1, body.dark h2, body.dark h3, body.dark .font-bold, body.dark .font-extrabold {
+      color: rgba(255,255,255,0.95) !important;
+    }
+
+    /* Dark mode accents: stronger red highlights */
+    body.dark .accent-btn {
+      background: linear-gradient(90deg, rgba(185,28,28,0.95), #1e3a8a) !important;
+      color: white !important;
+      box-shadow: 0 10px 30px rgba(185,28,28,0.12) !important;
+    }
+
+    body.dark .badge, body.dark .btn-outline {
+      border-color: rgba(185,28,28,0.18) !important;
+      color: rgba(255,255,255,0.95) !important;
+      background: rgba(185,28,28,0.03) !important;
+    }
+
+    .gojira-theme .app-view {
+      background: linear-gradient(180deg, rgba(185,28,28,0.03), rgba(14,42,90,0.03));
+    }
+
+    /* Ensure main page headings are dark when colored theme is active (so 'Guidelines' and 'Quality Assurance Checklist' are visible) */
+    .gojira-theme .app-view h1,
+    .gojira-theme .app-view h2,
+    .gojira-theme .app-view h3,
+    .gojira-theme .app-view .font-extrabold,
+    .gojira-theme .app-view .font-bold {
+      color: #0b0b0b !important;
+    }
+
+    .gojira-theme .card,
+    .gojira-theme .panel {
+      background: rgba(10,14,22,0.6);
+      color: rgba(255,255,255,0.92);
+      border-radius: 12px;
+      box-shadow: 0 8px 40px rgba(14, 40, 90, 0.12);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .gojira-theme .accent-btn {
+      background: var(--gojira-grad); color: white; border: none;
+      box-shadow: 0 10px 30px rgba(30,58,138,0.18);
+    }
+
+    /* Inputs and form elements */
+    .gojira-theme input,
+    .gojira-theme select,
+    .gojira-theme textarea {
+      background: rgba(255,255,255,0.02) !important;
+      border: 1px solid rgba(255,255,255,0.06) !important;
+      color: rgba(255,255,255,0.95) !important;
+    }
+
+    .gojira-theme .btn-outline {
+      border-color: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.92);
+    }
+
+    /* Accent badges */
+    .gojira-theme .badge {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Door branding */
+    .door-brand {
+      font-family: 'Montserrat', sans-serif;
+      text-shadow: 4px 5px 10px rgba(0,0,0,0.45);
+      letter-spacing: -2px;
+    }
+
+    /* Login label styling */
+    .login-label { color: var(--gojira-red); font-weight: 700; }
+
+    /* Header colored flash for smooth transition between themes */
+    #top-nav.header-colored-flash,
+    header.header-colored-flash {
+      background: var(--gojira-grad) !important;
+      color: #fff !important;
+      box-shadow: 0 8px 30px rgba(30,58,138,0.15);
+      transition: background 0.35s ease, color 0.25s ease;
+    }
+
+    /* subtle pulse while flashing */
+    .header-colored-flash .glow { box-shadow: 0 14px 40px rgba(30,58,138,0.22); }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
+  <!-- Update Available Banner (hidden by default) -->
+  <div id="update-banner"
+    class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl mx-auto px-4">
+    <div
+      class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded-lg shadow-md flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="text-lg">🔔</div>
+        <div>
+          <div class="font-bold">New version available</div>
+          <div class="text-sm text-yellow-800">A new version of the portal is available. Refresh to get the latest
+            updates.</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="update-reload-btn" class="bg-yellow-600 text-white px-4 py-2 rounded-md font-semibold">Reload
+          Now</button>
+        <button id="update-dismiss-btn" class="text-sm text-yellow-800 underline">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MAIN PORTAL LOGIN SCREEN -->
-  <div id="portal-login-screen"
-    class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-slate-800 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4">
+  <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
+    style="perspective: 1500px;">
+
+    <!-- The Split Doors (3D Swing) -->
+    <div
+      class="fixed inset-y-0 left-0 w-1/2 z-50 animate-door-left flex items-center justify-end border-r border-transparent shadow-2xl"
+      style="background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
+    </div>
+    <div
+      class="fixed inset-y-0 right-0 w-1/2 z-50 animate-door-right flex items-center justify-start border-l border-transparent shadow-2xl"
+      style="background: linear-gradient(270deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
+    </div>
+
+    <!-- Revealed Background -->
+    <div class="absolute inset-0 z-0" style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
+
+    <!-- Background Typography Theme (Door Branding) -->
+    <div id="door-brand" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
+      <h1
+        class="door-brand text-[18rem] font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 whitespace-nowrap drop-shadow-lg"
+        style="pointer-events: none; will-change: transform, opacity; transform: translateY(0) rotate(0deg);">
+        G - Gojira</h1>
+    </div>
+
+    <!-- Colored Login Card -->
+    <div id="login-card"
+      class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-60 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
+      style="background-color: rgba(10, 14, 22, 0.97);">
       <div class="text-center mb-8">
         <div
-          class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
+          class="w-20 h-20 bg-gradient-to-br from-red-600 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-4xl mx-auto mb-4 shadow-lg shadow-blue-900/50">
           G</div>
-        <h1 class="text-3xl font-bold text-indigo-600">Gojira TP</h1>
-        <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Training Portal Login</p>
+        <h1
+          class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600 drop-shadow-sm">
+          Gojira TP</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-3 font-semibold tracking-wide uppercase">Training Portal
+          Login</p>
       </div>
 
       <form onsubmit="submitLogin(event)">
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Employee ID</label>
+          <label class="block text-sm font-semibold mb-2 login-label">Employee ID</label>
           <input id="portal-emp-id" type="text" required placeholder="Enter your Employee ID"
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
-        </div>
+        </div>"
 
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2">Password</label>
+          <label class="block text-sm font-semibold mb-2 login-label">Password</label>
           <input id="portal-password" type="password" required placeholder="Enter your password"
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
         </div>
@@ -1353,6 +1630,9 @@
             <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()"
               class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed"
               disabled>Final Submit This Week</button>
+            <button onclick="adminLoadMonthlyDashboard()"
+              class="ml-2 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Monthly
+              Scorecard 📊</button>
           </div>
           <!-- Hidden native select (kept for backwards compatibility) -->
           <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
@@ -1488,6 +1768,50 @@
 
 
   </div>
+  </div>
+
+  <!-- ADMIN MONTHLY DASHBOARD (NEW) -->
+  <div id="view-admin-monthly" class="app-view bg-white dark:bg-slate-900">
+    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 sticky top-0 z-40">
+      <button onclick="navigateTo('view-admin')" class="font-bold text-slate-500 hover:text-blue-600 mr-4">←
+        Back</button>
+      <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div
+        class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-8 border border-indigo-100 dark:border-slate-700 flex justify-between items-center">
+        <div>
+          <h2 class="text-3xl font-bold mb-2">Team Performance Overview</h2>
+          <p class="text-slate-600 dark:text-slate-400">Aggregated performance for the last 30 days.</p>
+        </div>
+        <div class="text-right">
+          <div class="text-sm font-bold text-slate-500 uppercase">Entity</div>
+          <div class="text-2xl font-bold text-indigo-600" id="admin-monthly-entity-display">--</div>
+        </div>
+      </div>
+
+      <div
+        class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs font-bold">
+              <tr>
+                <th class="p-6 text-center w-16">#</th>
+                <th class="p-6">Agent Name</th>
+                <th class="p-6 text-center">Total Audits</th>
+                <th class="p-6 text-center">Fatal Errors</th>
+                <th class="p-6 text-center">Avg Score</th>
+                <th class="p-6 text-center">Performance</th>
+              </tr>
+            </thead>
+            <tbody id="admin-monthly-table-body" class="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
+              <!-- JS Populates this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- AGENT QUALITY ASSURANCE CHECKLIST -->
@@ -1937,6 +2261,9 @@
       // Show login screen
       document.getElementById('portal-login-screen').classList.remove('hidden');
       document.getElementById('top-nav').classList.add('hidden');
+
+      // Reset theme to light on logout
+      setTheme('light');
 
       // Hide all views
       document.querySelectorAll('.app-view').forEach(view => {
@@ -3195,8 +3522,8 @@ Reviewer: ${review.reviewerId}
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
       // Safe Trim Comparison
-      const currentAgentId = String(currentUser.id).trim();
-      const agentReviews = reviews.filter(r => String(r.agentId).trim() === currentAgentId);
+      const currentAgentId = String(currentUser.id).trim().toLowerCase();
+      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === currentAgentId);
 
       const recentReviews = agentReviews.filter(r => {
         // Try parsing ISO date first, then fallback
@@ -3333,9 +3660,8 @@ Reviewer: ${review.reviewerId}
             <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="adminViewNotificationComment('${comment.reviewId}')">
               <div class="flex items-start justify-between">
                 <div class="flex-1">
-                  <h3 class="font-bold text-orange-900 dark:text-orange-200">New Agent Reply</h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">From: ${comment.authorName}</p>
-                  <p class="text-sm text-slate-600 dark:text-slate-400">Date: ${comment.date}</p>
+                  <h3 class="font-bold text-orange-900 dark:text-orange-200">${comment.authorName} commented on review</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Review Date: ${comment.date}</p>
                   <p class="text-sm mt-2 text-slate-700 dark:text-slate-300 line-clamp-2">"${comment.text.substring(0, 80)}..."</p>
                 </div>
                 <span class="bg-orange-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
@@ -3472,7 +3798,7 @@ Reviewer: ${review.reviewerId}
         return; // Only for agents
       }
 
-      const agentId = String(currentSessionUser.id).trim(); // Trimming for safety
+      const agentId = String(currentSessionUser.id).trim().toLowerCase(); // Normalize Agent ID
       const agentName = currentSessionUser.name;
 
       // Set welcome text
@@ -3482,7 +3808,7 @@ Reviewer: ${review.reviewerId}
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
 
       // Filter reviews for current agent only (robust comparison)
-      const agentReviews = reviews.filter(r => String(r.agentId).trim() === agentId);
+      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === agentId);
 
       // Calculate stats
       const totalReviews = agentReviews.length;
@@ -3893,22 +4219,41 @@ Reviewer: ${review.reviewerId}
       `).join('');
     }
 
-    function toggleTheme() {
+    function setTheme(mode) {
+      // mode: 'light' | 'dark'
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
       const text = document.getElementById('theme-text');
 
-      if (html.classList.contains('dark')) {
-        html.classList.remove('dark');
+      if (mode === 'dark') {
+        html.classList.add('dark');
+        // Slight red mix in dark mode is handled by CSS (see .dark rules)
         icon.innerText = '🌙';
         text.innerText = 'Dark';
-        localStorage.setItem('theme', 'light');
       } else {
-        html.classList.add('dark');
+        html.classList.remove('dark');
         icon.innerText = '☀️';
         text.innerText = 'Light';
-        localStorage.setItem('theme', 'dark');
       }
+
+      localStorage.setItem('theme', mode);
+    }
+
+    function flashHeaderColored(duration = 700) {
+      const topNav = document.getElementById('top-nav');
+      const headerEl = document.querySelector('header');
+      const els = [topNav, headerEl].filter(Boolean);
+      els.forEach(el => el.classList.add('header-colored-flash'));
+      setTimeout(() => els.forEach(el => el.classList.remove('header-colored-flash')), duration);
+    }
+
+    function toggleTheme() {
+      const cur = localStorage.getItem('theme') || 'light';
+      const next = cur === 'light' ? 'dark' : 'light';
+
+      // Show a brief colored flash as a transition effect between themes
+      flashHeaderColored(500);
+      setTimeout(() => setTheme(next), 180);
     }
 
     function toggleDropdown(entity) {
@@ -4010,7 +4355,10 @@ Reviewer: ${review.reviewerId}
       { id: 'R112/GG/25/725', name: 'Kusum sharma', role: 'agent', entity: 'Rupee112' },
       { id: 'RDA/GG/25/038', name: 'Nippi', role: 'agent', entity: 'Loan112' },
       { id: 'R112/GG/23/168', name: 'Ruksar', role: 'agent', entity: 'Rupee112' },
-      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' }
+      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
+
+      // RUPEE ON TIME AGENTS
+      { id: 'RT/GG/25/1233', name: 'Swati', role: 'agent', entity: 'RupeeOnTime' }
     ];
 
     function hideLogin() {
@@ -4048,6 +4396,9 @@ Reviewer: ${review.reviewerId}
         currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
         localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
         console.info('[submitLogin] Login successful for', user.id, user.role);
+
+        // Apply dark theme after login (colored option removed)
+        setTheme('dark');
 
         // Clear login form
         document.getElementById('portal-emp-id').value = '';
@@ -4111,12 +4462,11 @@ Reviewer: ${review.reviewerId}
     }
 
     window.onload = () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.getElementById('theme-icon').innerText = '☀️';
-        document.getElementById('theme-text').innerText = 'Light';
-      }
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      // Apply saved theme (supports 'light' | 'dark')
+      try { setTheme(savedTheme); } catch (e) { console.warn('[onload] setTheme failed', e); }
+
+
 
       // Safety: Ensure session persists across refreshes. 
       try {
@@ -4127,6 +4477,49 @@ Reviewer: ${review.reviewerId}
 
           // Restore global variables based on role
           currentUser = currentSessionUser;
+
+          // Theme state handled globally via setTheme during onload (no legacy flag used)
+          console.debug('[onload] current theme:', localStorage.getItem('theme'));
+
+          // Move door-brand behind login after its animation completes (synchronised with doors)
+          try {
+            const doorBrandEl = document.getElementById('door-brand');
+            if (doorBrandEl) {
+              const heading = doorBrandEl.querySelector('.door-brand');
+
+              // When left door animation ends, trigger heading descend animation so it stays centered until doors move
+              const leftDoor = document.querySelector('.animate-door-left');
+              if (leftDoor) {
+                leftDoor.addEventListener('animationend', () => {
+                  heading?.classList.add('door-descend');
+                  console.debug('[onload] left door animation ended - started door-descend');
+                });
+              }
+
+              // When heading finishes its descend, finalize moved state and raise the login card
+              heading?.addEventListener('animationend', () => {
+                doorBrandEl.classList.add('moved');
+                const loginCardEl = document.getElementById('login-card');
+                if (loginCardEl) loginCardEl.classList.add('raised');
+                console.debug('[onload] door-brand animation ended, moved behind login and login-card raised');
+              });
+
+              // Fallback in case animation events aren't triggered - ensure proper final state after a short delay
+              setTimeout(() => {
+                if (!doorBrandEl.classList.contains('moved')) {
+                  heading?.classList.add('door-descend');
+                }
+                setTimeout(() => {
+                  doorBrandEl.classList.add('moved');
+                  const loginCardEl = document.getElementById('login-card');
+                  if (loginCardEl) loginCardEl.classList.add('raised');
+                }, 900);
+              }, 2400);
+            }
+          } catch (e) {
+            console.warn('[onload] failed to attach door-brand listeners', e);
+          }
+
           // initPortal will be called but we will override its default "show login" behavior if we have a user
         }
       } catch (e) {
@@ -4548,14 +4941,14 @@ Reviewer: ${review.reviewerId}
 
     function startQualityReviewWithType(type) {
       console.debug('[startQualityReviewWithType] type=', type, 'adminCurrentAgent=', adminCurrentAgent, 'selectedAgentForReview=', selectedAgentForReview?.id);
-      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) {}
+      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) { }
 
       if (!adminCurrentAgent && selectedAgentForReview) {
         adminCurrentAgent = selectedAgentForReview.id;
         adminCurrentAgentName = selectedAgentForReview.name;
       }
 
-      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) {}
+      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) { }
 
       // Reuse the existing adminSelectReviewType flow
       adminSelectReviewType(type);
@@ -4996,11 +5389,48 @@ Reviewer: ${review.reviewerId}
     function adminViewReview(index) {
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const review = reviews[index];
+      if (!review) return;
 
-      const choice = confirm(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}\n\nClick OK to open the file.`);
-      if (choice && review.fileContent) {
-        openFileContent(review.fileContent, review.fileName);
+      const modal = document.getElementById('admin-review-detail-modal');
+
+      // Populate fields
+      document.getElementById('admin-review-detail-agent').textContent = review.agentName || 'Unknown Agent';
+      document.getElementById('admin-review-detail-type').textContent = review.reviewType === 'voice' ? '🎙️ Voice Call' : '💬 Chat/Email';
+      document.getElementById('admin-review-detail-date').textContent = review.displayDate || review.date;
+      document.getElementById('admin-review-detail-score').textContent = review.score;
+      document.getElementById('admin-review-detail-observation').textContent = review.observation;
+
+      // File or ID
+      if (review.reviewType === 'voice') {
+        document.getElementById('admin-review-detail-file-section').classList.remove('hidden');
+        document.getElementById('admin-review-detail-id-section').classList.add('hidden');
+        document.getElementById('admin-review-detail-file-name').textContent = review.fileName || 'N/A';
+        document.getElementById('admin-review-detail-file-link').onclick = () => openFileContent(review.fileContent, review.fileName);
+      } else {
+        document.getElementById('admin-review-detail-file-section').classList.add('hidden');
+        document.getElementById('admin-review-detail-id-section').classList.remove('hidden');
+        const idText = (review.emailId ? 'Email: ' + review.emailId : '') + (review.emailId && review.chatId ? ' | ' : '') + (review.chatId ? 'Chat: ' + review.chatId : '');
+        document.getElementById('admin-review-detail-id-value').textContent = idText || 'N/A';
       }
+
+      // Comments
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === review.id);
+      const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No comments yet</p>' : comments.map(c => `
+        <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2 ${c.authorId === (currentUser?.id || 'admin') ? 'ml-8 bg-blue-50 dark:bg-blue-900/20' : 'mr-8'}">
+          <div class="flex justify-between items-center mb-1">
+             <span class="font-bold text-sm ${c.authorId === (currentUser?.id || 'admin') ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}">${c.authorName || 'User'}</span>
+             <span class="text-xs text-slate-400">${c.date}</span>
+          </div>
+          <div class="text-sm text-slate-800 dark:text-slate-200">${c.text}</div>
+        </div>
+      `).join('');
+      document.getElementById('admin-review-detail-comments').innerHTML = commentsHtml;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeAdminReviewDetailModal() {
+      document.getElementById('admin-review-detail-modal').classList.add('hidden');
     }
 
     let currentEditIndex = -1;
@@ -5447,7 +5877,8 @@ Reviewer: ${review.reviewerId}
       }
 
       // Load comments for this review
-      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === reviewId);
+      const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      const comments = allComments.filter(c => c.reviewId === reviewId);
       const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No replies yet</p>' : comments.map(c => `
         <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2">
           <div class="font-semibold text-sm">${c.authorName || 'Agent'}</div>
@@ -5457,12 +5888,40 @@ Reviewer: ${review.reviewerId}
       `).join('');
       document.getElementById('review-detail-comments').innerHTML = commentsHtml;
 
-      // Set reply handler
-      document.getElementById('review-detail-reply-btn').onclick = () => agentReplyFromModal(reviewId);
+      // Check if agent has already replied
+      const replyInput = document.getElementById('review-detail-reply-input');
+      const replyBtn = document.getElementById('review-detail-reply-btn');
+
+      const hasReplied = comments.some(c => c.authorId === (currentUser.id || currentSessionUser.id));
+
+      if (hasReplied && (currentUser.role === 'agent')) {
+        replyInput.disabled = true;
+        replyInput.placeholder = "You have already replied to this review.";
+        replyBtn.disabled = true;
+        replyBtn.innerHTML = "Reply Sent ✅";
+        replyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        replyInput.disabled = false;
+        replyInput.placeholder = "Write your reply...";
+        replyBtn.disabled = false;
+        replyBtn.innerHTML = "📤 Send Reply";
+        replyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        // Set reply handler
+        replyBtn.onclick = () => agentReplyFromModal(reviewId);
+      }
+
       document.getElementById('agent-review-detail-modal').classList.remove('hidden');
     }
 
     function agentReplyFromModal(reviewId) {
+      const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+      const alreadyReplied = allComments.some(c => c.reviewId === reviewId && c.authorId === (currentUser.id || currentSessionUser.id));
+
+      if (alreadyReplied && (currentUser.role === 'agent')) {
+        alert('You have already replied to this review.');
+        return;
+      }
+
       const textarea = document.getElementById('review-detail-reply-input');
       const text = textarea.value.trim();
       if (!text) return alert('Please write a reply first.');
@@ -5646,11 +6105,176 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    // ===== ADMIN MONTHLY DASHBOARD FUNCTIONS =====
+    function adminLoadMonthlyDashboard() {
+      // Navigate to view
+      navigateTo('view-admin-monthly');
+
+      const entity = adminCurrentEntity || 'ALL';
+      document.getElementById('admin-monthly-entity-display').textContent = entity;
+
+      const tbody = document.getElementById('admin-monthly-table-body');
+      tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Loading performance data...</td></tr>';
+
+      // 1. Get Agents
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entity !== 'ALL') {
+        agents = agents.filter(u => u.entity === entity);
+      }
+
+      // 2. Get Reviews & Date Range
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      // 3. Process Data
+      const rows = agents.map(agent => {
+        // Filter reviews for this agent within 30 days
+        const agentId = String(agent.id).trim().toLowerCase();
+
+        const agentReviews = reviews.filter(r => {
+          const rAgentId = String(r.agentId).trim().toLowerCase();
+          if (rAgentId !== agentId) return false;
+
+          // Date check
+          const d = new Date(r.date);
+          if (isNaN(d.getTime())) return false; // skip invalid dates
+          return d >= thirtyDaysAgo && d <= now;
+        });
+
+        const totalAudits = agentReviews.length;
+        const avgScore = totalAudits > 0 ? Math.round(agentReviews.reduce((sum, r) => sum + r.score, 0) / totalAudits) : 0;
+        const fatalCount = agentReviews.filter(r => r.score === 0).length;
+
+        // Performace Status
+        let status = 'Pending';
+        let statusClass = 'bg-slate-100 text-slate-600';
+
+        if (totalAudits > 0) {
+          if (avgScore >= 80) { status = 'Excellent'; statusClass = 'bg-emerald-100 text-emerald-700'; }
+          else if (avgScore >= 60) { status = 'Good'; statusClass = 'bg-blue-100 text-blue-700'; }
+          else if (avgScore >= 40) { status = 'Need Improvement'; statusClass = 'bg-amber-100 text-amber-700'; }
+          else { status = 'Critical'; statusClass = 'bg-red-100 text-red-700'; }
+        }
+
+        return {
+          name: agent.name,
+          id: agent.id,
+          audits: totalAudits,
+          fatals: fatalCount,
+          score: avgScore,
+          status: status,
+          statusClass: statusClass
+        };
+      });
+
+      // 4. Render
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">No agents found for this entity.</td></tr>';
+        return;
+      }
+
+      // Sort by score desc
+      rows.sort((a, b) => b.score - a.score);
+
+      tbody.innerHTML = rows.map((row, index) => {
+        // Blank logic for empty audits
+        const showAudits = row.audits === 0 ? '--' : row.audits;
+        const showFatals = row.audits === 0 ? '--' : row.fatals;
+        const showScore = row.audits === 0 ? '--' : row.score + '%';
+        const showStatus = row.audits === 0 ? '<span class="text-slate-400">--</span>' : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>`;
+        const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 50 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
+
+        return `
+        <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
+           <td class="p-6 text-center font-bold text-slate-400">${index + 1}</td>
+           <td class="p-6">
+              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
+              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+           </td>
+           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
+           <td class="p-6 text-center font-bold ${row.fatals > 0 ? 'text-red-600' : 'text-slate-400'} text-lg">${showFatals}</td>
+           <td class="p-6 text-center">
+              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
+                 ${showScore}
+              </div>
+           </td>
+           <td class="p-6 text-center">
+              ${showStatus}
+           </td>
+        </tr>
+      `}).join('');
+    }
+
     // Load reviews on page load
     window.addEventListener('load', function () {
       adminLoadReviewsList();
       adminLoadFeedbackList();
+
+      // Start update checker once initial admin data is loaded
+      try {
+        startUpdateChecker();
+      } catch (e) {
+        console.warn('[updateChecker] failed to start', e);
+      }
     });
+
+    /* ----------------- Auto-update / cache-refresh checker -----------------
+       It checks the embedded APP_VERSION token in the page and periodically
+       fetches the page with cache: 'no-store' to detect version changes.
+       When a new version is detected it shows a small banner with a reload
+       button so users can refresh to get the latest updates without re-sharing.
+    ----------------------------------------------------------------------- */
+
+    // Helper: extract token like "APP_VERSION: 20260130-001" from page text
+    function _extractAppVersion(text) {
+      const m = text.match(/APP_VERSION:\s*([0-9A-Za-z_.\-]+)/i);
+      return m ? m[1] : null;
+    }
+
+    const _currentAppVersion = _extractAppVersion(document.documentElement.innerHTML) || 'unknown';
+    let _updateCheckerInterval = null;
+
+    function showUpdateBanner() {
+      const banner = document.getElementById('update-banner');
+      if (!banner) return;
+      banner.classList.remove('hidden');
+
+      const reloadBtn = document.getElementById('update-reload-btn');
+      const dismissBtn = document.getElementById('update-dismiss-btn');
+
+      // Attach handlers
+      reloadBtn.onclick = () => location.reload();
+      dismissBtn.onclick = () => banner.classList.add('hidden');
+
+      // Auto-reload after 60s to ensure users get the new version (optional)
+      setTimeout(() => {
+        if (!banner.classList.contains('hidden')) location.reload();
+      }, 60000);
+    }
+
+    async function checkForUpdates() {
+      try {
+        const resp = await fetch(location.href, { cache: 'no-store', credentials: 'same-origin' });
+        if (!resp.ok) return;
+        const text = await resp.text();
+        const remoteVersion = _extractAppVersion(text);
+        if (remoteVersion && remoteVersion !== _currentAppVersion) {
+          console.info('[updateChecker] new version detected', remoteVersion, 'current', _currentAppVersion);
+          showUpdateBanner();
+          // stop further checks once detected
+          if (_updateCheckerInterval) clearInterval(_updateCheckerInterval);
+        }
+      } catch (e) {
+        console.warn('[updateChecker] check failed', e);
+      }
+    }
+
+    function startUpdateChecker() {
+      // Run an immediate check, then poll every 30s
+      checkForUpdates();
+      _updateCheckerInterval = setInterval(checkForUpdates, 30 * 1000);
+    }
 
   </script>
 
@@ -5722,6 +6346,72 @@ Reviewer: ${review.reviewerId}
       <div class="p-6 border-t border-slate-200 dark:border-slate-700">
         <button onclick="closeReviewDetailModal()"
           class="w-full bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-4 rounded-lg">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Admin Review Detail Modal (NEW) -->
+  <div id="admin-review-detail-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    onclick="if(event.target.id === 'admin-review-detail-modal') closeAdminReviewDetailModal()">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      onclick="event.stopPropagation()">
+      <div
+        class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Review Details (Admin)</h2>
+        <button onclick="closeAdminReviewDetailModal()" class="text-slate-500 hover:text-slate-700 text-2xl">✕</button>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-lg font-bold" id="admin-review-detail-agent">Agent Name</h3>
+            <p class="text-sm text-slate-500" id="admin-review-detail-date">-</p>
+          </div>
+          <div id="admin-review-detail-type" class="text-lg font-bold text-blue-600"></div>
+        </div>
+
+        <div id="admin-review-detail-file-section" class="hidden">
+          <label class="block text-sm font-semibold mb-2">Uploaded File</label>
+          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg flex justify-between items-center">
+            <div id="admin-review-detail-file-name" class="font-semibold">-</div>
+            <button id="admin-review-detail-file-link" class="text-blue-600 underline text-sm font-bold">📥
+              Download/View</button>
+          </div>
+        </div>
+
+        <div id="admin-review-detail-id-section" class="hidden">
+          <label class="block text-sm font-semibold mb-2">Contact ID</label>
+          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg font-mono text-sm"
+            id="admin-review-detail-id-value">-</div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Observation</label>
+          <div id="admin-review-detail-observation"
+            class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg whitespace-pre-wrap text-sm">-</div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Score</label>
+          <div class="text-3xl font-bold" id="admin-review-detail-score">-</div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Comments History</label>
+          <div id="admin-review-detail-comments"
+            class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg max-h-60 overflow-y-auto space-y-3">
+            <!-- Comments injected here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 border-t border-slate-200 dark:border-slate-700">
+        <button onclick="closeAdminReviewDetailModal()"
+          class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition">
           Close
         </button>
       </div>
