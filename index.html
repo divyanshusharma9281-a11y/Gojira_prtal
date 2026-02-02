@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="light">
 
@@ -395,7 +394,7 @@
       pointer-events: none;
       z-index: 10;
     }
-    
+
     /* Twinkle Animation */
     .twinkle {
       position: fixed;
@@ -3683,6 +3682,62 @@ Reviewer: ${review.reviewerId}
       function hideLogin() {
         document.getElementById('login-modal').classList.add('hidden');
         document.getElementById('empid').value = '';
+      }
+
+      function attemptLogin() {
+        const empIdInput = document.getElementById('login-empid');
+        const empId = empIdInput.value.trim();
+
+        if (!empId) {
+          alert('Please enter Employee ID');
+          return;
+        }
+
+        // Find user (Case Insensitive)
+        const user = USER_DB.find(u => u.id.toUpperCase() === empId.toUpperCase());
+
+        if (user) {
+          currentUser = user;
+
+          // Hide Login Overlay
+          document.getElementById('view-login').style.display = 'none';
+
+          if (user.role === 'admin') {
+            // Admin Login
+            adminCurrentEntity = 'ALL';
+            navigateTo('view-admin');
+            adminLoadAgents();
+          } else {
+            // Agent Login
+            if (currentEntity && user.entity !== currentEntity && currentEntity !== 'ALL') {
+              // This case might not happen on main page as currentEntity might be empty, 
+              // but if we want to be strict we could check. 
+              // For now, allow login.
+            }
+
+            const titleSpan = document.getElementById('agent-dashboard-title');
+            if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+
+            const bannerName = document.getElementById('agent-name-display');
+            if (bannerName) bannerName.innerText = user.name;
+
+            navigateTo('view-performance');
+          }
+        } else {
+          const errorMsg = document.getElementById('login-error');
+          if (errorMsg) {
+            errorMsg.classList.remove('hidden');
+            setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+          } else {
+            alert('Invalid Employee ID');
+          }
+        }
+      }
+
+      function handleLoginKey(event) {
+        if (event.key === 'Enter') {
+          attemptLogin();
+        }
       }
 
       function submitLogin(event) {
