@@ -377,7 +377,8 @@
   </div>
 
   <!-- MAIN PORTAL LOGIN SCREEN -->
-  <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
+  <div id="portal-login-screen"
+    class="fixed inset-0 bg-slate-900 flex flex-col items-center justify-start py-20 z-50 overflow-y-auto"
     style="perspective: 1500px;">
 
 
@@ -440,170 +441,218 @@
           class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
       </div>
 
-      <script>
-          /**
-           * RAINBOW TWINKLES ANIMATION
-           * Handles mouse trail and continuous stream on click-hold
-           */
-          (function () {
-            // Twinkle animation disabled — early return to prevent registration/animation
-            return;
-            const canvas = document.getElementById('twinkle-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height;
-            let particles = [];
-            let isMouseDown = false;
-            let mouseX = 0, mouseY = 0;
-
-            // Palette of extra colors for twinkles (chosen to be bright & pleasant)
-            const TWINKLE_PALETTE = ['#FFC857', '#FF6B6B', '#4ECDC4', '#00B4D8', '#9B5DE5', '#C7F464', '#FF9F1C'];
-
-            // Resize canvas
-            function resize() {
-              width = canvas.width = window.innerWidth;
-              height = canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resize);
-            resize();
-
-            // Mouse Events
-            document.addEventListener('mousemove', (e) => {
-              mouseX = e.clientX;
-              mouseY = e.clientY;
-              // Create a denser particle trail for stronger effect
-              createParticles(mouseX, mouseY, 6);
-            });
-
-            document.addEventListener('mousedown', (e) => {
-              isMouseDown = true;
-              mouseX = e.clientX;
-              mouseY = e.clientY;
-            });
-
-            document.addEventListener('mouseup', () => {
-              isMouseDown = false;
-            });
-
-            // Touch Support
-            document.addEventListener('touchmove', (e) => {
-              const touch = e.touches[0];
-              mouseX = touch.clientX;
-              mouseY = touch.clientY;
-              // Denser particles for touch as well
-              createParticles(mouseX, mouseY, 6);
-            });
-            document.addEventListener('touchstart', (e) => {
-              isMouseDown = true;
-              const touch = e.touches[0];
-              mouseX = touch.clientX;
-              mouseY = touch.clientY;
-            });
-            document.addEventListener('touchend', () => {
-              isMouseDown = false;
-            });
-
-
-            // Particle Class
-            class Particle {
-              constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                // SPEEDY ITERATION 3: 0.3s - 0.4s duration (approx 20-25 frames @ 60fps)
-                const angle = Math.random() * Math.PI * 2;
-                // Faster speed to be visible in short time
-                const speed = Math.random() * 3 + 2;
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed + 1.5; // Stronger gravity for fast fall
-                this.friction = 0.94; // Drag to slow them down quickly before vanishing
-
-                // 18 to 28 frames approx (0.3s - 0.45s)
-                this.maxLife = this.life = Math.floor(Math.random() * 10 + 18);
-                this.size = Math.random() * 3 + 1.5;
-
-                // Choose color from palette most of the time, otherwise random HSL
-                if (Math.random() < 0.72) {
-                  this.color = TWINKLE_PALETTE[Math.floor(Math.random() * TWINKLE_PALETTE.length)];
-                } else {
-                  const hue = Math.floor(Math.random() * 360);
-                  const lightness = Math.floor(Math.random() * 18 + 56);
-                  this.color = `hsl(${hue}, 100%, ${lightness}%)`;
-                }
-              }
-
-              update() {
-                // Apply friction
-                this.vx *= this.friction;
-                this.vy *= this.friction;
-                this.x += this.vx;
-                this.y += this.vy;
-                // Decrease life
-                this.life -= 1;
-                this.size *= 0.96; // rapid shrink matching short life
-              }
-
-              draw(ctx) {
-                ctx.save();
-
-                // compute normalized alpha so fade-out is smooth over maxLife
-                const alpha = Math.max(0, this.life / this.maxLife);
-
-                ctx.globalAlpha = alpha * 0.98;
-                // Use a softer blend so multiple twinkles stack smoothly
-                ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = this.color;
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-
-                // softer, smoother glow
-                ctx.shadowBlur = 14;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-
-                ctx.restore();
-              }
-            }
-
-            function createParticles(x, y, count) {
-              for (let i = 0; i < count; i++) {
-                particles.push(new Particle(x, y));
-              }
-
-              // Safety cap: keep particle array bounded to avoid performance issues
-              const MAX_PARTICLES = 1000;
-              if (particles.length > MAX_PARTICLES) {
-                particles.splice(0, particles.length - MAX_PARTICLES);
-              }
-            }
-
-            // Animation Loop
-            function animate() {
-              ctx.clearRect(0, 0, width, height);
-
-              // Continuous stream if mouse is down (denser)
-              if (isMouseDown) {
-                createParticles(mouseX, mouseY, 12); // Denser particles on hold
-              }
-
-              // Update and draw particles
-              for (let i = particles.length - 1; i >= 0; i--) {
-                const p = particles[i];
-                p.update();
-                p.draw(ctx);
-                if (p.life <= 0 || p.size <= 0.1) {
-                  particles.splice(i, 1);
-                }
-              }
-
-              requestAnimationFrame(animate);
-            }
-
-            animate();
-          })();
-      </script>
-
     </div>
+
+    <!-- Contact Details Section (Login Screen) -->
+    <div class="w-full max-w-5xl mx-auto mt-16 px-6 pb-20 relative z-60 animate-zoom-in" style="animation-delay: 0.5s;">
+      <h3 class="text-2xl font-bold text-white/90 mb-8 flex items-center justify-center gap-2 drop-shadow-md">
+        <span>📞</span> Contact Us
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+
+        <!-- Location -->
+        <div
+          class="p-6 rounded-2xl bg-slate-800/80 backdrop-blur-md shadow-lg border border-slate-700/50 hover:bg-slate-800 transition">
+          <div class="text-4xl mb-4">📍</div>
+          <h4 class="font-bold text-slate-200 mb-2">Visit Us</h4>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Plot no. 516, 2nd Floor<br>
+            Udyog Vihar Phase 3<br>
+            Gurgaon, Haryana 122016
+          </p>
+        </div>
+
+        <!-- Call -->
+        <a href="tel:9220912305"
+          class="p-6 rounded-2xl bg-slate-800/80 backdrop-blur-md shadow-lg border border-slate-700/50 hover:bg-slate-800 hover:border-blue-500/50 transition group">
+          <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">📞</div>
+          <h4 class="font-bold text-slate-200 mb-2 group-hover:text-blue-400 transition">Call Us</h4>
+          <p class="text-slate-400 font-mono text-lg">9220912305</p>
+        </a>
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/917668053516" target="_blank"
+          class="p-6 rounded-2xl bg-slate-800/80 backdrop-blur-md shadow-lg border border-slate-700/50 hover:bg-slate-800 hover:border-green-500/50 transition group">
+          <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">📱</div>
+          <h4 class="font-bold text-slate-200 mb-2 group-hover:text-green-400 transition">WhatsApp</h4>
+          <p class="text-slate-400 font-mono text-lg">7668053516</p>
+        </a>
+
+        <!-- Email -->
+        <a href="mailto:divyanshu.sharma@bharatloan.com"
+          class="p-6 rounded-2xl bg-slate-800/80 backdrop-blur-md shadow-lg border border-slate-700/50 hover:bg-slate-800 hover:border-amber-500/50 transition group">
+          <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">✉️</div>
+          <h4 class="font-bold text-slate-200 mb-2 group-hover:text-amber-400 transition">Email Us</h4>
+          <p class="text-slate-400 text-sm break-all">divyanshu.sharma@bharatloan.com</p>
+        </a>
+
+      </div>
+    </div>
+
+    <script>
+        /**
+         * RAINBOW TWINKLES ANIMATION
+         * Handles mouse trail and continuous stream on click-hold
+         */
+        (function () {
+          // Twinkle animation disabled — early return to prevent registration/animation
+          return;
+          const canvas = document.getElementById('twinkle-canvas');
+          const ctx = canvas.getContext('2d');
+          let width, height;
+          let particles = [];
+          let isMouseDown = false;
+          let mouseX = 0, mouseY = 0;
+
+          // Palette of extra colors for twinkles (chosen to be bright & pleasant)
+          const TWINKLE_PALETTE = ['#FFC857', '#FF6B6B', '#4ECDC4', '#00B4D8', '#9B5DE5', '#C7F464', '#FF9F1C'];
+
+          // Resize canvas
+          function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+          }
+          window.addEventListener('resize', resize);
+          resize();
+
+          // Mouse Events
+          document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            // Create a denser particle trail for stronger effect
+            createParticles(mouseX, mouseY, 6);
+          });
+
+          document.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+          });
+
+          document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+          });
+
+          // Touch Support
+          document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+            // Denser particles for touch as well
+            createParticles(mouseX, mouseY, 6);
+          });
+          document.addEventListener('touchstart', (e) => {
+            isMouseDown = true;
+            const touch = e.touches[0];
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+          });
+          document.addEventListener('touchend', () => {
+            isMouseDown = false;
+          });
+
+
+          // Particle Class
+          class Particle {
+            constructor(x, y) {
+              this.x = x;
+              this.y = y;
+              // SPEEDY ITERATION 3: 0.3s - 0.4s duration (approx 20-25 frames @ 60fps)
+              const angle = Math.random() * Math.PI * 2;
+              // Faster speed to be visible in short time
+              const speed = Math.random() * 3 + 2;
+              this.vx = Math.cos(angle) * speed;
+              this.vy = Math.sin(angle) * speed + 1.5; // Stronger gravity for fast fall
+              this.friction = 0.94; // Drag to slow them down quickly before vanishing
+
+              // 18 to 28 frames approx (0.3s - 0.45s)
+              this.maxLife = this.life = Math.floor(Math.random() * 10 + 18);
+              this.size = Math.random() * 3 + 1.5;
+
+              // Choose color from palette most of the time, otherwise random HSL
+              if (Math.random() < 0.72) {
+                this.color = TWINKLE_PALETTE[Math.floor(Math.random() * TWINKLE_PALETTE.length)];
+              } else {
+                const hue = Math.floor(Math.random() * 360);
+                const lightness = Math.floor(Math.random() * 18 + 56);
+                this.color = `hsl(${hue}, 100%, ${lightness}%)`;
+              }
+            }
+
+            update() {
+              // Apply friction
+              this.vx *= this.friction;
+              this.vy *= this.friction;
+              this.x += this.vx;
+              this.y += this.vy;
+              // Decrease life
+              this.life -= 1;
+              this.size *= 0.96; // rapid shrink matching short life
+            }
+
+            draw(ctx) {
+              ctx.save();
+
+              // compute normalized alpha so fade-out is smooth over maxLife
+              const alpha = Math.max(0, this.life / this.maxLife);
+
+              ctx.globalAlpha = alpha * 0.98;
+              // Use a softer blend so multiple twinkles stack smoothly
+              ctx.globalCompositeOperation = 'screen';
+              ctx.fillStyle = this.color;
+
+              ctx.beginPath();
+              ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+              ctx.fill();
+
+              // softer, smoother glow
+              ctx.shadowBlur = 14;
+              ctx.shadowColor = this.color;
+              ctx.fill();
+
+              ctx.restore();
+            }
+          }
+
+          function createParticles(x, y, count) {
+            for (let i = 0; i < count; i++) {
+              particles.push(new Particle(x, y));
+            }
+
+            // Safety cap: keep particle array bounded to avoid performance issues
+            const MAX_PARTICLES = 1000;
+            if (particles.length > MAX_PARTICLES) {
+              particles.splice(0, particles.length - MAX_PARTICLES);
+            }
+          }
+
+          // Animation Loop
+          function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Continuous stream if mouse is down (denser)
+            if (isMouseDown) {
+              createParticles(mouseX, mouseY, 12); // Denser particles on hold
+            }
+
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+              const p = particles[i];
+              p.update();
+              p.draw(ctx);
+              if (p.life <= 0 || p.size <= 0.1) {
+                particles.splice(i, 1);
+              }
+            }
+
+            requestAnimationFrame(animate);
+          }
+
+          animate();
+        })();
+    </script>
+
+  </div>
   </div>
 
   <!-- CHANGE PASSWORD MODAL -->
