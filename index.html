@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="light">
 
@@ -113,8 +114,13 @@
     }
 
     /* Login card stacking helper */
-    .login-card { z-index: 30; }
-    .login-card.raised { z-index: 70 !important; }
+    .login-card {
+      z-index: 30;
+    }
+
+    .login-card.raised {
+      z-index: 70 !important;
+    }
 
     /* 3D Swing Animations */
     @keyframes swingLeft {
@@ -176,15 +182,17 @@
 
     /* Gojira Theme Variables and Styles */
     :root {
-      --gojira-red: #b91c1c; /* deep red */
-      --gojira-blue: #0f172a; /* dark blue */
+      --gojira-red: #b91c1c;
+      /* deep red */
+      --gojira-blue: #0f172a;
+      /* dark blue */
       --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
     }
 
     /* Theme applied after login to make pages colorful (legacy - not used when removed) */
     body.gojira-theme {
       background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
-      color: rgba(255,255,255,0.92);
+      color: rgba(255, 255, 255, 0.92);
       transition: background 0.5s ease, color 0.3s ease;
     }
 
@@ -206,8 +214,8 @@
     /* Dark mode with stronger red mix */
     body.dark {
       /* stronger red tint layered over dark gradient */
-      background: linear-gradient(180deg, rgba(185,28,28,0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
-      color: rgba(255,255,255,0.95);
+      background: linear-gradient(180deg, rgba(185, 28, 28, 0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
+      color: rgba(255, 255, 255, 0.95);
       transition: background 0.45s ease, color 0.25s ease;
       background-blend-mode: overlay;
     }
@@ -215,31 +223,36 @@
     body.dark header,
     body.dark #top-nav {
       /* stronger red overlay for header in dark mode */
-      background: linear-gradient(90deg, rgba(185,28,28,0.22) 0%, rgba(30,24,40,0.6) 30%, #0b1220 70%) !important;
-      color: rgba(255,255,255,0.95) !important;
-      box-shadow: 0 6px 30px rgba(185,28,28,0.06);
+      background: linear-gradient(90deg, rgba(185, 28, 28, 0.22) 0%, rgba(30, 24, 40, 0.6) 30%, #0b1220 70%) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 6px 30px rgba(185, 28, 28, 0.06);
     }
 
     /* Ensure headings remain readable in dark mode */
-    body.dark h1, body.dark h2, body.dark h3, body.dark .font-bold, body.dark .font-extrabold {
-      color: rgba(255,255,255,0.95) !important;
+    body.dark h1,
+    body.dark h2,
+    body.dark h3,
+    body.dark .font-bold,
+    body.dark .font-extrabold {
+      color: rgba(255, 255, 255, 0.95) !important;
     }
 
     /* Dark mode accents: stronger red highlights */
     body.dark .accent-btn {
-      background: linear-gradient(90deg, rgba(185,28,28,0.95), #1e3a8a) !important;
+      background: linear-gradient(90deg, rgba(185, 28, 28, 0.95), #1e3a8a) !important;
       color: white !important;
-      box-shadow: 0 10px 30px rgba(185,28,28,0.12) !important;
+      box-shadow: 0 10px 30px rgba(185, 28, 28, 0.12) !important;
     }
 
-    body.dark .badge, body.dark .btn-outline {
-      border-color: rgba(185,28,28,0.18) !important;
-      color: rgba(255,255,255,0.95) !important;
-      background: rgba(185,28,28,0.03) !important;
+    body.dark .badge,
+    body.dark .btn-outline {
+      border-color: rgba(185, 28, 28, 0.18) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      background: rgba(185, 28, 28, 0.03) !important;
     }
 
     .gojira-theme .app-view {
-      background: linear-gradient(180deg, rgba(185,28,28,0.03), rgba(14,42,90,0.03));
+      background: linear-gradient(180deg, rgba(185, 28, 28, 0.03), rgba(14, 42, 90, 0.03));
     }
 
     /* Ensure main page headings are dark when colored theme is active (so 'Guidelines' and 'Quality Assurance Checklist' are visible) */
@@ -253,60 +266,67 @@
 
     .gojira-theme .card,
     .gojira-theme .panel {
-      background: rgba(10,14,22,0.6);
-      color: rgba(255,255,255,0.92);
+      background: rgba(10, 14, 22, 0.6);
+      color: rgba(255, 255, 255, 0.92);
       border-radius: 12px;
       box-shadow: 0 8px 40px rgba(14, 40, 90, 0.12);
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .gojira-theme .accent-btn {
-      background: var(--gojira-grad); color: white; border: none;
-      box-shadow: 0 10px 30px rgba(30,58,138,0.18);
+      background: var(--gojira-grad);
+      color: white;
+      border: none;
+      box-shadow: 0 10px 30px rgba(30, 58, 138, 0.18);
     }
 
     /* Inputs and form elements */
     .gojira-theme input,
     .gojira-theme select,
     .gojira-theme textarea {
-      background: rgba(255,255,255,0.02) !important;
-      border: 1px solid rgba(255,255,255,0.06) !important;
-      color: rgba(255,255,255,0.95) !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
     }
 
     .gojira-theme .btn-outline {
-      border-color: rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.92);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
     }
 
     /* Accent badges */
     .gojira-theme .badge {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     /* Door branding */
     .door-brand {
       font-family: 'Montserrat', sans-serif;
-      text-shadow: 4px 5px 10px rgba(0,0,0,0.45);
+      text-shadow: 4px 5px 10px rgba(0, 0, 0, 0.45);
       letter-spacing: -2px;
     }
 
     /* Login label styling */
-    .login-label { color: var(--gojira-red); font-weight: 700; }
+    .login-label {
+      color: var(--gojira-red);
+      font-weight: 700;
+    }
 
     /* Header colored flash for smooth transition between themes */
     #top-nav.header-colored-flash,
     header.header-colored-flash {
       background: var(--gojira-grad) !important;
       color: #fff !important;
-      box-shadow: 0 8px 30px rgba(30,58,138,0.15);
+      box-shadow: 0 8px 30px rgba(30, 58, 138, 0.15);
       transition: background 0.35s ease, color 0.25s ease;
     }
 
     /* subtle pulse while flashing */
-    .header-colored-flash .glow { box-shadow: 0 14px 40px rgba(30,58,138,0.22); }
+    .header-colored-flash .glow {
+      box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
+    }
   </style>
 </head>
 
@@ -333,69 +353,10 @@
     </div>
   </div>
 
-  <!-- MAIN PORTAL LOGIN SCREEN -->
-  <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
-    style="perspective: 1500px;">
-
-    <!-- The Split Doors (3D Swing) -->
-    <div
-      class="fixed inset-y-0 left-0 w-1/2 z-50 animate-door-left flex items-center justify-end border-r border-transparent shadow-2xl"
-      style="background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
-    </div>
-    <div
-      class="fixed inset-y-0 right-0 w-1/2 z-50 animate-door-right flex items-center justify-start border-l border-transparent shadow-2xl"
-      style="background: linear-gradient(270deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
-    </div>
-
-    <!-- Revealed Background -->
-    <div class="absolute inset-0 z-0" style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
-
-    <!-- Background Typography Theme (Door Branding) -->
-    <div id="door-brand" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
-      <h1
-        class="door-brand text-[18rem] font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 whitespace-nowrap drop-shadow-lg"
-        style="pointer-events: none; will-change: transform, opacity; transform: translateY(0) rotate(0deg);">
-        G - Gojira</h1>
-    </div>
-
-    <!-- Colored Login Card -->
-    <div id="login-card"
-      class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-60 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
-      style="background-color: rgba(10, 14, 22, 0.97);">
-      <div class="text-center mb-8">
-        <div
-          class="w-20 h-20 bg-gradient-to-br from-red-600 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-4xl mx-auto mb-4 shadow-lg shadow-blue-900/50">
-          G</div>
-        <h1
-          class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600 drop-shadow-sm">
-          Gojira TP</h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-3 font-semibold tracking-wide uppercase">Training Portal
-          Login</p>
-      </div>
-
-      <form onsubmit="submitLogin(event)">
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2 login-label">Employee ID</label>
-          <input id="portal-emp-id" type="text" required placeholder="Enter your Employee ID"
-            class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
-        </div>
-
-        <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2 login-label">Password</label>
-          <input id="portal-password" type="password" required placeholder="Enter your password"
-            class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
-        </div>
-
-        <button type="submit"
-          class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Login</button>
-      </form>
-
-      <div class="text-center">
-        <button onclick="showChangePasswordModal()"
-          class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
-      </div>
-    </div>
-  </div>
+  <!-- LOGIN SYSTEM REMOVED - AUTO LOGIN ENABLED -->
+  <!-- 
+  <div id="portal-login-screen" ...> (Removed for direct access)
+  -->
 
   <!-- CHANGE PASSWORD MODAL -->
   <div id="change-password-modal"
@@ -2183,114 +2144,92 @@
   </div>
 
   <script>
-    // ===== PORTAL LOGIN SYSTEM =====
+    // ===== AUTO LOGIN BYPASS SYSTEM =====
+    // Replaces the old login system with a direct-access mechanism.
     let currentSessionUser = null;
 
-    // Initialize portal login on page load
     function initPortal() {
-      const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
-      if (!Object.keys(savedPasswords).length) {
-        // Initialize all users with default password "1234"
-        const allUsers = {};
-        USER_DB.forEach(user => {
-          allUsers[user.id] = '1234'; // Default password
-        });
-        localStorage.setItem('gojira_passwords', JSON.stringify(allUsers));
-      } else {
-        // Ensure any newly added users (e.g., added via code edits) get a default password if missing
-        let updated = false;
-        USER_DB.forEach(user => {
-          if (!savedPasswords[user.id]) {
-            savedPasswords[user.id] = '1234';
-            updated = true;
-          }
-        });
-        if (updated) {
-          localStorage.setItem('gojira_passwords', JSON.stringify(savedPasswords));
-        }
+      console.log("Initializing Portal (Auto-Login Mode)...");
+
+      // 1. Try to get existing session
+      let sessionUser = localStorage.getItem('gojira_session_user');
+
+      // 2. If NO session exists, create a DEFAULT ADMIN session
+      if (!sessionUser) {
+        console.log("No session found. Creating Auto-Login Admin session.");
+        const defaultUser = {
+          id: 'BL/GG/25/1135', // Siddhant (Admin)
+          name: 'Siddhant Chauhan',
+          role: 'admin',
+          entity: 'ALL'
+        };
+        localStorage.setItem('gojira_session_user', JSON.stringify(defaultUser));
+        sessionUser = JSON.stringify(defaultUser);
       }
 
-      // Check if already logged in
-      const sessionUser = localStorage.getItem('gojira_session_user');
-      if (sessionUser) {
-        try {
-          currentSessionUser = JSON.parse(sessionUser);
-          console.info('[initPortal] Restored session for', currentSessionUser.id, currentSessionUser.role);
-          // Restore role-specific UI and state
-          if (currentSessionUser.role === 'admin') {
-            currentUser = currentSessionUser;
-            adminCurrentEntity = currentSessionUser.entity || 'ALL';
-            const welcomeText = document.getElementById('admin-welcome-text');
-            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
-            adminLoadAgents();
-          } else if (currentSessionUser.role === 'reviewer') {
-            currentUser = currentSessionUser;
-            reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
-            adminCurrentEntity = reviewerCurrentEntity; // ensure agents load correctly
-            const welcomeText = document.getElementById('reviewer-welcome-text');
-            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
-            const entityDisplay = document.getElementById('reviewer-entity-display');
-            if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
-            adminLoadAgents();
-          } else {
-            currentUser = currentSessionUser;
-          }
-          showPortalContent();
-        } catch (err) {
-          console.error('[initPortal] invalid session data', err);
+      // 3. Restore Session & Initialize UI
+      try {
+        currentSessionUser = JSON.parse(sessionUser);
+        currentUser = currentSessionUser;
+
+        // Ensure role-specific variables are set
+        if (currentSessionUser.role === 'admin') {
+          adminCurrentEntity = currentSessionUser.entity || 'ALL';
+        } else if (currentSessionUser.role === 'reviewer') {
+          reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
         }
+
+        console.info('[initPortal] Auto-logged in as', currentSessionUser.name);
+
+        // Show Main Navigation
+        const topNav = document.getElementById('top-nav');
+        if (topNav) topNav.classList.remove('hidden');
+
+        // Update User Greeting
+        const greeting = document.getElementById('home-user-greeting');
+        if (greeting) greeting.innerText = `Hi ${currentSessionUser.name.split(' ')[0]}`;
+
+        // Update Admin/Reviewer Welcome Text
+        if (currentSessionUser.role === 'admin') {
+          const adminWelcome = document.getElementById('admin-welcome-text');
+          if (adminWelcome) adminWelcome.innerText = `Welcome ${currentSessionUser.name}`;
+        } else if (currentSessionUser.role === 'reviewer') {
+          const revWelcome = document.getElementById('reviewer-welcome-text');
+          if (revWelcome) revWelcome.innerText = `Welcome ${currentSessionUser.name}`;
+        }
+
+        // Load Data
+        adminLoadAgents();
+
+        // Navigate directly to Home
+        navigateTo('view-home');
+
+      } catch (e) {
+        console.error("Auto-login critical error", e);
+        alert("Login Bypass Error. Please check console.");
       }
     }
 
-
-    // Portal Login Function
-    function showPortalContent() {
-      document.getElementById('portal-login-screen').classList.add('hidden');
-      document.getElementById('top-nav').classList.remove('hidden');
-
-      // Set user greeting on home page
-      const firstName = currentSessionUser.name.split(' ')[0];
-      document.getElementById('home-user-greeting').innerText = `Hi ${firstName}`;
-
-      // Filter entities display based on user
-      filterEntitiesDisplay();
-      filterResourcesQACard(); // Set QA card visibility based on user role
-
-      // Set currentUser and currentEntity for all users
-      currentUser = currentSessionUser;
-      currentEntity = currentSessionUser.entity;
-
-      // Route all users to home page
-      navigateTo('view-home');
-    }
-
-    // Portal Logout
+    // kept for compatibility if referenced, but just reloads the page
     function portalLogout() {
       currentSessionUser = null;
       localStorage.removeItem('gojira_session_user');
-
-      // Reset user greeting
-      document.getElementById('home-user-greeting').innerText = 'Hi Guest';
-
-      // Clear all forms
-      document.getElementById('portal-emp-id').value = '';
-      document.getElementById('portal-password').value = '';
-      document.getElementById('change-pass-emp-id').value = '';
-      document.getElementById('change-pass-current').value = '';
-      document.getElementById('change-pass-new').value = '';
-
-      // Show login screen
-      document.getElementById('portal-login-screen').classList.remove('hidden');
-      document.getElementById('top-nav').classList.add('hidden');
-
-      // Reset theme to light on logout
-      setTheme('light');
-
-      // Hide all views
-      document.querySelectorAll('.app-view').forEach(view => {
-        view.classList.remove('active');
-      });
+      window.location.reload();
     }
+
+    // Dummy function if referenced by old forms
+    function submitLogin(event) {
+      if (event) event.preventDefault();
+      initPortal();
+    }
+
+    window.onload = () => {
+      // Restore Theme
+      try { setTheme(localStorage.getItem('theme') || 'light'); } catch (e) { }
+
+      // Start App Immediately
+      initPortal();
+    };
 
     // Change Password Modal Functions
     function showChangePasswordModal() {
@@ -4387,213 +4326,9 @@ Reviewer: ${review.reviewerId}
       document.getElementById('empid').value = '';
     }
 
-    function submitLogin(event) {
-      try {
-        event.preventDefault();
-        // Support both portal login (portal-emp-id + portal-password) and modal login (empid + login-modal-password)
-        const empEl = document.getElementById('portal-emp-id') || document.getElementById('empid');
-        const empId = (empEl && empEl.value) ? empEl.value.trim() : '';
-        const passwordEl = document.getElementById('portal-password') || document.getElementById('login-modal-password');
-        let password = passwordEl ? (passwordEl.value || '') : '';
-        console.debug('[submitLogin] empId:', empId, 'passwordProvided:', !!password);
-
-        if (!empId) {
-          console.warn('[submitLogin] Missing Employee ID');
-          alert('❌ Please enter Employee ID');
-          return;
-        }
-
-        // Check if employee exists
-        const user = USER_DB.find(u => u.id === empId);
-        if (!user) {
-          console.warn('[submitLogin] Invalid Employee ID:', empId);
-          alert('❌ Invalid Employee ID');
-          return;
-        }
-
-        // Check password
-        const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
-        console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0, 5));
-        const correctPassword = savedPasswords[empId] || '1234';
-
-        // If no password field was available or user left it empty, prompt for it (helps modal login)
-        if (!password) {
-          password = prompt(`Enter password for ${empId} (default is 1234):`) || '';
-        }
-
-        if (password !== correctPassword) {
-          console.warn('[submitLogin] Invalid Password for', empId);
-          alert('❌ Invalid Password');
-          return;
-        }
-
-        // Login successful - save session
-        currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
-        localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
-        console.info('[submitLogin] Login successful for', user.id, user.role);
-
-        // Apply dark theme after login (colored option removed)
-        setTheme('dark');
-
-        // Clear login form(s) if present
-        const pe = document.getElementById('portal-emp-id'); if (pe) pe.value = '';
-        const pp = document.getElementById('portal-password'); if (pp) pp.value = '';
-        const me = document.getElementById('empid'); if (me) me.value = '';
-        const mp = document.getElementById('login-modal-password'); if (mp) mp.value = '';
-
-        // Route users based on role
-        if (user.role === 'admin') {
-          // For admin
-          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
-          adminCurrentEntity = selectedEntity;
-          currentUser = user;
-          currentEntity = user.entity;
-
-          // Set welcome message with admin name
-          const welcomeText = document.getElementById('admin-welcome-text');
-          if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
-
-          showPortalContent();
-          navigateTo('view-home');
-        } else if (user.role === 'reviewer') {
-          // For reviewer
-          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'BharatLoan';
-          reviewerCurrentEntity = selectedEntity;
-          adminCurrentEntity = selectedEntity; // ensure agent lists populate
-          currentUser = user;
-          currentEntity = user.entity;
-
-          // Set welcome message with reviewer name
-          const welcomeText = document.getElementById('reviewer-welcome-text');
-          if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
-
-          // Set entity display
-          const entityDisplay = document.getElementById('reviewer-entity-display');
-          if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
-
-          // Populate agent list for reviewer
-          adminLoadAgents();
-
-          showPortalContent();
-          navigateTo('view-home');
-        } else if (user.role === 'agent') {
-          // For agents
-          currentUser = user;
-          currentEntity = user.entity;
-
-          // Update Header Title
-          const titleSpan = document.getElementById('agent-dashboard-title');
-          if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
-
-          // Update Banner Name
-          const bannerName = document.getElementById('agent-name-display');
-          if (bannerName) bannerName.innerText = user.name;
-
-          showPortalContent();
-          navigateTo('view-home');
-        }
-
-        // Ensure any login UI is hidden and portal content is shown (covers modal and portal forms)
-        try { document.getElementById('login-modal')?.classList.add('hidden'); } catch(e) {}
-        try { document.getElementById('portal-login-screen')?.classList.add('hidden'); } catch(e) {}
-        try { document.getElementById('top-nav')?.classList.remove('hidden'); } catch(e) {}
-        showPortalContent();
-      } catch (err) {
-        console.error('[submitLogin] error', err);
-        alert('An unexpected error occurred during login. Check console for details.');
-      }
-    }
-
-    window.onload = () => {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      // Apply saved theme (supports 'light' | 'dark')
-      try { setTheme(savedTheme); } catch (e) { console.warn('[onload] setTheme failed', e); }
 
 
 
-      // Safety: Ensure session persists across refreshes. 
-      try {
-        const sessionUserRaw = localStorage.getItem('gojira_session_user');
-        if (sessionUserRaw) {
-          currentSessionUser = JSON.parse(sessionUserRaw);
-          console.info('[onload] Restoring session from localStorage for', currentSessionUser?.id);
-
-          // Restore global variables based on role
-          currentUser = currentSessionUser;
-
-          // Theme state handled globally via setTheme during onload (no legacy flag used)
-          console.debug('[onload] current theme:', localStorage.getItem('theme'));
-
-          // Move door-brand behind login after its animation completes (synchronised with doors)
-          try {
-            const doorBrandEl = document.getElementById('door-brand');
-            if (doorBrandEl) {
-              const heading = doorBrandEl.querySelector('.door-brand');
-
-              // When left door animation ends, trigger heading descend animation so it stays centered until doors move
-              const leftDoor = document.querySelector('.animate-door-left');
-              if (leftDoor) {
-                leftDoor.addEventListener('animationend', () => {
-                  heading?.classList.add('door-descend');
-                  console.debug('[onload] left door animation ended - started door-descend');
-                });
-              }
-
-              // When heading finishes its descend, finalize moved state and raise the login card
-              heading?.addEventListener('animationend', () => {
-                doorBrandEl.classList.add('moved');
-                const loginCardEl = document.getElementById('login-card');
-                if (loginCardEl) loginCardEl.classList.add('raised');
-                console.debug('[onload] door-brand animation ended, moved behind login and login-card raised');
-              });
-
-              // Fallback in case animation events aren't triggered - ensure proper final state after a short delay
-              setTimeout(() => {
-                if (!doorBrandEl.classList.contains('moved')) {
-                  heading?.classList.add('door-descend');
-                }
-                setTimeout(() => {
-                  doorBrandEl.classList.add('moved');
-                  const loginCardEl = document.getElementById('login-card');
-                  if (loginCardEl) loginCardEl.classList.add('raised');
-                }, 900);
-              }, 2400);
-            }
-          } catch (e) {
-            console.warn('[onload] failed to attach door-brand listeners', e);
-          }
-
-          // initPortal will be called but we will override its default "show login" behavior if we have a user
-        }
-      } catch (e) {
-        console.warn('[onload] failed to restore session safely', e);
-      }
-
-      // Initialize portal login system
-      // If we have a user, this function should respect it or we override it immediately after
-      initPortal();
-
-      if (currentSessionUser) {
-        showPortalContent();
-        if (currentSessionUser.role === 'admin') {
-          adminCurrentEntity = currentSessionUser.entity === 'ALL' ? (adminCurrentEntity || 'BharatLoan') : currentSessionUser.entity;
-          adminLoadAgents();
-        } else if (currentSessionUser.role === 'reviewer') {
-          adminCurrentEntity = currentSessionUser.entity === 'ALL' ? (adminCurrentEntity || 'BharatLoan') : currentSessionUser.entity;
-          adminLoadAgents();
-        } else if (currentSessionUser.role === 'agent') {
-          // Agent specific init if needed
-          const titleSpan = document.getElementById('agent-dashboard-title');
-          if (titleSpan) titleSpan.innerText = `Welcome ${currentSessionUser.name}`;
-          const bannerName = document.getElementById('agent-name-display');
-          if (bannerName) bannerName.innerText = currentSessionUser.name;
-        }
-
-        // Navigate to home or last view? Default to home for now to be safe, or stay on current if possible.
-        // User request: "refresh ... it shouldn't be logout"
-        // keeping it simple: just show portal content.
-      }
-    }
 
     // ===== NEW ADMIN DASHBOARD FUNCTIONS =====
     let adminCurrentEntity = '';
@@ -5785,7 +5520,7 @@ Reviewer: ${review.reviewerId}
 
       // Backup entityWeekState and relevant storages for undo
       const backups = {};
-      try { backups[`entityWeekState_${matchedEntity}`] = localStorage.getItem(`entityWeekState_${matchedEntity}`); } catch(e) {}
+      try { backups[`entityWeekState_${matchedEntity}`] = localStorage.getItem(`entityWeekState_${matchedEntity}`); } catch (e) { }
       backups['adminReviews'] = localStorage.getItem('adminReviews');
       backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
       backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
@@ -5795,7 +5530,7 @@ Reviewer: ${review.reviewerId}
       const agentList = USER_DB.filter(u => u.role === 'agent' && u.entity && u.entity.toLowerCase() === matchedEntity.toLowerCase()).map(a => a.id);
 
       // Save undo buffer
-      const buf = { id: `clearweek_${Date.now()}_${Math.floor(Math.random()*1000)}`, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: matchedEntity, agents: agentList, backups };
+      const buf = { id: `clearweek_${Date.now()}_${Math.floor(Math.random() * 1000)}`, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: matchedEntity, agents: agentList, backups };
       localStorage.setItem('finalizationUndoBuffer', JSON.stringify(buf));
 
       // Perform removals
@@ -5872,33 +5607,33 @@ Reviewer: ${review.reviewerId}
       alert(`Current week data for ${matchedEntity} cleared and set to Week 1.`);
     }
 
-      // Refresh UI
-      renderAdminAgentDropdown();
-      checkAndEnableWeekFinalButton();
-      adminLoadReviewsList();
-      updateClearFinalizationsButton();
+    // Refresh UI
+    renderAdminAgentDropdown();
+    checkAndEnableWeekFinalButton();
+    adminLoadReviewsList();
+    updateClearFinalizationsButton();
 
-      // Show undo toast
-      const toast = document.getElementById('finalization-undo-toast');
-      const text = document.getElementById('finalization-undo-text');
-      const btn = document.getElementById('finalization-undo-btn');
-      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
-      toast.classList.remove('hidden');
+    // Show undo toast
+    const toast = document.getElementById('finalization-undo-toast');
+    const text = document.getElementById('finalization-undo-text');
+    const btn = document.getElementById('finalization-undo-btn');
+    text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
+    toast.classList.remove('hidden');
 
-      // Wire undo button
-      btn.onclick = () => undoClearFinalizations(buffer.id);
+    // Wire undo button
+    btn.onclick = () => undoClearFinalizations(buffer.id);
 
-      // Auto-expire buffer after 10s
-      setTimeout(() => {
-        const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
-        if (existing && existing.id === buffer.id) {
-          localStorage.removeItem('finalizationUndoBuffer');
-          dismissFinalizationUndoToast();
-        }
-      }, 10000);
+    // Auto-expire buffer after 10s
+    setTimeout(() => {
+      const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
+      if (existing && existing.id === buffer.id) {
+        localStorage.removeItem('finalizationUndoBuffer');
+        dismissFinalizationUndoToast();
+      }
+    }, 10000);
 
-      // Save the buffer reference in memory too
-      _pendingFinalizationClearBuffer = { id: buffer.id };
+    // Save the buffer reference in memory too
+    _pendingFinalizationClearBuffer = { id: buffer.id };
     }
 
     function undoClearFinalizations(bufferId) {
