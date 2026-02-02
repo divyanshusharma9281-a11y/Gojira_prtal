@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gojira TP | Training Portal</title>
-  <!-- APP_VERSION: 20260130-001 -->
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -81,327 +80,32 @@
         transform: translateY(0);
       }
     }
-
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.7);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    /* Door brand descent animation: keeps same size but moves down behind the login card */
-    @keyframes doorBrandDescend {
-      0% {
-        transform: translateY(0) scale(1) rotate(-8deg);
-        opacity: 1;
-      }
-
-      60% {
-        transform: translateY(7rem) scale(0.96) rotate(-8deg);
-        opacity: 0.6;
-      }
-
-      100% {
-        transform: translateY(14rem) scale(0.85) rotate(-8deg);
-        opacity: 0.18;
-      }
-    }
-
-    /* Login card stacking helper */
-    .login-card {
-      z-index: 30;
-    }
-
-    .login-card.raised {
-      z-index: 70 !important;
-    }
-
-    /* 3D Swing Animations */
-    @keyframes swingLeft {
-      from {
-        transform: rotateY(0deg);
-      }
-
-      to {
-        transform: rotateY(95deg);
-        opacity: 0;
-      }
-    }
-
-    @keyframes swingRight {
-      from {
-        transform: rotateY(0deg);
-      }
-
-      to {
-        transform: rotateY(-95deg);
-        opacity: 0;
-      }
-    }
-
-    .animate-zoom-in {
-      animation: zoomIn 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s forwards;
-      /* Slightly longer, slower zoom out */
-      opacity: 0;
-    }
-
-    /* Apply door-brand descent to the big heading so it moves when doors swing */
-    #door-brand .door-brand {
-      transform-origin: center;
-      will-change: transform, opacity;
-      transform: translateY(0) rotate(0deg);
-    }
-
-    /* Class to start the descent animation on demand */
-    .door-descend {
-      animation: doorBrandDescend 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
-    }
-
-    #door-brand.moved {
-      z-index: 0 !important;
-      opacity: 0.18 !important;
-      pointer-events: none;
-      transform: translateY(14rem) scale(0.85) rotate(0deg);
-    }
-
-    .animate-door-left {
-      transform-origin: left;
-      animation: swingLeft 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
-    }
-
-    .animate-door-right {
-      transform-origin: right;
-      animation: swingRight 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
-    }
-
-    /* Gojira Theme Variables and Styles */
-    :root {
-      --gojira-red: #b91c1c;
-      /* deep red */
-      --gojira-blue: #0f172a;
-      /* dark blue */
-      --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
-    }
-
-    /* Theme applied after login to make pages colorful (legacy - not used when removed) */
-    body.gojira-theme {
-      background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
-      color: rgba(255, 255, 255, 0.92);
-      transition: background 0.5s ease, color 0.3s ease;
-    }
-
-    .gojira-theme header,
-    .gojira-theme #top-nav {
-      background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%) !important;
-      /* For the colored theme we show headers with dark text (per request) */
-      color: #0b0b0b !important;
-      border: none !important;
-      transition: background 0.4s ease, color 0.25s ease;
-    }
-
-    /* Ensure any white-text inside header elements is forced to dark in colored mode */
-    .gojira-theme header .text-white,
-    .gojira-theme #top-nav .text-white {
-      color: #0b0b0b !important;
-    }
-
-    /* Dark mode with stronger red mix */
-    body.dark {
-      /* stronger red tint layered over dark gradient */
-      background: linear-gradient(180deg, rgba(185, 28, 28, 0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
-      color: rgba(255, 255, 255, 0.95);
-      transition: background 0.45s ease, color 0.25s ease;
-      background-blend-mode: overlay;
-    }
-
-    body.dark header,
-    body.dark #top-nav {
-      /* stronger red overlay for header in dark mode */
-      background: linear-gradient(90deg, rgba(185, 28, 28, 0.22) 0%, rgba(30, 24, 40, 0.6) 30%, #0b1220 70%) !important;
-      color: rgba(255, 255, 255, 0.95) !important;
-      box-shadow: 0 6px 30px rgba(185, 28, 28, 0.06);
-    }
-
-    /* Ensure headings remain readable in dark mode */
-    body.dark h1,
-    body.dark h2,
-    body.dark h3,
-    body.dark .font-bold,
-    body.dark .font-extrabold {
-      color: rgba(255, 255, 255, 0.95) !important;
-    }
-
-    /* Dark mode accents: stronger red highlights */
-    body.dark .accent-btn {
-      background: linear-gradient(90deg, rgba(185, 28, 28, 0.95), #1e3a8a) !important;
-      color: white !important;
-      box-shadow: 0 10px 30px rgba(185, 28, 28, 0.12) !important;
-    }
-
-    body.dark .badge,
-    body.dark .btn-outline {
-      border-color: rgba(185, 28, 28, 0.18) !important;
-      color: rgba(255, 255, 255, 0.95) !important;
-      background: rgba(185, 28, 28, 0.03) !important;
-    }
-
-    .gojira-theme .app-view {
-      background: linear-gradient(180deg, rgba(185, 28, 28, 0.03), rgba(14, 42, 90, 0.03));
-    }
-
-    /* Ensure main page headings are dark when colored theme is active (so 'Guidelines' and 'Quality Assurance Checklist' are visible) */
-    .gojira-theme .app-view h1,
-    .gojira-theme .app-view h2,
-    .gojira-theme .app-view h3,
-    .gojira-theme .app-view .font-extrabold,
-    .gojira-theme .app-view .font-bold {
-      color: #0b0b0b !important;
-    }
-
-    .gojira-theme .card,
-    .gojira-theme .panel {
-      background: rgba(10, 14, 22, 0.6);
-      color: rgba(255, 255, 255, 0.92);
-      border-radius: 12px;
-      box-shadow: 0 8px 40px rgba(14, 40, 90, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .gojira-theme .accent-btn {
-      background: var(--gojira-grad);
-      color: white;
-      border: none;
-      box-shadow: 0 10px 30px rgba(30, 58, 138, 0.18);
-    }
-
-    /* Inputs and form elements */
-    .gojira-theme input,
-    .gojira-theme select,
-    .gojira-theme textarea {
-      background: rgba(255, 255, 255, 0.02) !important;
-      border: 1px solid rgba(255, 255, 255, 0.06) !important;
-      color: rgba(255, 255, 255, 0.95) !important;
-    }
-
-    .gojira-theme .btn-outline {
-      border-color: rgba(255, 255, 255, 0.12);
-      color: rgba(255, 255, 255, 0.92);
-    }
-
-    /* Accent badges */
-    .gojira-theme .badge {
-      background: rgba(255, 255, 255, 0.06);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    /* Door branding */
-    .door-brand {
-      font-family: 'Montserrat', sans-serif;
-      text-shadow: 4px 5px 10px rgba(0, 0, 0, 0.45);
-      letter-spacing: -2px;
-    }
-
-    /* Login label styling */
-    .login-label {
-      color: var(--gojira-red);
-      font-weight: 700;
-    }
-
-    /* Header colored flash for smooth transition between themes */
-    #top-nav.header-colored-flash,
-    header.header-colored-flash {
-      background: var(--gojira-grad) !important;
-      color: #fff !important;
-      box-shadow: 0 8px 30px rgba(30, 58, 138, 0.15);
-      transition: background 0.35s ease, color 0.25s ease;
-    }
-
-    /* subtle pulse while flashing */
-    .header-colored-flash .glow {
-      box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
-    }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-  <!-- Update Available Banner (hidden by default) -->
-  <div id="update-banner"
-    class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl mx-auto px-4">
-    <div
-      class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded-lg shadow-md flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="text-lg">🔔</div>
-        <div>
-          <div class="font-bold">New version available</div>
-          <div class="text-sm text-yellow-800">A new version of the portal is available. Refresh to get the latest
-            updates.</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <button id="update-reload-btn" class="bg-yellow-600 text-white px-4 py-2 rounded-md font-semibold">Reload
-          Now</button>
-        <button id="update-dismiss-btn" class="text-sm text-yellow-800 underline">Dismiss</button>
-      </div>
-    </div>
-  </div>
-
   <!-- MAIN PORTAL LOGIN SCREEN -->
-  <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
-    style="perspective: 1500px;">
-
-    <!-- The Split Doors (3D Swing) -->
-    <div
-      class="fixed inset-y-0 left-0 w-1/2 z-50 animate-door-left flex items-center justify-end border-r border-transparent shadow-2xl"
-      style="background: linear-gradient(90deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
-    </div>
-    <div
-      class="fixed inset-y-0 right-0 w-1/2 z-50 animate-door-right flex items-center justify-start border-l border-transparent shadow-2xl"
-      style="background: linear-gradient(270deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);">
-    </div>
-
-    <!-- Revealed Background -->
-    <div class="absolute inset-0 z-0"
-      style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
-
-    <!-- Background Typography Theme (Door Branding) -->
-    <div id="door-brand" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
-      <h1
-        class="door-brand text-[18rem] font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 whitespace-nowrap drop-shadow-lg"
-        style="pointer-events: none; will-change: transform, opacity; transform: translateY(0) rotate(0deg);">
-        G - Gojira</h1>
-    </div>
-
-    <!-- Colored Login Card -->
-    <div id="login-card"
-      class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-60 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
-      style="background-color: rgba(10, 14, 22, 0.97);">
+  <div id="portal-login-screen"
+    class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-slate-800 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4">
       <div class="text-center mb-8">
         <div
-          class="w-20 h-20 bg-gradient-to-br from-red-600 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-4xl mx-auto mb-4 shadow-lg shadow-blue-900/50">
+          class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
           G</div>
-        <h1
-          class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600 drop-shadow-sm">
-          Gojira TP</h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-3 font-semibold tracking-wide uppercase">Training Portal
-          Login</p>
+        <h1 class="text-3xl font-bold text-indigo-600">Gojira TP</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Training Portal Login</p>
       </div>
 
       <form onsubmit="submitLogin(event)">
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2 login-label">Employee ID</label>
+          <label class="block text-sm font-semibold mb-2">Employee ID</label>
           <input id="portal-emp-id" type="text" required placeholder="Enter your Employee ID"
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
         </div>
 
         <div class="mb-6">
-          <label class="block text-sm font-semibold mb-2 login-label">Password</label>
+          <label class="block text-sm font-semibold mb-2">Password</label>
           <input id="portal-password" type="password" required placeholder="Enter your password"
             class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
         </div>
@@ -1649,9 +1353,6 @@
             <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()"
               class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed"
               disabled>Final Submit This Week</button>
-            <button onclick="adminLoadMonthlyDashboard()"
-              class="ml-2 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">Monthly
-              Scorecard 📊</button>
           </div>
           <!-- Hidden native select (kept for backwards compatibility) -->
           <select id="admin-agent-selector" onchange="adminSelectAgentFromDropdown(this)"
@@ -1765,10 +1466,6 @@
         class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition text-sm">
         ✖️ Clear Finalizations
       </button>
-      <button onclick="adminClearEntityWeek()" id="admin-clear-week-btn"
-        class="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition text-sm">
-        🔁 Clear This Week
-      </button>
     </div>
     <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
       <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
@@ -1791,50 +1488,6 @@
 
 
   </div>
-  </div>
-
-  <!-- ADMIN MONTHLY DASHBOARD (NEW) -->
-  <div id="view-admin-monthly" class="app-view bg-white dark:bg-slate-900">
-    <header class="h-16 flex items-center px-6 border-b bg-white dark:bg-slate-800 sticky top-0 z-40">
-      <button onclick="navigateTo('view-admin')" class="font-bold text-slate-500 hover:text-blue-600 mr-4">←
-        Back</button>
-      <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
-    </header>
-
-    <div class="max-w-7xl mx-auto px-6 py-10">
-      <div
-        class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-8 border border-indigo-100 dark:border-slate-700 flex justify-between items-center">
-        <div>
-          <h2 class="text-3xl font-bold mb-2">Team Performance Overview</h2>
-          <p class="text-slate-600 dark:text-slate-400">Aggregated performance for the last 30 days.</p>
-        </div>
-        <div class="text-right">
-          <div class="text-sm font-bold text-slate-500 uppercase">Entity</div>
-          <div class="text-2xl font-bold text-indigo-600" id="admin-monthly-entity-display">--</div>
-        </div>
-      </div>
-
-      <div
-        class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs font-bold">
-              <tr>
-                <th class="p-6 text-center w-16">#</th>
-                <th class="p-6">Agent Name</th>
-                <th class="p-6 text-center">Total Audits</th>
-                <th class="p-6 text-center">Fatal Errors</th>
-                <th class="p-6 text-center">Avg Score</th>
-                <th class="p-6 text-center">Performance</th>
-              </tr>
-            </thead>
-            <tbody id="admin-monthly-table-body" class="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
-              <!-- JS Populates this -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- AGENT QUALITY ASSURANCE CHECKLIST -->
@@ -2125,12 +1778,6 @@
             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
         </div>
 
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-2">Password</label>
-          <input id="login-modal-password" type="password" placeholder="Enter your password"
-            class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700">
-        </div>
-
         <button type="submit"
           class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Login</button>
       </form>
@@ -2203,163 +1850,99 @@
   </div>
 
   <script>
-    // ===== PORTAL LOGIN SYSTEM (Consolidated) =====
+    // ===== PORTAL LOGIN SYSTEM =====
     let currentSessionUser = null;
 
+    // Initialize portal login on page load
     function initPortal() {
-      // 1. Initialize Passwords
       const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
       if (!Object.keys(savedPasswords).length) {
+        // Initialize all users with default password "1234"
         const allUsers = {};
-        USER_DB.forEach(user => allUsers[user.id] = '1234');
-        localStorage.setItem('gojira_passwords', JSON.stringify(allUsers));
-      } else {
-        // Add default for new users
-        let updated = false;
         USER_DB.forEach(user => {
-          if (!savedPasswords[user.id]) { savedPasswords[user.id] = '1234'; updated = true; }
+          allUsers[user.id] = '1234'; // Default password
         });
-        if (updated) localStorage.setItem('gojira_passwords', JSON.stringify(savedPasswords));
+        localStorage.setItem('gojira_passwords', JSON.stringify(allUsers));
       }
 
-      // 2. Check Session
+      // Check if already logged in
       const sessionUser = localStorage.getItem('gojira_session_user');
       if (sessionUser) {
         try {
           currentSessionUser = JSON.parse(sessionUser);
-          console.info('[initPortal] Restored session for', currentSessionUser.id);
-
-          // Restore global user refs immediately
-          currentUser = currentSessionUser;
-          if (currentSessionUser.role === 'admin') adminCurrentEntity = currentSessionUser.entity || 'ALL';
-          if (currentSessionUser.role === 'reviewer') reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
-
-          // Show Content
+          console.info('[initPortal] Restored session for', currentSessionUser.id, currentSessionUser.role);
+          // Restore role-specific UI and state
+          if (currentSessionUser.role === 'admin') {
+            currentUser = currentSessionUser;
+            adminCurrentEntity = currentSessionUser.entity || 'ALL';
+            const welcomeText = document.getElementById('admin-welcome-text');
+            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+            adminLoadAgents();
+          } else if (currentSessionUser.role === 'reviewer') {
+            currentUser = currentSessionUser;
+            reviewerCurrentEntity = currentSessionUser.entity || 'BharatLoan';
+            adminCurrentEntity = reviewerCurrentEntity; // ensure agents load correctly
+            const welcomeText = document.getElementById('reviewer-welcome-text');
+            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+            const entityDisplay = document.getElementById('reviewer-entity-display');
+            if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
+            adminLoadAgents();
+          } else {
+            currentUser = currentSessionUser;
+          }
           showPortalContent();
         } catch (err) {
-          console.error('[initPortal] invalid session', err);
+          console.error('[initPortal] invalid session data', err);
         }
       }
     }
 
+
+    // Portal Login Function
     function showPortalContent() {
-      console.log('[showPortalContent] triggered');
-      try {
-        // FORCE HIDE LOGIN
-        const loginScreen = document.getElementById('portal-login-screen');
-        if (loginScreen) {
-          loginScreen.classList.add('hidden');
-          loginScreen.style.display = 'none'; // CRITICAL FIX
-        }
+      document.getElementById('portal-login-screen').classList.add('hidden');
+      document.getElementById('top-nav').classList.remove('hidden');
 
-        const topNav = document.getElementById('top-nav');
-        if (topNav) topNav.classList.remove('hidden');
+      // Set user greeting on home page
+      const firstName = currentSessionUser.name.split(' ')[0];
+      document.getElementById('home-user-greeting').innerText = `Hi ${firstName}`;
 
-        // Set Greeting
-        if (currentSessionUser && currentSessionUser.name) {
-          const firstName = currentSessionUser.name.split(' ')[0] || 'User';
-          const greeting = document.getElementById('home-user-greeting');
-          if (greeting) greeting.innerText = `Hi ${firstName}`;
-        }
+      // Filter entities display based on user
+      filterEntitiesDisplay();
+      filterResourcesQACard(); // Set QA card visibility based on user role
 
-        // Run Filters
-        try { filterEntitiesDisplay(); } catch (e) { }
-        try { filterResourcesQACard(); } catch (e) { }
-        try {
-          // Admin headers
-          if (currentSessionUser.role === 'admin') {
-            const adminWelcome = document.getElementById('admin-welcome-text');
-            if (adminWelcome) adminWelcome.innerText = `Welcome ${currentSessionUser.name}`;
-            adminLoadAgents();
-          }
-          // Reviewer headers
-          if (currentSessionUser.role === 'reviewer') {
-            const revWelcome = document.getElementById('reviewer-welcome-text');
-            if (revWelcome) revWelcome.innerText = `Welcome ${currentSessionUser.name}`;
-            adminLoadAgents();
-          }
-        } catch (e) { }
+      // Set currentUser and currentEntity for all users
+      currentUser = currentSessionUser;
+      currentEntity = currentSessionUser.entity;
 
-        // Set global refs again to be safe
-        currentUser = currentSessionUser;
-        if (currentSessionUser) currentEntity = currentSessionUser.entity;
-
-        // Navigate Home
-        try {
-          navigateTo('view-home');
-        } catch (e) {
-          console.error('navigateTo error', e);
-          document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-          const home = document.getElementById('view-home');
-          if (home) home.classList.add('active');
-        }
-      } catch (err) {
-        console.error('[showPortalContent] critical error', err);
-        // Emergency Override
-        const loginScreen = document.getElementById('portal-login-screen');
-        if (loginScreen) loginScreen.style.display = 'none';
-
-        document.getElementById('view-home')?.classList.add('active');
-        document.getElementById('top-nav')?.classList.remove('hidden');
-      }
+      // Route all users to home page
+      navigateTo('view-home');
     }
 
+    // Portal Logout
     function portalLogout() {
       currentSessionUser = null;
       localStorage.removeItem('gojira_session_user');
-      window.location.reload(); // Simple reload to clear state and show login
+
+      // Reset user greeting
+      document.getElementById('home-user-greeting').innerText = 'Hi Guest';
+
+      // Clear all forms
+      document.getElementById('portal-emp-id').value = '';
+      document.getElementById('portal-password').value = '';
+      document.getElementById('change-pass-emp-id').value = '';
+      document.getElementById('change-pass-current').value = '';
+      document.getElementById('change-pass-new').value = '';
+
+      // Show login screen
+      document.getElementById('portal-login-screen').classList.remove('hidden');
+      document.getElementById('top-nav').classList.add('hidden');
+
+      // Hide all views
+      document.querySelectorAll('.app-view').forEach(view => {
+        view.classList.remove('active');
+      });
     }
-
-    function submitLogin(event) {
-      event.preventDefault();
-      const empId = document.getElementById('portal-emp-id').value.trim();
-      const pass = document.getElementById('portal-password').value.trim();
-
-      if (!empId) return alert('Please enter Employee ID');
-
-      const user = USER_DB.find(u => u.id === empId);
-      if (!user) return alert('Invalid Employee ID');
-
-      const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
-      const correctPass = savedPasswords[empId] || '1234';
-
-      if (pass !== correctPass) return alert('Invalid Password');
-
-      // Success
-      currentSessionUser = { ...user };
-      localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
-
-      // Theme
-      setTheme('dark');
-
-      showPortalContent();
-    }
-
-    window.onload = () => {
-      // Theme
-      try { setTheme(localStorage.getItem('theme') || 'light'); } catch (e) { }
-
-      // Animations
-      try {
-        const doorBrandEl = document.getElementById('door-brand');
-        const leftDoor = document.querySelector('.animate-door-left');
-
-        if (doorBrandEl && leftDoor) {
-          // Trigger animation sequence
-          setTimeout(() => {
-            doorBrandEl.querySelector('.door-brand')?.classList.add('door-descend');
-          }, 1500);
-
-          setTimeout(() => {
-            doorBrandEl.classList.add('moved');
-            document.getElementById('login-card')?.classList.add('raised');
-          }, 3000);
-        }
-      } catch (e) { }
-
-      // Initialize
-      initPortal();
-    };
 
     // Change Password Modal Functions
     function showChangePasswordModal() {
@@ -3612,8 +3195,8 @@ Reviewer: ${review.reviewerId}
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
       // Safe Trim Comparison
-      const currentAgentId = String(currentUser.id).trim().toLowerCase();
-      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === currentAgentId);
+      const currentAgentId = String(currentUser.id).trim();
+      const agentReviews = reviews.filter(r => String(r.agentId).trim() === currentAgentId);
 
       const recentReviews = agentReviews.filter(r => {
         // Try parsing ISO date first, then fallback
@@ -3750,8 +3333,9 @@ Reviewer: ${review.reviewerId}
             <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="adminViewNotificationComment('${comment.reviewId}')">
               <div class="flex items-start justify-between">
                 <div class="flex-1">
-                  <h3 class="font-bold text-orange-900 dark:text-orange-200">${comment.authorName} commented on review</h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Review Date: ${comment.date}</p>
+                  <h3 class="font-bold text-orange-900 dark:text-orange-200">New Agent Reply</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">From: ${comment.authorName}</p>
+                  <p class="text-sm text-slate-600 dark:text-slate-400">Date: ${comment.date}</p>
                   <p class="text-sm mt-2 text-slate-700 dark:text-slate-300 line-clamp-2">"${comment.text.substring(0, 80)}..."</p>
                 </div>
                 <span class="bg-orange-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
@@ -3888,7 +3472,7 @@ Reviewer: ${review.reviewerId}
         return; // Only for agents
       }
 
-      const agentId = String(currentSessionUser.id).trim().toLowerCase(); // Normalize Agent ID
+      const agentId = String(currentSessionUser.id).trim(); // Trimming for safety
       const agentName = currentSessionUser.name;
 
       // Set welcome text
@@ -3898,7 +3482,7 @@ Reviewer: ${review.reviewerId}
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
 
       // Filter reviews for current agent only (robust comparison)
-      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === agentId);
+      const agentReviews = reviews.filter(r => String(r.agentId).trim() === agentId);
 
       // Calculate stats
       const totalReviews = agentReviews.length;
@@ -4309,41 +3893,22 @@ Reviewer: ${review.reviewerId}
       `).join('');
     }
 
-    function setTheme(mode) {
-      // mode: 'light' | 'dark'
+    function toggleTheme() {
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
       const text = document.getElementById('theme-text');
 
-      if (mode === 'dark') {
-        html.classList.add('dark');
-        // Slight red mix in dark mode is handled by CSS (see .dark rules)
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
         icon.innerText = '🌙';
         text.innerText = 'Dark';
+        localStorage.setItem('theme', 'light');
       } else {
-        html.classList.remove('dark');
+        html.classList.add('dark');
         icon.innerText = '☀️';
         text.innerText = 'Light';
+        localStorage.setItem('theme', 'dark');
       }
-
-      localStorage.setItem('theme', mode);
-    }
-
-    function flashHeaderColored(duration = 700) {
-      const topNav = document.getElementById('top-nav');
-      const headerEl = document.querySelector('header');
-      const els = [topNav, headerEl].filter(Boolean);
-      els.forEach(el => el.classList.add('header-colored-flash'));
-      setTimeout(() => els.forEach(el => el.classList.remove('header-colored-flash')), duration);
-    }
-
-    function toggleTheme() {
-      const cur = localStorage.getItem('theme') || 'light';
-      const next = cur === 'light' ? 'dark' : 'light';
-
-      // Show a brief colored flash as a transition effect between themes
-      flashHeaderColored(500);
-      setTimeout(() => setTheme(next), 180);
     }
 
     function toggleDropdown(entity) {
@@ -4415,7 +3980,7 @@ Reviewer: ${review.reviewerId}
       { id: 'BL/GG/25/1022', name: 'Akshat', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1055', name: 'KAJAL', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1134', name: 'Isha', role: 'agent', entity: 'BharatLoan' },
-      { id: 'BL/GG/25/1233', name: 'BL/GG/25/1233', role: 'agent', entity: 'BharatLoan' },
+
       { id: 'BL/GG/25/1240', name: 'KUNDAN KUMAR', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/25/1338', name: 'MOHIT KUMAR', role: 'agent', entity: 'BharatLoan' },
       { id: 'BL/GG/26/042', name: 'MOHD. KAIF', role: 'agent', entity: 'BharatLoan' },
@@ -4445,10 +4010,7 @@ Reviewer: ${review.reviewerId}
       { id: 'R112/GG/25/725', name: 'Kusum sharma', role: 'agent', entity: 'Rupee112' },
       { id: 'RDA/GG/25/038', name: 'Nippi', role: 'agent', entity: 'Loan112' },
       { id: 'R112/GG/23/168', name: 'Ruksar', role: 'agent', entity: 'Rupee112' },
-      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
-
-      // RUPEE ON TIME AGENTS
-      { id: 'RT/GG/25/1233', name: 'Swati', role: 'agent', entity: 'RupeeOnTime' }
+      { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' }
     ];
 
     function hideLogin() {
@@ -4456,9 +4018,146 @@ Reviewer: ${review.reviewerId}
       document.getElementById('empid').value = '';
     }
 
+    function submitLogin(event) {
+      try {
+        event.preventDefault();
+        const empId = document.getElementById('portal-emp-id').value.trim();
+        const password = document.getElementById('portal-password').value;
+        console.debug('[submitLogin] empId:', empId);
 
+        // Check if employee exists
+        const user = USER_DB.find(u => u.id === empId);
+        if (!user) {
+          console.warn('[submitLogin] Invalid Employee ID:', empId);
+          alert('❌ Invalid Employee ID');
+          return;
+        }
 
+        // Check password
+        const savedPasswords = JSON.parse(localStorage.getItem('gojira_passwords') || '{}');
+        console.debug('[submitLogin] savedPasswords sample:', Object.keys(savedPasswords).slice(0, 5));
+        const correctPassword = savedPasswords[empId] || '1234';
 
+        if (password !== correctPassword) {
+          console.warn('[submitLogin] Invalid Password for', empId);
+          alert('❌ Invalid Password');
+          return;
+        }
+
+        // Login successful - save session
+        currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
+        localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
+        console.info('[submitLogin] Login successful for', user.id, user.role);
+
+        // Clear login form
+        document.getElementById('portal-emp-id').value = '';
+        document.getElementById('portal-password').value = '';
+
+        // Route users based on role
+        if (user.role === 'admin') {
+          // For admin
+          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'ALL';
+          adminCurrentEntity = selectedEntity;
+          currentUser = user;
+          currentEntity = user.entity;
+
+          // Set welcome message with admin name
+          const welcomeText = document.getElementById('admin-welcome-text');
+          if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
+
+          showPortalContent();
+          navigateTo('view-home');
+        } else if (user.role === 'reviewer') {
+          // For reviewer
+          const selectedEntity = document.getElementById('login-entity')?.value || currentEntity || 'BharatLoan';
+          reviewerCurrentEntity = selectedEntity;
+          adminCurrentEntity = selectedEntity; // ensure agent lists populate
+          currentUser = user;
+          currentEntity = user.entity;
+
+          // Set welcome message with reviewer name
+          const welcomeText = document.getElementById('reviewer-welcome-text');
+          if (welcomeText) welcomeText.innerText = `Welcome ${user.name}`;
+
+          // Set entity display
+          const entityDisplay = document.getElementById('reviewer-entity-display');
+          if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
+
+          // Populate agent list for reviewer
+          adminLoadAgents();
+
+          showPortalContent();
+          navigateTo('view-home');
+        } else if (user.role === 'agent') {
+          // For agents
+          currentUser = user;
+          currentEntity = user.entity;
+
+          // Update Header Title
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+
+          // Update Banner Name
+          const bannerName = document.getElementById('agent-name-display');
+          if (bannerName) bannerName.innerText = user.name;
+
+          showPortalContent();
+          navigateTo('view-home');
+        }
+      } catch (err) {
+        console.error('[submitLogin] error', err);
+        alert('An unexpected error occurred during login. Check console for details.');
+      }
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').innerText = '☀️';
+        document.getElementById('theme-text').innerText = 'Light';
+      }
+
+      // Safety: Ensure session persists across refreshes. 
+      try {
+        const sessionUserRaw = localStorage.getItem('gojira_session_user');
+        if (sessionUserRaw) {
+          currentSessionUser = JSON.parse(sessionUserRaw);
+          console.info('[onload] Restoring session from localStorage for', currentSessionUser?.id);
+
+          // Restore global variables based on role
+          currentUser = currentSessionUser;
+          // initPortal will be called but we will override its default "show login" behavior if we have a user
+        }
+      } catch (e) {
+        console.warn('[onload] failed to restore session safely', e);
+      }
+
+      // Initialize portal login system
+      // If we have a user, this function should respect it or we override it immediately after
+      initPortal();
+
+      if (currentSessionUser) {
+        showPortalContent();
+        if (currentSessionUser.role === 'admin') {
+          adminCurrentEntity = currentSessionUser.entity === 'ALL' ? (adminCurrentEntity || 'BharatLoan') : currentSessionUser.entity;
+          adminLoadAgents();
+        } else if (currentSessionUser.role === 'reviewer') {
+          adminCurrentEntity = currentSessionUser.entity === 'ALL' ? (adminCurrentEntity || 'BharatLoan') : currentSessionUser.entity;
+          adminLoadAgents();
+        } else if (currentSessionUser.role === 'agent') {
+          // Agent specific init if needed
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome ${currentSessionUser.name}`;
+          const bannerName = document.getElementById('agent-name-display');
+          if (bannerName) bannerName.innerText = currentSessionUser.name;
+        }
+
+        // Navigate to home or last view? Default to home for now to be safe, or stay on current if possible.
+        // User request: "refresh ... it shouldn't be logout"
+        // keeping it simple: just show portal content.
+      }
+    }
 
     // ===== NEW ADMIN DASHBOARD FUNCTIONS =====
     let adminCurrentEntity = '';
@@ -4849,14 +4548,14 @@ Reviewer: ${review.reviewerId}
 
     function startQualityReviewWithType(type) {
       console.debug('[startQualityReviewWithType] type=', type, 'adminCurrentAgent=', adminCurrentAgent, 'selectedAgentForReview=', selectedAgentForReview?.id);
-      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) { }
+      try { document.getElementById('agent-process-modal').classList.add('hidden'); } catch (e) {}
 
       if (!adminCurrentAgent && selectedAgentForReview) {
         adminCurrentAgent = selectedAgentForReview.id;
         adminCurrentAgentName = selectedAgentForReview.name;
       }
 
-      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) { }
+      try { document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName; } catch (e) {}
 
       // Reuse the existing adminSelectReviewType flow
       adminSelectReviewType(type);
@@ -5297,48 +4996,11 @@ Reviewer: ${review.reviewerId}
     function adminViewReview(index) {
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const review = reviews[index];
-      if (!review) return;
 
-      const modal = document.getElementById('admin-review-detail-modal');
-
-      // Populate fields
-      document.getElementById('admin-review-detail-agent').textContent = review.agentName || 'Unknown Agent';
-      document.getElementById('admin-review-detail-type').textContent = review.reviewType === 'voice' ? '🎙️ Voice Call' : '💬 Chat/Email';
-      document.getElementById('admin-review-detail-date').textContent = review.displayDate || review.date;
-      document.getElementById('admin-review-detail-score').textContent = review.score;
-      document.getElementById('admin-review-detail-observation').textContent = review.observation;
-
-      // File or ID
-      if (review.reviewType === 'voice') {
-        document.getElementById('admin-review-detail-file-section').classList.remove('hidden');
-        document.getElementById('admin-review-detail-id-section').classList.add('hidden');
-        document.getElementById('admin-review-detail-file-name').textContent = review.fileName || 'N/A';
-        document.getElementById('admin-review-detail-file-link').onclick = () => openFileContent(review.fileContent, review.fileName);
-      } else {
-        document.getElementById('admin-review-detail-file-section').classList.add('hidden');
-        document.getElementById('admin-review-detail-id-section').classList.remove('hidden');
-        const idText = (review.emailId ? 'Email: ' + review.emailId : '') + (review.emailId && review.chatId ? ' | ' : '') + (review.chatId ? 'Chat: ' + review.chatId : '');
-        document.getElementById('admin-review-detail-id-value').textContent = idText || 'N/A';
+      const choice = confirm(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}\n\nClick OK to open the file.`);
+      if (choice && review.fileContent) {
+        openFileContent(review.fileContent, review.fileName);
       }
-
-      // Comments
-      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === review.id);
-      const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No comments yet</p>' : comments.map(c => `
-        <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2 ${c.authorId === (currentUser?.id || 'admin') ? 'ml-8 bg-blue-50 dark:bg-blue-900/20' : 'mr-8'}">
-          <div class="flex justify-between items-center mb-1">
-             <span class="font-bold text-sm ${c.authorId === (currentUser?.id || 'admin') ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}">${c.authorName || 'User'}</span>
-             <span class="text-xs text-slate-400">${c.date}</span>
-          </div>
-          <div class="text-sm text-slate-800 dark:text-slate-200">${c.text}</div>
-        </div>
-      `).join('');
-      document.getElementById('admin-review-detail-comments').innerHTML = commentsHtml;
-
-      modal.classList.remove('hidden');
-    }
-
-    function closeAdminReviewDetailModal() {
-      document.getElementById('admin-review-detail-modal').classList.add('hidden');
     }
 
     let currentEditIndex = -1;
@@ -5537,12 +5199,6 @@ Reviewer: ${review.reviewerId}
         backups[key] = localStorage.getItem(key);
       });
 
-      // Include adminReviews, pending reviews, and performance data in backups so undo can restore removed data
-      backups['adminReviews'] = localStorage.getItem('adminReviews');
-      backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
-      backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
-      backups['gojira_performance'] = localStorage.getItem('gojira_performance');
-
       // Save buffer to localStorage as undo buffer
       const undoBuffer = { id: buffer.id, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, backups };
       localStorage.setItem('finalizationUndoBuffer', JSON.stringify(undoBuffer));
@@ -5552,218 +5208,40 @@ Reviewer: ${review.reviewerId}
         unmarkAgentWeekComplete('ALL', agentId);
       });
 
-      // Remove final reviews for affected agents and reset weeks as requested
-      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const agentsSet = new Set(buffer.agents.map(a => String(a)));
-      let removedCount = 0;
-
-      if (buffer.entity === 'ALL') {
-        // Remove all reviews for these agents across all entities
-        const filtered = reviews.filter(r => !agentsSet.has(String(r.agentId)));
-        removedCount = reviews.length - filtered.length;
-        reviews = filtered;
-      } else {
-        // Remove reviews for these agents within the specified entity
-        const filtered = reviews.filter(r => !(r.entity === buffer.entity && agentsSet.has(String(r.agentId))));
-        removedCount = reviews.length - filtered.length;
-        reviews = filtered;
-
-        // Reset this entity's week to 1 and clear completed agents
-        try {
-          const state = getEntityWeekState(buffer.entity);
-          state.currentWeek = 1;
-          state.completedAgents = {};
-          setEntityWeekState(buffer.entity, state);
-        } catch (e) {
-          console.warn('[clearFinalizations] failed resetting week for entity', buffer.entity, e);
-        }
-      }
-
-      localStorage.setItem('adminReviews', JSON.stringify(reviews));
-
-      // Remove any pending reviews for these agents
-      const pending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
-      let pendingRemoved = 0;
-      buffer.agents.forEach(agentId => {
-        if (pending[agentId]) {
-          pendingRemoved += (pending[agentId] || []).length;
-          delete pending[agentId];
-        }
-      });
-      localStorage.setItem('pending_agent_reviews', JSON.stringify(pending));
-
-      // Remove performance scores for these agents and their current performance records
-      let perfScores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
-      const perfRemoved = perfScores.filter(s => agentsSet.has(String(s.agentId))).length;
-      perfScores = perfScores.filter(s => !agentsSet.has(String(s.agentId)));
-      localStorage.setItem('gojira_performance_scores', JSON.stringify(perfScores));
-
-      const perfDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
-      buffer.agents.forEach(agentId => {
-        if (perfDb[agentId]) delete perfDb[agentId];
-      });
-      localStorage.setItem('gojira_performance', JSON.stringify(perfDb));
-
-      // If clearing ALL entities, reset all entityWeekState currentWeek to 1 and clear completedAgents
-      if (buffer.entity === 'ALL') {
-        Object.keys(localStorage).forEach(key => {
-          if (!key.startsWith('entityWeekState_')) return;
-          try {
-            const state = JSON.parse(localStorage.getItem(key) || '{}');
-            state.currentWeek = 1;
-            state.completedAgents = {};
-            localStorage.setItem(key, JSON.stringify(state));
-          } catch (e) {
-            console.warn('[clearFinalizations] failed resetting week for key', key, e);
-          }
-        });
-      }
       reconcileFinalizeFlags();
 
       // Push audit entry
       const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
-      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', removedReviews: removedCount, removedPending: pendingRemoved, removedPerformanceScores: (typeof perfRemoved !== 'undefined' ? perfRemoved : 0), timestamp: new Date().toISOString() });
-      localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
-    }
-
-    // Clear current week for a specific entity (removes reviews/pending/perf for that entity and resets week to 1)
-    function adminClearEntityWeek(entity) {
-      if (!entity) entity = adminCurrentEntity || prompt('Enter entity name to clear week (e.g., RupeeOnTime):');
-      if (!entity) return;
-
-      // Normalize entity name by matching existing entityWeekState keys or USER_DB entries (case-insensitive)
-      const lower = entity.toLowerCase();
-      let matchedEntity = entity;
-      // Try to find existing entityWeekState_<suffix> key that matches case-insensitively
-      Object.keys(localStorage).forEach(k => {
-        if (!k.startsWith('entityWeekState_')) return;
-        const suffix = k.replace('entityWeekState_', '');
-        if (suffix && suffix.toLowerCase() === lower) matchedEntity = suffix;
-      });
-      // Try to match against USER_DB entities if nothing found
-      if (matchedEntity === entity) {
-        const ud = USER_DB.find(u => u.entity && u.entity.toLowerCase() === lower);
-        if (ud) matchedEntity = ud.entity;
-      }
-
-      if (!confirm(`Clear all data for current week of entity "${matchedEntity}"? This will remove submitted reviews, pending reviews and performance scores for agents under ${matchedEntity} and reset the week to 1.`)) return;
-
-      // Backup entityWeekState and relevant storages for undo
-      const backups = {};
-      try { backups[`entityWeekState_${matchedEntity}`] = localStorage.getItem(`entityWeekState_${matchedEntity}`); } catch (e) { }
-      backups['adminReviews'] = localStorage.getItem('adminReviews');
-      backups['pending_agent_reviews'] = localStorage.getItem('pending_agent_reviews');
-      backups['gojira_performance_scores'] = localStorage.getItem('gojira_performance_scores');
-      backups['gojira_performance'] = localStorage.getItem('gojira_performance');
-
-      // Build agent list for this entity (case-insensitive match)
-      const agentList = USER_DB.filter(u => u.role === 'agent' && u.entity && u.entity.toLowerCase() === matchedEntity.toLowerCase()).map(a => a.id);
-
-      // Save undo buffer
-      const buf = { id: `clearweek_${Date.now()}_${Math.floor(Math.random() * 1000)}`, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: matchedEntity, agents: agentList, backups };
-      localStorage.setItem('finalizationUndoBuffer', JSON.stringify(buf));
-
-      // Perform removals
-      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const beforeCount = reviews.length;
-      reviews = reviews.filter(r => !(r.entity && r.entity.toLowerCase() === matchedEntity.toLowerCase()));
-      const removedCount = beforeCount - reviews.length;
-      localStorage.setItem('adminReviews', JSON.stringify(reviews));
-
-      // Remove pending reviews for agents of this entity
-      const pending = JSON.parse(localStorage.getItem('pending_agent_reviews') || '{}');
-      let pendingRemoved = 0;
-      agentList.forEach(agentId => {
-        if (pending[agentId]) {
-          pendingRemoved += (pending[agentId] || []).length;
-          delete pending[agentId];
-        }
-      });
-      localStorage.setItem('pending_agent_reviews', JSON.stringify(pending));
-
-      // Remove performance entries for these agents
-      let perfScores = JSON.parse(localStorage.getItem('gojira_performance_scores') || '[]');
-      const perfRemoved = perfScores.filter(s => agentList.includes(String(s.agentId))).length;
-      perfScores = perfScores.filter(s => !agentList.includes(String(s.agentId)));
-      localStorage.setItem('gojira_performance_scores', JSON.stringify(perfScores));
-
-      const perfDb = JSON.parse(localStorage.getItem('gojira_performance') || '{}');
-      agentList.forEach(agentId => { if (perfDb[agentId]) delete perfDb[agentId]; });
-      localStorage.setItem('gojira_performance', JSON.stringify(perfDb));
-
-      // Reset the entity week to 1 and clear completed agents
-      try {
-        const state = getEntityWeekState(matchedEntity);
-        state.currentWeek = 1;
-        state.completedAgents = {};
-        state.finalizedWeeks = [];
-        setEntityWeekState(matchedEntity, state);
-      } catch (e) {
-        console.warn('[clearEntityWeek] failed resetting week for entity', matchedEntity, e);
-      }
-
-      // Unmark agents globally
-      agentList.forEach(aid => unmarkAgentWeekComplete('ALL', aid));
-
-      reconcileFinalizeFlags();
-
-      // Audit and UI updates
-      const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
-      history.unshift({ id: buf.id, actor: buf.actor, entity: buf.entity, agents: buf.agents, action: 'clear_week', removedReviews: removedCount, removedPending: pendingRemoved, removedPerformanceScores: perfRemoved, timestamp: new Date().toISOString() });
+      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', timestamp: new Date().toISOString() });
       localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
 
       // Refresh UI
       renderAdminAgentDropdown();
       checkAndEnableWeekFinalButton();
       adminLoadReviewsList();
+      updateClearFinalizationsButton();
 
-      // Show undo toast using existing UI
+      // Show undo toast
       const toast = document.getElementById('finalization-undo-toast');
       const text = document.getElementById('finalization-undo-text');
       const btn = document.getElementById('finalization-undo-btn');
-      text.innerText = `Cleared current week for ${matchedEntity}. Removed ${removedCount} reviews, ${pendingRemoved} pending reviews and ${perfRemoved} performance score(s).`;
+      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s).`;
       toast.classList.remove('hidden');
-      btn.onclick = () => undoClearFinalizations(buf.id);
+
+      // Wire undo button
+      btn.onclick = () => undoClearFinalizations(buffer.id);
 
       // Auto-expire buffer after 10s
       setTimeout(() => {
         const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
-        if (existing && existing.id === buf.id) {
+        if (existing && existing.id === buffer.id) {
           localStorage.removeItem('finalizationUndoBuffer');
           dismissFinalizationUndoToast();
         }
       }, 10000);
 
-      alert(`Current week data for ${matchedEntity} cleared and set to Week 1.`);
-    }
-
-    // Refresh UI
-    renderAdminAgentDropdown();
-    checkAndEnableWeekFinalButton();
-    adminLoadReviewsList();
-    updateClearFinalizationsButton();
-
-    // Show undo toast
-    const toast = document.getElementById('finalization-undo-toast');
-    const text = document.getElementById('finalization-undo-text');
-    const btn = document.getElementById('finalization-undo-btn');
-    text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s). Removed ${removedCount || 0} review(s), ${pendingRemoved || 0} pending reviews and ${perfRemoved || 0} performance score(s). Weeks reset to Week 1.`;
-    toast.classList.remove('hidden');
-
-    // Wire undo button
-    btn.onclick = () => undoClearFinalizations(buffer.id);
-
-    // Auto-expire buffer after 10s
-    setTimeout(() => {
-      const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
-      if (existing && existing.id === buffer.id) {
-        localStorage.removeItem('finalizationUndoBuffer');
-        dismissFinalizationUndoToast();
-      }
-    }, 10000);
-
-    // Save the buffer reference in memory too
-    _pendingFinalizationClearBuffer = { id: buffer.id };
+      // Save the buffer reference in memory too
+      _pendingFinalizationClearBuffer = { id: buffer.id };
     }
 
     function undoClearFinalizations(bufferId) {
@@ -5969,8 +5447,7 @@ Reviewer: ${review.reviewerId}
       }
 
       // Load comments for this review
-      const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
-      const comments = allComments.filter(c => c.reviewId === reviewId);
+      const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === reviewId);
       const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No replies yet</p>' : comments.map(c => `
         <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2">
           <div class="font-semibold text-sm">${c.authorName || 'Agent'}</div>
@@ -5980,40 +5457,12 @@ Reviewer: ${review.reviewerId}
       `).join('');
       document.getElementById('review-detail-comments').innerHTML = commentsHtml;
 
-      // Check if agent has already replied
-      const replyInput = document.getElementById('review-detail-reply-input');
-      const replyBtn = document.getElementById('review-detail-reply-btn');
-
-      const hasReplied = comments.some(c => c.authorId === (currentUser.id || currentSessionUser.id));
-
-      if (hasReplied && (currentUser.role === 'agent')) {
-        replyInput.disabled = true;
-        replyInput.placeholder = "You have already replied to this review.";
-        replyBtn.disabled = true;
-        replyBtn.innerHTML = "Reply Sent ✅";
-        replyBtn.classList.add('opacity-50', 'cursor-not-allowed');
-      } else {
-        replyInput.disabled = false;
-        replyInput.placeholder = "Write your reply...";
-        replyBtn.disabled = false;
-        replyBtn.innerHTML = "📤 Send Reply";
-        replyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        // Set reply handler
-        replyBtn.onclick = () => agentReplyFromModal(reviewId);
-      }
-
+      // Set reply handler
+      document.getElementById('review-detail-reply-btn').onclick = () => agentReplyFromModal(reviewId);
       document.getElementById('agent-review-detail-modal').classList.remove('hidden');
     }
 
     function agentReplyFromModal(reviewId) {
-      const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
-      const alreadyReplied = allComments.some(c => c.reviewId === reviewId && c.authorId === (currentUser.id || currentSessionUser.id));
-
-      if (alreadyReplied && (currentUser.role === 'agent')) {
-        alert('You have already replied to this review.');
-        return;
-      }
-
       const textarea = document.getElementById('review-detail-reply-input');
       const text = textarea.value.trim();
       if (!text) return alert('Please write a reply first.');
@@ -6197,176 +5646,11 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    // ===== ADMIN MONTHLY DASHBOARD FUNCTIONS =====
-    function adminLoadMonthlyDashboard() {
-      // Navigate to view
-      navigateTo('view-admin-monthly');
-
-      const entity = adminCurrentEntity || 'ALL';
-      document.getElementById('admin-monthly-entity-display').textContent = entity;
-
-      const tbody = document.getElementById('admin-monthly-table-body');
-      tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Loading performance data...</td></tr>';
-
-      // 1. Get Agents
-      let agents = USER_DB.filter(u => u.role === 'agent');
-      if (entity !== 'ALL') {
-        agents = agents.filter(u => u.entity === entity);
-      }
-
-      // 2. Get Reviews & Date Range
-      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      // 3. Process Data
-      const rows = agents.map(agent => {
-        // Filter reviews for this agent within 30 days
-        const agentId = String(agent.id).trim().toLowerCase();
-
-        const agentReviews = reviews.filter(r => {
-          const rAgentId = String(r.agentId).trim().toLowerCase();
-          if (rAgentId !== agentId) return false;
-
-          // Date check
-          const d = new Date(r.date);
-          if (isNaN(d.getTime())) return false; // skip invalid dates
-          return d >= thirtyDaysAgo && d <= now;
-        });
-
-        const totalAudits = agentReviews.length;
-        const avgScore = totalAudits > 0 ? Math.round(agentReviews.reduce((sum, r) => sum + r.score, 0) / totalAudits) : 0;
-        const fatalCount = agentReviews.filter(r => r.score === 0).length;
-
-        // Performace Status
-        let status = 'Pending';
-        let statusClass = 'bg-slate-100 text-slate-600';
-
-        if (totalAudits > 0) {
-          if (avgScore >= 80) { status = 'Excellent'; statusClass = 'bg-emerald-100 text-emerald-700'; }
-          else if (avgScore >= 60) { status = 'Good'; statusClass = 'bg-blue-100 text-blue-700'; }
-          else if (avgScore >= 40) { status = 'Need Improvement'; statusClass = 'bg-amber-100 text-amber-700'; }
-          else { status = 'Critical'; statusClass = 'bg-red-100 text-red-700'; }
-        }
-
-        return {
-          name: agent.name,
-          id: agent.id,
-          audits: totalAudits,
-          fatals: fatalCount,
-          score: avgScore,
-          status: status,
-          statusClass: statusClass
-        };
-      });
-
-      // 4. Render
-      if (rows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">No agents found for this entity.</td></tr>';
-        return;
-      }
-
-      // Sort by score desc
-      rows.sort((a, b) => b.score - a.score);
-
-      tbody.innerHTML = rows.map((row, index) => {
-        // Blank logic for empty audits
-        const showAudits = row.audits === 0 ? '--' : row.audits;
-        const showFatals = row.audits === 0 ? '--' : row.fatals;
-        const showScore = row.audits === 0 ? '--' : row.score + '%';
-        const showStatus = row.audits === 0 ? '<span class="text-slate-400">--</span>' : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>`;
-        const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 50 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
-
-        return `
-        <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
-           <td class="p-6 text-center font-bold text-slate-400">${index + 1}</td>
-           <td class="p-6">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
-              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
-           </td>
-           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
-           <td class="p-6 text-center font-bold ${row.fatals > 0 ? 'text-red-600' : 'text-slate-400'} text-lg">${showFatals}</td>
-           <td class="p-6 text-center">
-              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
-                 ${showScore}
-              </div>
-           </td>
-           <td class="p-6 text-center">
-              ${showStatus}
-           </td>
-        </tr>
-      `}).join('');
-    }
-
     // Load reviews on page load
     window.addEventListener('load', function () {
       adminLoadReviewsList();
       adminLoadFeedbackList();
-
-      // Start update checker once initial admin data is loaded
-      try {
-        startUpdateChecker();
-      } catch (e) {
-        console.warn('[updateChecker] failed to start', e);
-      }
     });
-
-    /* ----------------- Auto-update / cache-refresh checker -----------------
-       It checks the embedded APP_VERSION token in the page and periodically
-       fetches the page with cache: 'no-store' to detect version changes.
-       When a new version is detected it shows a small banner with a reload
-       button so users can refresh to get the latest updates without re-sharing.
-    ----------------------------------------------------------------------- */
-
-    // Helper: extract token like "APP_VERSION: 20260130-001" from page text
-    function _extractAppVersion(text) {
-      const m = text.match(/APP_VERSION:\s*([0-9A-Za-z_.\-]+)/i);
-      return m ? m[1] : null;
-    }
-
-    const _currentAppVersion = _extractAppVersion(document.documentElement.innerHTML) || 'unknown';
-    let _updateCheckerInterval = null;
-
-    function showUpdateBanner() {
-      const banner = document.getElementById('update-banner');
-      if (!banner) return;
-      banner.classList.remove('hidden');
-
-      const reloadBtn = document.getElementById('update-reload-btn');
-      const dismissBtn = document.getElementById('update-dismiss-btn');
-
-      // Attach handlers
-      reloadBtn.onclick = () => location.reload();
-      dismissBtn.onclick = () => banner.classList.add('hidden');
-
-      // Auto-reload after 60s to ensure users get the new version (optional)
-      setTimeout(() => {
-        if (!banner.classList.contains('hidden')) location.reload();
-      }, 60000);
-    }
-
-    async function checkForUpdates() {
-      try {
-        const resp = await fetch(location.href, { cache: 'no-store', credentials: 'same-origin' });
-        if (!resp.ok) return;
-        const text = await resp.text();
-        const remoteVersion = _extractAppVersion(text);
-        if (remoteVersion && remoteVersion !== _currentAppVersion) {
-          console.info('[updateChecker] new version detected', remoteVersion, 'current', _currentAppVersion);
-          showUpdateBanner();
-          // stop further checks once detected
-          if (_updateCheckerInterval) clearInterval(_updateCheckerInterval);
-        }
-      } catch (e) {
-        console.warn('[updateChecker] check failed', e);
-      }
-    }
-
-    function startUpdateChecker() {
-      // Run an immediate check, then poll every 30s
-      checkForUpdates();
-      _updateCheckerInterval = setInterval(checkForUpdates, 30 * 1000);
-    }
 
   </script>
 
@@ -6438,72 +5722,6 @@ Reviewer: ${review.reviewerId}
       <div class="p-6 border-t border-slate-200 dark:border-slate-700">
         <button onclick="closeReviewDetailModal()"
           class="w-full bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-4 rounded-lg">
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Admin Review Detail Modal (NEW) -->
-  <div id="admin-review-detail-modal"
-    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    onclick="if(event.target.id === 'admin-review-detail-modal') closeAdminReviewDetailModal()">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-      onclick="event.stopPropagation()">
-      <div
-        class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-        <h2 class="text-2xl font-bold">Review Details (Admin)</h2>
-        <button onclick="closeAdminReviewDetailModal()" class="text-slate-500 hover:text-slate-700 text-2xl">✕</button>
-      </div>
-
-      <div class="p-6 space-y-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h3 class="text-lg font-bold" id="admin-review-detail-agent">Agent Name</h3>
-            <p class="text-sm text-slate-500" id="admin-review-detail-date">-</p>
-          </div>
-          <div id="admin-review-detail-type" class="text-lg font-bold text-blue-600"></div>
-        </div>
-
-        <div id="admin-review-detail-file-section" class="hidden">
-          <label class="block text-sm font-semibold mb-2">Uploaded File</label>
-          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg flex justify-between items-center">
-            <div id="admin-review-detail-file-name" class="font-semibold">-</div>
-            <button id="admin-review-detail-file-link" class="text-blue-600 underline text-sm font-bold">📥
-              Download/View</button>
-          </div>
-        </div>
-
-        <div id="admin-review-detail-id-section" class="hidden">
-          <label class="block text-sm font-semibold mb-2">Contact ID</label>
-          <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg font-mono text-sm"
-            id="admin-review-detail-id-value">-</div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-2">Observation</label>
-          <div id="admin-review-detail-observation"
-            class="bg-slate-100 dark:bg-slate-700 p-4 rounded-lg whitespace-pre-wrap text-sm">-</div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-2">Score</label>
-          <div class="text-3xl font-bold" id="admin-review-detail-score">-</div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-2">Comments History</label>
-          <div id="admin-review-detail-comments"
-            class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg max-h-60 overflow-y-auto space-y-3">
-            <!-- Comments injected here -->
-          </div>
-        </div>
-      </div>
-
-      <div class="p-6 border-t border-slate-200 dark:border-slate-700">
-        <button onclick="closeAdminReviewDetailModal()"
-          class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition">
           Close
         </button>
       </div>
