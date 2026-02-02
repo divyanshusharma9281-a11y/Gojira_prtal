@@ -329,9 +329,20 @@
 
     /* Zoom-in entrance for home page after login (smoother, slower) */
     @keyframes zoomInEntrance {
-      0% { opacity: 0; transform: scale(0.92) translateY(12px); }
-      60% { opacity: 1; transform: scale(1.012) translateY(4px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
+      0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(12px);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale(1.012) translateY(4px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
 
     .zoom-in-enter {
@@ -459,8 +470,8 @@
             document.addEventListener('mousemove', (e) => {
               mouseX = e.clientX;
               mouseY = e.clientY;
-              // Create a few particles on move for trail effect
-              createParticles(mouseX, mouseY, 2);
+              // Create a denser particle trail for stronger effect
+              createParticles(mouseX, mouseY, 6);
             });
 
             document.addEventListener('mousedown', (e) => {
@@ -478,7 +489,8 @@
               const touch = e.touches[0];
               mouseX = touch.clientX;
               mouseY = touch.clientY;
-              createParticles(mouseX, mouseY, 2);
+              // Denser particles for touch as well
+              createParticles(mouseX, mouseY, 6);
             });
             document.addEventListener('touchstart', (e) => {
               isMouseDown = true;
@@ -496,15 +508,17 @@
               constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                // Smoother motion: low initial speed + friction to damp movement
+                // SPEEDY ITERATION 3: 0.3s - 0.4s duration (approx 20-25 frames @ 60fps)
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.35 + 0.02; // very gentle speed
+                // Faster speed to be visible in short time
+                const speed = Math.random() * 3 + 2;
                 this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed + 0.06; // tiny downward drift
-                this.friction = 0.965; // damping for smooth slow motion
-                // lifetime in frames: 180 - 300 frames (~3s to 5s at 60fps)
-                this.maxLife = this.life = Math.floor(Math.random() * 120 + 180);
-                this.size = Math.random() * 2 + 0.9; // visible but subtle
+                this.vy = Math.sin(angle) * speed + 1.5; // Stronger gravity for fast fall
+                this.friction = 0.94; // Drag to slow them down quickly before vanishing
+
+                // 18 to 28 frames approx (0.3s - 0.45s)
+                this.maxLife = this.life = Math.floor(Math.random() * 10 + 18);
+                this.size = Math.random() * 3 + 1.5;
 
                 // Choose color from palette most of the time, otherwise random HSL
                 if (Math.random() < 0.72) {
@@ -517,14 +531,14 @@
               }
 
               update() {
-                // Apply friction to smooth motion and avoid abrupt stops
+                // Apply friction
                 this.vx *= this.friction;
                 this.vy *= this.friction;
                 this.x += this.vx;
                 this.y += this.vy;
-                // Decrease life by one frame per tick so fade-out happens within maxLife frames
+                // Decrease life
                 this.life -= 1;
-                this.size *= 0.992; // shrink slowly for a smooth trail
+                this.size *= 0.96; // rapid shrink matching short life
               }
 
               draw(ctx) {
@@ -555,15 +569,21 @@
               for (let i = 0; i < count; i++) {
                 particles.push(new Particle(x, y));
               }
+
+              // Safety cap: keep particle array bounded to avoid performance issues
+              const MAX_PARTICLES = 1000;
+              if (particles.length > MAX_PARTICLES) {
+                particles.splice(0, particles.length - MAX_PARTICLES);
+              }
             }
 
             // Animation Loop
             function animate() {
               ctx.clearRect(0, 0, width, height);
 
-              // Continuous stream if mouse is down
+              // Continuous stream if mouse is down (denser)
               if (isMouseDown) {
-                createParticles(mouseX, mouseY, 5); // More particles on hold
+                createParticles(mouseX, mouseY, 12); // Denser particles on hold
               }
 
               // Update and draw particles
@@ -1327,26 +1347,101 @@
       <h1 class="text-3xl font-extrabold mb-12">Quality Assurance Checklist</h1>
 
       <ol class="text-left max-w-2xl mx-auto space-y-6 text-slate-700 dark:text-slate-300">
-        <li onclick="handleChecklistClick('BharatLoan')"
-          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white shadow-lg hover:shadow-blue-500/50 flex items-center gap-4">
-          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">B</span>
-          1. BharatLoan
-        </li>
-        <li onclick="handleChecklistClick('RupeeOnTime')"
-          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-purple-800 text-white shadow-lg hover:shadow-purple-500/50 flex items-center gap-4">
-          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">✔</span>
-          2. RupeeOnTime
-        </li>
-        <li onclick="handleChecklistClick('Rupee112')"
-          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-800 text-white shadow-lg hover:shadow-emerald-500/50 flex items-center gap-4">
-          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">₹</span>
-          3. Rupee112
-        </li>
-        <li onclick="handleChecklistClick('Loan112')"
-          class="cursor-pointer hover:scale-105 transition-all duration-300 text-2xl font-bold p-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-900 text-white shadow-lg hover:shadow-indigo-500/50 flex items-center gap-4">
-          <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">L</span>
-          4. Loan112
-        </li>
+        <!-- BharatLoan -->
+        <div
+          class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div onclick="handleChecklistClick('BharatLoan')"
+            class="cursor-pointer hover:scale-[1.02] transition-all duration-300 text-2xl font-bold p-6 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white flex items-center gap-4">
+            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">B</span>
+            <div class="flex-1">1. BharatLoan</div>
+            <span class="text-sm opacity-80 backdrop-blur-sm bg-white/20 px-3 py-1 rounded-full">Enter Dashboard
+              →</span>
+          </div>
+          <!-- Comments Section for BharatLoan -->
+          <div class="p-6 bg-slate-50 dark:bg-slate-800/50">
+            <div class="flex items-center justify-between mb-4 cursor-pointer" onclick="toggleComments('BharatLoan')">
+              <h4 class="font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                <span>💬</span> Feedback (<span id="count-comments-BharatLoan">0</span>)
+              </h4>
+              <span id="icon-comments-BharatLoan" class="text-slate-400 transform transition-transform">▼</span>
+            </div>
+            <div id="container-comments-BharatLoan" class="hidden space-y-3">
+              <!-- Comments populated here -->
+              <p class="text-sm text-slate-500 italic">No feedback yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RupeeOnTime -->
+        <div
+          class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div onclick="handleChecklistClick('RupeeOnTime')"
+            class="cursor-pointer hover:scale-[1.02] transition-all duration-300 text-2xl font-bold p-6 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-800 text-white flex items-center gap-4">
+            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">✔</span>
+            <div class="flex-1">2. RupeeOnTime</div>
+            <span class="text-sm opacity-80 backdrop-blur-sm bg-white/20 px-3 py-1 rounded-full">Enter Dashboard
+              →</span>
+          </div>
+          <!-- Comments Section for RupeeOnTime -->
+          <div class="p-6 bg-slate-50 dark:bg-slate-800/50">
+            <div class="flex items-center justify-between mb-4 cursor-pointer" onclick="toggleComments('RupeeOnTime')">
+              <h4 class="font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                <span>💬</span> Feedback (<span id="count-comments-RupeeOnTime">0</span>)
+              </h4>
+              <span id="icon-comments-RupeeOnTime" class="text-slate-400 transform transition-transform">▼</span>
+            </div>
+            <div id="container-comments-RupeeOnTime" class="hidden space-y-3">
+              <p class="text-sm text-slate-500 italic">No feedback yet.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Rupee112 -->
+        <div
+          class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div onclick="handleChecklistClick('Rupee112')"
+            class="cursor-pointer hover:scale-[1.02] transition-all duration-300 text-2xl font-bold p-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-800 text-white flex items-center gap-4">
+            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">₹</span>
+            <div class="flex-1">3. Rupee112</div>
+            <span class="text-sm opacity-80 backdrop-blur-sm bg-white/20 px-3 py-1 rounded-full">Enter Dashboard
+              →</span>
+          </div>
+          <!-- Comments Section for Rupee112 -->
+          <div class="p-6 bg-slate-50 dark:bg-slate-800/50">
+            <div class="flex items-center justify-between mb-4 cursor-pointer" onclick="toggleComments('Rupee112')">
+              <h4 class="font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                <span>💬</span> Feedback (<span id="count-comments-Rupee112">0</span>)
+              </h4>
+              <span id="icon-comments-Rupee112" class="text-slate-400 transform transition-transform">▼</span>
+            </div>
+            <div id="container-comments-Rupee112" class="hidden space-y-3">
+              <p class="text-sm text-slate-500 italic">No feedback yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loan112 -->
+        <div
+          class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div onclick="handleChecklistClick('Loan112')"
+            class="cursor-pointer hover:scale-[1.02] transition-all duration-300 text-2xl font-bold p-6 bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-900 text-white flex items-center gap-4">
+            <span class="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center text-xl">L</span>
+            <div class="flex-1">4. Loan112</div>
+            <span class="text-sm opacity-80 backdrop-blur-sm bg-white/20 px-3 py-1 rounded-full">Enter Dashboard
+              →</span>
+          </div>
+          <!-- Comments Section for Loan112 -->
+          <div class="p-6 bg-slate-50 dark:bg-slate-800/50">
+            <div class="flex items-center justify-between mb-4 cursor-pointer" onclick="toggleComments('Loan112')">
+              <h4 class="font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                <span>💬</span> Feedback (<span id="count-comments-Loan112">0</span>)
+              </h4>
+              <span id="icon-comments-Loan112" class="text-slate-400 transform transition-transform">▼</span>
+            </div>
+            <div id="container-comments-Loan112" class="hidden space-y-3">
+              <p class="text-sm text-slate-500 italic">No feedback yet.</p>
+            </div>
+          </div>
+        </div>
       </ol>
     </div>
   </div>
@@ -1960,28 +2055,6 @@
     </div>
   </div>
 
-  <!-- Section 4: Agent Comments -->
-  <div id="admin-comments-section" class="mb-12">
-    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-      <span class="bg-orange-600 text-white rounded-lg p-2 text-xl">💬</span>
-      Agent Feedback / Comments
-    </h2>
-    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
-      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
-        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
-          <tr>
-            <th class="p-6">Date</th>
-            <th class="p-6">Agent</th>
-            <th class="p-6">Comment</th>
-            <th class="p-6 text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
-          <!-- JS Populates this -->
-        </tbody>
-      </table>
-    </div>
-  </div>
 
 
   </div>
@@ -6728,6 +6801,92 @@ Reviewer: ${review.reviewerId}
     </div>
   </div>
 
+  <script>
+    // --- CHECKLIST COMMENTS LOGIC (Relocated) ---
+    function toggleComments(entity) {
+      const container = document.getElementById(`container-comments-${entity}`);
+      const icon = document.getElementById(`icon-comments-${entity}`);
+      if (!container || !icon) return;
+
+      if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        container.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+      }
+      // Stop propagation to avoid triggering the card click
+      if (window.event) window.event.stopPropagation();
+    }
+
+    function renderChecklistComments() {
+      // Ensure specific backend methods exist or fallback
+      const comments = (typeof MockBackend !== 'undefined' && MockBackend.getComments) ? MockBackend.getComments() : [];
+      // Use USER_DB if available
+      const agents = (typeof USER_DB !== 'undefined') ? USER_DB.filter(u => u.role === 'agent') : [];
+
+      // Helper to find entity
+      const getEntity = (agentId) => {
+        const ag = agents.find(a => String(a.id).trim().toLowerCase() === String(agentId).trim().toLowerCase());
+        return ag ? ag.entity : null;
+      };
+
+      const entities = ['BharatLoan', 'RupeeOnTime', 'Rupee112', 'Loan112'];
+
+      entities.forEach(entity => {
+        const container = document.getElementById(`container-comments-${entity}`);
+        const countSpan = document.getElementById(`count-comments-${entity}`);
+        if (!container) return;
+
+        // Filter comments for this entity
+        const entityComments = comments.filter(c => {
+          const ent = getEntity(c.agentId);
+          return ent === entity;
+        });
+
+        if (countSpan) countSpan.textContent = entityComments.length;
+
+        if (entityComments.length === 0) {
+          container.innerHTML = '<p class="text-sm text-slate-500 italic">No feedback yet.</p>';
+        } else {
+          container.innerHTML = entityComments.map(c => {
+            const ag = agents.find(a => String(a.id) === String(c.agentId));
+            const agentName = ag ? ag.name : c.agentId;
+            return `
+               <div class="bg-white dark:bg-slate-700 p-3 rounded-xl border border-slate-200 dark:border-slate-600 text-sm shadow-sm relative group mt-2" onclick="event.stopPropagation()">
+                 <div class="flex justify-between items-start mb-1">
+                   <span class="font-bold text-slate-800 dark:text-slate-200">${agentName}</span>
+                   <span class="text-xs text-slate-400">${c.date}</span>
+                 </div>
+                 <p class="text-slate-600 dark:text-slate-300 mb-2">${c.text}</p>
+                 <button onclick="handleDeleteChecklistComment(${c.id}); event.stopPropagation()" class="text-xs text-red-500 hover:text-red-700 font-bold hover:underline bg-red-50 dark:bg-slate-600 px-2 py-1 rounded">Delete</button>
+               </div>
+             `;
+          }).join('');
+        }
+      });
+    }
+
+    function handleDeleteChecklistComment(id) {
+      if (!confirm('Delete this comment?')) return;
+      if (typeof MockBackend !== 'undefined') {
+        MockBackend.deleteComment(id);
+        renderChecklistComments();
+      }
+    }
+
+    // Call on load and on navigation to checklist
+    window.addEventListener('load', renderChecklistComments);
+
+    // Hook navigation for refresh
+    const _oldNavigateToChecklist = window.navigateTo;
+    window.navigateTo = function (id) {
+      if (_oldNavigateToChecklist) _oldNavigateToChecklist(id);
+      if (id === 'view-checklist') {
+        setTimeout(renderChecklistComments, 50);
+      }
+    };
+  </script>
 </body>
 
 </html>
