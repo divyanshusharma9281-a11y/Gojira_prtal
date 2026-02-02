@@ -113,8 +113,13 @@
     }
 
     /* Login card stacking helper */
-    .login-card { z-index: 30; }
-    .login-card.raised { z-index: 70 !important; }
+    .login-card {
+      z-index: 30;
+    }
+
+    .login-card.raised {
+      z-index: 70 !important;
+    }
 
     /* 3D Swing Animations */
     @keyframes swingLeft {
@@ -176,15 +181,17 @@
 
     /* Gojira Theme Variables and Styles */
     :root {
-      --gojira-red: #b91c1c; /* deep red */
-      --gojira-blue: #0f172a; /* dark blue */
+      --gojira-red: #b91c1c;
+      /* deep red */
+      --gojira-blue: #0f172a;
+      /* dark blue */
       --gojira-grad: linear-gradient(90deg, #b91c1c, #1e40af);
     }
 
     /* Theme applied after login to make pages colorful (legacy - not used when removed) */
     body.gojira-theme {
       background: linear-gradient(180deg, #081426 0%, #0b1220 40%, #2b0f14 100%);
-      color: rgba(255,255,255,0.92);
+      color: rgba(255, 255, 255, 0.92);
       transition: background 0.5s ease, color 0.3s ease;
     }
 
@@ -206,8 +213,8 @@
     /* Dark mode with stronger red mix */
     body.dark {
       /* stronger red tint layered over dark gradient */
-      background: linear-gradient(180deg, rgba(185,28,28,0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
-      color: rgba(255,255,255,0.95);
+      background: linear-gradient(180deg, rgba(185, 28, 28, 0.12) 0%, #061025 10%, #0b1220 50%, #160a0a 100%);
+      color: rgba(255, 255, 255, 0.95);
       transition: background 0.45s ease, color 0.25s ease;
       background-blend-mode: overlay;
     }
@@ -215,31 +222,36 @@
     body.dark header,
     body.dark #top-nav {
       /* stronger red overlay for header in dark mode */
-      background: linear-gradient(90deg, rgba(185,28,28,0.22) 0%, rgba(30,24,40,0.6) 30%, #0b1220 70%) !important;
-      color: rgba(255,255,255,0.95) !important;
-      box-shadow: 0 6px 30px rgba(185,28,28,0.06);
+      background: linear-gradient(90deg, rgba(185, 28, 28, 0.22) 0%, rgba(30, 24, 40, 0.6) 30%, #0b1220 70%) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 6px 30px rgba(185, 28, 28, 0.06);
     }
 
     /* Ensure headings remain readable in dark mode */
-    body.dark h1, body.dark h2, body.dark h3, body.dark .font-bold, body.dark .font-extrabold {
-      color: rgba(255,255,255,0.95) !important;
+    body.dark h1,
+    body.dark h2,
+    body.dark h3,
+    body.dark .font-bold,
+    body.dark .font-extrabold {
+      color: rgba(255, 255, 255, 0.95) !important;
     }
 
     /* Dark mode accents: stronger red highlights */
     body.dark .accent-btn {
-      background: linear-gradient(90deg, rgba(185,28,28,0.95), #1e3a8a) !important;
+      background: linear-gradient(90deg, rgba(185, 28, 28, 0.95), #1e3a8a) !important;
       color: white !important;
-      box-shadow: 0 10px 30px rgba(185,28,28,0.12) !important;
+      box-shadow: 0 10px 30px rgba(185, 28, 28, 0.12) !important;
     }
 
-    body.dark .badge, body.dark .btn-outline {
-      border-color: rgba(185,28,28,0.18) !important;
-      color: rgba(255,255,255,0.95) !important;
-      background: rgba(185,28,28,0.03) !important;
+    body.dark .badge,
+    body.dark .btn-outline {
+      border-color: rgba(185, 28, 28, 0.18) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      background: rgba(185, 28, 28, 0.03) !important;
     }
 
     .gojira-theme .app-view {
-      background: linear-gradient(180deg, rgba(185,28,28,0.03), rgba(14,42,90,0.03));
+      background: linear-gradient(180deg, rgba(185, 28, 28, 0.03), rgba(14, 42, 90, 0.03));
     }
 
     /* Ensure main page headings are dark when colored theme is active (so 'Guidelines' and 'Quality Assurance Checklist' are visible) */
@@ -253,60 +265,67 @@
 
     .gojira-theme .card,
     .gojira-theme .panel {
-      background: rgba(10,14,22,0.6);
-      color: rgba(255,255,255,0.92);
+      background: rgba(10, 14, 22, 0.6);
+      color: rgba(255, 255, 255, 0.92);
       border-radius: 12px;
       box-shadow: 0 8px 40px rgba(14, 40, 90, 0.12);
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .gojira-theme .accent-btn {
-      background: var(--gojira-grad); color: white; border: none;
-      box-shadow: 0 10px 30px rgba(30,58,138,0.18);
+      background: var(--gojira-grad);
+      color: white;
+      border: none;
+      box-shadow: 0 10px 30px rgba(30, 58, 138, 0.18);
     }
 
     /* Inputs and form elements */
     .gojira-theme input,
     .gojira-theme select,
     .gojira-theme textarea {
-      background: rgba(255,255,255,0.02) !important;
-      border: 1px solid rgba(255,255,255,0.06) !important;
-      color: rgba(255,255,255,0.95) !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
     }
 
     .gojira-theme .btn-outline {
-      border-color: rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.92);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
     }
 
     /* Accent badges */
     .gojira-theme .badge {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     /* Door branding */
     .door-brand {
       font-family: 'Montserrat', sans-serif;
-      text-shadow: 4px 5px 10px rgba(0,0,0,0.45);
+      text-shadow: 4px 5px 10px rgba(0, 0, 0, 0.45);
       letter-spacing: -2px;
     }
 
     /* Login label styling */
-    .login-label { color: var(--gojira-red); font-weight: 700; }
+    .login-label {
+      color: var(--gojira-red);
+      font-weight: 700;
+    }
 
     /* Header colored flash for smooth transition between themes */
     #top-nav.header-colored-flash,
     header.header-colored-flash {
       background: var(--gojira-grad) !important;
       color: #fff !important;
-      box-shadow: 0 8px 30px rgba(30,58,138,0.15);
+      box-shadow: 0 8px 30px rgba(30, 58, 138, 0.15);
       transition: background 0.35s ease, color 0.25s ease;
     }
 
     /* subtle pulse while flashing */
-    .header-colored-flash .glow { box-shadow: 0 14px 40px rgba(30,58,138,0.22); }
+    .header-colored-flash .glow {
+      box-shadow: 0 14px 40px rgba(30, 58, 138, 0.22);
+    }
   </style>
 </head>
 
@@ -336,6 +355,9 @@
   <!-- MAIN PORTAL LOGIN SCREEN -->
   <div id="portal-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 overflow-hidden"
     style="perspective: 1500px;">
+    <!-- CANVAS FOR TWINKLES -->
+    <canvas id="twinkle-canvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+
 
     <!-- The Split Doors (3D Swing) -->
     <div
@@ -348,7 +370,8 @@
     </div>
 
     <!-- Revealed Background -->
-    <div class="absolute inset-0 z-0" style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
+    <div class="absolute inset-0 z-0"
+      style="background: linear-gradient(135deg, #7f1d1d 0%, #0b1220 50%, #1e3a8a 100%);"></div>
 
     <!-- Background Typography Theme (Door Branding) -->
     <div id="door-brand" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
@@ -394,6 +417,139 @@
         <button onclick="showChangePasswordModal()"
           class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
       </div>
+
+      <script>
+          /**
+           * RAINBOW TWINKLES ANIMATION
+           * Handles mouse trail and continuous stream on click-hold
+           */
+          (function () {
+            const canvas = document.getElementById('twinkle-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            let isMouseDown = false;
+            let mouseX = 0, mouseY = 0;
+
+            // Resize canvas
+            function resize() {
+              width = canvas.width = window.innerWidth;
+              height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            // Mouse Events
+            document.addEventListener('mousemove', (e) => {
+              mouseX = e.clientX;
+              mouseY = e.clientY;
+              // Create a few particles on move for trail effect
+              createParticles(mouseX, mouseY, 2);
+            });
+
+            document.addEventListener('mousedown', (e) => {
+              isMouseDown = true;
+              mouseX = e.clientX;
+              mouseY = e.clientY;
+            });
+
+            document.addEventListener('mouseup', () => {
+              isMouseDown = false;
+            });
+
+            // Touch Support
+            document.addEventListener('touchmove', (e) => {
+              const touch = e.touches[0];
+              mouseX = touch.clientX;
+              mouseY = touch.clientY;
+              createParticles(mouseX, mouseY, 2);
+            });
+            document.addEventListener('touchstart', (e) => {
+              isMouseDown = true;
+              const touch = e.touches[0];
+              mouseX = touch.clientX;
+              mouseY = touch.clientY;
+            });
+            document.addEventListener('touchend', () => {
+              isMouseDown = false;
+            });
+
+
+            // Particle Class
+            class Particle {
+              constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                // Random velocity
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 2 + 1;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed + 2; // Slight gravity/downward trend
+                this.life = 100;
+                this.decay = Math.random() * 2 + 1;
+                this.size = Math.random() * 4 + 2;
+                // Rainbow Colors
+                const hue = Math.floor(Math.random() * 360);
+                this.color = `hsla(${hue}, 100%, 70%, 1)`;
+              }
+
+              update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+                this.size *= 0.95; // Shrink over time
+              }
+
+              draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life / 100;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                // Draw a star shape or circle for twinkle
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Optional: Add a glow
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+
+                ctx.restore();
+              }
+            }
+
+            function createParticles(x, y, count) {
+              for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y));
+              }
+            }
+
+            // Animation Loop
+            function animate() {
+              ctx.clearRect(0, 0, width, height);
+
+              // Continuous stream if mouse is down
+              if (isMouseDown) {
+                createParticles(mouseX, mouseY, 5); // More particles on hold
+              }
+
+              // Update and draw particles
+              for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.life <= 0 || p.size <= 0.1) {
+                  particles.splice(i, 1);
+                }
+              }
+
+              requestAnimationFrame(animate);
+            }
+
+            animate();
+          })();
+      </script>
+
     </div>
   </div>
 
@@ -1759,6 +1915,29 @@
           </tr>
         </thead>
         <tbody id="admin-reviews-list" class="divide-y divide-slate-100 dark:divide-slate-700">
+          <!-- JS Populates this -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 4: Agent Comments -->
+  <div id="admin-comments-section" class="mb-12">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+      <span class="bg-orange-600 text-white rounded-lg p-2 text-xl">💬</span>
+      Agent Feedback / Comments
+    </h2>
+    <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-700">
+      <table class="w-full bg-white dark:bg-slate-800 text-left border-collapse">
+        <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs">
+          <tr>
+            <th class="p-6">Date</th>
+            <th class="p-6">Agent</th>
+            <th class="p-6">Comment</th>
+            <th class="p-6 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="admin-comments-list" class="divide-y divide-slate-100 dark:divide-slate-700">
           <!-- JS Populates this -->
         </tbody>
       </table>
@@ -5821,15 +6000,9 @@ Reviewer: ${review.reviewerId}
         return;
       }
 
-      let comments = JSON.parse(localStorage.getItem('agentComments') || '[]');
-      comments.push({
-        date: new Date().toLocaleDateString(),
-        agentId: currentUser.id,
-        agentName: currentUser.name,
-        comment: comment
-      });
+      // Use unified MockBackend
+      MockBackend.addComment(comment, currentUser.id);
 
-      localStorage.setItem('agentComments', JSON.stringify(comments));
       textarea.value = '';
       alert('Your feedback has been sent to admin!');
     }
