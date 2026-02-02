@@ -502,8 +502,8 @@
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed + 0.06; // tiny downward drift
                 this.friction = 0.965; // damping for smooth slow motion
-                this.maxLife = this.life = Math.random() * 80 + 140; // longer life for gentle fade
-                this.decay = Math.random() * 0.18 + 0.24; // slow decay for smoothing
+                // lifetime in frames: 180 - 300 frames (~3s to 5s at 60fps)
+                this.maxLife = this.life = Math.floor(Math.random() * 120 + 180);
                 this.size = Math.random() * 2 + 0.9; // visible but subtle
 
                 // Choose color from palette most of the time, otherwise random HSL
@@ -522,8 +522,9 @@
                 this.vy *= this.friction;
                 this.x += this.vx;
                 this.y += this.vy;
-                this.life -= this.decay;
-                this.size *= 0.993; // shrink even slower for a smoother trail
+                // Decrease life by one frame per tick so fade-out happens within maxLife frames
+                this.life -= 1;
+                this.size *= 0.992; // shrink slowly for a smooth trail
               }
 
               draw(ctx) {
