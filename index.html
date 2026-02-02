@@ -14,7 +14,13 @@
 
     // Cursor Twinkle Animation Script - Global so it's ready
     // Cursor Twinkle Animation Script
+    let mouseX = 0, mouseY = 0;
+    let pourInterval = null;
+
     document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
       const loginView = document.getElementById('view-login');
       // Check if login view exists and is visible (not display: none)
       if (loginView && loginView.style.display !== 'none') {
@@ -22,42 +28,202 @@
       }
     });
 
+    document.addEventListener('mousedown', function () {
+      const loginView = document.getElementById('view-login');
+      if (loginView && loginView.style.display !== 'none') {
+        if (!pourInterval) {
+          pourInterval = setInterval(() => {
+            createTwinkle(mouseX, mouseY);
+          }, 50); // Pour every 50ms
+        }
+      }
+    });
+
+    document.addEventListener('mouseup', stopPouring);
+    document.addEventListener('mouseleave', stopPouring);
+
+    function stopPouring() {
+      if (pourInterval) {
+        clearInterval(pourInterval);
+        pourInterval = null;
+      }
+    }
+
     function createTwinkle(x, y) {
       const twinkle = document.createElement('div');
       twinkle.classList.add('twinkle');
-      twinkle.style.left = x + 'px';
-      twinkle.style.top = y + 'px';
 
-      // 30% chance to be a Shiny White Star
-      if (Math.random() < 0.3) {
-        twinkle.innerText = '★'; // Unicode Star
-        twinkle.style.color = '#FFFFFF'; // White Color
-        twinkle.style.fontSize = (Math.random() * 10 + 10) + 'px'; // Size 10-20px
-        twinkle.style.background = 'transparent'; // No background block
-        twinkle.style.borderRadius = '0'; // No circle
-        twinkle.style.boxShadow = 'none'; // No box shadow
-        twinkle.style.textShadow = '0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.8)'; // Intense White Glow
-        twinkle.style.width = 'auto';
-        twinkle.style.height = 'auto';
-        twinkle.style.display = 'flex';
-        twinkle.style.alignItems = 'center';
-        twinkle.style.justifyContent = 'center';
-      } else {
-        // Standard Rainbow Dot
-        const size = Math.random() * 4 + 2;
-        twinkle.style.width = size + 'px';
-        twinkle.style.height = size + 'px';
-        twinkle.style.borderRadius = '50%';
+      // Standard Rainbow Dot + Extra Vibrant Colors
+      const size = Math.random() * 4 + 2;
+      twinkle.style.width = size + 'px';
+      twinkle.style.height = size + 'px';
 
-        const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3']; // Rainbow
-        twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
-      }
+      // Center the dot offset by half size
+      twinkle.style.left = (x - size / 2) + 'px';
+      twinkle.style.top = (y - size / 2) + 'px';
+
+      twinkle.style.borderRadius = '50%';
+
+      // Extended Rainbow Palette
+      const colors = [
+        '#ff0000', '#ff4d4d', // Reds
+        '#ff7f00', '#ff9f43', // Oranges
+        '#ffff00', '#fff200', // Yellows
+        '#00ff00', '#32ff7e', // Greens
+        '#00fff7', '#17c0eb', // Cyans/Teals
+        '#0000ff', '#18dcff', // Blues
+        '#4b0082', '#7d5fff', // Indigos
+        '#9400d3', '#c56cf0', // Violets
+        '#ff1493', '#ff00ff'  // Pinks/Magentas
+      ];
+      twinkle.style.background = colors[Math.floor(Math.random() * colors.length)];
 
       document.body.appendChild(twinkle);
 
       setTimeout(() => {
         twinkle.remove();
       }, 1000);
+    }
+
+    // --- BUBBLE NETWORK ANIMATION (WEB EFFECT) ---
+    class BubbleNetwork {
+      constructor() {
+        this.canvas = document.getElementById('bubble-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.bubbles = [];
+        this.resize();
+
+        // Create initial bubbles (Increase count for denser web)
+        this.initBubbles(60);
+
+        window.addEventListener('resize', () => this.resize());
+        this.animate();
+      }
+
+      resize() {
+        if (this.canvas) {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        }
+      }
+
+      initBubbles(count) {
+        for (let i = 0; i < count; i++) {
+          this.bubbles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * 2, // Slightly faster
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 4 + 3, // Larger bubbles (3-7px)
+            color: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.2})` // Brighter (0.2-0.6 alpha)
+          });
+        }
+      }
+
+      animate() {
+        const loginView = document.getElementById('view-login');
+        const loginVisible = loginView && window.getComputedStyle(loginView).display !== 'none' && loginView.offsetParent !== null;
+
+        // If the login view is not visible, fade out the canvas and skip drawing to avoid
+        // the bubbles overlaying other pages (bubbles should be only on the first page).
+        if (!loginVisible) {
+          if (this.canvas.style.opacity !== '0') this.canvas.style.opacity = '0';
+          if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+          // keep the animation loop alive but do not draw until login is visible again
+          requestAnimationFrame(() => this.animate());
+          return;
+        }
+
+        // Ensure canvas is visible and faded in while on the login page
+        if (this.canvas.style.opacity !== '1') this.canvas.style.opacity = '1';
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Update and Draw Bubbles
+        this.bubbles.forEach(bubble => {
+          bubble.x += bubble.vx;
+          bubble.y += bubble.vy;
+
+          // Bounce
+          if (bubble.x < 0 || bubble.x > this.canvas.width) bubble.vx *= -1;
+          if (bubble.y < 0 || bubble.y > this.canvas.height) bubble.vy *= -1;
+
+          this.ctx.beginPath();
+          this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = bubble.color;
+          this.ctx.fill();
+        });
+
+        // Draw Connections (Web Effect)
+        const webReach = 150; // Distance to connect
+        const cursorReach = 200; // Cursor shooter range
+
+        for (let i = 0; i < this.bubbles.length; i++) {
+          const bubbleA = this.bubbles[i];
+
+          // 1. Connect to Cursor (Web Shooter)
+          const dxMouse = mouseX - bubbleA.x;
+          const dyMouse = mouseY - bubbleA.y;
+          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+          if (distMouse < cursorReach) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distMouse / cursorReach})`;
+            this.ctx.lineWidth = 1.5;
+            this.ctx.moveTo(bubbleA.x, bubbleA.y);
+            this.ctx.lineTo(mouseX, mouseY);
+            this.ctx.stroke();
+            // Extra shine on connected bubble
+            this.ctx.beginPath();
+            this.ctx.arc(bubbleA.x, bubbleA.y, bubbleA.size + 3, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            this.ctx.stroke();
+          }
+
+          // 2. Connect to Other Bubbles (The Web)
+          // "Meeting each other with the help of cursor"
+          // Logic: Only connect bubbles to each other IF they are NEAR THE CURSOR.
+          // This creates a localized web that follows the mouse.
+
+          if (distMouse < cursorReach) { // Only check connections if near cursor
+            for (let j = i + 1; j < this.bubbles.length; j++) {
+              const bubbleB = this.bubbles[j];
+              const dx = bubbleA.x - bubbleB.x;
+              const dy = bubbleA.y - bubbleB.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+
+              if (distance < webReach) {
+                this.ctx.beginPath();
+                // Opacity based on how close they are
+                this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.5 * (1 - distance / webReach)})`;
+                this.ctx.lineWidth = 0.5;
+                this.ctx.moveTo(bubbleA.x, bubbleA.y);
+                this.ctx.lineTo(bubbleB.x, bubbleB.y);
+                this.ctx.stroke();
+              }
+            }
+          }
+        }
+
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Initialize Bubble Effect
+    function initBubbles() {
+      // Prevent duplicates
+      if (window.bubbleNetworkActive) return;
+      window.bubbleNetworkActive = true;
+
+      new BubbleNetwork();
+      console.log("Bubble Network Initialized");
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBubbles);
+    } else {
+      initBubbles();
     }
   </script>
 
@@ -154,23 +320,29 @@
 
     .door {
       flex: 1;
-      background: #1e1e1e;
-      border: 4px solid #333;
+      background: linear-gradient(135deg, #ce0000 0%, #1a237e 100%);
+      background-size: 200% 100%;
       transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
-      background: linear-gradient(135deg, #450a0a, #1e1b4b);
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+      /* Removed borders and box-shadow for simple page look */
+      position: relative;
     }
 
     .door-left {
       transform-origin: left;
-      border-right: 1px solid #000;
+      background-position: 0% 0%;
+      /* Removed border */
     }
+
+    /* Handle removed */
 
     .door-right {
       transform-origin: right;
-      border-left: 1px solid #000;
+      background-position: 100% 0%;
+      /* Removed border */
     }
+
+    /* Handle removed */
 
     .doors-open .door-left {
       transform: rotateY(-110deg);
@@ -218,6 +390,18 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
+    /* Bubble Canvas (visible only on Login) */
+    #bubble-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
     /* Twinkle Animation */
     .twinkle {
       position: fixed;
@@ -246,6 +430,7 @@
 
   <!-- LOGIN VIEW -->
   <div id="view-login">
+    <canvas id="bubble-canvas" class="absolute inset-0 z-10 pointer-events-none"></canvas>
     <div class="door-container" id="door-container">
       <div class="door door-left"></div>
       <div class="door door-right"></div>
@@ -3426,7 +3611,7 @@ Reviewer: ${review.reviewerId}
 
       // USER DATABASE
       const USER_DB = [
-        { id: 'BL/GG/25/1135', name: 'Siddhant Chauhan', role: 'admin', entity: 'ALL' },
+        { id: 'BL/GG/25/1135', name: 'Siddhant', role: 'admin', entity: 'ALL' },
         { id: 'BL/GG/25/703', name: 'SHARAD ADHIKARI', role: 'agent', entity: 'BharatLoan' },
         { id: 'BL/GG/25/704', name: 'DIVYANSHU SHARMA', role: 'agent', entity: 'BharatLoan' },
         { id: 'BL/GG/25/705', name: 'AYUSHMAN TIBREWAL', role: 'agent', entity: 'BharatLoan' },
@@ -4240,10 +4425,30 @@ Reviewer: ${review.reviewerId}
         const storedUser = localStorage.getItem('currentUser');
         if (storedUser) {
           currentUser = JSON.parse(storedUser);
-          // Skip Login
-          document.getElementById('view-login').style.display = 'none';
-          document.getElementById('app-container').style.display = 'block';
-          document.getElementById('app-container').style.opacity = '1';
+
+          // Smoothly transition out the login view and bubble canvas to avoid flashing
+          const loginView = document.getElementById('view-login');
+          const bubbleCanvas = document.getElementById('bubble-canvas');
+          if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
+
+          // Fade out login view (short transition) then remove it from layout
+          if (loginView) {
+            loginView.style.opacity = '0';
+            loginView.style.transition = 'opacity 0.6s ease';
+          }
+
+          // Show app immediately but keep it hidden visually until we finish fading
+          const app = document.getElementById('app-container');
+          app.style.display = 'block';
+          // tiny delay to ensure display:block is applied
+          setTimeout(() => {
+            app.style.opacity = '1';
+          }, 50);
+
+          // After fade completes, hide login from layout
+          setTimeout(() => {
+            if (loginView) loginView.style.display = 'none';
+          }, 700);
 
           // Set Greeting
           const greeting = document.getElementById('home-greeting');
@@ -4362,34 +4567,32 @@ Reviewer: ${review.reviewerId}
 
       function triggerDoorAnimation() {
         const loginContent = document.getElementById('login-content');
+        const loginView = document.getElementById('view-login');
+        const app = document.getElementById('app-container');
 
-        // Open doors class trigger
+        // 1. Prepare App (Show it behind doors)
+        app.style.display = 'block';
+        setTimeout(() => app.style.opacity = '1', 50);
+
+        // 2. Make login container transparent so we can see through the opening doors
+        // The DOORS themselves have the background, so the screen remains covered until they move.
+        loginView.style.background = 'transparent';
+
+        // 3. Trigger Door Opening
         document.body.classList.add('doors-open');
 
-        // Fade out login content
+        // 4. Fade out Login Form Content
         loginContent.style.opacity = '0';
-        loginContent.style.transform = 'scale(0.5)';
+        loginContent.style.transform = 'scale(0.8)';
 
+        // Fade out bubble canvas
+        const bubbleCanvas = document.getElementById('bubble-canvas');
+        if (bubbleCanvas) bubbleCanvas.style.opacity = '0';
+
+        // 5. Cleanup after animation
         setTimeout(() => {
-          // Hide login view
-          const loginView = document.getElementById('view-login');
-          loginView.style.opacity = '0';
-          loginView.style.transition = 'opacity 1s ease';
-
-          // Show App
-          const app = document.getElementById('app-container');
-          app.style.display = 'block';
-
-          // Small delay to allow display:block to apply before opacity transition
-          setTimeout(() => {
-            app.style.opacity = '1';
-            // Remove login view from DOM or hide completely
-            setTimeout(() => {
-              loginView.style.display = 'none';
-            }, 1000);
-          }, 50);
-
-        }, 1200); // Wait for door animation
+          loginView.style.display = 'none';
+        }, 1500); // 1.5s matches CSS transition
       }
 
       function toggleNotifications() {
