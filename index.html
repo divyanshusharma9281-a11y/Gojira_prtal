@@ -3686,7 +3686,11 @@ Reviewer: ${review.reviewerId}
 
       function attemptLogin() {
         const empIdInput = document.getElementById('login-empid');
+        const passwordInput = document.getElementById('login-password');
+        const errorMsg = document.getElementById('login-error');
+
         const empId = empIdInput.value.trim();
+        const password = passwordInput.value.trim();
 
         if (!empId) {
           alert('Please enter Employee ID');
@@ -3697,40 +3701,62 @@ Reviewer: ${review.reviewerId}
         const user = USER_DB.find(u => u.id.toUpperCase() === empId.toUpperCase());
 
         if (user) {
+          // Check Password for Admin
+          if (user.role === 'admin') {
+            if (password !== '1234') {
+              if (errorMsg) {
+                errorMsg.innerText = "Invalid Password";
+                errorMsg.classList.remove('hidden');
+                setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+              } else {
+                alert('Invalid Password');
+              }
+              return;
+            }
+          }
+
+          // Successful Login
           currentUser = user;
 
-          // Hide Login Overlay
-          document.getElementById('view-login').style.display = 'none';
-
-          if (user.role === 'admin') {
-            // Admin Login
-            adminCurrentEntity = 'ALL';
-            navigateTo('view-admin');
-            adminLoadAgents();
+          // Hide Login Overlay & Door Animation?
+          // If we want the door animation, we should add class 'doors-open' to container first
+          const doorContainer = document.getElementById('door-container');
+          if (doorContainer) {
+            doorContainer.classList.add('doors-open');
+            // Wait for animation
+            setTimeout(() => {
+              document.getElementById('view-login').style.display = 'none';
+              proceedToDashboard(user);
+            }, 1500);
           } else {
-            // Agent Login
-            if (currentEntity && user.entity !== currentEntity && currentEntity !== 'ALL') {
-              // This case might not happen on main page as currentEntity might be empty, 
-              // but if we want to be strict we could check. 
-              // For now, allow login.
-            }
-
-            const titleSpan = document.getElementById('agent-dashboard-title');
-            if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
-
-            const bannerName = document.getElementById('agent-name-display');
-            if (bannerName) bannerName.innerText = user.name;
-
-            navigateTo('view-performance');
+            document.getElementById('view-login').style.display = 'none';
+            proceedToDashboard(user);
           }
+
         } else {
-          const errorMsg = document.getElementById('login-error');
           if (errorMsg) {
+            errorMsg.innerText = "Access Denied: Invalid ID";
             errorMsg.classList.remove('hidden');
             setTimeout(() => errorMsg.classList.add('hidden'), 3000);
           } else {
             alert('Invalid Employee ID');
           }
+        }
+      }
+
+      function proceedToDashboard(user) {
+        if (user.role === 'admin') {
+          adminCurrentEntity = 'ALL';
+          navigateTo('view-admin');
+          adminLoadAgents();
+        } else {
+          const titleSpan = document.getElementById('agent-dashboard-title');
+          if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+
+          const bannerName = document.getElementById('agent-name-display');
+          if (bannerName) bannerName.innerText = user.name;
+
+          navigateTo('view-performance');
         }
       }
 
