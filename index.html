@@ -3685,78 +3685,102 @@ Reviewer: ${review.reviewerId}
       }
 
       function attemptLogin() {
-        const empIdInput = document.getElementById('login-empid');
-        const passwordInput = document.getElementById('login-password');
-        const errorMsg = document.getElementById('login-error');
+        try {
+          const empIdInput = document.getElementById('login-empid');
+          const passwordInput = document.getElementById('login-password');
+          const errorMsg = document.getElementById('login-error');
 
-        const empId = empIdInput.value.trim();
-        const password = passwordInput.value.trim();
+          const empId = empIdInput.value.trim();
+          const password = passwordInput.value.trim();
 
-        if (!empId) {
-          alert('Please enter Employee ID');
-          return;
-        }
-
-        // Find user (Case Insensitive)
-        const user = USER_DB.find(u => u.id.toUpperCase() === empId.toUpperCase());
-
-        if (user) {
-          // Check Password for Admin
-          if (user.role === 'admin') {
-            if (password !== '1234') {
-              if (errorMsg) {
-                errorMsg.innerText = "Invalid Password";
-                errorMsg.classList.remove('hidden');
-                setTimeout(() => errorMsg.classList.add('hidden'), 3000);
-              } else {
-                alert('Invalid Password');
-              }
-              return;
-            }
+          if (!empId) {
+            alert('Please enter Employee ID');
+            return;
           }
 
-          // Successful Login
-          currentUser = user;
+          // Find user (Case Insensitive)
+          const user = USER_DB.find(u => u.id.toUpperCase() === empId.toUpperCase());
 
-          // Hide Login Overlay & Door Animation?
-          // If we want the door animation, we should add class 'doors-open' to container first
-          const doorContainer = document.getElementById('door-container');
-          if (doorContainer) {
-            doorContainer.classList.add('doors-open');
-            // Wait for animation
-            setTimeout(() => {
+          if (user) {
+            // Check Password for Admin
+            if (user.role === 'admin') {
+              if (password !== '1234') {
+                if (errorMsg) {
+                  errorMsg.innerText = "Invalid Password";
+                  errorMsg.classList.remove('hidden');
+                  setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+                } else {
+                  alert('Invalid Password');
+                }
+                return;
+              }
+            }
+
+            // Successful Login
+            currentUser = user;
+
+            // Hide Login Overlay & Door Animation?
+            const doorContainer = document.getElementById('door-container');
+            if (doorContainer) {
+              doorContainer.classList.add('doors-open');
+              // Wait for animation
+              setTimeout(() => {
+                document.getElementById('view-login').style.display = 'none';
+                proceedToDashboard(user);
+              }, 1500);
+            } else {
               document.getElementById('view-login').style.display = 'none';
               proceedToDashboard(user);
-            }, 1500);
-          } else {
-            document.getElementById('view-login').style.display = 'none';
-            proceedToDashboard(user);
-          }
+            }
 
-        } else {
-          if (errorMsg) {
-            errorMsg.innerText = "Access Denied: Invalid ID";
-            errorMsg.classList.remove('hidden');
-            setTimeout(() => errorMsg.classList.add('hidden'), 3000);
           } else {
-            alert('Invalid Employee ID');
+            if (errorMsg) {
+              errorMsg.innerText = "Access Denied: Invalid ID";
+              errorMsg.classList.remove('hidden');
+              setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+            } else {
+              alert('Invalid Employee ID');
+            }
           }
+        } catch (error) {
+          alert("Login Error: " + error.message);
+          console.error(error);
         }
       }
 
       function proceedToDashboard(user) {
-        if (user.role === 'admin') {
-          adminCurrentEntity = 'ALL';
-          navigateTo('view-admin');
-          adminLoadAgents();
-        } else {
-          const titleSpan = document.getElementById('agent-dashboard-title');
-          if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+        try {
+          if (user.role === 'admin') {
+            adminCurrentEntity = 'ALL';
 
-          const bannerName = document.getElementById('agent-name-display');
-          if (bannerName) bannerName.innerText = user.name;
+            // Check if admin view exists
+            const adminView = document.getElementById('view-admin');
+            if (!adminView) {
+              alert("Error: Admin Dashboard View (id='view-admin') not found!");
+              return;
+            }
 
-          navigateTo('view-performance');
+            navigateTo('view-admin');
+
+            // Check if adminLoadAgents exists
+            if (typeof adminLoadAgents === 'function') {
+              adminLoadAgents();
+            } else {
+              alert("Error: adminLoadAgents function missing!");
+            }
+
+          } else {
+            const titleSpan = document.getElementById('agent-dashboard-title');
+            if (titleSpan) titleSpan.innerText = `Welcome ${user.name}`;
+
+            const bannerName = document.getElementById('agent-name-display');
+            if (bannerName) bannerName.innerText = user.name;
+
+            navigateTo('view-performance');
+          }
+        } catch (e) {
+          alert("Dashboard Navigation Error: " + e.message);
+          console.error(e);
         }
       }
 
