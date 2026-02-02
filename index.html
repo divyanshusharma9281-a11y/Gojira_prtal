@@ -430,8 +430,6 @@
             let particles = [];
             let isMouseDown = false;
             let mouseX = 0, mouseY = 0;
-            // Track last mouse for creating a smooth line trail
-            let lastMouseX = null, lastMouseY = null; 
 
             // Resize canvas
             function resize() {
@@ -443,35 +441,10 @@
 
             // Mouse Events
             document.addEventListener('mousemove', (e) => {
-              const x = e.clientX;
-              const y = e.clientY;
-              mouseX = x;
-              mouseY = y;
-              // Create interpolated particles along the path to form a line trail
-              if (lastMouseX === null) {
-                createParticles(x, y, 1);
-              } else {
-                const dx = x - lastMouseX;
-                const dy = y - lastMouseY;
-                const dist = Math.hypot(dx, dy);
-                const spacing = 6; // pixels between particles
-                if (dist > 0) {
-                  const steps = Math.max(1, Math.floor(dist / spacing));
-                  for (let i = 0; i <= steps; i++) {
-                    const t = i / steps;
-                    const px = lastMouseX + dx * t;
-                    const py = lastMouseY + dy * t;
-                    // velocity slightly opposite motion so particles lag behind the cursor
-                    const pvx = -dx * 0.08 + (Math.random() - 0.5) * 0.2;
-                    const pvy = -dy * 0.08 + (Math.random() - 0.5) * 0.2;
-                    createParticles(px, py, 1, pvx, pvy);
-                  }
-                } else {
-                  createParticles(x, y, 1);
-                }
-              }
-              lastMouseX = x;
-              lastMouseY = y;
+              mouseX = e.clientX;
+              mouseY = e.clientY;
+              // Create a few particles on move for trail effect
+              createParticles(mouseX, mouseY, 2);
             });
 
             document.addEventListener('mousedown', (e) => {
@@ -489,8 +462,7 @@
               const touch = e.touches[0];
               mouseX = touch.clientX;
               mouseY = touch.clientY;
-              // single subtle particle for touch
-              createParticles(mouseX, mouseY, 1, (Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3);
+              createParticles(mouseX, mouseY, 2);
             });
             document.addEventListener('touchstart', (e) => {
               isMouseDown = true;
@@ -505,26 +477,21 @@
 
             // Particle Class
             class Particle {
-              constructor(x, y, vx = null, vy = null) {
+              constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                // Trail behavior: small velocities, no gravity so particles stay aligned
+                // REFINED PHYSICS: Faster & More Colorful
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.6 + 0.05; // much slower movement
-                if (vx === null || vy === null) {
-                  this.vx = Math.cos(angle) * speed;
-                  this.vy = Math.sin(angle) * speed;
-                } else {
-                  this.vx = vx;
-                  this.vy = vy;
-                }
-                this.maxLife = this.life = Math.random() * 60 + 140; // 140-200 frames ~ 2.3-3.3s
-                this.decay = Math.random() * 0.6 + 0.6; // slower decay
-                this.size = Math.random() * 2 + 0.8; // small particles to reduce glare
+                const speed = Math.random() * 2 + 0.5; // Increased speed (was 0.5+0.2)
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed + 1; // Increased gravity (was 0.5)
+                this.life = 100;
+                this.decay = Math.random() * 2 + 1; // Faster decay for snappier feel
+                this.size = Math.random() * 4 + 2;
 
-                // SUBTLER COLORS (dimmer)
+                // VIBRANT COLORS
                 const hue = Math.floor(Math.random() * 360);
-                const lightness = Math.floor(Math.random() * 18 + 36); // 36-54% for subtler brightness
+                const lightness = Math.floor(Math.random() * 30 + 50); // 50-80% for variety
                 this.color = `hsla(${hue}, 100%, ${lightness}%, 1)`;
               }
 
@@ -537,18 +504,17 @@
 
               draw(ctx) {
                 ctx.save();
-                // normalize alpha by life / maxLife so fade-out is smooth
-                ctx.globalAlpha = Math.max(0, this.life / this.maxLife) * 0.85;
-                // use "screen" for a softer blend instead of aggressive additive
-                ctx.globalCompositeOperation = 'screen';
+                ctx.globalAlpha = this.life / 100;
+                // ADDITIVE BLENDING for "Shiny" look
+                ctx.globalCompositeOperation = 'lighter';
                 ctx.fillStyle = this.color;
 
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
 
-                // softer glow
-                ctx.shadowBlur = 6;
+                // GLOW
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = this.color;
                 ctx.fill();
 
@@ -556,9 +522,9 @@
               }
             }
 
-            function createParticles(x, y, count, pvx = null, pvy = null) {
+            function createParticles(x, y, count) {
               for (let i = 0; i < count; i++) {
-                particles.push(new Particle(x, y, pvx, pvy));
+                particles.push(new Particle(x, y));
               }
             }
 
@@ -566,9 +532,9 @@
             function animate() {
               ctx.clearRect(0, 0, width, height);
 
-              // Continuous stream if mouse is down (subtle)
+              // Continuous stream if mouse is down
               if (isMouseDown) {
-                createParticles(mouseX, mouseY, 2, (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4); // fewer, subtler particles on hold
+                createParticles(mouseX, mouseY, 5); // More particles on hold
               }
 
               // Update and draw particles
