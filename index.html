@@ -480,37 +480,39 @@
               constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                // Random velocity
+                // SLOW MOTION: Reduced velocity range
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 2 + 1;
+                const speed = Math.random() * 0.5 + 0.2; // Much slower speed
                 this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed + 2; // Slight gravity/downward trend
+                this.vy = Math.sin(angle) * speed + 0.5; // Very slight gravity
                 this.life = 100;
-                this.decay = Math.random() * 2 + 1;
-                this.size = Math.random() * 4 + 2;
-                // Rainbow Colors
+                this.decay = Math.random() * 0.5 + 0.2; // Slower decay
+                this.size = Math.random() * 3 + 1;
+                // Rainbow Colors - lighter/brighter
                 const hue = Math.floor(Math.random() * 360);
-                this.color = `hsla(${hue}, 100%, 70%, 1)`;
+                this.color = `hsla(${hue}, 100%, 75%, 1)`; // Higher lightness for shine
               }
 
               update() {
                 this.x += this.vx;
                 this.y += this.vy;
                 this.life -= this.decay;
-                this.size *= 0.95; // Shrink over time
+                this.size *= 0.98; // Slower shrink
               }
 
               draw(ctx) {
                 ctx.save();
                 ctx.globalAlpha = this.life / 100;
+                // SHINY EFFECT: Additive blending
+                ctx.globalCompositeOperation = 'lighter';
                 ctx.fillStyle = this.color;
+
                 ctx.beginPath();
-                // Draw a star shape or circle for twinkle
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Optional: Add a glow
-                ctx.shadowBlur = 10;
+                // Strong glow for "shiny" look
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = this.color;
                 ctx.fill();
 
@@ -635,7 +637,13 @@
       onclick="event.stopPropagation()">
       <div
         class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-        <h2 class="text-2xl font-bold">Notifications</h2>
+        <div class="flex items-center gap-3">
+          <h2 class="text-2xl font-bold">Notifications</h2>
+          <button onclick="clearAllNotifications()"
+            class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 px-3 py-1 rounded-full font-semibold transition">
+            Clear All
+          </button>
+        </div>
         <button onclick="closeNotificationsModal()" class="text-slate-500 hover:text-slate-700 text-2xl">✕</button>
       </div>
 
@@ -3691,6 +3699,57 @@ Reviewer: ${review.reviewerId}
       localStorage.setItem(`agentNotifications_${agentId}`, JSON.stringify(Array.from(seen)));
     }
 
+    // --- CLEARED NOTIFICATIONS LOGIC ---
+    function getClearedNotifications(userId) {
+      // Shared logic for both agents and admins to get their cleared list
+      return JSON.parse(localStorage.getItem(`clearedNotifications_${userId}`) || '[]');
+    }
+
+    function addToClearedNotifications(userId, ids) {
+      const cleared = new Set(getClearedNotifications(userId));
+      ids.forEach(id => cleared.add(id));
+      localStorage.setItem(`clearedNotifications_${userId}`, JSON.stringify(Array.from(cleared)));
+    }
+
+    function clearNotification(id) {
+      if (!currentUser) return;
+      addToClearedNotifications(currentUser.id, [id]);
+      // Refresh the list immediately
+      checkNotifications(true);
+    }
+
+    function clearAllNotifications() {
+      if (!currentUser) return;
+      const list = document.querySelectorAll('#notifications-list > div');
+      // We can grab IDs from the rendered DOM elements if we add data-id attributes, 
+      // or easier: just clear based on the current context objects we have in memory.
+      // But re-fetching is safer.
+
+      let idsToClear = [];
+      if (currentUser.role === 'agent') {
+        // Re-fetch what the agent currently has "visible" (valid & uncleared)
+        const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        const clearedIds = getClearedNotifications(currentUser.id);
+        const currentAgentId = String(currentUser.id).trim().toLowerCase();
+        // Basic filter same as checkAgentNotifications
+        const validReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === currentAgentId && !clearedIds.includes(r.id));
+        idsToClear = validReviews.map(r => r.id);
+      } else {
+        // Admin logic
+        const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+        const clearedIds = getClearedNotifications(currentUser.id);
+        // Filter comments not cleared
+        const validComments = comments.filter(c => !clearedIds.includes(c.id));
+        idsToClear = validComments.map(c => c.id);
+      }
+
+      if (idsToClear.length > 0) {
+        addToClearedNotifications(currentUser.id, idsToClear);
+        checkNotifications(true);
+        // alert('All notifications cleared!');
+      }
+    }
+
     function checkAgentNotifications(showPopup) {
       if (!currentUser || currentUser.role !== 'agent') return;
 
@@ -3716,22 +3775,30 @@ Reviewer: ${review.reviewerId}
       });
 
       const seenIds = getAgentSeenNotifications(currentAgentId);
-      const unseen = recentReviews.filter(r => !seenIds.includes(r.id));
+      const clearedIds = getClearedNotifications(currentUser.id);
+
+      // LIST ITEMS: All recent reviews NOT CLEARED
+      // (We ignore 'seen' status for the list - show them even if seen, unless cleared)
+      const listItems = recentReviews.filter(r => !clearedIds.includes(r.id));
+
+      // UNSEEN ITEMS: List items that are NOT SEEN
+      const unseenItems = listItems.filter(r => !seenIds.includes(r.id));
 
       const dot = document.querySelector('.notification-dot');
 
-      if (unseen.length > 0) {
+      if (unseenItems.length > 0) {
         if (dot) dot.classList.remove('hidden');
-        if (showPopup) {
-          // Show all recent reviews but mark them as seen once shown
-          showAgentNotifications(recentReviews);
-          markAgentSeenNotifications(currentAgentId, recentReviews.map(r => r.id));
-          if (dot) dot.classList.add('hidden');
-        }
       } else {
         if (dot) dot.classList.add('hidden');
-        if (showPopup) {
-          showNotificationsModal([]);
+      }
+
+      if (showPopup) {
+        // Show LIST ITEMS
+        showAgentNotifications(listItems);
+        // Mark displayed items as seen
+        if (unseenItems.length > 0) {
+          markAgentSeenNotifications(currentAgentId, unseenItems.map(r => r.id));
+          if (dot) dot.classList.add('hidden'); // Dot goes away immediately on open
         }
       }
     }
@@ -3750,17 +3817,26 @@ Reviewer: ${review.reviewerId}
         notificationsList.innerHTML = reviews.map(review => {
           const displayDate = review.displayDate || review.date;
           return `
-          <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-purple-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="agentViewNotificationReview('${review.id}')">
-            <div class="flex items-start justify-between">
-              <div class="flex-1">
-                <h3 class="font-bold text-purple-900 dark:text-purple-200">Quality Review Received</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">From: ${review.reviewerName || 'Quality Team'}</p>
-                <p class="text-sm text-slate-600 dark:text-slate-400">Date: ${displayDate}</p>
-                <p class="text-sm font-semibold mt-2">Score: <span class="text-indigo-600 dark:text-indigo-300">${review.score}</span></p>
+          <div class="bg-blue-50 dark:bg-slate-700 p-4 rounded-xl border border-blue-100 dark:border-slate-600 cursor-pointer hover:shadow-lg transition relative group" onclick="agentViewNotificationReview('${review.id}')">
+              
+              <button onclick="event.stopPropagation(); clearNotification(${review.id})" 
+                class="absolute -top-2 -right-2 w-6 h-6 bg-slate-200 dark:bg-slate-600 text-slate-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm z-10" title="Clear">
+                ×
+              </button>
+
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3 class="font-bold text-blue-900 dark:text-blue-200">New Performance Review</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${review.date}</p>
+                  <div class="mt-2 flex gap-2">
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-600 text-blue-700 dark:text-blue-300">
+                      Score: ${review.score}%
+                    </span>
+                  </div>
+                </div>
+                <span class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
               </div>
-              <span class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
             </div>
-          </div>
         `}).join('');
       }
 
@@ -3800,22 +3876,33 @@ Reviewer: ${review.reviewerId}
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'reviewer')) return;
 
       const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
-      const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+      const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]'); // 'Seen' IDs
+      const clearedIds = getClearedNotifications(currentUser.id);
 
-      // Find new comments that haven't been seen by admin/reviewer
-      const newComments = comments.filter(c => !adminNotifications.includes(c.id));
+      // LIST ITEMS: All comments NOT CLEARED
+      const listItems = comments.filter(c => !clearedIds.includes(c.id));
+
+      // UNSEEN ITEMS: List items NOT SEEN
+      const unseenItems = listItems.filter(c => !adminNotifications.includes(c.id));
 
       const dot = document.querySelector('.notification-dot');
 
-      if (newComments.length > 0) {
-        dot.classList.remove('hidden');
-        if (showPopup) {
-          showAdminNotifications(newComments);
-        }
+      if (unseenItems.length > 0) {
+        if (dot) dot.classList.remove('hidden');
       } else {
-        dot.classList.add('hidden');
-        if (showPopup) {
-          showNotificationsModal([]);
+        if (dot) dot.classList.add('hidden');
+      }
+
+      if (showPopup) {
+        showAdminNotifications(listItems);
+
+        if (unseenItems.length > 0) {
+          // Add unseen IDs to 'seen' storage
+          const newSeen = [...adminNotifications];
+          unseenItems.forEach(c => { if (!newSeen.includes(c.id)) newSeen.push(c.id); });
+          localStorage.setItem('adminNotifications', JSON.stringify(newSeen));
+
+          if (dot) dot.classList.add('hidden');
         }
       }
     }
@@ -3835,7 +3922,13 @@ Reviewer: ${review.reviewerId}
         notificationsList.innerHTML = comments.map(comment => {
           const review = reviews.find(r => r.id === comment.reviewId);
           return `
-            <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition" onclick="adminViewNotificationComment('${comment.reviewId}')">
+            <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition relative group" onclick="adminViewNotificationComment('${comment.reviewId}')">
+              
+              <button onclick="event.stopPropagation(); clearNotification(${comment.id})" 
+                class="absolute -top-2 -right-2 w-6 h-6 bg-slate-200 dark:bg-slate-600 text-slate-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm z-10" title="Clear">
+                ×
+              </button>
+
               <div class="flex items-start justify-between">
                 <div class="flex-1">
                   <h3 class="font-bold text-orange-900 dark:text-orange-200">${comment.authorName} commented on review</h3>
