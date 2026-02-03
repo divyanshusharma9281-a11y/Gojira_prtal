@@ -780,10 +780,11 @@
       <div class="flex flex-col items-end gap-2">
         <div class="flex items-center gap-2">
           <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
-          <button onclick="toggleTheme()"
-            class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm font-semibold transition">
-            <span id="theme-icon">🌙</span>
-            <span id="theme-text">Dark</span>
+          <button id="theme-toggle" onclick="toggleTheme()"
+            class="flex items-center justify-center p-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm transition"
+            title="Toggle theme" aria-label="Toggle theme">
+            <span id="theme-icon" class="text-xl">🌙</span>
+            <span class="sr-only">Toggle theme</span>
           </button>
 
           <!-- Unified Notification Bell -->
@@ -4720,17 +4721,23 @@ Reviewer: ${review.reviewerId}
       // mode: 'light' | 'dark'
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
-      const text = document.getElementById('theme-text');
+      const btn = document.getElementById('theme-toggle');
 
       if (mode === 'dark') {
         html.classList.add('dark');
         // Slight red mix in dark mode is handled by CSS (see .dark rules)
-        icon.innerText = '🌙';
-        text.innerText = 'Dark';
+        if (icon) icon.innerText = '🌙';
+        if (btn) {
+          btn.title = 'Switch to Light theme';
+          btn.setAttribute('aria-label', 'Switch to Light theme');
+        }
       } else {
         html.classList.remove('dark');
-        icon.innerText = '☀️';
-        text.innerText = 'Light';
+        if (icon) icon.innerText = '☀️';
+        if (btn) {
+          btn.title = 'Switch to Dark theme';
+          btn.setAttribute('aria-label', 'Switch to Dark theme');
+        }
       }
 
       localStorage.setItem('theme', mode);
