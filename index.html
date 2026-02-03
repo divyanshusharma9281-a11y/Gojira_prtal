@@ -796,8 +796,14 @@
           </div>
 
           <button onclick="portalLogout()"
-            class="flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-800 transition">
-            🚪 Logout
+            class="flex items-center gap-2 px-3 py-2 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-800 transition"
+            title="Logout" aria-label="Logout">
+            <!-- Power icon (accessible) -->
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M17.657 6.343a8 8 0 11-11.314 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="sr-only">Logout</span>
           </button>
         </div>
 
@@ -4849,6 +4855,7 @@ Reviewer: ${review.reviewerId}
       { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
 
       // RUPEE ON TIME AGENTS
+      { id: 'RT/GG/25/1233', name: 'Swati', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'RT/GG/25/004', name: 'Jay Prakash', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'BL/GG/25/1233', name: 'Swati', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'BL/JAI/23/0032', name: 'Ritika Panwar', role: 'agent', entity: 'RupeeOnTime' },
