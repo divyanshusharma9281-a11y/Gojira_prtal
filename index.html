@@ -2529,6 +2529,15 @@
             const entityDisplay = document.getElementById('reviewer-entity-display');
             if (entityDisplay) entityDisplay.textContent = reviewerCurrentEntity;
             adminLoadAgents();
+          } else if (currentSessionUser.role === 'agent') {
+            // Restore agent session
+            currentUser = currentSessionUser;
+            currentEntity = currentSessionUser.entity || currentEntity;
+            // Welcome text for agent QA
+            const welcomeText = document.getElementById('agent-qa-welcome-text');
+            if (welcomeText) welcomeText.innerText = `Welcome ${currentSessionUser.name}`;
+            // Pre-load the agent QA dashboard so data is available on navigation
+            try { agentLoadQADashboard(); } catch (e) { console.warn('[initPortal] agentLoadQADashboard failed', e); }
           } else {
             currentUser = currentSessionUser;
           }
@@ -4229,22 +4238,30 @@ Reviewer: ${review.reviewerId}
     }
 
     // ===== AGENT QUALITY ASSURANCE FUNCTIONS =====
+    // Helper: normalize IDs for robust matching
+    function normalizeId(id) {
+      return String(id || '').trim().toLowerCase().replace(/\s+/g, '');
+    }
+
     function agentLoadQADashboard() {
       if (!currentSessionUser || currentSessionUser.role !== 'agent') {
         return; // Only for agents
       }
 
-      const agentId = String(currentSessionUser.id).trim().toLowerCase(); // Normalize Agent ID
+      const agentIdRaw = currentSessionUser.id;
+      const agentId = normalizeId(agentIdRaw); // normalized id for comparisons
       const agentName = currentSessionUser.name;
 
       // Set welcome text
       document.getElementById('agent-qa-welcome-text').innerText = `Welcome ${agentName}`;
 
-      // Load reviews for this agent
+      // Load reviews for this agent and filter out expired entries
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const now = new Date();
+      reviews = reviews.filter(r => !r.expiryDate || new Date(r.expiryDate) >= now);
 
-      // Filter reviews for current agent only (robust comparison)
-      const agentReviews = reviews.filter(r => String(r.agentId).trim().toLowerCase() === agentId);
+      // Filter reviews for current agent only using normalized matching
+      const agentReviews = reviews.filter(r => normalizeId(r.agentId) === agentId);
 
       // Calculate stats
       const totalReviews = agentReviews.length;
@@ -4253,8 +4270,6 @@ Reviewer: ${review.reviewerId}
       // Get last review date
       let lastReviewDate = '--';
       if (agentReviews.length > 0) {
-        // Sort by actual date if possible, assuming new ones appended last usually, but let's be safe
-        // Use normalized date for sorting if needed, but for "last review" getting the last item in array is usually enough for appended logs
         const lastReview = agentReviews[agentReviews.length - 1];
         lastReviewDate = lastReview.displayDate || lastReview.date;
       }
@@ -4326,8 +4341,9 @@ Reviewer: ${review.reviewerId}
     function agentLoadFeedback(agentId) {
       let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
 
-      // Filter feedback for current agent
-      let agentComments = comments.filter(c => c.agentId === agentId);
+      // Filter feedback for current agent using normalized ID comparison
+      const normalize = id => String(id || '').trim().toLowerCase().replace(/\s+/g, '');
+      let agentComments = comments.filter(c => normalize(c.agentId) === normalize(agentId));
 
       const tbody = document.getElementById('agent-feedback-list');
       const noFeedbackMsg = document.getElementById('agent-no-feedback-message');
@@ -4588,7 +4604,10 @@ Reviewer: ${review.reviewerId}
         filterResourcesQACard();
       }
 
-      // Load QA Dashboard for agents
+      // Load QA Dashboard for agents and monthly/weekly admin dashboards
+      if (id === 'view-agent-qa') {
+        try { agentLoadQADashboard(); } catch (e) { console.warn('[navigateTo] agentLoadQADashboard failed', e); }
+      }
       if (id === 'view-admin-monthly') {
         renderAdminMonthlyPerformance();
       }
@@ -4811,6 +4830,7 @@ Reviewer: ${review.reviewerId}
       { id: 'R112/GG/25/692', name: 'NEHA', role: 'agent', entity: 'Rupee112' },
 
       // RUPEE ON TIME AGENTS
+      { id: 'RT/GG/25/1233', name: 'Swati', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'RT/GG/25/004', name: 'Jay Prakash', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'BL/GG/25/1233', name: 'Swati', role: 'agent', entity: 'RupeeOnTime' },
       { id: 'BL/JAI/23/0032', name: 'Ritika Panwar', role: 'agent', entity: 'RupeeOnTime' },
@@ -5923,7 +5943,7 @@ Reviewer: ${review.reviewerId}
             id: reviewId,
             date: now.toISOString(), // Use ISO format for consistent parsing
             displayDate: now.toLocaleDateString(), // Keep human readable date for display
-            agentId: adminCurrentAgent,
+            agentId: String(adminCurrentAgent || '').trim(), // store normalized-ish agent ID (trimmed)
             agentName: adminCurrentAgentName,
             entity: adminCurrentEntity,
             reviewType: item.reviewType,
