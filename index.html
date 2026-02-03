@@ -2957,6 +2957,25 @@
           } catch (e) {
             /* ignore if modal not present */
           }
+
+          // Disable start button if this agent is finalized for the current week
+          try {
+            const stateBtn = getEntityWeekState(adminCurrentEntity || 'ALL');
+            const cw = stateBtn.currentWeek || 1;
+            const finalizedBtn = stateBtn.completedAgents && stateBtn.completedAgents[cw] && stateBtn.completedAgents[cw][selectedAgentForReview.id];
+            const startBtnEl = document.getElementById('start-review-btn');
+            if (startBtnEl) {
+              if (finalizedBtn) {
+                startBtnEl.disabled = true;
+                startBtnEl.classList.add('opacity-50', 'cursor-not-allowed');
+                startBtnEl.onclick = () => alert(`Agent finalized for Week ${cw}. Clear finalization to reopen.`);
+              } else {
+                startBtnEl.disabled = false;
+                startBtnEl.classList.remove('opacity-50', 'cursor-not-allowed');
+                startBtnEl.onclick = () => document.getElementById('agent-process-modal').classList.remove('hidden');
+              }
+            }
+          } catch (e) { /* ignore */ } 
         }
       } else {
         // Hide agent details section if no agent selected
@@ -5581,9 +5600,20 @@ Reviewer: ${review.reviewerId}
         // Reset any previous inline selection state (inline controls removed)
         adminReviewType = '';
 
-        // Enable the start review button (dropdown users will use modal to pick type)
-        document.getElementById('admin-start-review-btn').disabled = false;
-        document.getElementById('admin-start-review-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+        // Enable/disable the start review button (dropdown users will use modal to pick type)
+        const startTopBtn = document.getElementById('admin-start-review-btn');
+        const isFinalized = isAgentWeekComplete(adminCurrentEntity || 'ALL', agentId);
+        if (isFinalized) {
+          startTopBtn.disabled = true;
+          startTopBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          const stateForTooltip = getEntityWeekState(adminCurrentEntity || 'ALL');
+          const cw = stateForTooltip.currentWeek || 1;
+          startTopBtn.title = `Finalized for Week ${cw} — Clear finalizations to reopen`;
+        } else {
+          startTopBtn.disabled = false;
+          startTopBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          startTopBtn.title = '';
+        }
 
         // Show the submitted reviews section and load reviews for this agent
         document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
@@ -5628,6 +5658,14 @@ Reviewer: ${review.reviewerId}
           ? 'Ready for final submission'
           : `${agentReviews.length}/3 reviews completed`;
 
+      // Compute finalization state for this agent to control start button behavior
+      const stateForBtn = getEntityWeekState(adminCurrentEntity || 'ALL');
+      const currentWeekForBtn = stateForBtn.currentWeek || 1;
+      const finalizedForBtn = stateForBtn.completedAgents && stateForBtn.completedAgents[currentWeekForBtn] && stateForBtn.completedAgents[currentWeekForBtn][agentId];
+      const topBtnClass = finalizedForBtn ? 'bg-gray-300 text-slate-700 px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed' : 'bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold';
+      const topBtnOnclick = finalizedForBtn ? `alert('Agent finalized for Week ${currentWeekForBtn}. Clear finalization to reopen.');` : 'adminStartQualityReview()';
+      const topBtnDisabledAttr = finalizedForBtn ? 'disabled' : '';
+
       agentListContainer.innerHTML = `
         <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
            <div class="flex items-center justify-between mb-4">
@@ -5639,11 +5677,11 @@ Reviewer: ${review.reviewerId}
               </div>
               <div class="text-right flex items-center gap-3">
                  <button onclick="adminClearReviewsForAgent('${agentId}')" id="admin-clear-reviews-btn" class="bg-red-100 text-red-700 px-3 py-2 rounded-md text-sm font-semibold border border-red-200 hover:bg-red-200">Clear Reviews</button>
-                 <button onclick="adminStartQualityReview()" id="admin-top-start-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold">${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
+                 <button onclick="${topBtnOnclick}" id="admin-top-start-btn" class="${topBtnClass}" ${topBtnDisabledAttr}>${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
               </div>
            </div>
         </div>
-      `;
+      `; 
 
       // Refresh reviews list for this agent
       adminLoadReviewsList();
@@ -5677,6 +5715,14 @@ Reviewer: ${review.reviewerId}
         alert('Please select an agent');
         return;
       }
+      // Prevent starting reviews on finalized agents
+      const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+      const currentWeek = state.currentWeek || 1;
+      const finalized = state.completedAgents && state.completedAgents[currentWeek] && state.completedAgents[currentWeek][adminCurrentAgent];
+      if (finalized) {
+        return alert(`Agent finalized for Week ${currentWeek}. Clear finalization to reopen.`);
+      }
+
       // Trigger the new modal
       document.getElementById('admin-review-type-modal').classList.remove('hidden');
       document.getElementById('review-type-agent-name').textContent = adminCurrentAgentName;
@@ -6394,6 +6440,11 @@ Reviewer: ${review.reviewerId}
       adminLoadReviewsList();
       updateClearFinalizationsButton();
 
+      // Refresh selected agent card if an agent is still selected so start buttons reflect cleared finalization
+      if (adminCurrentAgent) {
+        try { adminSelectAgent(adminCurrentAgent, adminCurrentAgentName); } catch (e) { /* ignore */ }
+      }
+
       // Show undo toast
       const toast = document.getElementById('finalization-undo-toast');
       const text = document.getElementById('finalization-undo-text');
@@ -6431,6 +6482,10 @@ Reviewer: ${review.reviewerId}
       renderAdminAgentDropdown();
       checkAndEnableWeekFinalButton();
       adminLoadReviewsList();
+      // Refresh selected agent card if present
+      if (adminCurrentAgent) {
+        try { adminSelectAgent(adminCurrentAgent, adminCurrentAgentName); } catch (e) { /* ignore */ }
+      }
 
       // Audit undo
       const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
