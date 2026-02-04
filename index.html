@@ -383,7 +383,11 @@
 
     // --- SYNC FUNCTIONS ---
     async function pushReviewsToFirebase(reviewIds) {
-      if (!db) return;
+      if (!db) {
+        console.warn("Firebase DB not initialized.");
+        return;
+      }
+      updateFirebaseStatus('syncing');
       console.log('Pushing reviews to Firebase...', reviewIds);
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const targetReviews = reviews.filter(r => reviewIds.includes(r.id));
@@ -410,16 +414,27 @@
         }
         await batch.commit();
         console.log(`Successfully pushed ${targetReviews.length} reviews.`);
+        updateFirebaseStatus('connected');
+        alert("Synced to cloud! ☁️");
       } catch (err) {
         console.error('pushReviewsToFirebase failed', err);
+        updateFirebaseStatus('error');
+        alert("Sync Failed! Check console for Details (likely Firestore Database not created in Firebase Console).");
       }
     }
 
     async function syncReviewsFromFirebase() {
-      if (!db) return;
+      if (!db) {
+        updateFirebaseStatus('disconnected');
+        return;
+      }
       try {
+        updateFirebaseStatus('syncing');
         // Fetch all reviews (optimization: could filter by date)
         const snapshot = await db.collection('reviews').limit(500).get();
+
+        updateFirebaseStatus('connected');
+
         if (snapshot.empty) return;
 
         let localReviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
@@ -444,15 +459,46 @@
           if (typeof reviewerLoadReviewsList === 'function') reviewerLoadReviewsList();
           if (typeof checkAndEnableWeekFinalButton === 'function') checkAndEnableWeekFinalButton();
           if (typeof agentLoadMonthlyPerformance === 'function') agentLoadMonthlyPerformance();
+
+          // Show toast
+          const toast = document.createElement('div');
+          toast.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-[100] animate-fade-in';
+          toast.innerText = 'New reviews synced from cloud ☁️';
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000);
         }
       } catch (e) {
         console.warn('Sync failed', e);
+        updateFirebaseStatus('error');
+      }
+    }
+
+    function updateFirebaseStatus(status) {
+      const el = document.getElementById('firebase-status-dot');
+      if (!el) return;
+      el.className = 'w-3 h-3 rounded-full mr-2 ';
+      if (status === 'connected') el.classList.add('bg-green-500', 'shadow-[0_0_8px_rgba(34,197,94,0.6)]');
+      else if (status === 'syncing') el.classList.add('bg-yellow-400', 'animate-pulse');
+      else if (status === 'error') el.classList.add('bg-red-500');
+      else el.classList.add('bg-gray-400');
+
+      const text = document.getElementById('firebase-status-text');
+      if (text) {
+        if (status === 'connected') text.innerText = 'Live';
+        else if (status === 'syncing') text.innerText = 'Syncing...';
+        else if (status === 'error') text.innerText = 'Error';
+        else text.innerText = 'Offline';
       }
     }
 
     // Auto-sync loops
     setInterval(syncReviewsFromFirebase, 60000); // Check every minute
-    window.addEventListener('load', syncReviewsFromFirebase); // Check on load
+    window.addEventListener('load', () => {
+      syncReviewsFromFirebase();
+      setTimeout(() => {
+        if (!db) updateFirebaseStatus('disconnected');
+      }, 2000);
+    });
   </script>
 </head>
 
@@ -898,6 +944,14 @@
 
       <div class="flex flex-col items-end gap-2">
         <div class="flex items-center gap-2">
+          <!-- Firebase Status -->
+          <div
+            class="flex items-center bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-xs font-semibold mr-2 border border-slate-200 dark:border-slate-600 cursor-pointer"
+            title="Click to Test Connection" onclick="syncReviewsFromFirebase(); alert('Manual Sync Triggered');">
+            <div id="firebase-status-dot" class="w-2 h-2 rounded-full bg-gray-400 mr-2"></div>
+            <span id="firebase-status-text" class="text-slate-600 dark:text-slate-300">Connecting...</span>
+          </div>
+
           <button onclick="toggleSearch()" class="text-slate-500 hover:text-blue-600 text-xl">🔍</button>
           <button id="theme-toggle" onclick="toggleTheme()"
             class="flex items-center justify-center p-2 rounded-full bg-slate-100 dark:bg-slate-700 text-sm transition"
