@@ -2791,7 +2791,7 @@
     // ADMIN & AGENT FUNCTIONS
     function renderAdminDashboard() {
       // Request notifications permission for admin users (so they can get comment alerts)
-      try { if (typeof ensureNotificationPermission === 'function') ensureNotificationPermission().catch(() => {}); } catch (e) {}
+      try { if (typeof ensureNotificationPermission === 'function') ensureNotificationPermission().then(() => { if (typeof registerFCMTokenForCurrentUser === 'function') registerFCMTokenForCurrentUser().catch(() => {}); }).catch(() => {}); } catch (e) {}
 
       // This function is called to refresh UI after operations
       // It should use adminLoadAgents() instead to maintain consistency
@@ -4385,12 +4385,14 @@ Reviewer: ${review.reviewerId}
         await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js');
         await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js');
         await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+        await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
 
         firebase.initializeApp(FIREBASE_CONFIG);
         firebaseApp = firebase;
         firebaseFirestore = firebase.firestore();
         firebaseStorage = firebase.storage();
         firebaseAuth = firebase.auth();
+        try { firebaseMessaging = firebase.messaging(); } catch (e) { console.warn('[Firebase] messaging init failed', e); firebaseMessaging = null; }
         isFirebaseReady = true;
         console.info('[Firebase] initialized');
         return Promise.resolve();
@@ -4580,6 +4582,47 @@ Reviewer: ${review.reviewerId}
     function escapeHtml(str) { return String(str || '').replace(/[&"'<>]/g, function (m) { return ({ '&': '&amp;', '"': '&quot;', "'": '&#39;', '<': '&lt;', '>': '&gt;' })[m]; }); }
 
 
+    // FCM token registration helpers
+    async function registerFCMTokenForCurrentUser(vapidKey) {
+      if (!isFirebaseReady) return Promise.resolve();
+      if (!firebaseMessaging || !firebaseFirestore || !firebaseAuth) return Promise.resolve();
+      const user = firebaseAuth.currentUser;
+      if (!user) return Promise.resolve();
+      try {
+        // Try to register a service worker (so background notifications work) and then request token
+        let options = vapidKey ? { vapidKey } : undefined;
+        if ('serviceWorker' in navigator && (!options || !options.serviceWorkerRegistration)) {
+          try {
+            const reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            options = Object.assign({}, options || {}, { serviceWorkerRegistration: reg });
+          } catch (swErr) { console.warn('[FCM] service worker registration failed', swErr); }
+        }
+
+        const token = await firebaseMessaging.getToken(options);
+        if (!token) return null;
+        await firebaseFirestore.collection('fcm_tokens').doc(String(user.uid)).set({ tokens: firebase.firestore.FieldValue.arrayUnion(token), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        console.info('[FCM] token registered for', user.uid);
+        return token;
+      } catch (e) {
+        console.warn('[FCM] register failed', e);
+        return null;
+      }
+    }
+
+    async function deleteFCMTokenForCurrentUser(token) {
+      if (!isFirebaseReady) return Promise.resolve();
+      if (!firebaseMessaging || !firebaseFirestore || !firebaseAuth) return Promise.resolve();
+      const user = firebaseAuth.currentUser;
+      if (!user || !token) return Promise.resolve();
+      try {
+        await firebaseFirestore.collection('fcm_tokens').doc(String(user.uid)).set({ tokens: firebase.firestore.FieldValue.arrayRemove(token) }, { merge: true });
+        console.info('[FCM] token removed for', user.uid);
+      } catch (e) {
+        console.warn('[FCM] delete token failed', e);
+      }
+    }
+
+
     // ---------------------------------------------------------------------
 
     function agentLoadQADashboard() {
@@ -4596,8 +4639,12 @@ Reviewer: ${review.reviewerId}
         if (typeof setupAgentFirebaseListener === 'function') {
           if (isFirebaseReady) {
             setupAgentFirebaseListener(agentId);
+            if (typeof registerFCMTokenForCurrentUser === 'function') registerFCMTokenForCurrentUser().catch(() => {});
           } else {
-            initFirebase().then(() => setupAgentFirebaseListener(agentId)).catch(e => console.warn('[agentLoadQADashboard] initFirebase failed', e));
+            initFirebase().then(() => {
+              setupAgentFirebaseListener(agentId);
+              if (typeof registerFCMTokenForCurrentUser === 'function') registerFCMTokenForCurrentUser().catch(() => {});
+            }).catch(e => console.warn('[agentLoadQADashboard] initFirebase failed', e));
           }
         }
       } catch (e) {
