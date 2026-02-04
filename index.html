@@ -376,9 +376,87 @@
         storage = firebase.storage();
         auth = firebase.auth();
         console.log("Firebase initialized");
+
+        // Initialize Auth Listener
+        auth.onAuthStateChanged(user => {
+          if (user) {
+            console.log("User signed in:", user.email);
+            handleLoginSuccess(user);
+          } else {
+            console.log("User signed out");
+          }
+        });
       }
     } catch (e) {
       console.warn("Firebase initialization skipped (check config):", e);
+    }
+
+    // --- AUTH FUNCTIONS ---
+    async function signInWithGoogle() {
+      if (!auth) return alert("Firebase Auth not initialized.");
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const result = await auth.signInWithPopup(provider);
+        // specific logic handled in onAuthStateChanged
+      } catch (error) {
+        console.error("Google Sign-in Error:", error);
+        alert("Login Failed: " + error.message);
+      }
+    }
+
+    async function signInWithFirebaseEmail() {
+      if (!auth) return alert("Firebase Auth not initialized.");
+      const email = document.getElementById('firebase-email').value;
+      const pass = document.getElementById('firebase-password').value;
+      if (!email || !pass) return alert("Please enter email and password");
+
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+      } catch (error) {
+        console.error("Email Sign-in Error:", error);
+        alert("Login Failed: " + error.message);
+      }
+    }
+
+    async function handleLoginSuccess(firebaseUser) {
+      // Here we map the Firebase user to our internal role system
+      // For now, we will assume if they can login via Google/Firebase, they might be an admin
+      // OR we check against a whitelist.
+
+      // 1. Check Custom Claims (Best Practice)
+      const tokenResult = await firebaseUser.getIdTokenResult();
+      if (tokenResult.claims.role === 'admin') {
+        console.log("Admin claim found");
+        // Set local session as admin
+        // This re-uses your existing 'currentUser' logic or you might need to adapt it
+        const adminUser = {
+          id: 'ADMIN-FIREBASE', // or firebaseUser.uid
+          name: firebaseUser.displayName || firebaseUser.email,
+          role: 'admin',
+          entity: 'ALL'
+        };
+        localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        location.reload(); // Reload to apply theme/view
+        return;
+      }
+
+      // 2. Fallback: Check email whitelist if claims not set yet
+      const adminEmails = ['divyanshu.sharma@bharatloan.com']; // Add your admins here
+      if (adminEmails.includes(firebaseUser.email)) {
+        const adminUser = {
+          id: 'ADMIN-FIREBASE',
+          name: firebaseUser.displayName || firebaseUser.email,
+          role: 'admin',
+          entity: 'ALL'
+        };
+        localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        location.reload();
+        return;
+      }
+
+      alert("Login successful but you do not have Admin access.");
+      // Optional: Logout if not admin
+      // auth.signOut();
     }
 
     // --- SYNC FUNCTIONS ---
