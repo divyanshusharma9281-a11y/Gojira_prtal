@@ -4330,6 +4330,11 @@ Reviewer: ${review.reviewerId}
         return openFileContent(review.fileContent, review.fileName);
       }
 
+      // Remote file URL from Firebase Storage -- open directly
+      if (review.fileUrl) {
+        return openFileContent(review.fileUrl, review.fileName || 'file');
+      }
+
       // Otherwise attempt to fetch from FileDB
       try {
         if (!FileDB._db) await FileDB.init();
@@ -4345,6 +4350,148 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    // --------- Optional Firebase integration (Firestore + Storage) ---------
+    // Paste your Firebase config object into FIREBASE_CONFIG to enable real-time cross-device sync.
+    // Example:
+    // const FIREBASE_CONFIG = { apiKey: '...', authDomain: '...', projectId: '...', storageBucket: '...', messagingSenderId: '...', appId: '...' };
+    const FIREBASE_CONFIG = null; // <-- set your config object here to enable
+    let firebaseApp = null;
+    let firebaseFirestore = null;
+    let firebaseStorage = null;
+    let firebaseAuth = null;
+    let isFirebaseReady = false;
+    let _firebaseAgentUnsub = null;
+
+    function _loadScript(url) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = (e) => reject(e);
+        document.head.appendChild(s);
+      });
+    }
+
+    async function initFirebase() {
+      if (!FIREBASE_CONFIG) return Promise.resolve();
+      if (isFirebaseReady) return Promise.resolve();
+      // Load compat SDKs (non-module friendly)
+      try {
+        await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+        await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js');
+        await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js');
+        await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+
+        firebase.initializeApp(FIREBASE_CONFIG);
+        firebaseApp = firebase;
+        firebaseFirestore = firebase.firestore();
+        firebaseStorage = firebase.storage();
+        firebaseAuth = firebase.auth();
+        isFirebaseReady = true;
+        console.info('[Firebase] initialized');
+        return Promise.resolve();
+      } catch (err) {
+        console.warn('[Firebase] init failed', err);
+        return Promise.reject(err);
+      }
+    }
+
+    async function pushReviewToFirebase(review) {
+      if (!isFirebaseReady || !firebaseFirestore) return;
+      try {
+        const docRef = firebaseFirestore.collection('reviews').doc(String(review.id));
+        let fileUrl = review.fileUrl || null;
+        // If a local blob exists (stored in FileDB), upload it to Firebase Storage
+        if (!fileUrl && review.fileStored) {
+          try {
+            if (!FileDB._db) await FileDB.init();
+            const blob = await FileDB.getFile(review.id);
+            if (blob) {
+              const storagePath = `reviews/${review.id}/${encodeURIComponent(review.fileName || 'file')}`;
+              const uploadTaskSnapshot = await firebaseStorage.ref(storagePath).put(blob);
+              fileUrl = await uploadTaskSnapshot.ref.getDownloadURL();
+            }
+          } catch (err) {
+            console.warn('[Firebase] upload failed for', review.id, err);
+          }
+        }
+
+        // Prepare doc
+        const doc = {
+          id: review.id,
+          agentId: review.agentId,
+          agentName: review.agentName,
+          entity: review.entity,
+          reviewType: review.reviewType,
+          score: review.score,
+          observation: review.observation,
+          reviewerId: review.reviewerId,
+          reviewerName: review.reviewerName,
+          fileUrl: fileUrl || null,
+          fileName: review.fileName || null,
+          date: review.date,
+          expiryDate: review.expiryDate,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        await docRef.set(doc, { merge: true });
+        console.info('[Firebase] pushed review', review.id);
+      } catch (err) {
+        console.error('[Firebase] pushReviewToFirebase error', err);
+      }
+    }
+
+    async function pushReviewsToFirebase(reviewIds) {
+      if (!isFirebaseReady) {
+        try { await initFirebase(); } catch (e) { console.warn('[pushReviewsToFirebase] initFirebase failed', e); return; }
+      }
+      for (const id of reviewIds) {
+        const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        const review = reviews.find(r => r.id === id);
+        if (review) {
+          pushReviewToFirebase(review).catch(e => console.warn('[pushReviewsToFirebase] failed', id, e));
+        }
+      }
+    }
+
+    function setupAgentFirebaseListener(agentId) {
+      if (!isFirebaseReady || !firebaseFirestore) return;
+      try {
+        if (_firebaseAgentUnsub) _firebaseAgentUnsub();
+        const q = firebaseFirestore.collection('reviews').where('agentId', '==', agentId);
+        _firebaseAgentUnsub = q.onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(change => {
+            const data = change.doc.data();
+            const id = change.doc.id;
+            if (change.type === 'added' || change.type === 'modified') {
+              // Add to localStorage if missing
+              let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+              if (!reviews.some(r => r.id === id)) {
+                const newReview = Object.assign({}, data, { id: id });
+                // Ensure expiryDate is string
+                if (newReview.expiryDate && newReview.expiryDate.toDate) newReview.expiryDate = newReview.expiryDate.toDate().toISOString();
+                reviews.push(newReview);
+                localStorage.setItem('adminReviews', JSON.stringify(reviews));
+                try { agentLoadQADashboard(); checkAgentNotifications(false); } catch (e) { console.warn('[Firebase] agent reload failed', e); }
+              }
+            }
+            if (change.type === 'removed') {
+              // remove locally if present
+              let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+              const updated = reviews.filter(r => r.id !== id);
+              localStorage.setItem('adminReviews', JSON.stringify(updated));
+              try { agentLoadQADashboard(); } catch (e) {}
+            }
+          });
+        }, err => console.warn('[Firebase] listener error', err));
+      } catch (err) {
+        console.warn('[Firebase] setupAgentFirebaseListener failed', err);
+      }
+    }
+
+    // ---------------------------------------------------------------------
+
     function agentLoadQADashboard() {
       if (!currentSessionUser || currentSessionUser.role !== 'agent') {
         return; // Only for agents
@@ -4353,6 +4500,19 @@ Reviewer: ${review.reviewerId}
       const agentIdRaw = currentSessionUser.id;
       const agentId = normalizeId(agentIdRaw); // normalized id for comparisons
       const agentName = currentSessionUser.name;
+
+      // Setup Firebase listener so this agent receives cross-device updates in realtime (if configured)
+      try {
+        if (typeof setupAgentFirebaseListener === 'function') {
+          if (isFirebaseReady) {
+            setupAgentFirebaseListener(agentId);
+          } else {
+            initFirebase().then(() => setupAgentFirebaseListener(agentId)).catch(e => console.warn('[agentLoadQADashboard] initFirebase failed', e));
+          }
+        }
+      } catch (e) {
+        console.warn('[agentLoadQADashboard] could not setup firebase listener', e);
+      }
 
       // Set welcome text
       document.getElementById('agent-qa-welcome-text').innerText = `Welcome ${agentName}`;
@@ -6064,9 +6224,11 @@ Reviewer: ${review.reviewerId}
         const now = new Date();
 
         // Create review objects and append. We'll save file blobs to FileDB after creating review IDs.
+        const createdReviewIds = [];
         for (let idx = 0; idx < processedItems.length; idx++) {
           const item = processedItems[idx];
           const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 10000).toString() + '-' + idx;
+          createdReviewIds.push(reviewId);
           const reviewObj = {
             id: reviewId,
             date: now.toISOString(), // Use ISO format for consistent parsing
@@ -6106,6 +6268,18 @@ Reviewer: ${review.reviewerId}
 
         // Persist reviews (with updated fileStored flags)
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
+        // Notify other sessions/tabs that reviews changed (timestamp)
+        try { localStorage.setItem('adminReviewsUpdatedAt', Date.now().toString()); } catch (e) { console.warn('[adminFinalSubmit] could not set adminReviewsUpdatedAt', e); }
+
+        // If Firebase is configured, attempt to push these newly created reviews to Firestore/Storage
+        try {
+          if (typeof pushReviewsToFirebase === 'function' && createdReviewIds && createdReviewIds.length) {
+            // fire-and-forget, don't block admin submit flow
+            pushReviewsToFirebase(createdReviewIds).catch(err => console.warn('[adminFinalSubmit] pushReviewsToFirebase failed', err));
+          }
+        } catch (err) {
+          console.warn('[adminFinalSubmit] could not call pushReviewsToFirebase', err);
+        }
 
         // NOTIFICATION: Add feedback to agent comments
         let comments = JSON.parse(localStorage.getItem('gojira_comments') || '[]');
@@ -6401,6 +6575,15 @@ Reviewer: ${review.reviewerId}
         reviews[currentEditIndex] = review;
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
+        // If Firebase is configured, push the edited review to Firestore
+        try {
+          if (typeof pushReviewsToFirebase === 'function') {
+            pushReviewsToFirebase([review.id]).catch(err => console.warn('[adminSaveEdit] pushReviewsToFirebase failed', err));
+          }
+        } catch (err) {
+          console.warn('[adminSaveEdit] could not call pushReviewsToFirebase', err);
+        }
+
         // Refresh & Close
         adminLoadReviewsList();
         document.getElementById('admin-edit-review-modal').classList.add('hidden');
@@ -6432,6 +6615,30 @@ Reviewer: ${review.reviewerId}
 
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+        // If Firebase is configured, attempt to delete the review/doc from Firestore and its Storage file (non-blocking)
+        try {
+          (async () => {
+            try {
+              if (!isFirebaseReady) await initFirebase();
+              if (isFirebaseReady && firebaseFirestore) {
+                firebaseFirestore.collection('reviews').doc(review.id).delete().catch(e => console.warn('[adminDeleteReview] firebase delete failed', e));
+                if (review.fileUrl && firebaseStorage) {
+                  try {
+                    const ref = firebaseStorage.refFromURL(review.fileUrl);
+                    ref.delete().catch(e => console.warn('[adminDeleteReview] firebase storage delete failed', e));
+                  } catch (e) {
+                    console.warn('[adminDeleteReview] could not construct storage ref', e);
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('[adminDeleteReview] initFirebase or delete failed', e);
+            }
+          })();
+        } catch (e) {
+          console.warn('[adminDeleteReview] could not trigger firebase deletion', e);
+        }
 
         // If this deletion caused the agent to fall below threshold, unmark completion
         if (agentId) {
@@ -6479,6 +6686,33 @@ Reviewer: ${review.reviewerId}
         reviews = reviews.filter(r => r.entity !== adminCurrentEntity);
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+        // Attempt to remove matching docs/files from Firebase (non-blocking)
+        try {
+          (async () => {
+            try {
+              if (!isFirebaseReady) await initFirebase();
+              if (isFirebaseReady && firebaseFirestore) {
+                await Promise.all(toRemove.map(r => {
+                  try {
+                    firebaseFirestore.collection('reviews').doc(r.id).delete().catch(e => console.warn('[adminDeleteAllReviews] firebase delete failed', r.id, e));
+                  } catch (e) { console.warn('[adminDeleteAllReviews] delete doc loop', e); }
+                  if (r.fileUrl && firebaseStorage) {
+                    try {
+                      const ref = firebaseStorage.refFromURL(r.fileUrl);
+                      ref.delete().catch(e => console.warn('[adminDeleteAllReviews] firebase storage delete failed', r.id, e));
+                    } catch (e) { console.warn('[adminDeleteAllReviews] storage ref creation failed', e); }
+                  }
+                  return Promise.resolve();
+                }));
+              }
+            } catch (e) {
+              console.warn('[adminDeleteAllReviews] initFirebase or batch delete failed', e);
+            }
+          })();
+        } catch (e) {
+          console.warn('[adminDeleteAllReviews] could not trigger firebase deletes', e);
+        }
 
         // For each removed agent, if they now have 0 global reviews, unmark finalization
         removedAgents.forEach(agentId => {
@@ -7170,6 +7404,43 @@ Reviewer: ${review.reviewerId}
         startUpdateChecker();
       } catch (e) {
         console.warn('[updateChecker] failed to start', e);
+      }
+
+      // Real-time sync helper: Listen to storage events and poll for admin review changes.
+      // This notifies other browser tabs/sessions on the same origin. Note: it cannot sync across different machines without a server.
+      try {
+        // Storage event listener (fires in other tabs/windows on the same origin)
+        window.addEventListener('storage', function (ev) {
+          try {
+            if (!ev.key) return;
+            if (ev.key === 'adminReviews' || ev.key === 'adminReviewsUpdatedAt' || ev.key === 'gojira_comments') {
+              console.debug('[storage] detected change', ev.key);
+              if (currentSessionUser && currentSessionUser.role === 'agent') {
+                try { agentLoadQADashboard(); checkAgentNotifications(false); } catch (e) { console.warn('[storage] agent refresh failed', e); }
+              }
+              if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'reviewer')) {
+                try { adminLoadReviewsList(); adminLoadFeedbackList(); } catch (e) { console.warn('[storage] admin refresh failed', e); }
+              }
+            }
+          } catch (err) { console.warn('[storage] handler error', err); }
+        });
+
+        // Polling fallback: check an "adminReviewsUpdatedAt" timestamp every 5s to detect changes across sessions
+        let _lastAdminReviewsTimestamp = localStorage.getItem('adminReviewsUpdatedAt') || '';
+        setInterval(() => {
+          try {
+            const ts = localStorage.getItem('adminReviewsUpdatedAt') || '';
+            if (ts && ts !== _lastAdminReviewsTimestamp) {
+              _lastAdminReviewsTimestamp = ts;
+              console.debug('[poll] adminReviewsUpdatedAt changed', ts);
+              if (currentSessionUser && currentSessionUser.role === 'agent') {
+                try { agentLoadQADashboard(); checkAgentNotifications(false); } catch (e) { console.warn('[poll] agent refresh failed', e); }
+              }
+            }
+          } catch (e) { console.warn('[poll] error', e); }
+        }, 5000);
+      } catch (e) {
+        console.warn('[sync] failed to initialize storage sync helpers', e);
       }
     });
 
