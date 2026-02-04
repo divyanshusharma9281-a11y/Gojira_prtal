@@ -4375,7 +4375,19 @@ Reviewer: ${review.reviewerId}
     // Paste your Firebase config object into FIREBASE_CONFIG to enable real-time cross-device sync.
     // Example:
     // const FIREBASE_CONFIG = { apiKey: '...', authDomain: '...', projectId: '...', storageBucket: '...', messagingSenderId: '...', appId: '...' };
-    const FIREBASE_CONFIG = null; // <-- set your config object here to enable
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBaM-BpRPVhMTNaaX0RgcjLOWBiMe60kvU",
+      authDomain: "gojira-9f84a.firebaseapp.com",
+      projectId: "gojira-9f84a",
+      storageBucket: "gojira-9f84a.firebasestorage.app",
+      messagingSenderId: "1040488004573",
+      appId: "1:1040488004573:web:b4854f7bf34205dda51434",
+      measurementId: "G-PGSS0ELEXQ"
+    };
+
+    // Public VAPID key for Web Push (paste from Firebase Console -> Project settings -> Cloud Messaging)
+    const FIREBASE_VAPID_KEY = 'BBK5BLTVv851mxs7kHr8c4fbUWO1KIyN3ivod__pZz0T1AzOnOorWo7W70Q-p2FawX1v5gdKKRI6tBOaw1l6chg';
+    
     let firebaseApp = null;
     let firebaseFirestore = null;
     let firebaseStorage = null;
@@ -4689,7 +4701,7 @@ Reviewer: ${review.reviewerId}
       if (!user) return Promise.resolve();
       try {
         // Try to register a service worker (so background notifications work) and then request token
-        let options = vapidKey ? { vapidKey } : undefined;
+        let options = vapidKey ? { vapidKey } : (typeof FIREBASE_VAPID_KEY !== 'undefined' && FIREBASE_VAPID_KEY ? { vapidKey: FIREBASE_VAPID_KEY } : undefined);
         if ('serviceWorker' in navigator && (!options || !options.serviceWorkerRegistration)) {
           try {
             const reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
@@ -5514,6 +5526,13 @@ Reviewer: ${review.reviewerId}
 
       // Initialize portal login system
       // If we have a user, this function should respect it or we override it immediately after
+
+      // Try to register the service worker for FCM (non-blocking)
+      try {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/firebase-messaging-sw.js').then(reg => console.info('[SW] registered at', reg.scope)).catch(e => console.warn('[SW] service worker registration failed', e));
+        }
+      } catch (e) { console.warn('[onload] sw register failed', e); }
       initPortal();
 
       if (currentSessionUser) {
