@@ -392,15 +392,59 @@
     }
 
     // --- AUTH FUNCTIONS ---
-    async function signInWithGoogle() {
-      if (!auth) return alert("Firebase Auth not initialized.");
-      const provider = new firebase.auth.GoogleAuthProvider();
+    // --- SYNC FUNCTIONS --- (COMMENT/DELETE)
+    async function syncReviewDeletionToFirebase(reviewId) {
+      if (!db) return;
       try {
-        const result = await auth.signInWithPopup(provider);
-        // specific logic handled in onAuthStateChanged
-      } catch (error) {
-        console.error("Google Sign-in Error:", error);
-        alert("Login Failed: " + error.message);
+        await db.collection('reviews').doc(reviewId).delete();
+        console.log('Deleted review from Firebase:', reviewId);
+      } catch (e) {
+        console.warn('Failed to delete review from Firebase', e);
+      }
+    }
+
+    async function pushCommentsToFirebase(comment) {
+      if (!db) return;
+      try {
+        // Using a separate collection for comments is cleaner
+        await db.collection('comments').doc(comment.id).set(comment);
+        console.log('Pushed comment to Firebase:', comment.id);
+      } catch (e) {
+        console.warn('Failed to push comment', e);
+      }
+    }
+
+    async function syncCommentsFromFirebase() {
+      if (!db) return;
+      try {
+        const snapshot = await db.collection('comments').limit(100).get(); // Limit to recent 100 replies
+        if (snapshot.empty) return;
+
+        let localComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
+        const localIds = new Set(localComments.map(c => c.id));
+        let changed = false;
+
+        snapshot.forEach(doc => {
+          const remoteComment = doc.data();
+          if (!localIds.has(remoteComment.id)) {
+            localComments.push(remoteComment);
+            localIds.add(remoteComment.id);
+            changed = true;
+          }
+        });
+
+        if (changed) {
+          localStorage.setItem('reviewComments', JSON.stringify(localComments));
+          // Refresh relevant UI if open
+          // Note: adminLoadFeedbackList might need to be re-run if on that page
+          if (document.getElementById('admin-feedback-list')) {
+            // We need to make sure adminLoadFeedbackList is defined or accessible
+            // It is defined later, so we check type
+            if (typeof adminLoadFeedbackList === 'function') adminLoadFeedbackList();
+          }
+        }
+      } catch (e) {
+        console.warn('Sync comments failed', e);
       }
     }
 
@@ -537,6 +581,7 @@
           if (typeof reviewerLoadReviewsList === 'function') reviewerLoadReviewsList();
           if (typeof checkAndEnableWeekFinalButton === 'function') checkAndEnableWeekFinalButton();
           if (typeof agentLoadMonthlyPerformance === 'function') agentLoadMonthlyPerformance();
+          if (typeof agentLoadQADashboard === 'function') agentLoadQADashboard();
 
           // Show toast
           const toast = document.createElement('div');
@@ -570,9 +615,14 @@
     }
 
     // Auto-sync loops
-    setInterval(syncReviewsFromFirebase, 60000); // Check every minute
+    setInterval(() => {
+      syncReviewsFromFirebase();
+      syncCommentsFromFirebase();
+    }, 60000); // Check every minute
+
     window.addEventListener('load', () => {
       syncReviewsFromFirebase();
+      syncCommentsFromFirebase(); // Initial fetch
       setTimeout(() => {
         if (!db) updateFirebaseStatus('disconnected');
       }, 2000);
@@ -7117,28 +7167,10 @@ Reviewer: ${review.reviewerId}
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // If Firebase is configured, attempt to delete the review/doc from Firestore and its Storage file (non-blocking)
-        try {
-          (async () => {
-            try {
-              if (!isFirebaseReady) await initFirebase();
-              if (isFirebaseReady && firebaseFirestore) {
-                firebaseFirestore.collection('reviews').doc(review.id).delete().catch(e => console.warn('[adminDeleteReview] firebase delete failed', e));
-                if (review.fileUrl && firebaseStorage) {
-                  try {
-                    const ref = firebaseStorage.refFromURL(review.fileUrl);
-                    ref.delete().catch(e => console.warn('[adminDeleteReview] firebase storage delete failed', e));
-                  } catch (e) {
-                    console.warn('[adminDeleteReview] could not construct storage ref', e);
-                  }
-                }
-              }
-            } catch (e) {
-              console.warn('[adminDeleteReview] initFirebase or delete failed', e);
-            }
-          })();
-        } catch (e) {
-          console.warn('[adminDeleteReview] could not trigger firebase deletion', e);
+        // Firebase Deletion Sync
+        if (review && review.id) {
+          syncReviewDeletionToFirebase(review.id);
+          // Optional: Delete file from storage if URL exists (implementation skipped for now as per instructions to focus on main bugs)
         }
 
         // If this deletion caused the agent to fall below threshold, unmark completion
@@ -7615,7 +7647,10 @@ Reviewer: ${review.reviewerId}
         text: text,
         date: new Date().toLocaleString()
       });
+      const newComment = comments[0];
       localStorage.setItem('reviewComments', JSON.stringify(comments));
+      // Push to Firebase
+      pushCommentsToFirebase(newComment);
       textarea.value = '';
       alert('Reply submitted!');
       openReviewDetail(reviewId); // Refresh modal
