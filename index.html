@@ -353,7 +353,7 @@
   </style>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script>
@@ -372,10 +372,10 @@
     try {
       if (typeof firebase !== 'undefined') {
         firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
+        db = firebase.database(); // Switch to Realtime Database
         storage = firebase.storage();
         auth = firebase.auth();
-        console.log("Firebase initialized");
+        console.log("Firebase initialized (Realtime DB)");
 
         // Initialize Auth Listener
         auth.onAuthStateChanged(user => {
@@ -510,15 +510,14 @@
         return;
       }
       updateFirebaseStatus('syncing');
-      console.log('Pushing reviews to Firebase...', reviewIds);
+      console.log('Pushing reviews to Firebase (RTDB)...', reviewIds);
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const targetReviews = reviews.filter(r => reviewIds.includes(r.id));
 
       try {
-        const batch = db.batch();
+        // Realtime Database doesn't have batches like Firestore, so we loop await
         for (const review of targetReviews) {
-          const ref = db.collection('reviews').doc(review.id);
-          batch.set(ref, review);
+          await db.ref('reviews/' + review.id).set(review);
 
           // Upload file if exists and we have FileDB
           if (review.fileStored && typeof FileDB !== 'undefined' && storage) {
@@ -534,14 +533,13 @@
             }
           }
         }
-        await batch.commit();
         console.log(`Successfully pushed ${targetReviews.length} reviews.`);
         updateFirebaseStatus('connected');
         alert("Synced to cloud! ☁️");
       } catch (err) {
         console.error('pushReviewsToFirebase failed', err);
         updateFirebaseStatus('error');
-        alert("Sync Failed! Check console for Details (likely Firestore Database not created in Firebase Console).");
+        alert("Sync Failed! Check console for Details (Realtime Database error).");
       }
     }
 
@@ -552,20 +550,20 @@
       }
       try {
         updateFirebaseStatus('syncing');
-        // Fetch all reviews (optimization: could filter by date)
-        const snapshot = await db.collection('reviews').limit(500).get();
+        // Fetch all reviews
+        const snapshot = await db.ref('reviews').limitToLast(500).once('value');
 
         updateFirebaseStatus('connected');
 
-        if (snapshot.empty) return;
+        if (!snapshot.exists()) return;
 
         let localReviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         let changed = false;
         const localIds = new Set(localReviews.map(r => r.id));
 
-        snapshot.forEach(doc => {
-          const remoteReview = doc.data();
-          if (!localIds.has(remoteReview.id)) {
+        snapshot.forEach(childSnapshot => {
+          const remoteReview = childSnapshot.val();
+          if (remoteReview && !localIds.has(remoteReview.id)) {
             localReviews.push(remoteReview);
             localIds.add(remoteReview.id);
             changed = true;
@@ -574,7 +572,7 @@
 
         if (changed) {
           localStorage.setItem('adminReviews', JSON.stringify(localReviews));
-          console.log('Synced new reviews from Firebase');
+          console.log('Synced new reviews from Firebase (RTDB)');
 
           // Refresh UI if functions are available
           if (typeof adminLoadReviewsList === 'function') adminLoadReviewsList();
