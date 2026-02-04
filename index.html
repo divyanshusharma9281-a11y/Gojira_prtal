@@ -3840,7 +3840,7 @@ Reviewer: ${review.reviewerId}
                 <div>
                   <p class="text-sm text-slate-500">${r.date}</p>
                   <h4 class="font-bold text-lg">${r.fileName || 'Review'}</h4>
-                  <p class="text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${r.fileContent}', '${r.fileName}')">View File</p>
+                  <p class="text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${r.id}')">View File</p>
                 </div>
                 <div class="text-right">
                   <span class="inline-block px-3 py-1 rounded-full text-sm font-bold ${r.score == 100 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">
@@ -4267,6 +4267,82 @@ Reviewer: ${review.reviewerId}
     // Helper: normalize IDs for robust matching
     function normalizeId(id) {
       return String(id || '').trim().toLowerCase().replace(/\s+/g, '');
+    }
+
+    // --------- FileDB (IndexedDB) - used to store review files larger than localStorage -------
+    const FileDB = {
+      _db: null,
+      init() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) return reject(new Error('IndexedDB not supported'));
+          const req = indexedDB.open('gojira-files', 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('files')) db.createObjectStore('files');
+          };
+          req.onsuccess = (e) => { FileDB._db = e.target.result; resolve(); };
+          req.onerror = (e) => reject(e.target.error);
+        });
+      },
+      saveFile(id, blob) {
+        return new Promise((resolve, reject) => {
+          try {
+            const tx = FileDB._db.transaction('files', 'readwrite');
+            const store = tx.objectStore('files');
+            const r = store.put(blob, id);
+            r.onsuccess = () => resolve();
+            r.onerror = (e) => reject(e.target.error);
+          } catch (err) { reject(err); }
+        });
+      },
+      getFile(id) {
+        return new Promise((resolve, reject) => {
+          try {
+            const tx = FileDB._db.transaction('files', 'readonly');
+            const store = tx.objectStore('files');
+            const r = store.get(id);
+            r.onsuccess = (e) => resolve(e.target.result);
+            r.onerror = (e) => reject(e.target.error);
+          } catch (err) { reject(err); }
+        });
+      },
+      deleteFile(id) {
+        return new Promise((resolve, reject) => {
+          try {
+            const tx = FileDB._db.transaction('files', 'readwrite');
+            const store = tx.objectStore('files');
+            const r = store.delete(id);
+            r.onsuccess = () => resolve();
+            r.onerror = (e) => reject(e.target.error);
+          } catch (err) { reject(err); }
+        });
+      }
+    };
+
+    // Helper to open a review file by its review id (handles legacy data URLs and IndexedDB blobs)
+    async function openReviewFile(reviewId) {
+      const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const review = reviews.find(r => r.id === reviewId);
+      if (!review) return alert('File not found');
+
+      // If legacy fileContent (data URL) exists, use it
+      if (review.fileContent) {
+        return openFileContent(review.fileContent, review.fileName);
+      }
+
+      // Otherwise attempt to fetch from FileDB
+      try {
+        if (!FileDB._db) await FileDB.init();
+        const blob = await FileDB.getFile(reviewId);
+        if (!blob) return alert('File not found or not saved.');
+        const url = URL.createObjectURL(blob);
+        openFileContent(url, review.fileName || 'file');
+        // Revoke the URL later to free memory
+        setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+      } catch (err) {
+        console.error('openReviewFile error', err);
+        alert('Unable to open file: ' + (err.message || err));
+      }
     }
 
     function agentLoadQADashboard() {
@@ -4974,6 +5050,8 @@ Reviewer: ${review.reviewerId}
       const savedTheme = localStorage.getItem('theme') || 'light';
       // Apply saved theme (supports 'light' | 'dark')
       try { setTheme(savedTheme); } catch (e) { console.warn('[onload] setTheme failed', e); }
+      // Initialize file DB (used for storing uploaded review files up to ~50MB). Non-fatal if unsupported.
+      try { if (window.indexedDB) { FileDB.init().catch(e=>console.warn('[FileDB] init failed', e)); } } catch (e) { console.warn('[FileDB] init failed', e); }
 
 
 
@@ -5806,7 +5884,7 @@ Reviewer: ${review.reviewerId}
         itemHtml += `
           <!-- File Upload (Voice) -->
           <div class="mb-4">
-            <label class="block text-sm font-semibold mb-2">Select File (Max 20MB)</label>
+            <label class="block text-sm font-semibold mb-2">Select File (Max 50MB)</label>
             <input type="file" class="review-file-input block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700"
               data-item-index="${itemIndex - 1}" onchange="adminOnFileSelected(${itemIndex - 1})">
             <p class="text-xs text-slate-500 mt-1">Selected: <span class="review-file-name">None</span></p>
@@ -5874,8 +5952,8 @@ Reviewer: ${review.reviewerId}
       const file = fileInput.files[0];
 
       if (file) {
-        if (file.size > 20 * 1024 * 1024) {
-          alert('File size exceeds 20MB limit');
+        if (file.size > 50 * 1024 * 1024) {
+          alert('File size exceeds 50MB limit');
           fileInput.value = '';
           return;
         }
@@ -5978,25 +6056,16 @@ Reviewer: ${review.reviewerId}
       submitBtn.disabled = true;
 
       try {
-        // Process files
-        const processedItems = await Promise.all(items.map(item => {
-          return new Promise((resolve, reject) => {
-            if (!item.file) {
-              resolve({ ...item, fileContent: null, fileName: null });
-            } else {
-              const reader = new FileReader();
-              reader.onload = (e) => resolve({ ...item, fileContent: e.target.result, fileName: item.file.name });
-              reader.onerror = reject;
-              reader.readAsDataURL(item.file);
-            }
-          });
-        }));
+        // Process files: keep File blobs and metadata; actual file bytes are saved to IndexedDB (FileDB) to support larger files
+        const processedItems = items.map(item => ({ ...item, fileBlob: item.file || null, fileName: item.file ? item.file.name : null }));
 
         // STORAGE: Save to localStorage
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         const now = new Date();
 
-        processedItems.forEach((item, idx) => {
+        // Create review objects and append. We'll save file blobs to FileDB after creating review IDs.
+        for (let idx = 0; idx < processedItems.length; idx++) {
+          const item = processedItems[idx];
           const reviewId = Date.now().toString() + '-' + Math.floor(Math.random() * 10000).toString() + '-' + idx;
           const reviewObj = {
             id: reviewId,
@@ -6013,17 +6082,29 @@ Reviewer: ${review.reviewerId}
             reviewerName: currentUser?.name || 'Admin',
             // Specific fields
             chatId: item.chatId,
-            emailId: item.emailId
+            emailId: item.emailId,
+            fileName: item.fileName || null,
+            fileStored: false
           };
 
-          if (item.reviewType === 'voice') {
-            reviewObj.fileName = item.fileName;
-            reviewObj.fileContent = item.fileContent;
-          }
-
           reviews.push(reviewObj);
-        });
 
+          // If a file blob is present, save it to IndexedDB under the reviewId
+          if (item.fileBlob) {
+            try {
+              if (!FileDB._db) await FileDB.init();
+              await FileDB.saveFile(reviewId, item.fileBlob);
+              // Mark as stored
+              reviews[reviews.length - 1].fileStored = true;
+            } catch (err) {
+              console.error('Failed to save file for review', reviewId, err);
+              // keep fileStored false and notify admin
+              alert('Warning: file could not be saved for one of the reviews. The review was submitted without the file.');
+            }
+          }
+        }
+
+        // Persist reviews (with updated fileStored flags)
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
         // NOTIFICATION: Add feedback to agent comments
@@ -6072,7 +6153,22 @@ Reviewer: ${review.reviewerId}
 
       // Remove expired reviews
       const now = new Date();
+      // Keep non-expired for immediate display
       let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
+
+      // Delete expired review files in background to free space
+      const expired = reviews.filter(r => new Date(r.expiryDate) < now);
+      if (expired.length > 0) {
+        (async () => {
+          try {
+            if (!FileDB._db) await FileDB.init();
+            await Promise.all(expired.map(r => r.fileStored ? FileDB.deleteFile(r.id).catch(e => console.warn('[cleanup] deleteFile failed', r.id, e)) : Promise.resolve()));
+          } catch (e) {
+            console.warn('[cleanup] failed', e);
+          }
+        })();
+      }
+
       localStorage.setItem('adminReviews', JSON.stringify(filtered));
 
       // Filter by current entity (admin can only see reviews for their logged-in entity)
@@ -6097,7 +6193,7 @@ Reviewer: ${review.reviewerId}
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
           <td class="p-6">${review.date}</td>
           <td class="p-6">${review.agentName}</td>
-          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
+          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${review.id}')">${review.fileName || 'N/A'}</td>
           <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
           <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
           <td class="p-6 text-right space-x-2">
@@ -6137,7 +6233,7 @@ Reviewer: ${review.reviewerId}
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
           <td class="p-6">${review.date}</td>
           <td class="p-6">${review.agentName}</td>
-          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openFileContent('${review.fileContent}', '${review.fileName}')">${review.fileName}</td>
+          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${review.id}')">${review.fileName || 'N/A'}</td>
           <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
           <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
           <td class="p-6 text-right space-x-2">
@@ -6153,8 +6249,8 @@ Reviewer: ${review.reviewerId}
       const review = reviews.find(r => r.id === reviewId);
       if (review) {
         const choice = confirm(`File: ${review.fileName}\nAgent: ${review.agentName}\nScore: ${review.score}\nObservation: ${review.observation}\n\nClick OK to open the file.`);
-        if (choice && review.fileContent) {
-          openFileContent(review.fileContent, review.fileName);
+        if (choice) {
+          openReviewFile(review.id);
         }
       }
     }
@@ -6207,7 +6303,7 @@ Reviewer: ${review.reviewerId}
         document.getElementById('admin-review-detail-file-section').classList.remove('hidden');
         document.getElementById('admin-review-detail-id-section').classList.add('hidden');
         document.getElementById('admin-review-detail-file-name').textContent = review.fileName || 'N/A';
-        document.getElementById('admin-review-detail-file-link').onclick = () => openFileContent(review.fileContent, review.fileName);
+        document.getElementById('admin-review-detail-file-link').onclick = () => openReviewFile(review.id);
       } else {
         document.getElementById('admin-review-detail-file-section').classList.add('hidden');
         document.getElementById('admin-review-detail-id-section').classList.remove('hidden');
@@ -6283,14 +6379,19 @@ Reviewer: ${review.reviewerId}
       try {
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
-          const content = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-          review.fileName = file.name;
-          review.fileContent = content; // Update content
+          try {
+            if (!FileDB._db) await FileDB.init();
+            // Remove any previously stored file for this review to avoid orphaned blobs
+            if (review.fileStored) {
+              try { await FileDB.deleteFile(review.id); } catch (e) { console.warn('Failed to delete old file for review', review.id, e); }
+            }
+            await FileDB.saveFile(review.id, file);
+            review.fileName = file.name;
+            review.fileStored = true;
+          } catch (err) {
+            console.error('Failed saving edited file', err);
+            alert('Failed to save file. Review updated without replacing the file.');
+          }
         }
 
         review.observation = obs;
@@ -6313,11 +6414,21 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    function adminDeleteReview(index) {
+    async function adminDeleteReview(index) {
       if (confirm('Delete this review?')) {
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         const review = reviews[index];
         const agentId = review ? review.agentId : null;
+
+        // If file is stored in FileDB, attempt to remove it
+        try {
+          if (review && review.fileStored) {
+            if (!FileDB._db) await FileDB.init();
+            await FileDB.deleteFile(review.id);
+          }
+        } catch (e) {
+          console.warn('[adminDeleteReview] failed to delete associated file', e);
+        }
 
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
@@ -6343,12 +6454,26 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    function adminDeleteAllReviews() {
+    async function adminDeleteAllReviews() {
       if (confirm('Delete all reviews for this entity? This action cannot be undone.')) {
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
 
+        // Find reviews to remove for this entity
+        const toRemove = reviews.filter(r => r.entity === adminCurrentEntity);
+
+        // Delete associated files from FileDB when present
+        try {
+          if (!FileDB._db) await FileDB.init();
+          await Promise.all(toRemove.map(r => {
+            if (r.fileStored) return FileDB.deleteFile(r.id).catch(e => console.warn('[adminDeleteAllReviews] deleteFile failed', r.id, e));
+            return Promise.resolve();
+          }));
+        } catch (e) {
+          console.warn('[adminDeleteAllReviews] file deletion loop failed', e);
+        }
+
         // Determine which agents had reviews removed for this entity
-        const removedAgents = new Set(reviews.filter(r => r.entity === adminCurrentEntity).map(r => r.agentId));
+        const removedAgents = new Set(toRemove.map(r => r.agentId));
 
         // Remove only reviews for the current entity
         reviews = reviews.filter(r => r.entity !== adminCurrentEntity);
@@ -6634,8 +6759,8 @@ Reviewer: ${review.reviewerId}
       const review = agentReviews[index];
 
       const choice = confirm(`📋 Review Detail\n\nFile: ${review.fileName}\nScore: ${review.score}\nObservation:\n${review.observation}\n\nClick OK to OPEN THE FILE.`);
-      if (choice && review.fileContent) {
-        openFileContent(review.fileContent, review.fileName);
+      if (choice) {
+        openReviewFile(review.id);
       }
     }
 
@@ -6673,7 +6798,7 @@ Reviewer: ${review.reviewerId}
         document.getElementById('review-detail-file-section').classList.remove('hidden');
         document.getElementById('review-detail-id-section').classList.add('hidden');
         document.getElementById('review-detail-file-name').textContent = review.fileName || 'N/A';
-        document.getElementById('review-detail-file-link').onclick = () => openFileContent(review.fileContent, review.fileName);
+        document.getElementById('review-detail-file-link').onclick = () => openReviewFile(review.id);
       } else {
         document.getElementById('review-detail-file-section').classList.add('hidden');
         document.getElementById('review-detail-id-section').classList.remove('hidden');
