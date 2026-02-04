@@ -437,9 +437,20 @@
             class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Login</button>
         </form>
 
-        <div class="text-center">
+        <div class="text-center mb-4">
           <button onclick="showChangePasswordModal()"
             class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
+        </div>
+
+        <div class="text-center mb-4">
+          <div class="text-sm text-slate-400 mb-2">-- OR (Admin sign-in via Firebase) --</div>
+          <button onclick="signInWithGoogle()" class="w-full bg-white text-slate-900 font-bold py-2 px-4 rounded-lg hover:bg-slate-100 transition mb-3">Sign in with Google</button>
+
+          <div class="grid grid-cols-1 gap-2 max-w-sm mx-auto">
+            <input id="firebase-email" type="email" placeholder="Admin Email (Firebase)" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 border" />
+            <input id="firebase-password" type="password" placeholder="Password" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 border" />
+            <button onclick="signInWithFirebaseEmail()" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Sign in (Email)</button>
+          </div>
         </div>
 
       </div>
@@ -2579,6 +2590,14 @@
 
     // Portal Logout
     function portalLogout() {
+      try {
+        // Sign out of Firebase if in use
+        if (firebaseAuth && firebaseAuth.signOut) {
+          firebaseAuth.signOut().catch(e => console.warn('[portalLogout] firebase signOut failed', e));
+        }
+      } catch(e) {}
+
+      // Clear session
       currentSessionUser = null;
       localStorage.removeItem('gojira_session_user');
 
@@ -4447,6 +4466,87 @@ Reviewer: ${review.reviewerId}
       }
     }
 
+    // ---------------- Firebase Auth helpers ----------------
+    function handleFirebaseAuthUser(fbUser) {
+      if (!fbUser) {
+        // Signed out
+        console.info('[Auth] signed out');
+        // If we previously used firebase for session, clear it
+        try { if (localStorage.getItem('gojira_session_user') && currentSessionUser && currentSessionUser.id === fbUser?.uid) { localStorage.removeItem('gojira_session_user'); } } catch(e){}
+        return;
+      }
+
+      (async function() {
+        try {
+          const idTokenResult = await fbUser.getIdTokenResult();
+          const claims = idTokenResult?.claims || {};
+          const role = claims.role || (fbUser.email && (fbUser.email.endsWith('@yourcompany.com') ? 'admin' : 'agent')) || 'agent';
+          const mapped = USER_DB.find(u => u.email && u.email.toLowerCase() === (fbUser.email || '').toLowerCase());
+          const userProfile = mapped ? { id: mapped.id, name: mapped.name, role: mapped.role, entity: mapped.entity } : { id: fbUser.uid, name: fbUser.displayName || fbUser.email, role, entity: 'ALL' };
+
+          currentSessionUser = { id: userProfile.id, name: userProfile.name, role: userProfile.role, entity: userProfile.entity };
+          localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
+
+          // Apply session and show portal
+          currentUser = currentSessionUser;
+          currentEntity = currentSessionUser.entity;
+          if (currentUser.role === 'admin') {
+            adminCurrentEntity = currentUser.entity || adminCurrentEntity || 'ALL';
+            const welcomeText = document.getElementById('admin-welcome-text'); if (welcomeText) welcomeText.innerText = `Welcome ${currentUser.name}`;
+          }
+
+          showPortalContent();
+          navigateTo('view-home');
+
+          // Register FCM token for this user now that they are signed in
+          try { if (typeof registerFCMTokenForCurrentUser === 'function') registerFCMTokenForCurrentUser().catch(()=>{}); } catch(e){}
+
+          console.info('[Auth] mapped user to session', currentSessionUser);
+        } catch (err) {
+          console.warn('[Auth] handle user failed', err);
+        }
+      })();
+    }
+
+    async function initFirebaseAuth() {
+      if (!FIREBASE_CONFIG) return;
+      if (!isFirebaseReady) {
+        try { await initFirebase(); } catch(e) { console.warn('[initFirebaseAuth] initFirebase failed', e); return; }
+      }
+      if (!firebaseAuth) return;
+
+      firebaseAuth.onAuthStateChanged(user => {
+        if (user) {
+          console.info('[Auth] user signed in', user.uid);
+          handleFirebaseAuthUser(user);
+        } else {
+          console.info('[Auth] user signed out');
+          handleFirebaseAuthUser(null);
+        }
+      });
+    }
+
+    async function signInWithGoogle() {
+      try {
+        if (!isFirebaseReady) await initFirebase();
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await firebaseAuth.signInWithPopup(provider);
+        const user = result.user;
+        if (user) handleFirebaseAuthUser(user);
+      } catch (e) { console.warn('[Auth] signInWithGoogle failed', e); alert('Google sign-in failed'); }
+    }
+
+    async function signInWithFirebaseEmail() {
+      try {
+        if (!isFirebaseReady) await initFirebase();
+        const email = document.getElementById('firebase-email').value.trim();
+        const pass = document.getElementById('firebase-password').value;
+        if (!email || !pass) return alert('Enter email and password');
+        const res = await firebaseAuth.signInWithEmailAndPassword(email, pass);
+        if (res && res.user) handleFirebaseAuthUser(res.user);
+      } catch (e) { console.warn('[Auth] signInWithFirebaseEmail failed', e); alert('Email sign-in failed.'); }
+    }
+
     async function pushReviewsToFirebase(reviewIds) {
       if (!isFirebaseReady) {
         try { await initFirebase(); } catch (e) { console.warn('[pushReviewsToFirebase] initFirebase failed', e); return; }
@@ -5358,6 +5458,9 @@ Reviewer: ${review.reviewerId}
         if (sessionUserRaw) {
           currentSessionUser = JSON.parse(sessionUserRaw);
           console.info('[onload] Restoring session from localStorage for', currentSessionUser?.id);
+
+          // Initialize Firebase Auth listener if configured (so admin sign-in persists and maps into session)
+          try { if (typeof initFirebaseAuth === 'function') initFirebaseAuth().catch(e => console.warn('[onload] initFirebaseAuth failed', e)); } catch (e) { console.warn('[onload] initFirebaseAuth missing', e); }
 
           // Restore global variables based on role
           currentUser = currentSessionUser;
