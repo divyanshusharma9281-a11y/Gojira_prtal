@@ -507,24 +507,7 @@
       }
     }
 
-    async function signInWithSupabaseEmail() {
-      if (!supabase) return alert("Supabase not initialized (check keys).");
-      const email = document.getElementById('firebase-email').value;
-      const pass = document.getElementById('firebase-password').value;
-      if (!email || !pass) return alert("Please enter email and password");
-
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: pass,
-        });
-        if (error) throw error;
-        // Auth listener will handle success
-      } catch (error) {
-        console.error("Email Sign-in Error:", error);
-        alert("Login Failed: " + error.message);
-      }
-    }
+    // signInWithSupabaseEmail removed
 
     async function handleLoginSuccess(user) {
       // Check for custom claims or role in metadata
@@ -570,11 +553,39 @@
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const targetReviews = reviews.filter(r => reviewIds.includes(r.id));
 
+      if (targetReviews.length === 0) return;
+
+      // Helper to convert Blob to Base64
+      const blobToBase64 = (blob) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
       try {
-        const { error } = await supabase.from('reviews').upsert(targetReviews);
+        // Prepare reviews with file content if available
+        const uploadableReviews = await Promise.all(targetReviews.map(async (r) => {
+          const clone = { ...r };
+          if (clone.fileStored) {
+            try {
+              if (!FileDB._db) await FileDB.init();
+              const blob = await FileDB.getFile(clone.id);
+              if (blob) {
+                clone.fileContent = await blobToBase64(blob);
+                console.log(`Attached file content for ${clone.id} (${Math.round(clone.fileContent.length / 1024)}KB)`);
+              }
+            } catch (e) {
+              console.warn('Failed to attach file for upload', clone.id, e);
+            }
+          }
+          return clone;
+        }));
+
+        const { error } = await supabase.from('reviews').upsert(uploadableReviews);
         if (error) throw error;
 
-        console.log(`Successfully pushed ${targetReviews.length} reviews.`);
+        console.log(`Successfully pushed ${uploadableReviews.length} reviews.`);
         updateSupabaseStatus('connected');
         alert("Synced to Supabase! ☁️");
       } catch (err) {
@@ -591,7 +602,6 @@
       }
       try {
         updateSupabaseStatus('syncing');
-        console.log("SYNC DEBUG: Starting fetch from 'reviews'...");
 
         // Add a timeout to detect hanging requests
         const timeoutPromise = new Promise((_, reject) =>
@@ -603,8 +613,6 @@
         // Race the fetch against the timeout
         const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
-        console.log("SYNC DEBUG: Fetch complete.", { dataCount: data?.length, error });
-
         updateSupabaseStatus('connected');
         if (error) throw error;
         if (!data || data.length === 0) return;
@@ -613,13 +621,31 @@
         let changed = false;
         const localIds = new Set(localReviews.map(r => r.id));
 
-        data.forEach(remoteReview => {
+        // Initialize FileDB once if needed
+        try { if (!FileDB._db) await FileDB.init(); } catch (e) { console.warn('FileDB init failed in sync', e); }
+
+        for (const remoteReview of data) {
+          // Handle file download/sync
+          if (remoteReview.fileContent && remoteReview.fileContent.startsWith('data:')) {
+            try {
+              const res = await fetch(remoteReview.fileContent);
+              const blob = await res.blob();
+              await FileDB.saveFile(remoteReview.id, blob);
+              remoteReview.fileStored = true;
+              // Remove heavy content before saving to localStorage
+              delete remoteReview.fileContent;
+              console.log(`Downloaded and saved file for review ${remoteReview.id}`);
+            } catch (e) {
+              console.warn(`Failed to process file for review ${remoteReview.id}`, e);
+            }
+          }
+
           if (!localIds.has(remoteReview.id)) {
             localReviews.push(remoteReview);
             localIds.add(remoteReview.id);
             changed = true;
           }
-        });
+        }
 
         if (changed) {
           localStorage.setItem('adminReviews', JSON.stringify(localReviews));
@@ -2336,6 +2362,29 @@
           <button onclick="adminFinalSubmit()" id="admin-final-submit-btn" disabled
             class="flex-1 bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition opacity-50 cursor-not-allowed">
             ✅ Final Submit
+          </button>
+        </div>
+      </div>
+
+      <!-- Section: Data Management -->
+      <div id="admin-data-management-section"
+        class="mb-12 hidden bg-red-50 dark:bg-slate-800 p-8 rounded-3xl border border-red-200 dark:border-red-900/50">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 text-red-700 dark:text-red-400">
+          <span class="bg-red-600 text-white rounded-lg p-2 text-xl">⚠️</span>
+          Data Management
+        </h2>
+        <p class="mb-6 text-slate-600 dark:text-slate-400">Manage performance data for the selected agent. Actions here
+          are destructive.</p>
+
+        <div class="flex flex-wrap gap-4">
+          <button onclick="adminDeleteAgentWeekData()"
+            class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition shadow-sm">
+            <span>🗑️</span> Delete Current Week Data
+          </button>
+
+          <button onclick="adminResetAgentMonthlyData()"
+            class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 border border-orange-300 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-bold rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/30 transition shadow-sm">
+            <span>📅</span> Reset Monthly Data
           </button>
         </div>
       </div>
@@ -4850,44 +4899,8 @@ Reviewer: ${review.reviewerId}
       })();
     }
 
-    async function initFirebaseAuth() {
-      if (!FIREBASE_CONFIG) return;
-      if (!isFirebaseReady) {
-        try { await initFirebase(); } catch (e) { console.warn('[initFirebaseAuth] initFirebase failed', e); return; }
-      }
-      if (!firebaseAuth) return;
+    // Legacy Authentication Functions Removed
 
-      firebaseAuth.onAuthStateChanged(user => {
-        if (user) {
-          console.info('[Auth] user signed in', user.uid);
-          handleFirebaseAuthUser(user);
-        } else {
-          console.info('[Auth] user signed out');
-          handleFirebaseAuthUser(null);
-        }
-      });
-    }
-
-    async function signInWithGoogle() {
-      try {
-        if (!isFirebaseReady) await initFirebase();
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const result = await firebaseAuth.signInWithPopup(provider);
-        const user = result.user;
-        if (user) handleFirebaseAuthUser(user);
-      } catch (e) { console.warn('[Auth] signInWithGoogle failed', e); alert('Google sign-in failed'); }
-    }
-
-    async function signInWithFirebaseEmail() {
-      try {
-        if (!isFirebaseReady) await initFirebase();
-        const email = document.getElementById('firebase-email').value.trim();
-        const pass = document.getElementById('firebase-password').value;
-        if (!email || !pass) return alert('Enter email and password');
-        const res = await firebaseAuth.signInWithEmailAndPassword(email, pass);
-        if (res && res.user) handleFirebaseAuthUser(res.user);
-      } catch (e) { console.warn('[Auth] signInWithFirebaseEmail failed', e); alert('Email sign-in failed.'); }
-    }
 
     async function pushReviewsToFirebase(reviewIds) {
       if (!isFirebaseReady) {
@@ -5802,7 +5815,8 @@ Reviewer: ${review.reviewerId}
           console.info('[onload] Restoring session from localStorage for', currentSessionUser?.id);
 
           // Initialize Firebase Auth listener if configured (so admin sign-in persists and maps into session)
-          try { if (typeof initFirebaseAuth === 'function') initFirebaseAuth().catch(e => console.warn('[onload] initFirebaseAuth failed', e)); } catch (e) { console.warn('[onload] initFirebaseAuth missing', e); }
+          // initFirebaseAuth removed
+
 
           // Restore global variables based on role
           currentUser = currentSessionUser;
@@ -6457,6 +6471,7 @@ Reviewer: ${review.reviewerId}
 
         // Show the submitted reviews section and load reviews for this agent
         document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
+        document.getElementById('admin-data-management-section').classList.remove('hidden');
         adminLoadReviewsList();
         // Update clear finalizations button
         updateClearFinalizationsButton();
@@ -6468,6 +6483,7 @@ Reviewer: ${review.reviewerId}
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
         // Hide the submitted reviews section
         document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
+        document.getElementById('admin-data-management-section').classList.add('hidden');
         adminReviewType = '';
         // Update clear finalizations button
         updateClearFinalizationsButton();
@@ -6480,6 +6496,8 @@ Reviewer: ${review.reviewerId}
 
       // Show the submitted reviews section when agent is selected
       document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
+      document.getElementById('admin-data-management-section').classList.remove('hidden');
+
 
       // Clear any previous inline selection state
       adminReviewType = '';
@@ -7445,6 +7463,44 @@ Reviewer: ${review.reviewerId}
     function dismissFinalizationUndoToast() {
       const toast = document.getElementById('finalization-undo-toast');
       if (toast) toast.classList.add('hidden');
+    }
+
+    function adminDeleteAgentWeekData() {
+      if (!adminCurrentAgent) return alert('No agent selected.');
+      if (!confirm(`Are you sure you want to DELETE all reviews for ${adminCurrentAgentName} in the current week? This will also un-finalize the week for this agent.`)) return;
+
+      // Unmark completion
+      unmarkAgentWeekComplete(adminCurrentEntity || 'ALL', adminCurrentAgent);
+
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const now = new Date();
+      // Keep reviews that belong to OTHER agents OR belong to this agent but are EXPIRED (old history)
+      const newReviews = reviews.filter(r => {
+        if (r.agentId !== adminCurrentAgent) return true; // Keep other agents
+        if (new Date(r.expiryDate) < now) return true; // Keep old history
+        return false; // DELETE active reviews for this agent
+      });
+
+      localStorage.setItem('adminReviews', JSON.stringify(newReviews));
+
+      // Also trigger file cleanup for deleted reviews if needed (optional optimization)
+
+      alert(`Current week data deleted for ${adminCurrentAgentName}.`);
+
+      // Refresh
+      adminLoadAgents();
+      if (adminCurrentAgent) adminSelectAgent(adminCurrentAgent, adminCurrentAgentName);
+    }
+
+    function adminResetAgentMonthlyData() {
+      if (!adminCurrentAgent) return alert('No agent selected.');
+      if (!confirm(`Are you sure you want to RESET monthly performance data for ${adminCurrentAgentName}? This cannot be undone.`)) return;
+
+      localStorage.removeItem(`agentMonthlyData_${adminCurrentAgent}`);
+      alert('Monthly data reset.');
+
+      // Force re-calculation if needed by clearing the cached object in memory if any
+      // Since agentLoadMonthlyPerformance reads from localStorage every time, this is sufficient.
     }
 
     function adminDeleteAllReports() {
