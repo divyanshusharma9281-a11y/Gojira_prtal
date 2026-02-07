@@ -391,8 +391,7 @@
         }
       }
 
-      // Attempt immediate initialization
-      initSupabase();
+      // Attempt immediate initialization removed (handled by DOMContentLoaded)
 
       // If not initialized, poll for SDK load
       if (!supabase) {
