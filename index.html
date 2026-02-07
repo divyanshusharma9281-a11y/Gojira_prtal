@@ -2439,10 +2439,17 @@
           Back</button>
         <h1 class="font-bold text-xl text-teal-600">Weekly Performance Scorecard</h1>
       </div>
-      <button onclick="downloadTableAsCSV('admin-weekly-table', 'Weekly_Performance_Report')"
-        class="bg-teal-100 text-teal-700 hover:bg-teal-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
-        <span>📥</span> Download CSV
-      </button>
+      <div class="flex gap-2">
+        <button onclick="adminDeleteAgentWeekData()"
+          class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition"
+          title="Delete current week data for selected agent">
+          <span>🗑️</span> Delete Week Data
+        </button>
+        <button onclick="downloadTableAsCSV('admin-weekly-table', 'Weekly_Performance_Report')"
+          class="bg-teal-100 text-teal-700 hover:bg-teal-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
+          <span>📥</span> Download CSV
+        </button>
+      </div>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-10">
@@ -2487,10 +2494,17 @@
           Back</button>
         <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
       </div>
-      <button onclick="downloadTableAsCSV('admin-monthly-table', 'Monthly_Performance_Report')"
-        class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
-        <span>📥</span> Download CSV
-      </button>
+      <div class="flex gap-2">
+        <button onclick="adminResetAgentMonthlyData()"
+          class="bg-orange-100 text-orange-700 hover:bg-orange-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition"
+          title="Reset monthly data for selected agent">
+          <span>📅</span> Reset Month Data
+        </button>
+        <button onclick="downloadTableAsCSV('admin-monthly-table', 'Monthly_Performance_Report')"
+          class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
+          <span>📥</span> Download CSV
+        </button>
+      </div>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-10">
@@ -5089,6 +5103,12 @@ Reviewer: ${review.reviewerId}
       const agentId = normalizeId(agentIdRaw); // normalized id for comparisons
       const agentName = currentSessionUser.name;
 
+      // Trigger sync for new reviews
+      if (typeof syncReviewsFromSupabase === 'function') {
+        syncReviewsFromSupabase().catch(e => console.warn('Agent sync failed', e));
+      }
+
+
       // Setup Firebase listener so this agent receives cross-device updates in realtime (if configured)
       try {
         if (typeof setupAgentFirebaseListener === 'function') {
@@ -6471,22 +6491,21 @@ Reviewer: ${review.reviewerId}
 
         // Show the submitted reviews section and load reviews for this agent
         document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
-        document.getElementById('admin-data-management-section').classList.remove('hidden');
+        // Data Management panel removed
         adminLoadReviewsList();
-        // Update clear finalizations button
-        updateClearFinalizationsButton();
+        // updateClearFinalizationsButton removed
       } else {
         adminCurrentAgent = '';
+
         adminCurrentAgentName = '';
         // Disable the start review button
         document.getElementById('admin-start-review-btn').disabled = true;
         document.getElementById('admin-start-review-btn').classList.add('opacity-50', 'cursor-not-allowed');
         // Hide the submitted reviews section
         document.getElementById('admin-submitted-reviews-section').classList.add('hidden');
-        document.getElementById('admin-data-management-section').classList.add('hidden');
+        // Data Management panel removed
         adminReviewType = '';
-        // Update clear finalizations button
-        updateClearFinalizationsButton();
+        // updateClearFinalizationsButton removed
       }
     }
 
@@ -6496,7 +6515,7 @@ Reviewer: ${review.reviewerId}
 
       // Show the submitted reviews section when agent is selected
       document.getElementById('admin-submitted-reviews-section').classList.remove('hidden');
-      document.getElementById('admin-data-management-section').classList.remove('hidden');
+      // Data Management panel removed
 
 
       // Clear any previous inline selection state
@@ -7326,108 +7345,8 @@ Reviewer: ${review.reviewerId}
     // ----- Confirm modal & undo flow for clearing finalizations -----
     let _pendingFinalizationClearBuffer = null; // stores pending buffer id and expiry in localStorage
 
-    function adminClearFinalizations(targetAgentId) {
-      // Build list of affected agents
-      let agents = [];
-      if (targetAgentId || adminCurrentAgent) {
-        const id = targetAgentId || adminCurrentAgent;
-        const agentObj = USER_DB.find(u => String(u.id) === String(id));
-        if (agentObj) agents.push(agentObj);
-      } else {
-        agents = USER_DB.filter(u => u.role === 'agent' && (!adminCurrentEntity || adminCurrentEntity === 'ALL' || u.entity === adminCurrentEntity));
-      }
+    // adminClearFinalizations logic removed
 
-      if (agents.length === 0) return alert('No agents found for this operation.');
-
-      // Render modal details
-      const details = document.getElementById('confirm-clear-finalizations-details');
-      details.innerHTML = '';
-      const list = document.createElement('ul');
-      list.className = 'list-disc pl-5 space-y-2';
-      agents.forEach(a => {
-        const li = document.createElement('li');
-        const reviewCount = (JSON.parse(localStorage.getItem('adminReviews') || '[]').filter(r => String(r.agentId) === String(a.id)) || []).length;
-        li.innerHTML = `<strong>${a.name}</strong> (${a.id}) — ${reviewCount} review(s)`;
-        list.appendChild(li);
-      });
-      details.appendChild(list);
-
-      // Store pending selection in a temporary global so confirm can access
-      _pendingFinalizationClearBuffer = { id: `buf_${Date.now()}_${Math.floor(Math.random() * 1000)}`, agents: agents.map(a => a.id), entity: adminCurrentEntity || 'ALL', timestamp: Date.now() };
-
-      document.getElementById('confirm-clear-finalizations-modal').classList.remove('hidden');
-    }
-
-    function confirmClearFinalizationsModalCancel() {
-      _pendingFinalizationClearBuffer = null;
-      document.getElementById('confirm-clear-finalizations-modal').classList.add('hidden');
-    }
-
-    function confirmClearFinalizationsModalConfirm() {
-      if (!_pendingFinalizationClearBuffer) return;
-      const buf = _pendingFinalizationClearBuffer;
-      document.getElementById('confirm-clear-finalizations-modal').classList.add('hidden');
-      _performClearFinalizationsWithUndo(buf);
-      _pendingFinalizationClearBuffer = null;
-    }
-
-    function _performClearFinalizationsWithUndo(buffer) {
-      // Backup all entityWeekState_* entries so we can restore on undo
-      const backups = {};
-      Object.keys(localStorage).forEach(key => {
-        if (!key.startsWith('entityWeekState_')) return;
-        backups[key] = localStorage.getItem(key);
-      });
-
-      // Save buffer to localStorage as undo buffer
-      const undoBuffer = { id: buffer.id, timestamp: Date.now(), actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, backups };
-      localStorage.setItem('finalizationUndoBuffer', JSON.stringify(undoBuffer));
-
-      // Perform clear: unmark agents across all entities
-      buffer.agents.forEach(agentId => {
-        unmarkAgentWeekComplete('ALL', agentId);
-      });
-
-      reconcileFinalizeFlags();
-
-      // Push audit entry
-      const history = JSON.parse(localStorage.getItem('finalizationClearHistory') || '[]');
-      history.unshift({ id: buffer.id, actor: (currentUser?.name || currentSessionUser?.name || 'admin'), entity: buffer.entity, agents: buffer.agents, action: 'cleared', timestamp: new Date().toISOString() });
-      localStorage.setItem('finalizationClearHistory', JSON.stringify(history));
-
-      // Refresh UI
-      renderAdminAgentDropdown();
-      checkAndEnableWeekFinalButton();
-      adminLoadReviewsList();
-      updateClearFinalizationsButton();
-
-      // Refresh selected agent card if an agent is still selected so start buttons reflect cleared finalization
-      if (adminCurrentAgent) {
-        try { adminSelectAgent(adminCurrentAgent, adminCurrentAgentName); } catch (e) { /* ignore */ }
-      }
-
-      // Show undo toast
-      const toast = document.getElementById('finalization-undo-toast');
-      const text = document.getElementById('finalization-undo-text');
-      const btn = document.getElementById('finalization-undo-btn');
-      text.innerText = `Finalizations cleared for ${buffer.agents.length} agent(s).`;
-      toast.classList.remove('hidden');
-
-      // Wire undo button
-      btn.onclick = () => undoClearFinalizations(buffer.id);
-
-      // Auto-expire buffer after 10s
-      setTimeout(() => {
-        const existing = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
-        if (existing && existing.id === buffer.id) {
-          localStorage.removeItem('finalizationUndoBuffer');
-          dismissFinalizationUndoToast();
-        }
-      }, 10000);
-
-      // Save the buffer reference in memory too
-      _pendingFinalizationClearBuffer = { id: buffer.id };
-    }
 
     function undoClearFinalizations(bufferId) {
       const buf = JSON.parse(localStorage.getItem('finalizationUndoBuffer') || 'null');
