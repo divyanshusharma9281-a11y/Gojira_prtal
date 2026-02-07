@@ -351,79 +351,83 @@
       will-change: transform, opacity;
     }
   </style>
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase SDK with Fallback -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
+
   <script>
     // --- SUPABASE INTEGRATION ---
-    // TODO: Replace with your actual Supabase project URL and Anon Key
     const SUPABASE_URL = "https://mhqowleeklroqrpycibs.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ocW93bGVla2xyb3FycHljaWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDM3NTUsImV4cCI6MjA4NTg3OTc1NX0.5LYhA9sMo-OEFUacnF1imc4V-nFLg7p0f-pCZoMX0Ig";
 
     let supabase;
 
     // --- ROBUST SUPABASE INITIALIZATION ---
-    try {
-      function initSupabase() {
-        if (supabase) return; // Already initialized
+    function initSupabase() {
+      if (supabase) return; // Already initialized
 
-        // Check availability
+      try {
+        // Try global createClient first (checking different namespaces)
         if (typeof createClient !== 'undefined') {
           supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
           console.log("Supabase initialized (global createClient)");
         } else if (window.supabase && window.supabase.createClient) {
           supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           console.log("Supabase initialized (window.supabase)");
+        } else if (window['@supabase/supabase-js'] && window['@supabase/supabase-js'].createClient) {
+          supabase = window['@supabase/supabase-js'].createClient(SUPABASE_URL, SUPABASE_KEY);
+          console.log("Supabase initialized (window['@supabase/supabase-js'])");
         }
-
-        if (supabase) {
-          // Initialization Success
-          updateSupabaseStatus('syncing');
-
-          // Auth Listener
-          supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN' && session) {
-              console.log("User signed in:", session.user.email);
-              handleLoginSuccess(session.user);
-            }
-          });
-
-          // Initial Sync
-          setTimeout(() => {
-            syncReviewsFromSupabase();
-            syncCommentsFromSupabase();
-          }, 500);
-
-        } else {
-          console.log("Supabase SDK not loaded yet.");
-        }
+      } catch (err) {
+        console.error("Supabase init attempt failed:", err);
       }
 
-      // 1. Try immediately
+      if (supabase) {
+        // Initialization Success
+        updateSupabaseStatus('syncing');
+
+        // Auth Listener
+        supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' && session) {
+            console.log("User signed in:", session.user.email);
+            handleLoginSuccess(session.user);
+          }
+        });
+
+        // Trigger Initial Sync
+        setTimeout(() => {
+          syncReviewsFromSupabase();
+          syncCommentsFromSupabase();
+        }, 500);
+      }
+    }
+
+    // Try immediately
+    initSupabase();
+
+    // Retry loop (wait for script to load)
+    let sbAttempts = 0;
+    const sbInterval = setInterval(() => {
+      sbAttempts++;
       initSupabase();
 
-      // 2. Poll if not ready (retries for 5 seconds)
-      if (!supabase) {
-        let attempts = 0;
-        const maxAttempts = 20; // 5 seconds (250ms * 20)
-
-        const interval = setInterval(() => {
-          attempts++;
-          initSupabase();
-
-          if (supabase) {
-            clearInterval(interval);
-          } else if (attempts >= maxAttempts) {
-            clearInterval(interval);
-            console.error("Supabase SDK timeout.");
+      if (supabase) {
+        clearInterval(sbInterval);
+        console.log("Supabase connected successfully!");
+      } else if (sbAttempts > 40) { // 20 seconds
+        clearInterval(sbInterval);
+        console.error("Supabase failed to load.");
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
             updateSupabaseStatus('error');
-            alert("⚠️ Connection Failing: The Supabase library is not loading.\n\nPlease check your internet connection and reload.");
-          }
-        }, 250);
+            alert("CRITICAL ERROR: Supabase SDK could not be loaded from CDN.\n\nPlease check your internet connection.");
+          });
+        } else {
+          updateSupabaseStatus('error');
+          alert("CRITICAL ERROR: Supabase SDK could not be loaded from CDN.\n\nPlease check your internet connection.");
+        }
       }
-    } catch (e) {
-      console.error("Supabase Init Error:", e);
-      updateSupabaseStatus('error');
-    }
+    }, 500);
 
     // --- AUTH FUNCTIONS ---
     // --- SUPABASE SYNC FUNCTIONS ---
