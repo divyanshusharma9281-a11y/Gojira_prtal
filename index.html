@@ -351,99 +351,103 @@
       will-change: transform, opacity;
     }
   </style>
-  <!-- Supabase SDK with Fallback -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
-
   <!-- VISUAL DEBUG CONSOLE -->
   <div id="debug-console"
-    style="position:fixed; top:0; left:0; width:100%; height:150px; background:rgba(0,0,0,0.9); color:#0f0; z-index:99999; font-family:monospace; font-size:12px; overflow-y:scroll; pointer-events:none; padding:10px; border-bottom:2px solid #0f0;">
-    <strong>SUPABASE DEBUG CONSOLE (Check here for errors)</strong><br />
+    style="position:fixed; top:0; left:0; width:100%; height:200px; background:rgba(0,0,0,0.9); color:#0f0; z-index:99999; font-family:monospace; font-size:12px; overflow-y:scroll; padding:10px; border-bottom:2px solid #0f0;">
+    <strong>DEBUG CONSOLE (v2)</strong><br />
   </div>
 
-  <script>
-    function logDebug(msg) {
+  <script type="module">
+    // 1. Setup Logging
+    function log(msg) {
       console.log(msg);
-      const consoleEl = document.getElementById('debug-console');
-      if (consoleEl) {
-        const line = document.createElement('div');
-        line.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
-        consoleEl.appendChild(line);
-        consoleEl.scrollTop = consoleEl.scrollHeight;
+      const el = document.getElementById('debug-console');
+      if (el) {
+        const div = document.createElement('div');
+        div.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        el.appendChild(div);
+        el.scrollTop = el.scrollHeight;
       }
     }
 
-    logDebug("Script started. Wrapper loaded.");
+    // 2. Global Error Handler
+    window.onerror = function (msg, url, line) {
+      log(`GLOBAL ERROR: ${msg} (Line: ${line})`);
+      return false;
+    };
+
+    log("Loader script started.");
+
+    // --- FIX: Define missing functions to prevent crash ---
+    window.updateClearFinalizationsButton = function () {
+      console.log("updateClearFinalizationsButton called (placeholder)");
+    };
+    window.renderAdminEntityFeedback = function () {
+      console.log("renderAdminEntityFeedback called (placeholder)");
+    };
+    // Shim for status update to prevent module crash if legacy script lags
+    window.updateSupabaseStatus = function (status) {
+      console.log("Status Update (Shim): " + status);
+      const el = document.getElementById('firebase-status-dot');
+      const text = document.getElementById('firebase-status-text');
+      if (el && text) {
+        // Simple fallback update
+        if (status === 'connected') { el.className = 'w-3 h-3 rounded-full mr-2 bg-green-500'; text.innerText = 'Live (Supabase)'; }
+        else if (status === 'syncing') { el.className = 'w-3 h-3 rounded-full mr-2 bg-yellow-400 animate-pulse'; text.innerText = 'Syncing...'; }
+        else { el.className = 'w-3 h-3 rounded-full mr-2 bg-red-500'; text.innerText = 'Offline'; }
+      }
+    };
+
+    // 3. Modern ES Module Load (Bypasses UMD issues)
+    // We import directly and assign to window to ensure global access
+
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    log("Module loaded. createClient available.");
+
+    window.createClient = createClient; // Backup global
 
     // --- SUPABASE INTEGRATION ---
     const SUPABASE_URL = "https://mhqowleeklroqrpycibs.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ocW93bGVla2xyb3FycHljaWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDM3NTUsImV4cCI6MjA4NTg3OTc1NX0.5LYhA9sMo-OEFUacnF1imc4V-nFLg7p0f-pCZoMX0Ig";
 
-    let supabase;
+    try {
+      window.supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      log("Supabase Client Created (ESM)!");
 
-    function initSupabase() {
-      if (supabase) return;
+      // Signal success to the rest of the app
+      if (window.supabase) {
+        updateSupabaseStatus('syncing');
 
-      try {
-        logDebug("Attempting to initialize Supabase...");
-
-        if (typeof createClient !== 'undefined') {
-          supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-          logDebug("SUCCESS: Supabase initialized (createClient)");
-        } else if (window.supabase && window.supabase.createClient) {
-          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          logDebug("SUCCESS: Supabase initialized (window.supabase)");
-        } else if (window['@supabase/supabase-js'] && window['@supabase/supabase-js'].createClient) {
-          supabase = window['@supabase/supabase-js'].createClient(SUPABASE_URL, SUPABASE_KEY);
-          logDebug("SUCCESS: Supabase initialized (window['@supabase/supabase-js'])");
-        } else {
-          logDebug("WAITING: SDK Not found yet...");
-        }
-
-        if (supabase) {
-          logDebug("Connecting to: " + SUPABASE_URL);
-          updateSupabaseStatus('syncing');
-
-          // Auth Listener
-          supabase.auth.onAuthStateChange((event, session) => {
-            logDebug("Auth Event: " + event);
-            if (event === 'SIGNED_IN' && session) {
+        window.supabase.auth.onAuthStateChange((event, session) => {
+          log("Auth Event: " + event);
+          if (event === 'SIGNED_IN' && session) {
+            if (typeof handleLoginSuccess === 'function') {
               handleLoginSuccess(session.user);
             }
-          });
+          }
+        });
 
-          // Sync
-          setTimeout(() => {
-            logDebug("Triggering sync...");
-            syncReviewsFromSupabase();
-            syncCommentsFromSupabase();
-          }, 500);
+        // Initial Sync
+        setTimeout(() => {
+          log("Starting Sync...");
+          if (typeof syncReviewsFromSupabase === 'function') syncReviewsFromSupabase();
+          if (typeof syncCommentsFromSupabase === 'function') syncCommentsFromSupabase();
+        }, 1000);
 
-          // Hide debug console after 5 seconds of success
-          setTimeout(() => {
-            const dbg = document.getElementById('debug-console');
-            if (dbg) dbg.style.display = 'none';
-          }, 5000);
-        }
-      } catch (err) {
-        logDebug("ERROR in initSupabase: " + err.message);
+        // Hide debug console after success
+        setTimeout(() => {
+          const dbg = document.getElementById('debug-console');
+          if (dbg) dbg.style.display = 'none';
+        }, 5000);
       }
+    } catch (e) {
+      log("INIT MODULE EXCEPTION: " + e.message);
     }
+  </script>
 
-    // Polling Loop
-    let attempts = 0;
-    const interval = setInterval(() => {
-      attempts++;
-      initSupabase();
-      if (supabase) {
-        clearInterval(interval);
-        logDebug("Init loop finished. Connection established.");
-      } else if (attempts > 40) {
-        logDebug("TIMEOUT: Could not find Supabase SDK after 20 seconds.");
-        clearInterval(interval);
-        alert("Admin Debug: Supabase SDK failed to load. Check the black box at the top of the screen.");
-      }
-    }, 500);
+  <script>
+    // --- LEGACY INITIALIZATION REMOVED (Replaced by Module) ---
 
     // --- AUTH FUNCTIONS ---
     // --- SUPABASE SYNC FUNCTIONS ---
@@ -587,7 +591,19 @@
       }
       try {
         updateSupabaseStatus('syncing');
-        const { data, error } = await supabase.from('reviews').select('*').limit(500);
+        console.log("SYNC DEBUG: Starting fetch from 'reviews'...");
+
+        // Add a timeout to detect hanging requests
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timed out after 5s')), 5000)
+        );
+
+        const fetchPromise = supabase.from('reviews').select('*').limit(500);
+
+        // Race the fetch against the timeout
+        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+
+        console.log("SYNC DEBUG: Fetch complete.", { dataCount: data?.length, error });
 
         updateSupabaseStatus('connected');
         if (error) throw error;
@@ -624,6 +640,7 @@
       } catch (e) {
         console.warn('Sync failed', e);
         updateSupabaseStatus('error');
+        if (e.message.includes('time')) alert("Sync Timed Out. Check Internet/Firewall.");
       }
     }
 
@@ -754,22 +771,6 @@
         <div class="text-center mb-4">
           <button onclick="showChangePasswordModal()"
             class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
-        </div>
-
-        <div class="text-center mb-4">
-          <button onclick="signInWithGoogle()"
-            class="w-full bg-white text-slate-900 font-bold py-2 px-4 rounded-lg hover:bg-slate-100 transition mb-3">Sign
-            in with Google</button>
-
-          <div class="grid grid-cols-1 gap-2 max-w-sm mx-auto">
-            <input id="firebase-email" type="email" placeholder="Admin Email (Firebase)"
-              class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 border" />
-            <input id="firebase-password" type="password" placeholder="Password"
-              class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 border" />
-            <button onclick="signInWithSupabaseEmail()"
-              class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Sign
-              in (Email)</button>
-          </div>
         </div>
 
       </div>
@@ -7469,6 +7470,11 @@ Reviewer: ${review.reviewerId}
     function adminLoadFeedbackList() {
       const comments = (typeof MockBackend !== 'undefined' && MockBackend.getComments) ? MockBackend.getComments() : [];
       const tbody = document.getElementById('admin-feedback-list');
+
+      if (!tbody) {
+        console.warn("Feedback list element 'admin-feedback-list' not found.");
+        return;
+      }
 
       if (comments.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-slate-400">No agent replies yet.</td></tr>';
