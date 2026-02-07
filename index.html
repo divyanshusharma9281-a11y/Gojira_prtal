@@ -351,81 +351,77 @@
       will-change: transform, opacity;
     }
   </style>
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // --- FIREBASE INTEGRATION ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBaM-BpRPVhMTNaaX0RgcjLOWBiMe60kvU",
-      authDomain: "gojira-9f84a.firebaseapp.com",
-      projectId: "gojira-9f84a",
-      storageBucket: "gojira-9f84a.firebasestorage.app",
-      messagingSenderId: "1040488004573",
-      appId: "1:1040488004573:web:57c660c5bb5d65c2a51434",
-      measurementId: "G-0CZ6L88L1J"
-    };
+    // --- SUPABASE INTEGRATION ---
+    // TODO: Replace with your actual Supabase project URL and Anon Key
+    const SUPABASE_URL = "https://mhqowleeklroqrpycibs.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ocW93bGVla2xyb3FycHljaWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDM3NTUsImV4cCI6MjA4NTg3OTc1NX0.5LYhA9sMo-OEFUacnF1imc4V-nFLg7p0f-pCZoMX0Ig";
 
-    let db, storage, auth;
+    let supabase;
+
     try {
-      if (typeof firebase !== 'undefined') {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.database(); // Switch to Realtime Database
-        storage = firebase.storage();
-        auth = firebase.auth();
-        console.log("Firebase initialized (Realtime DB)");
-
-        // Initialize Auth Listener
-        auth.onAuthStateChanged(user => {
-          if (user) {
-            console.log("User signed in:", user.email);
-            handleLoginSuccess(user);
-          } else {
-            console.log("User signed out");
-          }
-        });
+      if (typeof createClient !== 'undefined') {
+        supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("Supabase initialized");
+      } else if (window.supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("Supabase initialized (window.supabase)");
       }
     } catch (e) {
-      console.warn("Firebase initialization skipped (check config):", e);
+      console.warn("Supabase initialization failed:", e);
     }
 
     // --- AUTH FUNCTIONS ---
-    // --- SYNC FUNCTIONS --- (COMMENT/DELETE)
-    async function syncReviewDeletionToFirebase(reviewId) {
-      if (!db) return;
+    // --- SUPABASE SYNC FUNCTIONS ---
+
+    // Auth Listener
+    if (supabase) {
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          console.log("User signed in:", session.user.email);
+          handleLoginSuccess(session.user);
+        } else if (event === 'SIGNED_OUT') {
+          console.log("User signed out");
+        }
+      });
+    }
+
+    async function syncReviewDeletionToSupabase(reviewId) {
+      if (!supabase) return;
       try {
-        await db.collection('reviews').doc(reviewId).delete();
-        console.log('Deleted review from Firebase:', reviewId);
+        const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
+        if (error) throw error;
+        console.log('Deleted review from Supabase:', reviewId);
       } catch (e) {
-        console.warn('Failed to delete review from Firebase', e);
+        console.warn('Failed to delete review from Supabase', e);
       }
     }
 
-    async function pushCommentsToFirebase(comment) {
-      if (!db) return;
+    async function pushCommentsToSupabase(comment) {
+      if (!supabase) return;
       try {
-        // Using a separate collection for comments is cleaner
-        await db.collection('comments').doc(comment.id).set(comment);
-        console.log('Pushed comment to Firebase:', comment.id);
+        const { error } = await supabase.from('comments').upsert(comment);
+        if (error) throw error;
+        console.log('Pushed comment to Supabase:', comment.id);
       } catch (e) {
         console.warn('Failed to push comment', e);
       }
     }
 
-    async function syncCommentsFromFirebase() {
-      if (!db) return;
+    async function syncCommentsFromSupabase() {
+      if (!supabase) return;
       try {
-        const snapshot = await db.collection('comments').limit(100).get(); // Limit to recent 100 replies
-        if (snapshot.empty) return;
+        const { data, error } = await supabase.from('comments').select('*').limit(100);
+        if (error) throw error;
+        if (!data || data.length === 0) return;
 
         let localComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
         const localIds = new Set(localComments.map(c => c.id));
         let changed = false;
 
-        snapshot.forEach(doc => {
-          const remoteComment = doc.data();
+        data.forEach(remoteComment => {
           if (!localIds.has(remoteComment.id)) {
             localComments.push(remoteComment);
             localIds.add(remoteComment.id);
@@ -435,11 +431,7 @@
 
         if (changed) {
           localStorage.setItem('reviewComments', JSON.stringify(localComments));
-          // Refresh relevant UI if open
-          // Note: adminLoadFeedbackList might need to be re-run if on that page
           if (document.getElementById('admin-feedback-list')) {
-            // We need to make sure adminLoadFeedbackList is defined or accessible
-            // It is defined later, so we check type
             if (typeof adminLoadFeedbackList === 'function') adminLoadFeedbackList();
           }
         }
@@ -448,48 +440,48 @@
       }
     }
 
-    async function signInWithFirebaseEmail() {
-      if (!auth) return alert("Firebase Auth not initialized.");
+    async function signInWithSupabaseEmail() {
+      if (!supabase) return alert("Supabase not initialized (check keys).");
       const email = document.getElementById('firebase-email').value;
       const pass = document.getElementById('firebase-password').value;
       if (!email || !pass) return alert("Please enter email and password");
 
       try {
-        await auth.signInWithEmailAndPassword(email, pass);
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: pass,
+        });
+        if (error) throw error;
+        // Auth listener will handle success
       } catch (error) {
         console.error("Email Sign-in Error:", error);
         alert("Login Failed: " + error.message);
       }
     }
 
-    async function handleLoginSuccess(firebaseUser) {
-      // Here we map the Firebase user to our internal role system
-      // For now, we will assume if they can login via Google/Firebase, they might be an admin
-      // OR we check against a whitelist.
+    async function handleLoginSuccess(user) {
+      // Check for custom claims or role in metadata
+      const role = user.app_metadata?.role || user.user_metadata?.role;
 
-      // 1. Check Custom Claims (Best Practice)
-      const tokenResult = await firebaseUser.getIdTokenResult();
-      if (tokenResult.claims.role === 'admin') {
-        console.log("Admin claim found");
-        // Set local session as admin
-        // This re-uses your existing 'currentUser' logic or you might need to adapt it
+      if (role === 'admin') {
+        console.log("Admin role found");
         const adminUser = {
-          id: 'ADMIN-FIREBASE', // or firebaseUser.uid
-          name: firebaseUser.displayName || firebaseUser.email,
+          id: user.id,
+          name: user.user_metadata?.name || user.email,
           role: 'admin',
           entity: 'ALL'
         };
         localStorage.setItem('currentUser', JSON.stringify(adminUser));
-        location.reload(); // Reload to apply theme/view
+        location.reload();
         return;
       }
 
-      // 2. Fallback: Check email whitelist if claims not set yet
-      const adminEmails = ['divyanshu.sharma@bharatloan.com']; // Add your admins here
-      if (adminEmails.includes(firebaseUser.email)) {
+      // Fallback: Check email whitelist
+      const adminEmails = ['divyanshu.sharma@bharatloan.com'];
+      if (adminEmails.includes(user.email)) {
         const adminUser = {
-          id: 'ADMIN-FIREBASE',
-          name: firebaseUser.displayName || firebaseUser.email,
+          id: user.id,
+          name: user.user_metadata?.name || user.email,
           role: 'admin',
           entity: 'ALL'
         };
@@ -499,71 +491,51 @@
       }
 
       alert("Login successful but you do not have Admin access.");
-      // Optional: Logout if not admin
-      // auth.signOut();
     }
 
-    // --- SYNC FUNCTIONS ---
-    async function pushReviewsToFirebase(reviewIds) {
-      if (!db) {
-        console.warn("Firebase DB not initialized.");
+    async function pushReviewsToSupabase(reviewIds) {
+      if (!supabase) {
+        console.warn("Supabase not initialized.");
         return;
       }
-      updateFirebaseStatus('syncing');
-      console.log('Pushing reviews to Firebase (RTDB)...', reviewIds);
+      updateSupabaseStatus('syncing');
+      console.log('Pushing reviews to Supabase...', reviewIds);
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const targetReviews = reviews.filter(r => reviewIds.includes(r.id));
 
       try {
-        // Realtime Database doesn't have batches like Firestore, so we loop await
-        for (const review of targetReviews) {
-          await db.ref('reviews/' + review.id).set(review);
+        const { error } = await supabase.from('reviews').upsert(targetReviews);
+        if (error) throw error;
 
-          // Upload file if exists and we have FileDB
-          if (review.fileStored && typeof FileDB !== 'undefined' && storage) {
-            try {
-              const blob = await FileDB.getFile(review.id);
-              if (blob) {
-                const storageRef = storage.ref().child(`reviews/${review.id}/${encodeURIComponent(review.fileName)}`);
-                await storageRef.put(blob, { customMetadata: { agentId: review.agentId } });
-                console.log('Uploaded file for review', review.id);
-              }
-            } catch (err) {
-              console.warn('File upload failed for review', review.id, err);
-            }
-          }
-        }
         console.log(`Successfully pushed ${targetReviews.length} reviews.`);
-        updateFirebaseStatus('connected');
-        alert("Synced to cloud! ☁️");
+        updateSupabaseStatus('connected');
+        alert("Synced to Supabase! ☁️");
       } catch (err) {
-        console.error('pushReviewsToFirebase failed', err);
-        updateFirebaseStatus('error');
-        alert("Sync Failed! Check console for Details (Realtime Database error).");
+        console.error('pushReviewsToSupabase failed', err);
+        updateSupabaseStatus('error');
+        alert("Sync Failed! Check console.");
       }
     }
 
-    async function syncReviewsFromFirebase() {
-      if (!db) {
-        updateFirebaseStatus('disconnected');
+    async function syncReviewsFromSupabase() {
+      if (!supabase) {
+        updateSupabaseStatus('disconnected');
         return;
       }
       try {
-        updateFirebaseStatus('syncing');
-        // Fetch all reviews
-        const snapshot = await db.ref('reviews').limitToLast(500).once('value');
+        updateSupabaseStatus('syncing');
+        const { data, error } = await supabase.from('reviews').select('*').limit(500);
 
-        updateFirebaseStatus('connected');
-
-        if (!snapshot.exists()) return;
+        updateSupabaseStatus('connected');
+        if (error) throw error;
+        if (!data || data.length === 0) return;
 
         let localReviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         let changed = false;
         const localIds = new Set(localReviews.map(r => r.id));
 
-        snapshot.forEach(childSnapshot => {
-          const remoteReview = childSnapshot.val();
-          if (remoteReview && !localIds.has(remoteReview.id)) {
+        data.forEach(remoteReview => {
+          if (!localIds.has(remoteReview.id)) {
             localReviews.push(remoteReview);
             localIds.add(remoteReview.id);
             changed = true;
@@ -572,29 +544,27 @@
 
         if (changed) {
           localStorage.setItem('adminReviews', JSON.stringify(localReviews));
-          console.log('Synced new reviews from Firebase (RTDB)');
+          console.log('Synced new reviews from Supabase');
 
-          // Refresh UI if functions are available
           if (typeof adminLoadReviewsList === 'function') adminLoadReviewsList();
           if (typeof reviewerLoadReviewsList === 'function') reviewerLoadReviewsList();
           if (typeof checkAndEnableWeekFinalButton === 'function') checkAndEnableWeekFinalButton();
           if (typeof agentLoadMonthlyPerformance === 'function') agentLoadMonthlyPerformance();
           if (typeof agentLoadQADashboard === 'function') agentLoadQADashboard();
 
-          // Show toast
           const toast = document.createElement('div');
           toast.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-[100] animate-fade-in';
-          toast.innerText = 'New reviews synced from cloud ☁️';
+          toast.innerText = 'New reviews synced from Supabase ☁️';
           document.body.appendChild(toast);
           setTimeout(() => toast.remove(), 3000);
         }
       } catch (e) {
         console.warn('Sync failed', e);
-        updateFirebaseStatus('error');
+        updateSupabaseStatus('error');
       }
     }
 
-    function updateFirebaseStatus(status) {
+    function updateSupabaseStatus(status) {
       const el = document.getElementById('firebase-status-dot');
       if (!el) return;
       el.className = 'w-3 h-3 rounded-full mr-2 ';
@@ -605,7 +575,7 @@
 
       const text = document.getElementById('firebase-status-text');
       if (text) {
-        if (status === 'connected') text.innerText = 'Live';
+        if (status === 'connected') text.innerText = 'Live (Supabase)';
         else if (status === 'syncing') text.innerText = 'Syncing...';
         else if (status === 'error') text.innerText = 'Error';
         else text.innerText = 'Offline';
@@ -614,15 +584,15 @@
 
     // Auto-sync loops
     setInterval(() => {
-      syncReviewsFromFirebase();
-      syncCommentsFromFirebase();
-    }, 60000); // Check every minute
+      syncReviewsFromSupabase();
+      syncCommentsFromSupabase();
+    }, 60000);
 
     window.addEventListener('load', () => {
-      syncReviewsFromFirebase();
-      syncCommentsFromFirebase(); // Initial fetch
+      syncReviewsFromSupabase();
+      syncCommentsFromSupabase();
       setTimeout(() => {
-        if (!db) updateFirebaseStatus('disconnected');
+        if (!supabase) updateSupabaseStatus('disconnected');
       }, 2000);
     });
   </script>
@@ -727,7 +697,7 @@
               class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 border" />
             <input id="firebase-password" type="password" placeholder="Password"
               class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 border" />
-            <button onclick="signInWithFirebaseEmail()"
+            <button onclick="signInWithSupabaseEmail()"
               class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Sign
               in (Email)</button>
           </div>
@@ -1073,7 +1043,7 @@
           <!-- Firebase Status -->
           <div
             class="flex items-center bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-xs font-semibold mr-2 border border-slate-200 dark:border-slate-600 cursor-pointer"
-            title="Click to Test Connection" onclick="syncReviewsFromFirebase(); alert('Manual Sync Triggered');">
+            title="Click to Test Connection" onclick="syncReviewsFromSupabase(); alert('Manual Sync Triggered');">
             <div id="firebase-status-dot" class="w-2 h-2 rounded-full bg-gray-400 mr-2"></div>
             <span id="firebase-status-text" class="text-slate-600 dark:text-slate-300">Connecting...</span>
           </div>
@@ -6820,14 +6790,14 @@ Reviewer: ${review.reviewerId}
         // Notify other sessions/tabs that reviews changed (timestamp)
         try { localStorage.setItem('adminReviewsUpdatedAt', Date.now().toString()); } catch (e) { console.warn('[adminFinalSubmit] could not set adminReviewsUpdatedAt', e); }
 
-        // If Firebase is configured, attempt to push these newly created reviews to Firestore/Storage
+        // If Supabase is configured, attempt to push these newly created reviews
         try {
-          if (typeof pushReviewsToFirebase === 'function' && createdReviewIds && createdReviewIds.length) {
+          if (typeof pushReviewsToSupabase === 'function' && createdReviewIds && createdReviewIds.length) {
             // fire-and-forget, don't block admin submit flow
-            pushReviewsToFirebase(createdReviewIds).catch(err => console.warn('[adminFinalSubmit] pushReviewsToFirebase failed', err));
+            pushReviewsToSupabase(createdReviewIds).catch(err => console.warn('[adminFinalSubmit] pushReviewsToSupabase failed', err));
           }
         } catch (err) {
-          console.warn('[adminFinalSubmit] could not call pushReviewsToFirebase', err);
+          console.warn('[adminFinalSubmit] could not call pushReviewsToSupabase', err);
         }
 
         // NOTIFICATION: Add feedback to agent comments
@@ -7124,13 +7094,13 @@ Reviewer: ${review.reviewerId}
         reviews[currentEditIndex] = review;
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // If Firebase is configured, push the edited review to Firestore
+        // If Supabase is configured, push the edited review
         try {
-          if (typeof pushReviewsToFirebase === 'function') {
-            pushReviewsToFirebase([review.id]).catch(err => console.warn('[adminSaveEdit] pushReviewsToFirebase failed', err));
+          if (typeof pushReviewsToSupabase === 'function') {
+            pushReviewsToSupabase([review.id]).catch(err => console.warn('[adminSaveEdit] pushReviewsToSupabase failed', err));
           }
         } catch (err) {
-          console.warn('[adminSaveEdit] could not call pushReviewsToFirebase', err);
+          console.warn('[adminSaveEdit] could not call pushReviewsToSupabase', err);
         }
 
         // Refresh & Close
@@ -7165,9 +7135,9 @@ Reviewer: ${review.reviewerId}
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // Firebase Deletion Sync
+        // Supabase Deletion Sync
         if (review && review.id) {
-          syncReviewDeletionToFirebase(review.id);
+          syncReviewDeletionToSupabase(review.id);
           // Optional: Delete file from storage if URL exists (implementation skipped for now as per instructions to focus on main bugs)
         }
 
