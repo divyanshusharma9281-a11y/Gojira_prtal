@@ -361,61 +361,67 @@
 
     let supabase;
 
+    // --- ROBUST SUPABASE INITIALIZATION ---
     try {
-      // Function to initialize Supabase once SDK is available
       function initSupabase() {
         if (supabase) return; // Already initialized
 
+        // Check availability
         if (typeof createClient !== 'undefined') {
           supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
           console.log("Supabase initialized (global createClient)");
         } else if (window.supabase && window.supabase.createClient) {
           supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          console.log("Supabase initialized (window.supabase.createClient)");
+          console.log("Supabase initialized (window.supabase)");
         }
 
         if (supabase) {
-          // Initialize Auth Listener
+          // Initialization Success
+          updateSupabaseStatus('syncing');
+
+          // Auth Listener
           supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN' && session) {
               console.log("User signed in:", session.user.email);
               handleLoginSuccess(session.user);
-            } else if (event === 'SIGNED_OUT') {
-              console.log("User signed out");
             }
           });
 
-          // Trigger initial sync
-          syncReviewsFromSupabase();
-          syncCommentsFromSupabase();
+          // Initial Sync
+          setTimeout(() => {
+            syncReviewsFromSupabase();
+            syncCommentsFromSupabase();
+          }, 500);
+
+        } else {
+          console.log("Supabase SDK not loaded yet.");
         }
       }
 
-      // Attempt immediate initialization removed (handled by DOMContentLoaded)
+      // 1. Try immediately
+      initSupabase();
 
-      // If not initialized, poll for SDK load
+      // 2. Poll if not ready (retries for 5 seconds)
       if (!supabase) {
-        console.log("Supabase SDK not ready, polling...");
-        const checkSupabaseInterval = setInterval(() => {
-          if (typeof createClient !== 'undefined' || (window.supabase && window.supabase.createClient)) {
-            clearInterval(checkSupabaseInterval);
-            initSupabase();
-          }
-        }, 500);
+        let attempts = 0;
+        const maxAttempts = 20; // 5 seconds (250ms * 20)
 
-        // Timeout after 10 seconds
-        setTimeout(() => {
-          clearInterval(checkSupabaseInterval);
-          if (!supabase) {
-            console.error("Supabase SDK failed to load after timeout.");
+        const interval = setInterval(() => {
+          attempts++;
+          initSupabase();
+
+          if (supabase) {
+            clearInterval(interval);
+          } else if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            console.error("Supabase SDK timeout.");
             updateSupabaseStatus('error');
-            const statusText = document.getElementById('firebase-status-text');
-            if (statusText) statusText.innerText = 'SDK Error';
+            alert("⚠️ Connection Failing: The Supabase library is not loading.\n\nPlease check your internet connection and reload.");
           }
-        }, 10000);
+        }, 250);
       }
     } catch (e) {
-      console.warn("Supabase initialization failed:", e);
+      console.error("Supabase Init Error:", e);
       updateSupabaseStatus('error');
     }
 
