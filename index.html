@@ -2510,11 +2510,6 @@
         <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
       </div>
       <div class="flex gap-2">
-        <button onclick="openResetDataModal('monthly')"
-          class="bg-orange-100 text-orange-700 hover:bg-orange-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition"
-          title="Reset monthly data for selected agent">
-          <span>📅</span> Reset Month Data
-        </button>
         <button onclick="downloadTableAsCSV('admin-monthly-table', 'Monthly_Performance_Report')"
           class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
           <span>📥</span> Download CSV
@@ -6206,37 +6201,64 @@
       const targetAgentId = String(agentId).trim().toLowerCase();
 
       if (currentResetType === 'weekly') {
-        // Weekly Logic: Delete for last 7 days (standard weekly view)
-        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const weekSelect = document.getElementById('admin-weekly-select-week');
+        const monthSelect = document.getElementById('admin-weekly-select-month');
+        const yearSelect = document.getElementById('admin-weekly-select-year');
+
+        let startDate, endDate;
+
+        if (weekSelect && monthSelect && yearSelect && weekSelect.value && monthSelect.value && yearSelect.value) {
+          const year = parseInt(yearSelect.value);
+          const month = parseInt(monthSelect.value) - 1; // 0-indexed
+          const week = parseInt(weekSelect.value);
+
+          let startDay = (week - 1) * 7 + 1;
+          startDate = new Date(year, month, startDay);
+
+          if (week === 4) {
+            endDate = new Date(year, month + 1, 0);
+          } else {
+            endDate = new Date(year, month, startDay + 6);
+          }
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          // Fallback: Delete last 7 days if selectors are missing (legacy or fail-safe)
+          const now = new Date();
+          endDate = now;
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        }
+
         reviews = reviews.filter(r => {
           if (String(r.agentId).trim().toLowerCase() !== targetAgentId) return true; // Keep others
 
-          // Check if this review is recent (<= 7 days)
+          // Check if this review is within the selected range
           const d = new Date(r.date);
-          if (d >= oneWeekAgo) {
+          if (d >= startDate && d <= endDate) {
             deletedCount++;
             return false; // Remove
           }
           return true;
         });
 
-        // Clear Finalization Status
+        // Clear Finalization Status (Using selected week index if possible)
         try {
           const state = getEntityWeekState(adminCurrentEntity || 'ALL');
-          const currentWeek = state.currentWeek || 1;
+          // If we have a selected week from dropdown, use it, otherwise default to "current"
+          const targetWeek = (weekSelect && weekSelect.value) ? parseInt(weekSelect.value) : (state.currentWeek || 1);
 
           let cleared = false;
-          if (state.completedAgents && state.completedAgents[currentWeek]) {
+          if (state.completedAgents && state.completedAgents[targetWeek]) {
             // Direct check
-            if (state.completedAgents[currentWeek][agentId]) {
-              delete state.completedAgents[currentWeek][agentId];
+            if (state.completedAgents[targetWeek][agentId]) {
+              delete state.completedAgents[targetWeek][agentId];
               cleared = true;
             } else {
               // Case-insensitive check
-              const keys = Object.keys(state.completedAgents[currentWeek]);
+              const keys = Object.keys(state.completedAgents[targetWeek]);
               const match = keys.find(k => k.toLowerCase() === targetAgentId);
               if (match) {
-                delete state.completedAgents[currentWeek][match];
+                delete state.completedAgents[targetWeek][match];
                 cleared = true;
               }
             }
