@@ -381,7 +381,7 @@
       const text = document.getElementById('firebase-status-text');
       if (el && text) {
         // Simple fallback update
-        if (status === 'connected') { el.className = 'w-3 h-3 rounded-full mr-2 bg-green-500'; text.innerText = 'Live (Supabase)'; }
+        if (status === 'connected') { el.className = 'w-3 h-3 rounded-full mr-2 bg-green-500'; text.innerText = 'Live'; }
         else if (status === 'syncing') { el.className = 'w-3 h-3 rounded-full mr-2 bg-yellow-400 animate-pulse'; text.innerText = 'Syncing...'; }
         else { el.className = 'w-3 h-3 rounded-full mr-2 bg-red-500'; text.innerText = 'Offline'; }
       }
@@ -689,7 +689,7 @@
       else if (status === 'error') el.classList.add('bg-red-500');
       else el.classList.add('bg-gray-400');
 
-      if (status === 'connected') text.innerText = 'Live (Supabase)';
+      if (status === 'connected') text.innerText = 'Live';
       else if (status === 'syncing') text.innerText = 'Syncing...';
       else if (status === 'error') text.innerText = 'Error';
       else text.innerText = 'Offline';
@@ -3257,18 +3257,18 @@
             const date = new Date(r.timestamp).toLocaleString();
 
             return `
-              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                <td class="p-6">${date}</td>
-                <td class="p-6">${agentName}</td>
-                <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
-                <td class="p-6">--</td>
-                <td class="p-6">${r.feedbackData.fileName}</td>
-                <td class="p-6 text-right">
-                  <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                  <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
-                </td>
-              </tr>
-            `;
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                  <td class="p-6">${date}</td>
+                  <td class="p-6">${agentName}</td>
+                  <td class="p-6"><span class="${scoreClass} font-bold">${scoreText}</span></td>
+                  <td class="p-6">--</td>
+                  <td class="p-6">${r.feedbackData.fileName}</td>
+                  <td class="p-6 text-right">
+                    <button onclick="viewReviewDetails(${r.id})" class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                    <button onclick="handleDeleteReview(${r.id})" class="text-red-600 hover:text-red-800">Delete</button>
+                  </td>
+                </tr>
+              `;
           }).join('');
         }
       }
@@ -3296,20 +3296,20 @@
           const reviewDate = review ? review.date : 'Unknown Date';
 
           return `
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm flex justify-between items-start gap-4">
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="font-bold text-slate-800 dark:text-slate-200">${c.authorName || 'Agent'}</span>
-                  <span class="text-xs text-slate-400">• ${c.date}</span>
-                  <span class="text-xs text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">Review: ${reviewDate}</span>
+              <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm flex justify-between items-start gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="font-bold text-slate-800 dark:text-slate-200">${c.authorName || 'Agent'}</span>
+                    <span class="text-xs text-slate-400">• ${c.date}</span>
+                    <span class="text-xs text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">Review: ${reviewDate}</span>
+                  </div>
+                  <p class="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-wrap">${c.text}</p>
                 </div>
-                <p class="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-wrap">${c.text}</p>
+                <button onclick="adminDeleteComment('${c.id}')" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition" title="Delete Comment">
+                  🗑️
+                </button>
               </div>
-              <button onclick="adminDeleteComment('${c.id}')" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition" title="Delete Comment">
-                🗑️
-              </button>
-            </div>
-           `;
+            `;
         }).join('');
       }
     }
@@ -3377,32 +3377,32 @@
             : 'startQualityReview()';
 
           agentListContainer.innerHTML = `
-            <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
-               <div class="flex items-center justify-between mb-4">
-                  <div>
-                     <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
-                     ${finalizedBadge}
-                     <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
-                     <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
-                     <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
-                  </div>
-                  <div class="text-right">
-                     <div class="font-black ${scoreClass} text-2xl">${scoreText}</div>
-                     <div class="text-xs text-slate-400 uppercase">Current Score</div>
-                  </div>
-               </div>
+              <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${selectedAgentForReview.name}</h4>
+                      ${finalizedBadge}
+                      <p class="text-sm text-slate-500 font-mono">${selectedAgentForReview.id}</p>
+                      <p class="text-xs text-slate-400 mt-1">Entity: ${selectedAgentForReview.entity}</p>
+                      <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
+                    </div>
+                    <div class="text-right">
+                      <div class="font-black ${scoreClass} text-2xl">${scoreText}</div>
+                      <div class="text-xs text-slate-400 uppercase">Current Score</div>
+                    </div>
+                </div>
 
-               <!-- Replaced inline process selection with modal-driven process selector -->
-               <div class="flex gap-3">
-                  <button onclick="document.getElementById('agent-process-modal').classList.remove('hidden')" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn">
-                     ${buttonText}
-                  </button>
-                  <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
-                     Clear Selection
-                  </button>
-               </div>
-            </div>
-          `;
+                <!-- Replaced inline process selection with modal-driven process selector -->
+                <div class="flex gap-3">
+                    <button onclick="document.getElementById('agent-process-modal').classList.remove('hidden')" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition" id="start-review-btn">
+                      ${buttonText}
+                    </button>
+                    <button onclick="clearAgentSelection()" class="bg-slate-500 text-white font-medium py-2 px-4 rounded-xl hover:bg-slate-600 transition">
+                      Clear Selection
+                    </button>
+                </div>
+              </div>
+            `;
 
           // Auto-open the admin review type modal when an agent is selected from the list
           try {
@@ -3602,12 +3602,12 @@
       const newItem = document.createElement('div');
       newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
       newItem.innerHTML = `
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm font-medium">Feedback Item ${count + 1}</label>
-          <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
-        </div>
-        <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-      `;
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">Feedback Item ${count + 1}</label>
+            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+          </div>
+          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+        `;
 
       container.appendChild(newItem);
       updateFeedbackCount();
@@ -3764,12 +3764,12 @@
         newItem.className = 'feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
         const isDisabled = index < 3;
         newItem.innerHTML = `
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item ${index + 1}</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm ${isDisabled ? 'opacity-50' : ''}" ${isDisabled ? 'disabled' : ''}>Remove</button>
-          </div>
-          <input type="text" value="${item}" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        `;
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-medium">Feedback Item ${index + 1}</label>
+              <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm ${isDisabled ? 'opacity-50' : ''}" ${isDisabled ? 'disabled' : ''}>Remove</button>
+            </div>
+            <input type="text" value="${item}" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
+          `;
 
         container.appendChild(newItem);
       });
@@ -3888,14 +3888,14 @@
         const reviewDiv = document.createElement('div');
         reviewDiv.className = 'p-3 bg-slate-50 dark:bg-slate-700 rounded-lg mb-2';
         reviewDiv.innerHTML = `
-          <div class="flex justify-between items-center">
-            <span class="font-medium">Review ${index + 1}</span>
-            <span class="text-sm text-slate-500">${new Date(review.timestamp).toLocaleDateString()}</span>
-          </div>
-          <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            Process: ${review.processType === 'voice' ? 'Voice' : 'Non-Voice'} | File: ${review.fileName} | Score: ${review.score}/100
-          </div>
-        `;
+            <div class="flex justify-between items-center">
+              <span class="font-medium">Review ${index + 1}</span>
+              <span class="text-sm text-slate-500">${new Date(review.timestamp).toLocaleDateString()}</span>
+            </div>
+            <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Process: ${review.processType === 'voice' ? 'Voice' : 'Non-Voice'} | File: ${review.fileName} | Score: ${review.score}/100
+            </div>
+          `;
         reviewSummary.appendChild(reviewDiv);
       });
     }
@@ -3906,41 +3906,41 @@
       section.className = 'hidden bg-green-50 dark:bg-slate-800 p-8 rounded-3xl mb-12 border border-green-200 dark:border-slate-700';
 
       section.innerHTML = `
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <span class="bg-green-600 text-white rounded-lg p-2 text-xl">✅</span>
-            Final Performance Submission for <span id="final-agent-name" class="text-green-600"></span>
-          </h2>
-          <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
-            Cancel Process
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold flex items-center gap-3">
+              <span class="bg-green-600 text-white rounded-lg p-2 text-xl">✅</span>
+              Final Performance Submission for <span id="final-agent-name" class="text-green-600"></span>
+            </h2>
+            <button onclick="cancelReviewProcess()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">
+              Cancel Process
+            </button>
+          </div>
+
+          <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+              <div><strong>Agent ID:</strong> <span id="final-agent-id" class="font-mono"></span></div>
+              <div><strong>Average Score:</strong> <span id="final-average-score" class="font-bold text-green-600"></span>/100</div>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-4">Review Summary (3 Reviews Completed)</h3>
+            <div id="final-review-summary" class="space-y-2">
+              <!-- Review summaries will be populated here -->
+            </div>
+          </div>
+
+          <div class="mb-6 p-4 bg-yellow-50 dark:bg-slate-700 rounded-xl border border-yellow-200 dark:border-slate-600">
+            <p class="text-sm text-yellow-800 dark:text-yellow-200">
+              <strong>Note:</strong> This will calculate the final performance score based on the average of all 3 reviews and update the agent's performance record.
+            </p>
+          </div>
+
+          <button onclick="submitFinalPerformanceScore()"
+            class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30">
+            Submit Final Performance Score
           </button>
-        </div>
-
-        <div class="mb-6 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div><strong>Agent ID:</strong> <span id="final-agent-id" class="font-mono"></span></div>
-            <div><strong>Average Score:</strong> <span id="final-average-score" class="font-bold text-green-600"></span>/100</div>
-          </div>
-        </div>
-
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold mb-4">Review Summary (3 Reviews Completed)</h3>
-          <div id="final-review-summary" class="space-y-2">
-            <!-- Review summaries will be populated here -->
-          </div>
-        </div>
-
-        <div class="mb-6 p-4 bg-yellow-50 dark:bg-slate-700 rounded-xl border border-yellow-200 dark:border-slate-600">
-          <p class="text-sm text-yellow-800 dark:text-yellow-200">
-            <strong>Note:</strong> This will calculate the final performance score based on the average of all 3 reviews and update the agent's performance record.
-          </p>
-        </div>
-
-        <button onclick="submitFinalPerformanceScore()"
-          class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30">
-          Submit Final Performance Score
-        </button>
-      `;
+        `;
 
       // Insert after the scoring section
       const scoringSection = document.getElementById('scoring-section');
@@ -4061,28 +4061,28 @@
       // Reset Additional Feedback Section to default 3 items
       const container = document.getElementById('additional-feedback-container');
       container.innerHTML = `
-        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item 1</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-medium">Feedback Item 1</label>
+              <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+            </div>
+            <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
           </div>
-          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        </div>
-        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item 2</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-medium">Feedback Item 2</label>
+              <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+            </div>
+            <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
           </div>
-          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        </div>
-        <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium">Feedback Item 3</label>
-            <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+          <div class="feedback-item mb-3 p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-medium">Feedback Item 3</label>
+              <button onclick="removeFeedbackItem(this)" class="text-red-500 hover:text-red-700 text-sm opacity-50" disabled>Remove</button>
+            </div>
+            <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
           </div>
-          <input type="text" placeholder="Enter additional feedback point..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-purple-500 outline-none">
-        </div>
-      `;
+        `;
       updateFeedbackCount();
       document.getElementById('add-feedback-btn').disabled = false;
       document.getElementById('add-feedback-btn').classList.remove('opacity-50', 'cursor-not-allowed');
@@ -4176,16 +4176,16 @@
         const date = new Date(review.timestamp).toLocaleString();
 
         const details = `
-Review Details:
-- Date: ${date}
-- Agent: ${agentName} (${review.agentId})
-- Score: ${review.score === 0 ? '0 (Fatal Error)' : review.score}
-- Interaction Type: ${review.feedbackData.interactionType}
-- File: ${review.feedbackData.fileName}
-- Feedback: ${review.feedbackData.feedback}
+  Review Details:
+  - Date: ${date}
+  - Agent: ${agentName} (${review.agentId})
+  - Score: ${review.score === 0 ? '0 (Fatal Error)' : review.score}
+  - Interaction Type: ${review.feedbackData.interactionType}
+  - File: ${review.feedbackData.fileName}
+  - Feedback: ${review.feedbackData.feedback}
 
-Reviewer: ${review.reviewerId}
-        `;
+  Reviewer: ${review.reviewerId}
+          `;
 
         alert(details);
       }
@@ -4283,25 +4283,25 @@ Reviewer: ${review.reviewerId}
         const reviewsList = document.getElementById('modal-reviews-list');
         if (reviews.length > 0) {
           reviewsList.innerHTML = reviews.map(r => `
-            <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-              <div class="flex justify-between items-start mb-4">
-                <div>
-                  <p class="text-sm text-slate-500">${r.date}</p>
-                  <h4 class="font-bold text-lg">${r.fileName || 'Review'}</h4>
-                  <p class="text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${r.id}')">View File</p>
+              <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <p class="text-sm text-slate-500">${r.date}</p>
+                    <h4 class="font-bold text-lg">${r.fileName || 'Review'}</h4>
+                    <p class="text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${r.id}')">View File</p>
+                  </div>
+                  <div class="text-right">
+                    <span class="inline-block px-3 py-1 rounded-full text-sm font-bold ${r.score == 100 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">
+                      Score: ${r.score}
+                    </span>
+                  </div>
                 </div>
-                <div class="text-right">
-                  <span class="inline-block px-3 py-1 rounded-full text-sm font-bold ${r.score == 100 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">
-                    Score: ${r.score}
-                  </span>
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <p class="text-sm font-bold text-slate-500 mb-1">Observation:</p>
+                  <p class="text-slate-700 dark:text-slate-300">${r.observation}</p>
                 </div>
               </div>
-              <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                 <p class="text-sm font-bold text-slate-500 mb-1">Observation:</p>
-                 <p class="text-slate-700 dark:text-slate-300">${r.observation}</p>
-              </div>
-            </div>
-          `).join('');
+            `).join('');
         } else {
           reviewsList.innerHTML = '<p class="text-center text-slate-500 italic">No reviews found.</p>';
         }
@@ -4310,17 +4310,17 @@ Reviewer: ${review.reviewerId}
         const proofsList = document.getElementById('modal-proofs-list');
         if (perfData.proofs && perfData.proofs.length > 0) {
           proofsList.innerHTML = perfData.proofs.map(p => `
-                <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-                   <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
-                      <div>
-                         <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
-                         <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
-                      </div>
-                   </div>
-                   <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
-                </div>
-             `).join('');
+                  <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-600 flex items-center justify-center text-xl">${p.icon}</div>
+                        <div>
+                          <p class="font-bold text-sm text-slate-700 dark:text-slate-200">${p.name}</p>
+                          <p class="text-[10px] text-slate-400 uppercase">${p.type.split('/')[1] || 'FILE'}</p>
+                        </div>
+                    </div>
+                    <button onclick="openReport('${p.content}', '${p.type}')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">View 👁️</button>
+                  </div>
+              `).join('');
         } else {
           proofsList.innerHTML = '<p class="col-span-2 text-center text-slate-400 italic">No proofs attached.</p>';
         }
@@ -4474,27 +4474,27 @@ Reviewer: ${review.reviewerId}
         notificationsList.innerHTML = reviews.map(review => {
           const displayDate = review.displayDate || review.date;
           return `
-          <div class="bg-blue-50 dark:bg-slate-700 p-4 rounded-xl border border-blue-100 dark:border-slate-600 cursor-pointer hover:shadow-lg transition relative group" onclick="agentViewNotificationReview('${review.id}')">
-              
-              <button onclick="event.stopPropagation(); clearNotification(${review.id})" 
-                class="absolute -top-2 -right-2 w-6 h-6 bg-slate-200 dark:bg-slate-600 text-slate-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm z-10" title="Clear">
-                ×
-              </button>
+            <div class="bg-blue-50 dark:bg-slate-700 p-4 rounded-xl border border-blue-100 dark:border-slate-600 cursor-pointer hover:shadow-lg transition relative group" onclick="agentViewNotificationReview('${review.id}')">
+                
+                <button onclick="event.stopPropagation(); clearNotification(${review.id})" 
+                  class="absolute -top-2 -right-2 w-6 h-6 bg-slate-200 dark:bg-slate-600 text-slate-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm z-10" title="Clear">
+                  ×
+                </button>
 
-              <div class="flex items-start justify-between">
-                <div>
-                  <h3 class="font-bold text-blue-900 dark:text-blue-200">New Performance Review</h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${review.date}</p>
-                  <div class="mt-2 flex gap-2">
-                    <span class="text-xs font-bold px-2 py-1 rounded bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-600 text-blue-700 dark:text-blue-300">
-                      Score: ${review.score}%
-                    </span>
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="font-bold text-blue-900 dark:text-blue-200">New Performance Review</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${review.date}</p>
+                    <div class="mt-2 flex gap-2">
+                      <span class="text-xs font-bold px-2 py-1 rounded bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-600 text-blue-700 dark:text-blue-300">
+                        Score: ${review.score}%
+                      </span>
+                    </div>
                   </div>
+                  <span class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
                 </div>
-                <span class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
               </div>
-            </div>
-        `}).join('');
+          `}).join('');
       }
 
       document.getElementById('notifications-modal').classList.remove('hidden');
@@ -4579,23 +4579,23 @@ Reviewer: ${review.reviewerId}
         notificationsList.innerHTML = comments.map(comment => {
           const review = reviews.find(r => r.id === comment.reviewId);
           return `
-            <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition relative group" onclick="adminViewNotificationComment('${comment.reviewId}')">
-              
-              <button onclick="event.stopPropagation(); clearNotification(${comment.id})" 
-                class="absolute -top-2 -right-2 w-6 h-6 bg-slate-200 dark:bg-slate-600 text-slate-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm z-10" title="Clear">
-                ×
-              </button>
+              <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-orange-200 dark:border-slate-600 cursor-pointer hover:shadow-lg transition relative group" onclick="adminViewNotificationComment('${comment.reviewId}')">
+                
+                <button onclick="event.stopPropagation(); clearNotification(${comment.id})" 
+                  class="absolute -top-2 -right-2 w-6 h-6 bg-slate-200 dark:bg-slate-600 text-slate-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm z-10" title="Clear">
+                  ×
+                </button>
 
-              <div class="flex items-start justify-between">
-                <div class="flex-1">
-                  <h3 class="font-bold text-orange-900 dark:text-orange-200">${comment.authorName} commented on review</h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Review Date: ${comment.date}</p>
-                  <p class="text-sm mt-2 text-slate-700 dark:text-slate-300 line-clamp-2">"${comment.text.substring(0, 80)}..."</p>
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h3 class="font-bold text-orange-900 dark:text-orange-200">${comment.authorName} commented on review</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Review Date: ${comment.date}</p>
+                    <p class="text-sm mt-2 text-slate-700 dark:text-slate-300 line-clamp-2">"${comment.text.substring(0, 80)}..."</p>
+                  </div>
+                  <span class="bg-orange-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
                 </div>
-                <span class="bg-orange-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">→</span>
               </div>
-            </div>
-          `;
+            `;
         }).join('');
 
         // Mark all as seen
@@ -5226,19 +5226,19 @@ Reviewer: ${review.reviewerId}
           const displayDate = review.displayDate || review.date;
 
           return `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-            <td class="p-6">${displayDate}</td>
-            <td class="p-6" title="${review.reviewerName || 'Quality Team'}">Quality Team</td>
-            <td class="p-6">
-              <button onclick="openReviewDetail('${review.id}')" class="text-blue-600 hover:text-blue-800 underline font-semibold">
-                👁️ View
-              </button>
-            </td>
-            <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : review.score >= 50 ? 'text-blue-600' : 'text-red-600'}">${review.score}</span></td>
-            <td class="p-6 text-sm">${replyCount} <span class="text-slate-500">replies</span></td>
-            <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${review.score === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${review.score === 100 ? 'Good' : 'Review'}</span></td>
-          </tr>
-        `}).join('');
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="p-6">${displayDate}</td>
+              <td class="p-6" title="${review.reviewerName || 'Quality Team'}">Quality Team</td>
+              <td class="p-6">
+                <button onclick="openReviewDetail('${review.id}')" class="text-blue-600 hover:text-blue-800 underline font-semibold">
+                  👁️ View
+                </button>
+              </td>
+              <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : review.score >= 50 ? 'text-blue-600' : 'text-red-600'}">${review.score}</span></td>
+              <td class="p-6 text-sm">${replyCount} <span class="text-slate-500">replies</span></td>
+              <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${review.score === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${review.score === 100 ? 'Good' : 'Review'}</span></td>
+            </tr>
+          `}).join('');
       }
 
       // Load feedback
@@ -5268,13 +5268,13 @@ Reviewer: ${review.reviewerId}
           const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
 
           return `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <td class="p-6">${comment.date}</td>
-              <td class="p-6">Quality Team</td>
-              <td class="p-6 text-sm">${comment.text.substring(0, 50)}...</td>
-              <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${daysLeft > 0 ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}">${daysLeft > 0 ? daysLeft + ' days' : 'Expired'}</span></td>
-            </tr>
-          `;
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <td class="p-6">${comment.date}</td>
+                <td class="p-6">Quality Team</td>
+                <td class="p-6 text-sm">${comment.text.substring(0, 50)}...</td>
+                <td class="p-6"><span class="px-3 py-1 rounded-full text-xs font-bold ${daysLeft > 0 ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}">${daysLeft > 0 ? daysLeft + ' days' : 'Expired'}</span></td>
+              </tr>
+            `;
         }).join('');
       }
     }
@@ -5295,11 +5295,11 @@ Reviewer: ${review.reviewerId}
         resultsDiv.innerHTML = '<div class="p-4 text-sm text-slate-500 italic">No agents found</div>';
       } else {
         resultsDiv.innerHTML = matched.map(u => `
-          <div onclick="selectAgent('${u.id}')" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-50 dark:border-slate-700 last:border-0">
-             <div class="font-bold text-slate-700 dark:text-slate-200">${u.name}</div>
-             <div class="text-xs text-slate-500 font-mono">${u.id} • ${u.entity}</div>
-          </div>
-        `).join('');
+            <div onclick="selectAgent('${u.id}')" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-50 dark:border-slate-700 last:border-0">
+              <div class="font-bold text-slate-700 dark:text-slate-200">${u.name}</div>
+              <div class="text-xs text-slate-500 font-mono">${u.id} • ${u.entity}</div>
+            </div>
+          `).join('');
       }
       resultsDiv.classList.remove('hidden');
     }
@@ -5586,16 +5586,16 @@ Reviewer: ${review.reviewerId}
 
       // Create agent list HTML
       container.innerHTML = agents.map(agent => `
-        <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 hover:shadow-md transition">
-          <div class="flex items-center justify-between">
-            <div>
-              <h4 class="font-bold text-slate-900 dark:text-white text-lg">${agent.name}</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300 font-mono">${agent.id}</p>
+          <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 hover:shadow-md transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-slate-900 dark:text-white text-lg">${agent.name}</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-300 font-mono">${agent.id}</p>
+              </div>
+              <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 px-3 py-1 rounded-lg text-sm font-semibold">${agent.entity}</div>
             </div>
-            <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 px-3 py-1 rounded-lg text-sm font-semibold">${agent.entity}</div>
           </div>
-        </div>
-      `).join('');
+        `).join('');
     }
 
     function setTheme(mode) {
@@ -6067,12 +6067,12 @@ Reviewer: ${review.reviewerId}
         const item = document.createElement('div');
         item.className = 'p-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between';
         item.innerHTML = `
-          <div class="flex items-center">
-            <div class="w-6 h-6 rounded-full mr-3 flex items-center justify-center ${completed ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}">${completed ? '✔' : ''}</div>
-            <div class="font-bold">${agent.name} ${agent.id}</div>
-          </div>
-          <div class="text-sm text-slate-500">${completed ? 'Finalized Wk ' + currentWeek : ''}</div>
-        `;
+            <div class="flex items-center">
+              <div class="w-6 h-6 rounded-full mr-3 flex items-center justify-center ${completed ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}">${completed ? '✔' : ''}</div>
+              <div class="font-bold">${agent.name} ${agent.id}</div>
+            </div>
+            <div class="text-sm text-slate-500">${completed ? 'Finalized Wk ' + currentWeek : ''}</div>
+          `;
 
         item.addEventListener('click', () => {
           adminSelectAgent(agent.id, agent.name);
@@ -6230,25 +6230,25 @@ Reviewer: ${review.reviewerId}
         const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 60 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
 
         return `
-        <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
-           <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
-           <td class="p-6">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
-              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
-           </td>
-           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
-           <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
-           <td class="p-6 text-center font-bold text-indigo-600 text-lg">${showPerfects}</td>
-           <td class="p-6 text-center">
-              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
-                 ${showScore}
-              </div>
-           </td>
-           <td class="p-6 text-center">
-              ${showStatus}
-           </td>
-        </tr>
-      `}).join('');
+          <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
+            <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
+            <td class="p-6">
+                <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
+                <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+            </td>
+            <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
+            <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
+            <td class="p-6 text-center font-bold text-indigo-600 text-lg">${showPerfects}</td>
+            <td class="p-6 text-center">
+                <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
+                  ${showScore}
+                </div>
+            </td>
+            <td class="p-6 text-center">
+                ${showStatus}
+            </td>
+          </tr>
+        `}).join('');
     }
 
     function renderAdminWeeklyPerformance() {
@@ -6352,25 +6352,25 @@ Reviewer: ${review.reviewerId}
         const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 60 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
 
         return `
-        <tr class="hover:bg-teal-50/30 dark:hover:bg-slate-700/30 transition">
-           <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
-           <td class="p-6">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
-              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
-           </td>
-           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
-           <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
-           <td class="p-6 text-center font-bold text-indigo-600 text-lg">${showPerfects}</td>
-           <td class="p-6 text-center">
-              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
-                 ${showScore}
-              </div>
-           </td>
-           <td class="p-6 text-center">
-              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>
-           </td>
-        </tr>
-      `}).join('');
+          <tr class="hover:bg-teal-50/30 dark:hover:bg-slate-700/30 transition">
+            <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
+            <td class="p-6">
+                <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
+                <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+            </td>
+            <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
+            <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
+            <td class="p-6 text-center font-bold text-indigo-600 text-lg">${showPerfects}</td>
+            <td class="p-6 text-center">
+                <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
+                  ${showScore}
+                </div>
+            </td>
+            <td class="p-6 text-center">
+                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>
+            </td>
+          </tr>
+        `}).join('');
     }
 
     function checkAndEnableWeekFinalButton() {
@@ -6578,21 +6578,21 @@ Reviewer: ${review.reviewerId}
       const topBtnDisabledAttr = finalizedForBtn ? 'disabled' : '';
 
       agentListContainer.innerHTML = `
-        <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
-           <div class="flex items-center justify-between mb-4">
-              <div>
-                 <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${agentName}</h4>
-                 <p class="text-sm text-slate-500 font-mono">${agentId}</p>
-                 <p class="text-xs text-slate-400 mt-1">Entity: ${USER_DB.find(u => String(u.id) === String(agentId))?.entity || ''}</p>
-                 <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
-              </div>
-              <div class="text-right flex items-center gap-3">
-                 <button onclick="adminClearReviewsForAgent('${agentId}')" id="admin-clear-reviews-btn" class="bg-red-100 text-red-700 px-3 py-2 rounded-md text-sm font-semibold border border-red-200 hover:bg-red-200">Clear Reviews</button>
-                 <button onclick="${topBtnOnclick}" id="admin-top-start-btn" class="${topBtnClass}" ${topBtnDisabledAttr}>${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
-              </div>
-           </div>
-        </div>
-      `;
+          <div class="bg-white dark:bg-slate-700 p-6 rounded-2xl border border-slate-200 dark:border-slate-600">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xl">${agentName}</h4>
+                  <p class="text-sm text-slate-500 font-mono">${agentId}</p>
+                  <p class="text-xs text-slate-400 mt-1">Entity: ${USER_DB.find(u => String(u.id) === String(agentId))?.entity || ''}</p>
+                  <p class="text-xs text-blue-600 mt-1 font-medium">${reviewStatus}</p>
+                </div>
+                <div class="text-right flex items-center gap-3">
+                  <button onclick="adminClearReviewsForAgent('${agentId}')" id="admin-clear-reviews-btn" class="bg-red-100 text-red-700 px-3 py-2 rounded-md text-sm font-semibold border border-red-200 hover:bg-red-200">Clear Reviews</button>
+                  <button onclick="${topBtnOnclick}" id="admin-top-start-btn" class="${topBtnClass}" ${topBtnDisabledAttr}>${agentReviews.length >= 3 ? 'Complete Final Submission' : 'Start Quality Review'}</button>
+                </div>
+            </div>
+          </div>
+        `;
 
       // Refresh reviews list for this agent
       adminLoadReviewsList();
@@ -6692,66 +6692,66 @@ Reviewer: ${review.reviewerId}
       const container = document.getElementById('admin-review-items-container');
 
       let itemHtml = `
-        <div class="admin-review-item bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600 mb-4">
-          <div class="flex items-center justify-between mb-4">
-            <h4 class="font-bold text-lg">Review #${itemIndex}</h4>
-            ${itemIndex > 1 ? `<button onclick="adminRemoveReviewItem(${itemIndex - 1})" class="text-red-600 hover:text-red-700 text-sm">🗑️ Remove</button>` : ''}
-          </div>
-      `;
+          <div class="admin-review-item bg-white dark:bg-slate-700 p-6 rounded-xl border border-slate-200 dark:border-slate-600 mb-4">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold text-lg">Review #${itemIndex}</h4>
+              ${itemIndex > 1 ? `<button onclick="adminRemoveReviewItem(${itemIndex - 1})" class="text-red-600 hover:text-red-700 text-sm">🗑️ Remove</button>` : ''}
+            </div>
+        `;
 
       // Show file upload only for voice reviews
       if (adminReviewType === 'voice') {
         itemHtml += `
 
-          <!-- File Upload (Voice) -->
-          <div class="mb-4">
-            <label class="block text-sm font-semibold mb-2">Select File (Optional, Max 50MB)</label>
-            <input type="file" class="review-file-input block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700"
-              data-item-index="${itemIndex - 1}" onchange="adminOnFileSelected(${itemIndex - 1})">
-            <p class="text-xs text-slate-500 mt-1">Selected: <span class="review-file-name">None</span></p>
-          </div>
-        `;
+            <!-- File Upload (Voice) -->
+            <div class="mb-4">
+              <label class="block text-sm font-semibold mb-2">Select File (Optional, Max 50MB)</label>
+              <input type="file" class="review-file-input block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700"
+                data-item-index="${itemIndex - 1}" onchange="adminOnFileSelected(${itemIndex - 1})">
+              <p class="text-xs text-slate-500 mt-1">Selected: <span class="review-file-name">None</span></p>
+            </div>
+          `;
       } else {
         // Show single contact input for non-voice reviews (Chat ID or Email ID - only one required)
         itemHtml += `
-          <!-- Chat or Email ID (Non-Voice) -->
-          <div class="mb-4">
-            <label class="block text-sm font-semibold mb-2">Chat ID or Email ID</label>
-            <input type="text" class="review-contact-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
-              placeholder="Enter Chat ID or Email ID (one required)" data-item-index="${itemIndex - 1}">
-          </div>
-        `;
+            <!-- Chat or Email ID (Non-Voice) -->
+            <div class="mb-4">
+              <label class="block text-sm font-semibold mb-2">Chat ID or Email ID</label>
+              <input type="text" class="review-contact-id w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+                placeholder="Enter Chat ID or Email ID (one required)" data-item-index="${itemIndex - 1}">
+            </div>
+          `;
       }
 
       // Observation and Score (Binary)
       itemHtml += `
-          <!-- Observation -->
-          <div class="mb-4">
-            <label class="block text-sm font-semibold mb-2">Observation</label>
-            <textarea class="review-observation w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
-              rows="4" placeholder="Enter your observation for this review..." data-item-index="${itemIndex - 1}"></textarea>
-          </div>
+            <!-- Observation -->
+            <div class="mb-4">
+              <label class="block text-sm font-semibold mb-2">Observation</label>
+              <textarea class="review-observation w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+                rows="4" placeholder="Enter your observation for this review..." data-item-index="${itemIndex - 1}"></textarea>
+            </div>
 
-          <!-- Score (Binary 0 or 100) -->
-          <div class="mb-4">
-            <label class="block text-sm font-semibold mb-3">Performance Score</label>
-            <div class="flex gap-4">
-              <label class="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-slate-600 rounded-lg border border-emerald-200 dark:border-slate-500 cursor-pointer flex-1 transition hover:bg-emerald-100">
-                <input type="radio" name="score-${itemIndex - 1}" value="100" class="review-score w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300" data-item-index="${itemIndex - 1}">
-                <div>
-                  <div class="font-bold text-emerald-600">Good (100)</div>
-                </div>
-              </label>
-              <label class="flex items-center gap-2 p-3 bg-red-50 dark:bg-slate-600 rounded-lg border border-red-200 dark:border-slate-500 cursor-pointer flex-1 transition hover:bg-red-100">
-                <input type="radio" name="score-${itemIndex - 1}" value="0" class="review-score w-5 h-5 text-red-600 focus:ring-red-500 border-gray-300" data-item-index="${itemIndex - 1}">
-                <div>
-                  <div class="font-bold text-red-600">Fatal (0)</div>
-                </div>
-              </label>
+            <!-- Score (Binary 0 or 100) -->
+            <div class="mb-4">
+              <label class="block text-sm font-semibold mb-3">Performance Score</label>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-slate-600 rounded-lg border border-emerald-200 dark:border-slate-500 cursor-pointer flex-1 transition hover:bg-emerald-100">
+                  <input type="radio" name="score-${itemIndex - 1}" value="100" class="review-score w-5 h-5 text-emerald-600 focus:ring-emerald-500 border-gray-300" data-item-index="${itemIndex - 1}">
+                  <div>
+                    <div class="font-bold text-emerald-600">Good (100)</div>
+                  </div>
+                </label>
+                <label class="flex items-center gap-2 p-3 bg-red-50 dark:bg-slate-600 rounded-lg border border-red-200 dark:border-slate-500 cursor-pointer flex-1 transition hover:bg-red-100">
+                  <input type="radio" name="score-${itemIndex - 1}" value="0" class="review-score w-5 h-5 text-red-600 focus:ring-red-500 border-gray-300" data-item-index="${itemIndex - 1}">
+                  <div>
+                    <div class="font-bold text-red-600">Fatal (0)</div>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-      `;
+        `;
 
       container.insertAdjacentHTML('beforeend', itemHtml);
       // Initialize with correct fields structure
@@ -7025,18 +7025,18 @@ Reviewer: ${review.reviewerId}
       }
 
       tbody.innerHTML = filtered.map((review, idx) => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-          <td class="p-6">${review.date}</td>
-          <td class="p-6">${review.agentName}</td>
-          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${review.id}')">${review.fileName || 'N/A'}</td>
-          <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
-          <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
-          <td class="p-6 text-right space-x-2">
-            <button onclick="adminViewReview(${idx})" class="text-blue-600 hover:text-blue-700">👁️ View</button>
-            <button onclick="adminDeleteReview('${review.id}')" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
-          </td>
-        </tr>
-      `).join('');
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${review.date}</td>
+            <td class="p-6">${review.agentName}</td>
+            <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${review.id}')">${review.fileName || 'N/A'}</td>
+            <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
+            <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
+            <td class="p-6 text-right space-x-2">
+              <button onclick="adminViewReview(${idx})" class="text-blue-600 hover:text-blue-700">👁️ View</button>
+              <button onclick="adminDeleteReview('${review.id}')" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
+            </td>
+          </tr>
+        `).join('');
     }
 
     function reviewerLoadReviewsList() {
@@ -7065,18 +7065,18 @@ Reviewer: ${review.reviewerId}
       }
 
       tbody.innerHTML = filtered.map((review, idx) => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-          <td class="p-6">${review.date}</td>
-          <td class="p-6">${review.agentName}</td>
-          <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${review.id}')">${review.fileName || 'N/A'}</td>
-          <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
-          <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
-          <td class="p-6 text-right space-x-2">
-            <button onclick="reviewerViewReview('${review.id}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
-            <button onclick="reviewerViewComments('${review.id}')" class="text-purple-600 hover:text-purple-700">💬 Comments</button>
-          </td>
-        </tr>
-      `).join('');
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <td class="p-6">${review.date}</td>
+            <td class="p-6">${review.agentName}</td>
+            <td class="p-6 text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${review.id}')">${review.fileName || 'N/A'}</td>
+            <td class="p-6"><span class="font-bold ${review.score === 100 ? 'text-emerald-600' : 'text-red-600'}">${review.score}</span></td>
+            <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
+            <td class="p-6 text-right space-x-2">
+              <button onclick="reviewerViewReview('${review.id}')" class="text-blue-600 hover:text-blue-700">👁️ View</button>
+              <button onclick="reviewerViewComments('${review.id}')" class="text-purple-600 hover:text-purple-700">💬 Comments</button>
+            </td>
+          </tr>
+        `).join('');
     }
 
     function reviewerViewReview(reviewId) {
@@ -7149,14 +7149,14 @@ Reviewer: ${review.reviewerId}
       // Comments
       const comments = JSON.parse(localStorage.getItem('reviewComments') || '[]').filter(c => c.reviewId === review.id);
       const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No comments yet</p>' : comments.map(c => `
-        <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2 ${c.authorId === (currentUser?.id || 'admin') ? 'ml-8 bg-blue-50 dark:bg-blue-900/20' : 'mr-8'}">
-          <div class="flex justify-between items-center mb-1">
-             <span class="font-bold text-sm ${c.authorId === (currentUser?.id || 'admin') ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}">${c.authorName || 'User'}</span>
-             <span class="text-xs text-slate-400">${c.date}</span>
+          <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2 ${c.authorId === (currentUser?.id || 'admin') ? 'ml-8 bg-blue-50 dark:bg-blue-900/20' : 'mr-8'}">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-bold text-sm ${c.authorId === (currentUser?.id || 'admin') ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}">${c.authorName || 'User'}</span>
+              <span class="text-xs text-slate-400">${c.date}</span>
+            </div>
+            <div class="text-sm text-slate-800 dark:text-slate-200">${c.text}</div>
           </div>
-          <div class="text-sm text-slate-800 dark:text-slate-200">${c.text}</div>
-        </div>
-      `).join('');
+        `).join('');
       document.getElementById('admin-review-detail-comments').innerHTML = commentsHtml;
 
       modal.classList.remove('hidden');
@@ -7516,16 +7516,16 @@ Reviewer: ${review.reviewerId}
         const agentName = ag ? ag.name : comment.agentId;
         const entity = comment.entity || (ag ? ag.entity : 'Unknown');
         return `
-        <tr>
-          <td class="p-6">${comment.date}</td>
-          <td class="p-6">${agentName}</td>
-          <td class="p-6">${entity}</td>
-          <td class="p-6">${comment.text.substring(0, 80)}...</td>
-          <td class="p-6 text-right">
-            <button onclick="adminDeleteCommentById(${comment.id})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
-          </td>
-        </tr>
-      `;
+          <tr>
+            <td class="p-6">${comment.date}</td>
+            <td class="p-6">${agentName}</td>
+            <td class="p-6">${entity}</td>
+            <td class="p-6">${comment.text.substring(0, 80)}...</td>
+            <td class="p-6 text-right">
+              <button onclick="adminDeleteCommentById(${comment.id})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
+            </td>
+          </tr>
+        `;
       }).join('');
     }
 
@@ -7570,19 +7570,19 @@ Reviewer: ${review.reviewerId}
       // Display reviews
       const reviewsList = document.getElementById('modal-reviews-list');
       reviewsList.innerHTML = agentReviews.map((review, idx) => `
-        <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
-          <div class="flex justify-between items-start mb-2">
-            <div>
-              <p class="font-bold text-sm">Review #${idx + 1}</p>
-              <p class="text-xs text-slate-500">${review.date}</p>
+          <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <p class="font-bold text-sm">Review #${idx + 1}</p>
+                <p class="text-xs text-slate-500">${review.date}</p>
+              </div>
+              <span class="font-bold ${review.score === 100 ? 'text-emerald-600 text-lg' : 'text-red-600 text-lg'}">Score: ${review.score}</span>
             </div>
-            <span class="font-bold ${review.score === 100 ? 'text-emerald-600 text-lg' : 'text-red-600 text-lg'}">Score: ${review.score}</span>
+            <p class="text-sm mb-2"><strong>File:</strong> ${review.fileName}</p>
+            <p class="text-sm mb-2"><strong>Observation:</strong> ${review.observation}</p>
+            <button onclick="agentViewReviewDetail(${idx})" class="text-blue-600 hover:text-blue-700 text-sm">👁️ View Details</button>
           </div>
-          <p class="text-sm mb-2"><strong>File:</strong> ${review.fileName}</p>
-          <p class="text-sm mb-2"><strong>Observation:</strong> ${review.observation}</p>
-          <button onclick="agentViewReviewDetail(${idx})" class="text-blue-600 hover:text-blue-700 text-sm">👁️ View Details</button>
-        </div>
-      `).join('');
+        `).join('');
 
       document.getElementById('perf-content-loaded').classList.remove('hidden');
       document.getElementById('perf-content-empty').classList.add('hidden');
@@ -7662,12 +7662,12 @@ Reviewer: ${review.reviewerId}
       const allComments = JSON.parse(localStorage.getItem('reviewComments') || '[]');
       const comments = allComments.filter(c => c.reviewId === reviewId);
       const commentsHtml = comments.length === 0 ? '<p class="text-slate-500 italic">No replies yet</p>' : comments.map(c => `
-        <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2">
-          <div class="font-semibold text-sm">${c.authorName || 'Agent'}</div>
-          <div class="text-xs text-slate-500">${c.date}</div>
-          <div class="text-sm mt-1">${c.text}</div>
-        </div>
-      `).join('');
+          <div class="bg-slate-100 dark:bg-slate-600 p-3 rounded mb-2">
+            <div class="font-semibold text-sm">${c.authorName || 'Agent'}</div>
+            <div class="text-xs text-slate-500">${c.date}</div>
+            <div class="text-sm mt-1">${c.text}</div>
+          </div>
+        `).join('');
       document.getElementById('review-detail-comments').innerHTML = commentsHtml;
 
       // Check if agent has already replied
@@ -7980,24 +7980,24 @@ Reviewer: ${review.reviewerId}
         const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 50 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
 
         return `
-        <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
-           <td class="p-6 text-center font-bold text-slate-400">${index + 1}</td>
-           <td class="p-6">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
-              <div class="text-xs text-slate-500 font-mono">${row.id}</div>
-           </td>
-           <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
-           <td class="p-6 text-center font-bold ${row.fatals > 0 ? 'text-red-600' : 'text-slate-400'} text-lg">${showFatals}</td>
-           <td class="p-6 text-center">
-              <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
-                 ${showScore}
-              </div>
-           </td>
-           <td class="p-6 text-center">
-              ${showStatus}
-           </td>
-        </tr>
-      `}).join('');
+          <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
+            <td class="p-6 text-center font-bold text-slate-400">${index + 1}</td>
+            <td class="p-6">
+                <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
+                <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+            </td>
+            <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
+            <td class="p-6 text-center font-bold ${row.fatals > 0 ? 'text-red-600' : 'text-slate-400'} text-lg">${showFatals}</td>
+            <td class="p-6 text-center">
+                <div class="inline-block px-3 py-1 rounded-full font-bold text-sm ${scoreClass}">
+                  ${showScore}
+                </div>
+            </td>
+            <td class="p-6 text-center">
+                ${showStatus}
+            </td>
+          </tr>
+        `}).join('');
     }
 
     // Load reviews on page load
@@ -8081,10 +8081,10 @@ Reviewer: ${review.reviewerId}
     });
 
     /* ----------------- Auto-update / cache-refresh checker -----------------
-       It checks the embedded APP_VERSION token in the page and periodically
-       fetches the page with cache: 'no-store' to detect version changes.
-       When a new version is detected it shows a small banner with a reload
-       button so users can refresh to get the latest updates without re-sharing.
+      It checks the embedded APP_VERSION token in the page and periodically
+      fetches the page with cache: 'no-store' to detect version changes.
+      When a new version is detected it shows a small banner with a reload
+      button so users can refresh to get the latest updates without re-sharing.
     ----------------------------------------------------------------------- */
 
     // Helper: extract token like "APP_VERSION: 20260130-001" from page text
