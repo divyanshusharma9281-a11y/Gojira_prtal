@@ -6260,13 +6260,13 @@
           let cleared = false;
           if (state.completedAgents && state.completedAgents[targetWeek]) {
             // Direct check
-            if (state.completedAgents[targetWeek][agentId]) {
+            if (state.completedAgents[targetWeek] && state.completedAgents[targetWeek][agentId]) {
               delete state.completedAgents[targetWeek][agentId];
               cleared = true;
-            } else {
+            } else if (state.completedAgents[targetWeek]) {
               // Case-insensitive check
               const keys = Object.keys(state.completedAgents[targetWeek]);
-              const match = keys.find(k => k.toLowerCase() === targetAgentId);
+              const match = keys.find(k => String(k).toLowerCase() === String(agentId).toLowerCase());
               if (match) {
                 delete state.completedAgents[targetWeek][match];
                 cleared = true;
@@ -6505,8 +6505,10 @@
           <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
             <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
             <td class="p-6">
-                <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
-                <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+                <div class="font-bold rounded-lg p-3 ${row.statusClass}">
+                  <div class="text-lg text-white drop-shadow-md">${row.name}</div>
+                  <div class="text-xs text-white/80 font-mono">${row.id}</div>
+                </div>
             </td>
             <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
             <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
@@ -6716,8 +6718,10 @@
           <tr class="hover:bg-teal-50/30 dark:hover:bg-slate-700/30 transition">
             <td class="p-6 text-center font-bold text-slate-400">#${index + 1}</td>
             <td class="p-6">
-                <div class="font-bold text-slate-800 dark:text-slate-200">${row.name}</div>
-                <div class="text-xs text-slate-500 font-mono">${row.id}</div>
+                <div class="font-bold rounded-lg p-3 ${row.statusClass}">
+                  <div class="text-lg text-white drop-shadow-md">${row.name}</div>
+                  <div class="text-xs text-white/80 font-mono">${row.id}</div>
+                </div>
             </td>
             <td class="p-6 text-center font-bold text-slate-700 dark:text-slate-300 text-lg">${showAudits}</td>
             <td class="p-6 text-center font-bold text-lg ${row.audits > 0 ? row.fatalClass : 'text-slate-400'}">${showFatals}</td>
