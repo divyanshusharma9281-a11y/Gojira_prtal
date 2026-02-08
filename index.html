@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gojira TP | Training Portal</title>
+  <title>Gojira | Training Portal</title>
   <!-- APP_VERSION: 20260130-001 -->
 
   <!-- Tailwind -->
@@ -762,9 +762,9 @@
     </div>
 
     <!-- Colored Login Card -->
-    <div class="min-h-screen w-full flex items-center justify-center py-20 relative z-60">
+    <div class="min-h-screen w-full flex items-center justify-center py-20 relative z-50">
       <div id="login-card"
-        class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-60 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
+        class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-50 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
         style="background-color: rgba(10, 14, 22, 0.97);">
         <div class="text-center mb-8">
           <div
@@ -772,10 +772,8 @@
             G</div>
           <h1
             class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600 drop-shadow-sm">
-            Gojira TP</h1>
-          <p class="text-slate-500 dark:text-slate-400 text-sm mt-3 font-semibold tracking-wide uppercase">Training
-            Portal
-            Login</p>
+            Gojira</h1>
+
         </div>
 
         <form onsubmit="submitLogin(event)">
@@ -783,7 +781,7 @@
             <label class="block text-sm font-semibold mb-2 login-label">Employee ID</label>
             <input id="portal-emp-id" type="text" required placeholder="Enter your Employee ID"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none transition">
-          </div>"
+          </div>
 
           <div class="mb-6">
             <label class="block text-sm font-semibold mb-2 login-label">Password</label>
@@ -799,12 +797,11 @@
           <button onclick="showChangePasswordModal()"
             class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
         </div>
-
       </div>
     </div>
 
     <!-- Contact Details Section (Login Screen) -->
-    <div class="w-full max-w-5xl mx-auto mt-16 px-6 pb-20 relative z-60 animate-zoom-in" style="animation-delay: 0.5s;">
+    <div class="w-full max-w-5xl mx-auto mt-16 px-6 pb-20 relative z-50 animate-zoom-in" style="animation-delay: 0.5s;">
       <h3 class="text-2xl font-bold text-white/90 mb-8 flex items-center justify-center gap-2 drop-shadow-md">
         <span>📞</span> Contact Us
       </h3>
@@ -849,171 +846,108 @@
       </div>
     </div>
 
+    <!-- Web Shooter Animation Canvas (Inside Login Screen) -->
+    <canvas id="twinkle-canvas" class="absolute inset-0 pointer-events-none" style="z-index: 20;"></canvas>
+
     <script>
       /**
-       * RAINBOW TWINKLES ANIMATION
-       * Handles mouse trail and continuous stream on click-hold
+       * BUBBLE NETWORK ANIMATION (Web Shooter Effect)
        */
       (function () {
-        // Twinkle animation disabled — early return to prevent registration/animation
-        return;
+        const loginScreen = document.getElementById('portal-login-screen');
+        // Only run if we are inside the login screen context
         const canvas = document.getElementById('twinkle-canvas');
+        if (!canvas || !loginScreen) return;
+
         const ctx = canvas.getContext('2d');
         let width, height;
         let particles = [];
-        let isMouseDown = false;
-        let mouseX = 0, mouseY = 0;
+        let mouseX = -1000, mouseY = -1000;
 
-        // Palette of extra colors for twinkles (chosen to be bright & pleasant)
-        const TWINKLE_PALETTE = ['#FFC857', '#FF6B6B', '#4ECDC4', '#00B4D8', '#9B5DE5', '#C7F464', '#FF9F1C'];
-
-        // Resize canvas
+        // Resize
         function resize() {
           width = canvas.width = window.innerWidth;
-          height = canvas.height = window.innerHeight;
+          // Use scrollHeight to ensure it covers the full scrollable content (contacts etc.)
+          height = canvas.height = Math.max(window.innerHeight, loginScreen.scrollHeight);
         }
         window.addEventListener('resize', resize);
+        // Also resize on scroll to ensure dynamic content is covered if it expands
+        loginScreen.addEventListener('scroll', () => {
+          if (canvas.height < loginScreen.scrollHeight) resize();
+        });
         resize();
 
-        // Mouse Events
+        // Mouse Listeners
         document.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-          // Create a denser particle trail for stronger effect
-          createParticles(mouseX, mouseY, 6);
+          // Adjust mouse coordinates relative to the canvas/scroll position
+          const rect = canvas.getBoundingClientRect();
+          mouseX = e.clientX - rect.left;
+          mouseY = e.clientY - rect.top;
         });
 
-        document.addEventListener('mousedown', (e) => {
-          isMouseDown = true;
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-        });
-
-        document.addEventListener('mouseup', () => {
-          isMouseDown = false;
-        });
-
-        // Touch Support
-        document.addEventListener('touchmove', (e) => {
-          const touch = e.touches[0];
-          mouseX = touch.clientX;
-          mouseY = touch.clientY;
-          // Denser particles for touch as well
-          createParticles(mouseX, mouseY, 6);
-        });
-        document.addEventListener('touchstart', (e) => {
-          isMouseDown = true;
-          const touch = e.touches[0];
-          mouseX = touch.clientX;
-          mouseY = touch.clientY;
-        });
-        document.addEventListener('touchend', () => {
-          isMouseDown = false;
-        });
-
-
-        // Particle Class
-        class Particle {
-          constructor(x, y) {
-            this.x = x;
-            this.y = y;
-            // SPEEDY ITERATION 3: 0.3s - 0.4s duration (approx 20-25 frames @ 60fps)
-            const angle = Math.random() * Math.PI * 2;
-            // Faster speed to be visible in short time
-            const speed = Math.random() * 3 + 2;
-            this.vx = Math.cos(angle) * speed;
-            this.vy = Math.sin(angle) * speed + 1.5; // Stronger gravity for fast fall
-            this.friction = 0.94; // Drag to slow them down quickly before vanishing
-
-            // 18 to 28 frames approx (0.3s - 0.45s)
-            this.maxLife = this.life = Math.floor(Math.random() * 10 + 18);
-            this.size = Math.random() * 3 + 1.5;
-
-            // Choose color from palette most of the time, otherwise random HSL
-            if (Math.random() < 0.72) {
-              this.color = TWINKLE_PALETTE[Math.floor(Math.random() * TWINKLE_PALETTE.length)];
-            } else {
-              const hue = Math.floor(Math.random() * 360);
-              const lightness = Math.floor(Math.random() * 18 + 56);
-              this.color = `hsl(${hue}, 100%, ${lightness}%)`;
-            }
+        // Bubble Class
+        class Bubble {
+          constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            // SLOWER SPEED: reduced from 1.5 to 0.4
+            this.vx = (Math.random() - 0.5) * 0.4;
+            this.vy = (Math.random() - 0.5) * 0.4;
+            this.size = Math.random() * 3 + 2;
+            const colors = ['rgba(100, 149, 237, 0.7)', 'rgba(255, 105, 180, 0.7)', 'rgba(50, 205, 50, 0.7)', 'rgba(255, 165, 0, 0.7)'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
           }
 
           update() {
-            // Apply friction
-            this.vx *= this.friction;
-            this.vy *= this.friction;
             this.x += this.vx;
             this.y += this.vy;
-            // Decrease life
-            this.life -= 1;
-            this.size *= 0.96; // rapid shrink matching short life
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
           }
 
-          draw(ctx) {
-            ctx.save();
-
-            // compute normalized alpha so fade-out is smooth over maxLife
-            const alpha = Math.max(0, this.life / this.maxLife);
-
-            ctx.globalAlpha = alpha * 0.98;
-            // Use a softer blend so multiple twinkles stack smoothly
-            ctx.globalCompositeOperation = 'screen';
-            ctx.fillStyle = this.color;
-
+          draw() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
             ctx.fill();
-
-            // softer, smoother glow
-            ctx.shadowBlur = 14;
-            ctx.shadowColor = this.color;
-            ctx.fill();
-
-            ctx.restore();
           }
         }
 
-        function createParticles(x, y, count) {
-          for (let i = 0; i < count; i++) {
-            particles.push(new Particle(x, y));
-          }
-
-          // Safety cap: keep particle array bounded to avoid performance issues
-          const MAX_PARTICLES = 1000;
-          if (particles.length > MAX_PARTICLES) {
-            particles.splice(0, particles.length - MAX_PARTICLES);
+        function initParts() {
+          particles = [];
+          // HIGHER QUANTITY: Reduced divisor from 12000 to 5000 (more than double the bubbles)
+          const particleCount = Math.floor(width * height / 5000);
+          for (let i = 0; i < particleCount; i++) {
+            particles.push(new Bubble());
           }
         }
+        initParts();
 
-        // Animation Loop
         function animate() {
           ctx.clearRect(0, 0, width, height);
-
-          // Continuous stream if mouse is down (denser)
-          if (isMouseDown) {
-            createParticles(mouseX, mouseY, 12); // Denser particles on hold
-          }
-
-          // Update and draw particles
-          for (let i = particles.length - 1; i >= 0; i--) {
-            const p = particles[i];
+          particles.forEach(p => {
             p.update();
-            p.draw(ctx);
-            if (p.life <= 0 || p.size <= 0.1) {
-              particles.splice(i, 1);
+            p.draw();
+            const dist = Math.hypot(p.x - mouseX, p.y - mouseY);
+            if (dist < 180) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 180})`;
+              ctx.lineWidth = 1.5;
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(mouseX, mouseY);
+              ctx.stroke();
+              p.x += (mouseX - p.x) * 0.02;
+              p.y += (mouseY - p.y) * 0.02;
             }
-          }
-
+          });
           requestAnimationFrame(animate);
         }
-
         animate();
       })();
     </script>
 
   </div>
-  </div>
+
 
   <!-- CHANGE PASSWORD MODAL -->
   <div id="change-password-modal"
@@ -1130,7 +1064,7 @@
         <div class="flex flex-col">
           <span
             class="font-['Montserrat'] text-3xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 stylish leading-none">
-            Gojira TP
+            Gojira
           </span>
         </div>
       </div>
@@ -2410,14 +2344,14 @@
           are destructive.</p>
 
         <div class="flex flex-wrap gap-4">
-          <button onclick="adminDeleteAgentWeekData()"
+          <button onclick="openResetDataModal('weekly')"
             class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition shadow-sm">
-            <span>🗑️</span> Delete Current Week Data
+            <span>🗑️</span> Reset Week Data
           </button>
 
-          <button onclick="adminResetAgentMonthlyData()"
+          <button onclick="openResetDataModal('monthly')"
             class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 border border-orange-300 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-bold rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/30 transition shadow-sm">
-            <span>📅</span> Reset Monthly Data
+            <span>📅</span> Reset Month Data
           </button>
         </div>
       </div>
@@ -2464,6 +2398,32 @@
     </div>
   </div>
 
+  <!-- Reset Data Modal -->
+  <div id="admin-reset-data-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all scale-100">
+      <h3 class="text-2xl font-bold mb-4 text-red-600 flex items-center gap-2">
+        <span>⚠️</span> Reset Data
+      </h3>
+      <p class="text-slate-600 dark:text-slate-300 mb-6">Select an agent to permanently delete their <span
+          id="reset-data-type-display" class="font-bold"></span> data.</p>
+
+      <label class="block text-sm font-bold mb-2">Select Agent</label>
+      <select id="reset-data-agent-select"
+        class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 mb-6 font-bold outline-none focus:ring-2 focus:ring-red-500">
+        <!-- Populated by JS -->
+      </select>
+
+      <div class="flex gap-3">
+        <button onclick="closeResetDataModal()"
+          class="flex-1 py-3 rounded-xl font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 transition">Cancel</button>
+        <button onclick="confirmResetData()"
+          class="flex-1 py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition">Confirm
+          Reset</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ADMIN WEEKLY DASHBOARD (NEW) -->
   <div id="view-admin-weekly" class="app-view bg-white dark:bg-slate-900">
     <header class="h-16 flex items-center justify-between px-6 border-b bg-white dark:bg-slate-800 sticky top-0 z-40">
@@ -2473,10 +2433,10 @@
         <h1 class="font-bold text-xl text-teal-600">Weekly Performance Scorecard</h1>
       </div>
       <div class="flex gap-2">
-        <button onclick="adminDeleteAgentWeekData()"
+        <button onclick="openResetDataModal('weekly')"
           class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition"
           title="Delete current week data for selected agent">
-          <span>🗑️</span> Delete Week Data
+          <span>🗑️</span> Reset Week Data
         </button>
         <button onclick="downloadTableAsCSV('admin-weekly-table', 'Weekly_Performance_Report')"
           class="bg-teal-100 text-teal-700 hover:bg-teal-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition">
@@ -2528,7 +2488,7 @@
         <h1 class="font-bold text-xl text-indigo-600">Monthly Performance Scorecard</h1>
       </div>
       <div class="flex gap-2">
-        <button onclick="adminResetAgentMonthlyData()"
+        <button onclick="openResetDataModal('monthly')"
           class="bg-orange-100 text-orange-700 hover:bg-orange-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition"
           title="Reset monthly data for selected agent">
           <span>📅</span> Reset Month Data
@@ -2545,7 +2505,13 @@
         class="bg-indigo-50 dark:bg-slate-800 p-8 rounded-3xl mb-8 border border-indigo-100 dark:border-slate-700 flex justify-between items-center">
         <div>
           <h2 class="text-3xl font-bold mb-2">Team Performance Overview</h2>
-          <p class="text-slate-600 dark:text-slate-400">Aggregated performance for the last 30 days.</p>
+          <div class="flex items-center gap-4">
+            <p class="text-slate-600 dark:text-slate-400">Aggregated performance for: </p>
+            <select id="admin-monthly-month-select" onchange="renderAdminMonthlyPerformance()"
+              class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold">
+              <!-- Options populated by JS -->
+            </select>
+          </div>
         </div>
         <div class="text-right">
           <div class="text-sm font-bold text-slate-500 uppercase">Entity</div>
@@ -4282,13 +4248,21 @@
         // Populate Reviews List
         const reviewsList = document.getElementById('modal-reviews-list');
         if (reviews.length > 0) {
-          reviewsList.innerHTML = reviews.map(r => `
+          reviewsList.innerHTML = reviews.map(r => {
+            const dateObj = new Date(r.date);
+            const displayDate = r.displayDate || (isNaN(dateObj.getTime()) ? r.date : dateObj.toLocaleDateString());
+            const monthName = r.month || (isNaN(dateObj.getTime()) ? 'Unknown' : dateObj.toLocaleString('default', { month: 'long', year: 'numeric' }));
+
+            return `
               <div class="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <div class="flex justify-between items-start mb-4">
                   <div>
-                    <p class="text-sm text-slate-500">${r.date}</p>
-                    <h4 class="font-bold text-lg">${r.fileName || 'Review'}</h4>
-                    <p class="text-sm text-blue-600 underline cursor-pointer" onclick="openReviewFile('${r.id}')">View File</p>
+                    <h4 class="font-bold text-lg text-slate-800 dark:text-slate-100">${r.fileName || 'Performance Review'}</h4>
+                    <div class="flex items-center gap-3 mt-1 text-sm text-slate-500 font-medium">
+                      <span>📅 ${displayDate}</span>
+                      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs uppercase font-bold">${monthName}</span>
+                    </div>
+                    ${r.id ? `<p class="text-xs text-blue-600 underline cursor-pointer mt-2" onclick="openReviewDetail('${r.id}')">View Details & File</p>` : ''}
                   </div>
                   <div class="text-right">
                     <span class="inline-block px-3 py-1 rounded-full text-sm font-bold ${r.score == 100 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">
@@ -4298,10 +4272,11 @@
                 </div>
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                   <p class="text-sm font-bold text-slate-500 mb-1">Observation:</p>
-                  <p class="text-slate-700 dark:text-slate-300">${r.observation}</p>
+                  <p class="text-slate-700 dark:text-slate-300 italic">"${r.observation}"</p>
                 </div>
               </div>
-            `).join('');
+            `;
+          }).join('');
         } else {
           reviewsList.innerHTML = '<p class="text-center text-slate-500 italic">No reviews found.</p>';
         }
@@ -6143,12 +6118,223 @@
       document.body.removeChild(downloadLink);
     }
 
-    function renderAdminMonthlyPerformance() {
-      const tbody = document.getElementById('admin-monthly-list');
+    /* -------------------------------------------------------------------------- */
+    /*                        RESET DATA MODAL LOGIC                              */
+    /* -------------------------------------------------------------------------- */
+
+    let currentResetType = ''; // 'weekly' or 'monthly'
+
+    function openResetDataModal(type) {
+      currentResetType = type;
+      const modal = document.getElementById('admin-reset-data-modal');
+      const typeDisplay = document.getElementById('reset-data-type-display');
+      const select = document.getElementById('reset-data-agent-select');
+
+      if (!modal || !select) return;
+
+      typeDisplay.textContent = type === 'weekly' ? 'Weekly' : 'Monthly';
+
+      // Populate agents from current entity
+      select.innerHTML = '<option value="">-- Select Agent --</option>';
       const entity = adminCurrentEntity || 'ALL';
+      let agents = USER_DB.filter(u => u.role === 'agent');
+      if (entity !== 'ALL') {
+        agents = agents.filter(u => u.entity === entity);
+      }
+
+      agents.forEach(agent => {
+        const opt = document.createElement('option');
+        opt.value = agent.id;
+        opt.textContent = `${agent.name} (${agent.id})`;
+        select.appendChild(opt);
+      });
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeResetDataModal() {
+      document.getElementById('admin-reset-data-modal').classList.add('hidden');
+      currentResetType = '';
+    }
+
+    function confirmResetData() {
+      const select = document.getElementById('reset-data-agent-select');
+      const agentId = select.value;
+
+      if (!agentId) {
+        alert('Please select an agent.');
+        return;
+      }
+
+      const agentName = select.options[select.selectedIndex].text;
+      if (!confirm(`Are you sure you want to delete ALL ${currentResetType} data for ${agentName}? This cannot be undone.`)) {
+        return;
+      }
+
+      // Load current reviews
+      let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      const now = new Date();
+      let deletedCount = 0;
+
+      // Normalize target agent ID
+      const targetAgentId = String(agentId).trim().toLowerCase();
+
+      if (currentResetType === 'weekly') {
+        // Weekly Logic: Delete for last 7 days (standard weekly view)
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        reviews = reviews.filter(r => {
+          if (String(r.agentId).trim().toLowerCase() !== targetAgentId) return true; // Keep others
+
+          // Check if this review is recent (<= 7 days)
+          const d = new Date(r.date);
+          if (d >= oneWeekAgo) {
+            deletedCount++;
+            return false; // Remove
+          }
+          return true;
+        });
+
+        // Clear Finalization Status
+        try {
+          const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+          const currentWeek = state.currentWeek || 1;
+
+          let cleared = false;
+          if (state.completedAgents && state.completedAgents[currentWeek]) {
+            // Direct check
+            if (state.completedAgents[currentWeek][agentId]) {
+              delete state.completedAgents[currentWeek][agentId];
+              cleared = true;
+            } else {
+              // Case-insensitive check
+              const keys = Object.keys(state.completedAgents[currentWeek]);
+              const match = keys.find(k => k.toLowerCase() === targetAgentId);
+              if (match) {
+                delete state.completedAgents[currentWeek][match];
+                cleared = true;
+              }
+            }
+          }
+          if (cleared) saveEntityWeekState(state);
+        } catch (e) { console.error('Error clearing week state', e); }
+
+      } else if (currentResetType === 'monthly') {
+        // Monthly Logic: Delete for selected Month/Year
+        // Monthly Logic:
+        const monthSelect = document.getElementById('admin-monthly-month-select');
+        const isMonthlyViewActive = !document.getElementById('view-admin-monthly').classList.contains('hidden');
+
+        let selYear = null;
+        let selMonth = null;
+
+        if (isMonthlyViewActive && monthSelect && monthSelect.value) {
+          // Targeted Month Wipe
+          const parts = monthSelect.value.split('-').map(Number);
+          selYear = parts[0];
+          selMonth = parts[1];
+        } else {
+          // Full Wipe (Main Dashboard or no month selected)
+          selYear = null;
+          selMonth = null;
+        }
+
+        reviews = reviews.filter(r => {
+          if (String(r.agentId).trim().toLowerCase() !== targetAgentId) return true;
+
+          // If no specific month targeted, delete ALL reviews for agent
+          if (selYear === null) {
+            deletedCount++;
+            return false;
+          }
+
+          // If no specific month targeted, delete ALL reviews for agent
+          if (selYear === null) {
+            deletedCount++;
+            return false;
+          }
+
+          const d = new Date(r.date);
+          // Match Year and Month
+          if (d.getFullYear() === selYear && (d.getMonth() + 1) === selMonth) {
+            deletedCount++;
+            return false; // Remove
+          }
+          return true;
+        });
+      }
+
+      localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+      // Update timestamps/sync if needed
+      try { localStorage.setItem('adminReviewsUpdatedAt', Date.now().toString()); } catch (e) { }
+
+      // Refresh UI based on active view
+      if (currentResetType === 'weekly') {
+        if (typeof renderAdminWeeklyPerformance === 'function') renderAdminWeeklyPerformance();
+      } else {
+        if (typeof renderAdminMonthlyPerformance === 'function') renderAdminMonthlyPerformance();
+      }
+
+      closeResetDataModal();
+
+      if (deletedCount > 0) {
+        alert(`Successfully deleted ${deletedCount} reviews for ${agentName}.`);
+      } else {
+        alert(`No matching ${currentResetType} data found for ${agentName} to delete.`);
+      }
+    }
+
+    function initMonthlyDashboardControls() {
+      const select = document.getElementById('admin-monthly-month-select');
+      if (!select) return;
+
+      const currentYear = new Date().getFullYear();
+      const startYear = 2024; // Allow older data
+      const endYear = currentYear + 1; // Allow slightly future planning
+      const currentMonth = new Date().getMonth(); // 0-11
+
+      select.innerHTML = '';
+
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
+      for (let y = startYear; y <= endYear; y++) {
+        for (let m = 0; m < 12; m++) {
+          const option = document.createElement('option');
+          option.value = `${y}-${String(m + 1).padStart(2, '0')}`; // YYYY-MM
+          option.text = `${months[m]} ${y}`;
+
+          if (y === currentYear && m === currentMonth) option.selected = true;
+          select.appendChild(option);
+        }
+      }
+    }
+
+    function renderAdminMonthlyPerformance() {
+      const tbody = document.getElementById('admin-monthly-table-body');
+      const entity = adminCurrentEntity || 'ALL';
+      const monthSelect = document.getElementById('admin-monthly-month-select');
 
       if (!tbody) return;
       tbody.innerHTML = ''; // loading state
+
+      // Initialize dropdown if empty
+      if (monthSelect && monthSelect.options.length === 0) {
+        initMonthlyDashboardControls();
+      }
+
+      let selectedValue;
+      if (monthSelect && monthSelect.value) {
+        selectedValue = monthSelect.value;
+      } else {
+        // Default to current YYYY-MM if select not ready or not found
+        const now = new Date();
+        selectedValue = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      }
+
+      const [selYear, selMonth] = selectedValue.split('-').map(Number); // YYYY, MM
 
       // 1. Get Agents
       let agents = USER_DB.filter(u => u.role === 'agent');
@@ -6156,14 +6342,12 @@
         agents = agents.filter(u => u.entity === entity);
       }
 
-      // 2. Get Reviews & Date Range
+      // 2. Get Reviews
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-      const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       // 3. Process Data
       const rows = agents.map(agent => {
-        // Filter reviews for this agent within 30 days
+        // Filter reviews for this agent matching the selected month/year
         const agentId = String(agent.id).trim().toLowerCase();
 
         const agentReviews = reviews.filter(r => {
@@ -6172,8 +6356,9 @@
 
           // Date check
           const d = new Date(r.date);
-          if (isNaN(d.getTime())) return false; // skip invalid dates
-          return d >= thirtyDaysAgo && d <= now;
+          if (isNaN(d.getTime())) return false;
+
+          return d.getFullYear() === selYear && (d.getMonth() + 1) === selMonth;
         });
 
         const totalAudits = agentReviews.length;
@@ -6697,6 +6882,13 @@
               <h4 class="font-bold text-lg">Review #${itemIndex}</h4>
               ${itemIndex > 1 ? `<button onclick="adminRemoveReviewItem(${itemIndex - 1})" class="text-red-600 hover:text-red-700 text-sm">🗑️ Remove</button>` : ''}
             </div>
+
+            <!-- Date Selector -->
+            <div class="mb-4">
+              <label class="block text-sm font-semibold mb-2">Review Date</label>
+              <input type="date" class="review-date-input w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
+                data-item-index="${itemIndex - 1}">
+            </div>
         `;
 
       // Show file upload only for voice reviews
@@ -6863,7 +7055,8 @@
           emailId: emailId, // Store email ID
           observation: observation,
           score: score,
-          reviewType: adminReviewType
+          reviewType: adminReviewType,
+          date: item.querySelector('.review-date-input')?.value || null
         });
       });
 
@@ -6892,15 +7085,16 @@
           createdReviewIds.push(reviewId);
           const reviewObj = {
             id: reviewId,
-            date: now.toISOString(), // Use ISO format for consistent parsing
-            displayDate: now.toLocaleDateString(), // Keep human readable date for display
+            date: item.date ? new Date(item.date).toISOString() : now.toISOString(), // Use selected date or current
+            displayDate: item.date ? new Date(item.date).toLocaleDateString() : now.toLocaleDateString(), // Keep human readable date for display
+            month: item.date ? new Date(item.date).toLocaleString('default', { month: 'long', year: 'numeric' }) : now.toLocaleString('default', { month: 'long', year: 'numeric' }), // store month explicitly
             agentId: String(adminCurrentAgent || '').trim(), // store normalized-ish agent ID (trimmed)
             agentName: adminCurrentAgentName,
             entity: adminCurrentEntity,
             reviewType: item.reviewType,
             score: item.score,
             observation: item.observation,
-            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            expiryDate: new Date((item.date ? new Date(item.date) : now).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             reviewerId: currentUser?.id || 'admin',
             reviewerName: currentUser?.name || 'Admin',
             // Specific fields
@@ -8279,8 +8473,7 @@
     </div>
   </div>
 
-  <script>
-  </script>
+
 </body>
 
 </html>
