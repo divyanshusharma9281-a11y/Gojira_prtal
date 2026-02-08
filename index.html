@@ -1544,6 +1544,22 @@
                 ↗</a>
             </div>
           </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Refund Sheet</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Refund Tracker for processing and status updates.
+                </p>
+              </div>
+              <a href="https://bharatloan1-my.sharepoint.com/:x:/g/personal/karamjit_singh_bharatloan_com/IQCJrpeD0n1mRZIu_vPq7HqGAQKM_Bvbax8CFaRwSYLBes4?e=Tb7xev"
+                target="_blank"
+                class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition">Open Sheet
+                ↗</a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2096,6 +2112,22 @@
               </div>
               <a href="https://outlook.office.com/mail/" target="_blank"
                 class="bg-amber-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-amber-600 transition">Open Mail
+                ↗</a>
+            </div>
+          </div>
+
+          <div
+            class="group bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-3xl transition-all hover:shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">Refund Sheet</h3>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                  Refund Tracker for processing and status updates.
+                </p>
+              </div>
+              <a href="https://bharatloan1-my.sharepoint.com/:x:/g/personal/karamjit_singh_bharatloan_com/IQCJrpeD0n1mRZIu_vPq7HqGAQKM_Bvbax8CFaRwSYLBes4?e=Tb7xev"
+                target="_blank"
+                class="bg-green-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-700 transition">Open Sheet
                 ↗</a>
             </div>
           </div>
@@ -7000,7 +7032,7 @@ Reviewer: ${review.reviewerId}
           <td class="p-6 text-sm">${review.observation.substring(0, 50)}...</td>
           <td class="p-6 text-right space-x-2">
             <button onclick="adminViewReview(${idx})" class="text-blue-600 hover:text-blue-700">👁️ View</button>
-            <button onclick="adminDeleteReview(${idx})" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
+            <button onclick="adminDeleteReview('${review.id}')" class="text-red-600 hover:text-red-700">🗑️ Delete</button>
           </td>
         </tr>
       `).join('');
@@ -7225,29 +7257,33 @@ Reviewer: ${review.reviewerId}
       }
     }
 
-    async function adminDeleteReview(index) {
+    async function adminDeleteReview(reviewId) {
       if (confirm('Delete this review?')) {
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+        const index = reviews.findIndex(r => r.id === reviewId);
+        if (index === -1) return;
+
         const review = reviews[index];
         const agentId = review ? review.agentId : null;
 
-        // If file is stored in FileDB, attempt to remove it
-        try {
-          if (review && review.fileStored) {
-            if (!FileDB._db) await FileDB.init();
-            await FileDB.deleteFile(review.id);
-          }
-        } catch (e) {
-          console.warn('[adminDeleteReview] failed to delete associated file', e);
+        // If file is stored in FileDB, remove it (non-blocking)
+        if (review && review.fileStored) {
+          (async () => {
+            try {
+              if (!FileDB._db) await FileDB.init();
+              await FileDB.deleteFile(review.id);
+            } catch (e) { console.warn('[adminDeleteReview] failed to delete associated file', e); }
+          })();
         }
 
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // Supabase Deletion Sync
+        // Supabase Deletion Sync (non-blocking)
         if (review && review.id) {
-          syncReviewDeletionToSupabase(review.id);
-          // Optional: Delete file from storage if URL exists (implementation skipped for now as per instructions to focus on main bugs)
+          if (typeof syncReviewDeletionToSupabase === 'function') {
+            syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed', e));
+          }
         }
 
         // If this deletion caused the agent to fall below threshold, unmark completion
@@ -7255,15 +7291,28 @@ Reviewer: ${review.reviewerId}
           const remaining = reviews.filter(r => String(r.agentId) === String(agentId)).length;
           if (remaining < 3) {
             unmarkAgentWeekComplete('ALL', agentId);
-            // Reconcile flags globally to ensure consistency
             reconcileFinalizeFlags();
-            // Refresh dropdown etc.
             renderAdminAgentDropdown();
             checkAndEnableWeekFinalButton();
             if (adminCurrentAgent && String(adminCurrentAgent) === String(agentId)) {
-              adminSelectAgent(agentId, adminCurrentAgentName || agentId);
+              // Soft refresh without full reset
+              try {
+                const btn = document.getElementById('admin-top-start-btn');
+                if (btn) {
+                  btn.disabled = false;
+                  btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                  btn.innerHTML = 'Start Quality Review';
+                  btn.title = '';
+                  btn.onclick = () => adminStartQualityReview();
+                }
+              } catch (e) { }
             }
-            alert(`Reviews for agent ${agentId} now ${remaining}. Finalized flag removed.`);
+            // Use toast instead of blocking alert for speed
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-amber-600 text-white px-4 py-2 rounded-lg shadow-lg z-[100] animate-fade-in';
+            toast.innerText = `Agent reviews dropped to ${remaining}. Finalization removed.`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
           }
         }
 
