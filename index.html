@@ -2450,9 +2450,31 @@
         class="bg-teal-50 dark:bg-slate-800 p-8 rounded-3xl mb-8 border border-teal-100 dark:border-slate-700 flex justify-between items-center">
         <div>
           <h2 class="text-3xl font-bold mb-2">Weekly Team Overview</h2>
-          <p class="text-slate-600 dark:text-slate-400">Performance metrics for the current week.</p>
+          <div class="flex items-center gap-2 mt-4 flex-wrap">
+            <label class="text-slate-600 dark:text-slate-400 font-bold ml-1">Period:</label>
+
+            <select id="admin-weekly-select-week" onchange="renderAdminWeeklyPerformance()"
+              class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2.5 font-bold shadow-sm">
+              <option value="1">Week 1</option>
+              <option value="2">Week 2</option>
+              <option value="3">Week 3</option>
+              <option value="4">Week 4</option>
+            </select>
+
+            <span class="text-slate-400 mx-1">/</span>
+
+            <select id="admin-weekly-select-month" onchange="renderAdminWeeklyPerformance()"
+              class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2.5 font-bold shadow-sm">
+              <!-- Months populated by JS -->
+            </select>
+
+            <select id="admin-weekly-select-year" onchange="renderAdminWeeklyPerformance()"
+              class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2.5 font-bold shadow-sm">
+              <!-- Years populated by JS -->
+            </select>
+          </div>
         </div>
-        <div class="text-5xl">📊</div>
+        <div class="text-5xl opacity-80">📊</div>
       </div>
 
       <div
@@ -2507,9 +2529,13 @@
           <h2 class="text-3xl font-bold mb-2">Team Performance Overview</h2>
           <div class="flex items-center gap-4">
             <p class="text-slate-600 dark:text-slate-400">Aggregated performance for: </p>
-            <select id="admin-monthly-month-select" onchange="renderAdminMonthlyPerformance()"
+            <select id="admin-monthly-select-month" onchange="renderAdminMonthlyPerformance()"
               class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold">
-              <!-- Options populated by JS -->
+              <!-- Months populated by JS -->
+            </select>
+            <select id="admin-monthly-select-year" onchange="renderAdminMonthlyPerformance()"
+              class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold">
+              <!-- Years populated by JS -->
             </select>
           </div>
         </div>
@@ -6219,19 +6245,18 @@
         } catch (e) { console.error('Error clearing week state', e); }
 
       } else if (currentResetType === 'monthly') {
-        // Monthly Logic: Delete for selected Month/Year
         // Monthly Logic:
-        const monthSelect = document.getElementById('admin-monthly-month-select');
+        const monthSelect = document.getElementById('admin-monthly-select-month');
+        const yearSelect = document.getElementById('admin-monthly-select-year');
         const isMonthlyViewActive = !document.getElementById('view-admin-monthly').classList.contains('hidden');
 
         let selYear = null;
         let selMonth = null;
 
-        if (isMonthlyViewActive && monthSelect && monthSelect.value) {
+        if (isMonthlyViewActive && monthSelect && yearSelect && monthSelect.value && yearSelect.value) {
           // Targeted Month Wipe
-          const parts = monthSelect.value.split('-').map(Number);
-          selYear = parts[0];
-          selMonth = parts[1];
+          selYear = parseInt(yearSelect.value);
+          selMonth = parseInt(monthSelect.value);
         } else {
           // Full Wipe (Main Dashboard or no month selected)
           selYear = null;
@@ -6240,12 +6265,6 @@
 
         reviews = reviews.filter(r => {
           if (String(r.agentId).trim().toLowerCase() !== targetAgentId) return true;
-
-          // If no specific month targeted, delete ALL reviews for agent
-          if (selYear === null) {
-            deletedCount++;
-            return false;
-          }
 
           // If no specific month targeted, delete ALL reviews for agent
           if (selYear === null) {
@@ -6285,56 +6304,63 @@
     }
 
     function initMonthlyDashboardControls() {
-      const select = document.getElementById('admin-monthly-month-select');
-      if (!select) return;
+      const selectMonth = document.getElementById('admin-monthly-select-month');
+      const selectYear = document.getElementById('admin-monthly-select-year');
+      if (!selectMonth || !selectYear) return;
 
-      const currentYear = new Date().getFullYear();
-      const startYear = 2024; // Allow older data
-      const endYear = currentYear + 1; // Allow slightly future planning
       const currentMonth = new Date().getMonth(); // 0-11
+      const defaultYear = 2026;
 
-      select.innerHTML = '';
-
+      // populate months
+      selectMonth.innerHTML = '';
       const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
       ];
+      months.forEach((mName, idx) => {
+        const option = document.createElement('option');
+        option.value = idx + 1;
+        option.text = mName;
+        if (idx === currentMonth) option.selected = true; // Default to current month
+        selectMonth.appendChild(option);
+      });
 
-      for (let y = startYear; y <= endYear; y++) {
-        for (let m = 0; m < 12; m++) {
-          const option = document.createElement('option');
-          option.value = `${y}-${String(m + 1).padStart(2, '0')}`; // YYYY-MM
-          option.text = `${months[m]} ${y}`;
-
-          if (y === currentYear && m === currentMonth) option.selected = true;
-          select.appendChild(option);
-        }
+      // populate years (2026-2030)
+      selectYear.innerHTML = '';
+      for (let y = 2026; y <= 2030; y++) {
+        const option = document.createElement('option');
+        option.value = y;
+        option.text = y;
+        if (y === defaultYear) option.selected = true; // Default to 2026 as requested
+        selectYear.appendChild(option);
       }
     }
 
     function renderAdminMonthlyPerformance() {
       const tbody = document.getElementById('admin-monthly-table-body');
       const entity = adminCurrentEntity || 'ALL';
-      const monthSelect = document.getElementById('admin-monthly-month-select');
+      const monthSelect = document.getElementById('admin-monthly-select-month');
+      const yearSelect = document.getElementById('admin-monthly-select-year');
 
       if (!tbody) return;
       tbody.innerHTML = ''; // loading state
 
-      // Initialize dropdown if empty
+      // Initialize dropdowns if empty
       if (monthSelect && monthSelect.options.length === 0) {
         initMonthlyDashboardControls();
       }
 
-      let selectedValue;
-      if (monthSelect && monthSelect.value) {
-        selectedValue = monthSelect.value;
-      } else {
-        // Default to current YYYY-MM if select not ready or not found
-        const now = new Date();
-        selectedValue = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      }
+      let selYear, selMonth;
 
-      const [selYear, selMonth] = selectedValue.split('-').map(Number); // YYYY, MM
+      if (monthSelect && yearSelect && monthSelect.value && yearSelect.value) {
+        selYear = parseInt(yearSelect.value);
+        selMonth = parseInt(monthSelect.value);
+      } else {
+        // Fallback or init default (Current Month, 2026)
+        const now = new Date();
+        selMonth = now.getMonth() + 1;
+        selYear = 2026;
+      }
 
       // 1. Get Agents
       let agents = USER_DB.filter(u => u.role === 'agent');
@@ -6436,12 +6462,88 @@
         `}).join('');
     }
 
+    function initWeeklyDashboardControls() {
+      const selectMonth = document.getElementById('admin-weekly-select-month');
+      const selectYear = document.getElementById('admin-weekly-select-year');
+      if (!selectMonth || !selectYear) return;
+
+      const currentMonth = new Date().getMonth(); // 0-11
+      const defaultYear = new Date().getFullYear();
+
+      // populate months
+      selectMonth.innerHTML = '';
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      months.forEach((mName, idx) => {
+        const option = document.createElement('option');
+        option.value = idx + 1;
+        option.text = mName;
+        if (idx === currentMonth) option.selected = true;
+        selectMonth.appendChild(option);
+      });
+
+      // populate years (2025-2030)
+      selectYear.innerHTML = '';
+      for (let y = 2025; y <= 2030; y++) {
+        const option = document.createElement('option');
+        option.value = y;
+        option.text = y;
+        if (y === defaultYear) option.selected = true;
+        selectYear.appendChild(option);
+      }
+    }
+
     function renderAdminWeeklyPerformance() {
       const tbody = document.getElementById('admin-weekly-list');
       const entity = adminCurrentEntity || 'ALL';
 
+      // Selectors
+      const weekSelect = document.getElementById('admin-weekly-select-week');
+      const monthSelect = document.getElementById('admin-weekly-select-month');
+      const yearSelect = document.getElementById('admin-weekly-select-year');
+
       if (!tbody) return;
       tbody.innerHTML = ''; // loading state
+
+      // Initialize dropdowns if empty
+      if (monthSelect && monthSelect.options.length === 0) {
+        initWeeklyDashboardControls();
+      }
+
+      // Determine Date Range from Selectors
+      let startDate, endDate;
+
+      if (weekSelect && monthSelect && yearSelect && weekSelect.value && monthSelect.value && yearSelect.value) {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value) - 1; // 0-indexed
+        const week = parseInt(weekSelect.value);
+
+        // Week 1: 1st - 7th
+        // Week 2: 8th - 14th
+        // Week 3: 15th - 21st
+        // Week 4: 22nd - End of Month
+
+        let startDay = (week - 1) * 7 + 1;
+        startDate = new Date(year, month, startDay);
+
+        if (week === 4) {
+          // For week 4, go to the last day of the month
+          endDate = new Date(year, month + 1, 0);
+          // Limit to end of month
+        } else {
+          endDate = new Date(year, month, startDay + 6);
+        }
+        // Set times to cover the full days
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        // Fallback: Current Week Logic (approx)
+        const now = new Date();
+        endDate = now;
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      }
 
       // 1. Get Agents
       let agents = USER_DB.filter(u => u.role === 'agent');
@@ -6449,12 +6551,8 @@
         agents = agents.filter(u => u.entity === entity);
       }
 
-      // 2. Get Reviews & Weekly Filter
+      // 2. Get Reviews
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
-
-      // Get current week index from our mock state
-      const state = getEntityWeekState(entity);
-      const currentWeek = state.currentWeek || 1;
 
       // 3. Process Data
       const rows = agents.map(agent => {
@@ -6463,23 +6561,11 @@
         const agentReviews = reviews.filter(r => {
           const rAgentId = String(r.agentId).trim().toLowerCase();
           if (rAgentId !== agentId) return false;
-          // Filter by week index if stored, otherwise fallback to date range logic could be here
-          // Assuming reviews are tagged with weekIndex or we infer from date for this week
-          // For simplicity/demo: lets say weekIndex is part of review OR we filter last 7 days
-          // Since existing code doesn't explicitly store weekIndex in reviews, we'll try to match state logic
-          // But to be consistent with request "once admin submitted reports... weekly reports added automatically",
-          // let's assume ALL current reviews pending for this week cycle are "current week"
-          // OR better: use the date filter for current week boundaries
 
-          // Implementation: Filter strictly for "current week" using ISO week or simplified 7-day window
-          // But user mentioned "submitted reports", which implies weekly finalization.
-          // Let's filter reviews created within the *current active week* of the system.
-
-          // Fallback: Filter last 7 days for "Weekly" visual
-          const now = new Date();
-          const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           const d = new Date(r.date);
-          return d >= sevenDaysAgo && d <= now;
+          if (isNaN(d.getTime())) return false; // skip invalid dates
+
+          return d >= startDate && d <= endDate;
         });
 
         const totalAudits = agentReviews.length;
