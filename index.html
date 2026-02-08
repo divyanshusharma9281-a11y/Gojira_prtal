@@ -17,6 +17,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700&display=swap"
     rel="stylesheet">
+  <audio id="login-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"
+    preload="auto"></audio>
 
   <style>
     body {
@@ -793,6 +795,9 @@
             class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Login</button>
         </form>
 
+
+
+
         <div class="text-center mb-4">
           <button onclick="showChangePasswordModal()"
             class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold underline">Change Password</button>
@@ -850,6 +855,8 @@
     <canvas id="twinkle-canvas" class="absolute inset-0 pointer-events-none" style="z-index: 20;"></canvas>
 
     <script>
+
+
       /**
        * BUBBLE NETWORK ANIMATION (Web Shooter Effect)
        */
@@ -874,10 +881,7 @@
         // Also resize on scroll to ensure dynamic content is covered if it expands
         loginScreen.addEventListener('scroll', () => {
           if (canvas.height < loginScreen.scrollHeight) resize();
-        });
-        resize();
-
-        // Mouse Listeners
+        }); resize(); // Mouse Listeners
         document.addEventListener('mousemove', (e) => {
           // Adjust mouse coordinates relative to the canvas/scroll position
           const rect = canvas.getBoundingClientRect();
@@ -917,34 +921,20 @@
           particles = [];
           // HIGHER QUANTITY: Reduced divisor from 12000 to 5000 (more than double the bubbles)
           const particleCount = Math.floor(width * height / 5000);
-          for (let i = 0; i < particleCount; i++) {
-            particles.push(new Bubble());
-          }
-        }
-        initParts();
-
-        function animate() {
-          ctx.clearRect(0, 0, width, height);
-          particles.forEach(p => {
+          for (let i = 0; i < particleCount; i++) { particles.push(new Bubble()); }
+        } initParts(); function animate() {
+          ctx.clearRect(0, 0, width, height); particles.forEach(p => {
             p.update();
             p.draw();
             const dist = Math.hypot(p.x - mouseX, p.y - mouseY);
             if (dist < 180) {
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 180})`;
-              ctx.lineWidth = 1.5;
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(mouseX, mouseY);
-              ctx.stroke();
-              p.x += (mouseX - p.x) * 0.02;
-              p.y += (mouseY - p.y) * 0.02;
+              ctx.beginPath(); ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 180})`;
+              ctx.lineWidth = 1.5; ctx.moveTo(p.x, p.y); ctx.lineTo(mouseX, mouseY); ctx.stroke(); p.x += (mouseX - p.x) *
+                0.02; p.y += (mouseY - p.y) * 0.02;
             }
-          });
-          requestAnimationFrame(animate);
-        }
-        animate();
-      })();
-    </script>
+          }); requestAnimationFrame(animate);
+        } animate();
+      })(); </script>
 
   </div>
 
@@ -5753,7 +5743,7 @@
       document.getElementById('empid').value = '';
     }
 
-    function submitLogin(event) {
+    async function submitLogin(event) {
       try {
         event.preventDefault();
         const empId = document.getElementById('portal-emp-id').value.trim();
@@ -5783,6 +5773,16 @@
         currentSessionUser = { id: user.id, name: user.name, role: user.role, entity: user.entity };
         localStorage.setItem('gojira_session_user', JSON.stringify(currentSessionUser));
         console.info('[submitLogin] Login successful for', user.id, user.role);
+
+        // Play login sound
+        try {
+          const sound = document.getElementById('login-sound');
+          if (sound) {
+            sound.volume = 0.5;
+            sound.currentTime = 0;
+            await sound.play();
+          }
+        } catch (e) { console.warn('Login sound play failed:', e); }
 
         // Apply dark theme after login (colored option removed)
         setTheme('dark');
@@ -5877,6 +5877,16 @@
           // Move door-brand behind login after its animation completes (synchronised with doors)
           try {
             const doorBrandEl = document.getElementById('door-brand');
+
+            // Play login sound effect
+            const loginSound = document.getElementById('login-sound');
+            if (loginSound) {
+              setTimeout(() => {
+                loginSound.volume = 0.5;
+                loginSound.play().catch(e => console.warn("Login sound autoplay prevented:", e));
+              }, 400); // Sync with door animation start
+            }
+
             if (doorBrandEl) {
               const heading = doorBrandEl.querySelector('.door-brand');
 
@@ -6414,9 +6424,10 @@
         const fatalCount = agentReviews.filter(r => r.score === 0 || (r.fatals && r.fatals > 0)).length;
         const perfectCount = agentReviews.filter(r => r.score === 100).length;
 
-        // Performace Status
+        // Performace Status & Color Logic
         let status = 'Pending';
-        let statusClass = 'bg-slate-100 text-slate-600';
+        let statusClass = 'bg-slate-100 text-slate-500';
+        let scoreClass = 'text-slate-400 bg-slate-50';
 
         // Fatal Color Logic
         let fatalClass = 'text-green-600'; // Default Low (0)
@@ -6425,10 +6436,37 @@
         else if (fatalCount === 1) fatalClass = 'text-amber-500 font-semibold'; // Low-Medium
 
         if (totalAudits > 0) {
-          if (avgScore >= 90) { status = 'Excellent'; statusClass = 'bg-emerald-100 text-emerald-700'; }
-          else if (avgScore >= 75) { status = 'Good'; statusClass = 'bg-blue-100 text-blue-700'; }
-          else if (avgScore >= 60) { status = 'Average'; statusClass = 'bg-yellow-100 text-yellow-700'; }
-          else { status = 'Critical'; statusClass = 'bg-red-100 text-red-700'; }
+          // Tiered Color Logic: Dark Green -> Green -> Light Green -> Yellow -> Orange -> Red
+          if (avgScore >= 95 && fatalCount === 0) {
+            status = 'Outstanding';
+            statusClass = 'bg-emerald-900 text-white shadow-md'; // Dark Green
+            scoreClass = 'text-emerald-900 bg-emerald-100';
+          }
+          else if (avgScore >= 90 && fatalCount <= 1) {
+            status = 'Excellent';
+            statusClass = 'bg-green-600 text-white'; // Green
+            scoreClass = 'text-green-700 bg-green-100';
+          }
+          else if (avgScore >= 80 && fatalCount <= 2) {
+            status = 'Good';
+            statusClass = 'bg-green-400 text-white'; // Light Green
+            scoreClass = 'text-green-600 bg-green-50';
+          }
+          else if (avgScore >= 70) {
+            status = 'Average';
+            statusClass = 'bg-yellow-400 text-white'; // Yellow
+            scoreClass = 'text-yellow-700 bg-yellow-50';
+          }
+          else if (avgScore >= 60) {
+            status = 'Below Avg';
+            statusClass = 'bg-orange-500 text-white'; // Orange
+            scoreClass = 'text-orange-700 bg-orange-50';
+          }
+          else {
+            status = 'Critical';
+            statusClass = 'bg-red-600 text-white animate-pulse'; // Red
+            scoreClass = 'text-red-700 bg-red-50';
+          }
         }
 
         return {
@@ -6440,7 +6478,8 @@
           score: avgScore,
           status: status,
           statusClass: statusClass,
-          fatalClass: fatalClass
+          fatalClass: fatalClass,
+          scoreClass: scoreClass
         };
       });
 
@@ -6460,7 +6499,7 @@
         const showPerfects = row.audits === 0 ? '--' : row.perfects;
         const showScore = row.audits === 0 ? '--' : row.score + '%';
         const showStatus = row.audits === 0 ? '<span class="text-slate-400">--</span>' : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${row.statusClass}">${row.status}</span>`;
-        const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 60 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
+        const scoreClass = row.scoreClass || '';
 
         return `
           <tr class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/30 transition">
@@ -6597,19 +6636,47 @@
 
         // Performace Status & Color Logic
         let status = 'Pending';
-        let statusClass = 'bg-slate-100 text-slate-600';
+        let statusClass = 'bg-slate-100 text-slate-500';
+        let scoreClass = 'text-slate-400 bg-slate-50';
 
-        // Fatal Color Logic (User Request: Red > Orange > Yellow > Green)
+        // Fatal Color Logic
         let fatalClass = 'text-green-600'; // Default Low (0)
         if (fatalCount > 2) fatalClass = 'text-red-600 font-black animate-pulse'; // Highest
         else if (fatalCount === 2) fatalClass = 'text-orange-600 font-bold'; // Medium
         else if (fatalCount === 1) fatalClass = 'text-amber-500 font-semibold'; // Low-Medium
 
         if (totalAudits > 0) {
-          if (avgScore >= 90) { status = 'Excellent'; statusClass = 'bg-emerald-100 text-emerald-700'; }
-          else if (avgScore >= 75) { status = 'Good'; statusClass = 'bg-blue-100 text-blue-700'; }
-          else if (avgScore >= 60) { status = 'Average'; statusClass = 'bg-yellow-100 text-yellow-700'; }
-          else { status = 'Critical'; statusClass = 'bg-red-100 text-red-700'; }
+          // Tiered Color Logic: Dark Green -> Green -> Light Green -> Yellow -> Orange -> Red
+          if (avgScore >= 95 && fatalCount === 0) {
+            status = 'Outstanding';
+            statusClass = 'bg-emerald-900 text-white shadow-md'; // Dark Green
+            scoreClass = 'text-emerald-900 bg-emerald-100';
+          }
+          else if (avgScore >= 90 && fatalCount <= 1) {
+            status = 'Excellent';
+            statusClass = 'bg-green-600 text-white'; // Green
+            scoreClass = 'text-green-700 bg-green-100';
+          }
+          else if (avgScore >= 80 && fatalCount <= 2) {
+            status = 'Good';
+            statusClass = 'bg-green-400 text-white'; // Light Green
+            scoreClass = 'text-green-600 bg-green-50';
+          }
+          else if (avgScore >= 70) {
+            status = 'Average';
+            statusClass = 'bg-yellow-400 text-white'; // Yellow
+            scoreClass = 'text-yellow-700 bg-yellow-50';
+          }
+          else if (avgScore >= 60) {
+            status = 'Below Avg';
+            statusClass = 'bg-orange-500 text-white'; // Orange
+            scoreClass = 'text-orange-700 bg-orange-50';
+          }
+          else {
+            status = 'Critical';
+            statusClass = 'bg-red-600 text-white animate-pulse'; // Red
+            scoreClass = 'text-red-700 bg-red-50';
+          }
         }
 
         return {
@@ -6621,7 +6688,8 @@
           score: avgScore,
           status: status,
           statusClass: statusClass,
-          fatalClass: fatalClass
+          fatalClass: fatalClass,
+          scoreClass: scoreClass
         };
       });
 
@@ -6642,7 +6710,7 @@
         const showFatals = row.audits === 0 ? '--' : row.fatals;
         const showPerfects = row.audits === 0 ? '--' : row.perfects;
         const showScore = row.audits === 0 ? '--' : row.score + '%';
-        const scoreClass = row.audits === 0 ? '' : (row.score >= 80 ? 'text-emerald-600 bg-emerald-50' : row.score < 60 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50');
+        const scoreClass = row.scoreClass || '';
 
         return `
           <tr class="hover:bg-teal-50/30 dark:hover:bg-slate-700/30 transition">
