@@ -411,9 +411,25 @@
     // --- SUPABASE INTEGRATION ---
     const SUPABASE_URL = "https://mhqowleeklroqrpycibs.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ocW93bGVla2xyb3FycHljaWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDM3NTUsImV4cCI6MjA4NTg3OTc1NX0.5LYhA9sMo-OEFUacnF1imc4V-nFLg7p0f-pCZoMX0Ig";
+    // Default storage bucket for attachments
+    const SUPABASE_STORAGE_BUCKET = 'attachments';
 
     try {
       window.supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      // Optional second DB client: tusro
+      const SUPABASE_TUSRO_URL = window.SUPABASE_TUSRO_URL || '';
+      const SUPABASE_TUSRO_KEY = window.SUPABASE_TUSRO_KEY || '';
+      if (SUPABASE_TUSRO_URL && SUPABASE_TUSRO_KEY) {
+        try { window.supabaseTusro = createClient(SUPABASE_TUSRO_URL, SUPABASE_TUSRO_KEY); log('Supabase Tusro client created'); } catch (e) { console.warn('Failed to create tusro client', e); }
+      }
+      // Helper to select active client
+      window.activeSupabaseName = window.activeSupabaseName || 'main';
+      window.getSupabaseClient = function(name) {
+        if (!name) name = window.activeSupabaseName || 'main';
+        if (name === 'tusro' && window.supabaseTusro) return window.supabaseTusro;
+        return window.supabase;
+      };
+
       log("Supabase Client Created (ESM)!");
 
       // Signal success to the rest of the app
@@ -453,10 +469,11 @@
     // Auth Listener
     // Auth Listener moved to initSupabase
 
-    async function syncReviewDeletionToSupabase(reviewId) {
-      if (!supabase) return;
+    async function syncReviewDeletionToSupabase(reviewId, dbName) {
+      const client = getSupabaseClient(dbName);
+      if (!client) return;
       try {
-        const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
+        const { error } = await client.from('reviews').delete().eq('id', reviewId);
         if (error) throw error;
         console.log('Deleted review from Supabase:', reviewId);
         // Mark as successfully deleted
@@ -471,9 +488,10 @@
     }
 
     async function pushCommentsToSupabase(comment) {
-      if (!supabase) return;
+      const client = getSupabaseClient();
+      if (!client) return;
       try {
-        const { error } = await supabase.from('comments').upsert(comment);
+        const { error } = await client.from('comments').upsert(comment);
         if (error) throw error;
         console.log('Pushed comment to Supabase:', comment.id);
       } catch (e) {
@@ -482,9 +500,10 @@
     }
 
     async function syncCommentsFromSupabase() {
-      if (!supabase) return;
+      const client = getSupabaseClient();
+      if (!client) { updateSupabaseStatus('disconnected'); return; }
       try {
-        const { data, error } = await supabase.from('comments').select('*').limit(100);
+        const { data, error } = await client.from('comments').select('*').limit(100);
         if (error) throw error;
         if (!data || data.length === 0) return;
 
@@ -547,13 +566,14 @@
       alert("Login successful but you do not have Admin access.");
     }
 
-    async function pushReviewsToSupabase(reviewIds) {
-      if (!supabase) {
-        console.warn("Supabase not initialized.");
+    async function pushReviewsToSupabase(reviewIds, dbName) {
+      const client = getSupabaseClient(dbName);
+      if (!client) {
+        console.warn("Supabase client not initialized.");
         return;
       }
       updateSupabaseStatus('syncing');
-      console.log('Pushing reviews to Supabase...', reviewIds);
+      console.log('Pushing reviews to Supabase...', reviewIds, 'targetDB=', dbName || 'main');
       const reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const targetReviews = reviews.filter(r => reviewIds.includes(r.id));
 
@@ -568,35 +588,45 @@
       });
 
       try {
-        // Prepare reviews with file content if available
-        const uploadableReviews = await Promise.all(targetReviews.map(async (r) => {
-          const clone = { ...r };
-          // Fix: Remove local-only fields that cause schema errors in Supabase
-          delete clone.month;
+          // Prepare reviews: upload attachments to Storage and remove large base64 payloads
+          const uploadableReviews = await Promise.all(targetReviews.map(async (r) => {
+            const clone = { ...r };
+            // Fix: Remove local-only fields that cause schema errors in Supabase
+            delete clone.month;
 
-          if (clone.fileStored) {
-            try {
-              if (!FileDB._db) await FileDB.init();
-              const blob = await FileDB.getFile(clone.id);
-              if (blob) {
-                // Check size limit (max 5MB for Supabase row safety)
-                if (blob.size > 5 * 1024 * 1024) {
-                  console.warn(`File for ${clone.id} is too large (${(blob.size / 1024 / 1024).toFixed(2)}MB). Skipping file upload.`);
-                  alert(`Warning: Attachment for ${clone.reviewerName || 'Review'} is too large (>5MB) and will not be synced.`);
-                  delete clone.fileContent; // Ensure clean
-                } else {
-                  clone.fileContent = await blobToBase64(blob);
-                  console.log(`Attached file content for ${clone.id} (${Math.round(clone.fileContent.length / 1024)}KB)`);
+            if (clone.fileStored) {
+              try {
+                if (!FileDB._db) await FileDB.init();
+                const blob = await FileDB.getFile(clone.id);
+                if (blob) {
+                  // If file is very large, warn but attempt upload (Supabase Storage can handle larger files)
+                  const safeName = (clone.fileName || `${clone.id}.bin`).replace(/[^a-zA-Z0-9_.-]/g, '_');
+                  const path = `${clone.id}/${safeName}`;
+
+                  // Upload to Supabase Storage
+                  const { data: upData, error: upErr } = await client.storage.from(SUPABASE_STORAGE_BUCKET).upload(path, blob, { contentType: blob.type || 'application/octet-stream', upsert: true });
+                  if (upErr) {
+                    console.warn('Storage upload failed for', clone.id, upErr);
+                  } else {
+                    // Get public URL
+                    const { data: urlData } = client.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(path);
+                    const publicUrl = urlData?.publicUrl || null;
+                    clone.fileStoragePath = path;
+                    clone.fileStorageUrl = publicUrl;
+                    clone.fileStored = true;
+                    // Remove base64 payload if present
+                    delete clone.fileContent;
+                    console.log('Uploaded file for', clone.id, '->', path);
+                  }
                 }
+              } catch (e) {
+                console.warn('Failed to upload file for', clone.id, e);
               }
-            } catch (e) {
-              console.warn('Failed to attach file for upload', clone.id, e);
             }
-          }
-          return clone;
-        }));
+            return clone;
+          }));
 
-        const { error } = await supabase.from('reviews').upsert(uploadableReviews);
+        const { error } = await client.from('reviews').upsert(uploadableReviews);
         if (error) throw error;
 
         console.log(`Successfully pushed ${uploadableReviews.length} reviews.`);
@@ -627,7 +657,9 @@
         );
 
         // Fetch active reviews (Limit 1000 to cover all active weekly items)
-        const fetchPromise = supabase.from('reviews').select('*').limit(1000);
+        const client = getSupabaseClient();
+        if (!client) { updateSupabaseStatus('disconnected'); return; }
+        const fetchPromise = client.from('reviews').select('*').limit(1000);
 
         // Race the fetch against the timeout
         const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
@@ -649,17 +681,46 @@
         // 2. Incoming Sync: ADD new remote reviews to local
         for (const remoteReview of data) {
           // Handle file download/sync if needed
-          if (remoteReview.fileContent && remoteReview.fileContent.startsWith('data:')) {
-            try {
-              const res = await fetch(remoteReview.fileContent);
-              const blob = await res.blob();
-              await FileDB.saveFile(remoteReview.id, blob);
-              remoteReview.fileStored = true;
-              delete remoteReview.fileContent; // Clean up
-              console.log(`Downloaded and saved file for review ${remoteReview.id}`);
-            } catch (e) {
-              console.warn(`Failed to process file for review ${remoteReview.id}`, e);
+          // Prefer storage URL/path if available, fall back to legacy fileContent
+          try {
+            if (remoteReview.fileStorageUrl) {
+              try {
+                const res = await fetch(remoteReview.fileStorageUrl);
+                const blob = await res.blob();
+                await FileDB.saveFile(remoteReview.id, blob);
+                remoteReview.fileStored = true;
+                console.log(`Downloaded and saved file from storage URL for review ${remoteReview.id}`);
+              } catch (e) {
+                console.warn(`Failed to download file from storage URL for ${remoteReview.id}`, e);
+              }
+            } else if (remoteReview.fileStoragePath) {
+              try {
+                const storageClient = getSupabaseClient();
+                const { data: downloadBlob, error: dlErr } = await storageClient.storage.from(SUPABASE_STORAGE_BUCKET).download(remoteReview.fileStoragePath);
+                if (dlErr) throw dlErr;
+                await FileDB.saveFile(remoteReview.id, downloadBlob);
+                remoteReview.fileStored = true;
+                // Also populate public URL for convenience
+                const { data: urlData } = storageClient.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(remoteReview.fileStoragePath);
+                remoteReview.fileStorageUrl = urlData?.publicUrl || null;
+                console.log(`Downloaded and saved file from storage path for review ${remoteReview.id}`);
+              } catch (e) {
+                console.warn(`Failed to download file from storage path for ${remoteReview.id}`, e);
+              }
+            } else if (remoteReview.fileContent && remoteReview.fileContent.startsWith('data:')) {
+              try {
+                const res = await fetch(remoteReview.fileContent);
+                const blob = await res.blob();
+                await FileDB.saveFile(remoteReview.id, blob);
+                remoteReview.fileStored = true;
+                delete remoteReview.fileContent; // Clean up
+                console.log(`Downloaded and saved legacy fileContent for review ${remoteReview.id}`);
+              } catch (e) {
+                console.warn(`Failed to process legacy fileContent for review ${remoteReview.id}`, e);
+              }
             }
+          } catch (e) {
+            console.warn('Error while handling remote files for', remoteReview.id, e);
           }
 
           if (!localIds.has(remoteReview.id)) {
@@ -5081,6 +5142,23 @@
       // If legacy fileContent (data URL) exists, use it
       if (review.fileContent) {
         return openFileContent(review.fileContent, review.fileName);
+      }
+
+      // If we have a Supabase storage public URL, open it directly
+      if (review.fileStorageUrl) {
+        return openFileContent(review.fileStorageUrl, review.fileName || 'file');
+      }
+
+      // If we have a storage path, try to get public URL first
+      if (review.fileStoragePath) {
+        try {
+          const storageClient = getSupabaseClient();
+          const { data: urlData } = storageClient.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(review.fileStoragePath);
+          const publicUrl = urlData?.publicUrl;
+          if (publicUrl) return openFileContent(publicUrl, review.fileName || 'file');
+        } catch (e) {
+          console.warn('Failed to get public URL for', review.fileStoragePath, e);
+        }
       }
 
       // Remote file URL from Firebase Storage -- open directly
