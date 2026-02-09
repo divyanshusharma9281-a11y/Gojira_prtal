@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gojira | Training Portal</title>
-  <!-- APP_VERSION: 20260130-001 -->
+  <!-- APP_VERSION: 20260209-001 -->
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,6 +19,16 @@
     rel="stylesheet">
   <audio id="login-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"
     preload="auto"></audio>
+
+  <!-- PDF.js for SOP Viewer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    });
+  </script>
 
   <style>
     body {
@@ -1983,22 +1993,27 @@
         <!-- Inserted SOP (user PDF) -->
         <div id="sop-card"
           class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-600 transition"
-          onclick="event.stopPropagation()">
+          onclick="openSOPModalFullscreen()">
           <div class="flex items-center gap-4 mb-4">
             <div class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-xl">📚</div>
             <div class="flex-1">
               <h3 class="text-xl font-bold">Standard Operating Procedure</h3>
+              <p class="text-slate-600 dark:text-slate-300 text-sm">Click to view or download full guidelines.</p>
             </div>
             <div class="flex-none flex items-center gap-2">
-              <a id="sop-download-abs" href="file:///C:/Users/Divyanshu704/Downloads/SOP_BharatLoan2%20(1)%20(1).pdf"
-                target="_blank" class="text-slate-500 hover:text-blue-600">Open local file ↗</a>
+              <a id="sop-download-abs" href="resources/SOP_BharatLoan2.pdf" download="SOP_BharatLoan2.pdf"
+                onclick="event.stopPropagation()"
+                class="text-slate-500 hover:text-blue-600 border border-slate-200 rounded-lg px-3 py-1 text-sm bg-white dark:bg-slate-700 shadow-sm">
+                Download PDF ⬇️
+              </a>
             </div>
           </div>
 
           <div class="mt-4">
             <button onclick="event.stopPropagation(); openSOPModalFullscreen()"
-              class="font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-lg transition">🖥️
-              Fullscreen</button>
+              class="w-full font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 py-3 px-4 rounded-xl transition shadow-lg shadow-indigo-500/30">
+              🖥️ View Fullscreen
+            </button>
           </div>
 
           <input id="sop-file-input" type="file" accept="application/pdf" class="hidden" />
@@ -7489,12 +7504,8 @@
               ${itemIndex > 1 ? `<button onclick="adminRemoveReviewItem(${itemIndex - 1})" class="text-red-600 hover:text-red-700 text-sm">🗑️ Remove</button>` : ''}
             </div>
 
-            <!-- Date Selector -->
-            <div class="mb-4">
-              <label class="block text-sm font-semibold mb-2">Review Date</label>
-              <input type="date" class="review-date-input w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none" 
-                data-item-index="${itemIndex - 1}">
-            </div>
+
+            <!-- Date Selector Removed (Automatic) -->
         `;
 
       // Show file upload only for voice reviews
@@ -7621,6 +7632,12 @@
         return;
       }
 
+      // Security Check: Ensure user is actually admin
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert('Security Alert: You do not have permission to submit reviews.');
+        return;
+      }
+
       const items = [];
       let missingFields = false;
 
@@ -7662,7 +7679,7 @@
           observation: observation,
           score: score,
           reviewType: adminReviewType,
-          date: item.querySelector('.review-date-input')?.value || null
+          date: null // Will be set to NOW
         });
       });
 
@@ -7691,16 +7708,16 @@
           createdReviewIds.push(reviewId);
           const reviewObj = {
             id: reviewId,
-            date: item.date ? new Date(item.date).toISOString() : now.toISOString(), // Use selected date or current
-            displayDate: item.date ? new Date(item.date).toLocaleDateString() : now.toLocaleDateString(), // Keep human readable date for display
-            month: item.date ? new Date(item.date).toLocaleString('default', { month: 'long', year: 'numeric' }) : now.toLocaleString('default', { month: 'long', year: 'numeric' }), // store month explicitly
-            agentId: String(adminCurrentAgent || '').trim(), // store normalized-ish agent ID (trimmed)
+            date: now.toISOString(), // ALWAYS USE CURRENT TIME
+            displayDate: now.toLocaleDateString(),
+            month: now.toLocaleString('default', { month: 'long', year: 'numeric' }),
+            agentId: String(adminCurrentAgent || '').trim(),
             agentName: adminCurrentAgentName,
             entity: adminCurrentEntity,
             reviewType: item.reviewType,
             score: item.score,
             observation: item.observation,
-            expiryDate: new Date((item.date ? new Date(item.date) : now).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            expiryDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             reviewerId: currentUser?.id || 'admin',
             reviewerName: currentUser?.name || 'Admin',
             // Specific fields
@@ -8063,6 +8080,13 @@
     }
 
     async function adminDeleteReview(reviewId) {
+      // Security Check
+      if (!currentUser || currentUser.role !== 'admin') {
+        console.warn('Security Alert: Unauthorized deletion attempt.');
+        alert('You do not have permission to delete reviews.');
+        return;
+      }
+
       if (confirm('Delete this review?')) {
         let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         const index = reviews.findIndex(r => r.id === reviewId);
@@ -8092,7 +8116,10 @@
         // Supabase Deletion Sync - AWAIT completion
         if (review && review.id) {
           if (typeof syncReviewDeletionToSupabase === 'function') {
-            await syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed', e));
+            await syncReviewDeletionToSupabase(review.id).catch(e => {
+              console.error('[Critical Error] Supabase delete failed for ID ' + review.id, e);
+              // We might want to re-queue this later, but for now just log it loudly
+            });
           }
         }
 
