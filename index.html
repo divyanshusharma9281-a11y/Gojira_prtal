@@ -571,6 +571,9 @@
         // Prepare reviews with file content if available
         const uploadableReviews = await Promise.all(targetReviews.map(async (r) => {
           const clone = { ...r };
+          // Fix: Remove local-only fields that cause schema errors in Supabase
+          delete clone.month;
+
           if (clone.fileStored) {
             try {
               if (!FileDB._db) await FileDB.init();
@@ -579,7 +582,7 @@
                 // Check size limit (max 5MB for Supabase row safety)
                 if (blob.size > 5 * 1024 * 1024) {
                   console.warn(`File for ${clone.id} is too large (${(blob.size / 1024 / 1024).toFixed(2)}MB). Skipping file upload.`);
-                  alert(`Warning: Attachment for ${clone.employeeName} is too large (>5MB) and will not be synced.`);
+                  alert(`Warning: Attachment for ${clone.reviewerName || 'Review'} is too large (>5MB) and will not be synced.`);
                   delete clone.fileContent; // Ensure clean
                 } else {
                   clone.fileContent = await blobToBase64(blob);
