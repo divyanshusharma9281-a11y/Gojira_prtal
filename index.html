@@ -368,6 +368,15 @@
   <!-- Load Turso client for dual-database support -->
   <script src="turso-client.js"></script>
 
+  <!-- Turso Configuration (Injected) -->
+  <script>
+    // Loaded from .env.local
+    window.TURSO_URL = 'libsql://gojira-divyanshusharma9281-a11y.aws-ap-south-1.turso.io';
+    window.TURSO_AUTH_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzA2MzIwNjgsImlkIjoiMzViYmFiZWEtMzIxYi00YmM2LWI4MGEtNGQ1ZTAzNDgzMDM3IiwicmlkIjoiMDlmOTJiOGMtNGI5NS00ZTIyLWJjOWEtOWI4ZTUxMmUwMDg5In0.beijQjwGnfAgDurokj97HBcTxRe3MYRLJNxhszmlqo03HpciyRam0pGvtFGPYfBbP46UsdcANpr2f-7Sf3d4Dw';
+    window.SYNC_TARGET = 'both';
+    console.log('Turso configuration loaded');
+  </script>
+
   <script type="module">
     // 1. Setup Logging
     function log(msg) {
