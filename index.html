@@ -449,6 +449,12 @@
         const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
         if (error) throw error;
         console.log('Deleted review from Supabase:', reviewId);
+        // Mark as successfully deleted
+        let deleted = JSON.parse(localStorage.getItem('deletedReviewIds') || '[]');
+        if (!deleted.includes(reviewId)) {
+          deleted.push(reviewId);
+          localStorage.setItem('deletedReviewIds', JSON.stringify(deleted));
+        }
       } catch (e) {
         console.warn('Failed to delete review from Supabase', e);
       }
@@ -607,32 +613,36 @@
           setTimeout(() => reject(new Error('Request timed out after 15s')), 15000)
         );
 
-        const fetchPromise = supabase.from('reviews').select('*').limit(500);
+        // Fetch active reviews (Limit 1000 to cover all active weekly items)
+        const fetchPromise = supabase.from('reviews').select('*').limit(1000);
 
         // Race the fetch against the timeout
         const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
         updateSupabaseStatus('connected');
         if (error) throw error;
-        if (!data || data.length === 0) return;
+        if (!data) return;
 
         let localReviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
         let changed = false;
+
+        // 1. Convert remote data to Set for easy lookup
+        const remoteIds = new Set(data.map(r => r.id));
         const localIds = new Set(localReviews.map(r => r.id));
 
         // Initialize FileDB once if needed
         try { if (!FileDB._db) await FileDB.init(); } catch (e) { console.warn('FileDB init failed in sync', e); }
 
+        // 2. Incoming Sync: ADD new remote reviews to local
         for (const remoteReview of data) {
-          // Handle file download/sync
+          // Handle file download/sync if needed
           if (remoteReview.fileContent && remoteReview.fileContent.startsWith('data:')) {
             try {
               const res = await fetch(remoteReview.fileContent);
               const blob = await res.blob();
               await FileDB.saveFile(remoteReview.id, blob);
               remoteReview.fileStored = true;
-              // Remove heavy content before saving to localStorage
-              delete remoteReview.fileContent;
+              delete remoteReview.fileContent; // Clean up
               console.log(`Downloaded and saved file for review ${remoteReview.id}`);
             } catch (e) {
               console.warn(`Failed to process file for review ${remoteReview.id}`, e);
@@ -640,15 +650,47 @@
           }
 
           if (!localIds.has(remoteReview.id)) {
+            // New review found
             localReviews.push(remoteReview);
             localIds.add(remoteReview.id);
             changed = true;
+          } else {
+            // Optional: Update existing review if needed (naive check)
+            // For now, we assume immutable reviews mostly, but we could update flags
           }
+        }
+
+        // 3. Deletion Sync: REMOVE local reviews that are NOT in Supabase
+        // Safety: Only delete if review is not "brand new" (created < 30s ago) to avoid race with upload
+        const now = Date.now();
+        const initialCount = localReviews.length;
+
+        const prunedReviews = localReviews.filter(r => {
+          // If it exists in remote, keep it
+          if (remoteIds.has(r.id)) return true;
+
+          // If not in remote, check if it's a very recent local creation (un-synced)
+          // ID format: timestamp-random-index
+          const parts = r.id.split('-');
+          const ts = parseInt(parts[0]);
+          if (!isNaN(ts) && (now - ts < 300000)) {
+            // Created less than 5m ago, keep it (might be uploading)
+            return true;
+          }
+
+          // Otherwise, it's missing from Supabase (deleted remotely), so remove locally
+          return false;
+        });
+
+        if (prunedReviews.length !== initialCount) {
+          localReviews = prunedReviews;
+          changed = true;
+          console.log(`Pruned ${initialCount - localReviews.length} deleted reviews.`);
         }
 
         if (changed) {
           localStorage.setItem('adminReviews', JSON.stringify(localReviews));
-          console.log('Synced new reviews from Supabase');
+          console.log('Synced reviews (adds/removes) from Supabase');
 
           if (typeof adminLoadReviewsList === 'function') adminLoadReviewsList();
           if (typeof reviewerLoadReviewsList === 'function') reviewerLoadReviewsList();
@@ -656,11 +698,14 @@
           if (typeof agentLoadMonthlyPerformance === 'function') agentLoadMonthlyPerformance();
           if (typeof agentLoadQADashboard === 'function') agentLoadQADashboard();
 
-          const toast = document.createElement('div');
-          toast.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-[100] animate-fade-in';
-          toast.innerText = 'New reviews synced from Supabase ☁️';
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 3000);
+          // Only toast if meaningful change and not background
+          if (!isBackground) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-[100] animate-fade-in';
+            toast.innerText = 'Sync complete ☁️';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+          }
         }
       } catch (e) {
         console.warn('Sync failed', e);
@@ -783,7 +828,7 @@
             Gojira</h1>
 
         </div>
-        
+
 
         <form onsubmit="submitLogin(event)">
           <div class="mb-6">
@@ -881,7 +926,7 @@
         // Only run if we are inside the login screen context
         const canvas = document.getElementById('twinkle-canvas');
         if (!canvas || !loginScreen) return;
-        
+
         window.loginAnimState.canvas = canvas;
 
         const ctx = canvas.getContext('2d');
@@ -911,7 +956,7 @@
             this.x = Math.random() * width;
             this.y = Math.random() * height;
             this.mode = mode;
-            
+
             if (mode === 'star') {
               // Stars flow downward slowly
               this.vx = (Math.random() - 0.5) * 0.2;
@@ -1012,8 +1057,8 @@
         }
 
         let animationMode = localStorage.getItem('loginTheme') || 'bubble';
-        
-        window.reinitLoginAnimation = function() {
+
+        window.reinitLoginAnimation = function () {
           animationMode = localStorage.getItem('loginTheme') || 'bubble';
           window.loginAnimState.particles = [];
           initParts();
@@ -1023,34 +1068,34 @@
           window.loginAnimState.particles = [];
           const particleCount = Math.floor(width * height / 2500);
           for (let i = 0; i < particleCount; i++) { window.loginAnimState.particles.push(new Particle(animationMode)); }
-        } 
-        initParts(); 
-        
+        }
+        initParts();
+
         function animate() {
-          ctx.clearRect(0, 0, width, height); 
+          ctx.clearRect(0, 0, width, height);
           window.loginAnimState.particles.forEach(p => {
             p.update();
             if (animationMode === 'star') {
               p.scatter(window.loginAnimState.mouseX, window.loginAnimState.mouseY);
             }
             p.draw();
-            
+
             if (animationMode === 'bubble') {
               const dist = Math.hypot(p.x - window.loginAnimState.mouseX, p.y - window.loginAnimState.mouseY);
               if (dist < 180) {
-                ctx.beginPath(); 
+                ctx.beginPath();
                 ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 180})`;
-                ctx.lineWidth = 1.5; 
-                ctx.moveTo(p.x, p.y); 
-                ctx.lineTo(window.loginAnimState.mouseX, window.loginAnimState.mouseY); 
-                ctx.stroke(); 
-                p.x += (window.loginAnimState.mouseX - p.x) * 0.02; 
+                ctx.lineWidth = 1.5;
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(window.loginAnimState.mouseX, window.loginAnimState.mouseY);
+                ctx.stroke();
+                p.x += (window.loginAnimState.mouseX - p.x) * 0.02;
                 p.y += (window.loginAnimState.mouseY - p.y) * 0.02;
               }
             }
-          }); 
+          });
           requestAnimationFrame(animate);
-        } 
+        }
         animate();
       })(); 
     </script>
@@ -1575,7 +1620,7 @@
               <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>
@@ -1952,14 +1997,15 @@
 
           <div class="mt-4">
             <button onclick="event.stopPropagation(); openSOPModalFullscreen()"
-              class="font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-lg transition">🖥️ Fullscreen</button>
+              class="font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-lg transition">🖥️
+              Fullscreen</button>
           </div>
 
           <input id="sop-file-input" type="file" accept="application/pdf" class="hidden" />
         </div>
 
         <!-- Quality Assurance Checklist - Agent Only -->
-        
+
 
         <div id="qa-checklist-card-agent"
           class="hidden bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-400 transition"
@@ -2511,7 +2557,8 @@
               </select>
             </div>
             <div class="text-sm text-slate-700 dark:text-slate-300">| Week <span id="admin-week-display"
-                class="font-bold">1</span> - <span id="admin-week-progress" class="text-slate-500">(0/0 completed)</span></div>
+                class="font-bold">1</span> - <span id="admin-week-progress" class="text-slate-500">(0/0
+                completed)</span></div>
             <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()"
               class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed"
               disabled>Final Submit This Week</button>
@@ -2625,7 +2672,8 @@
           <span class="bg-red-600 text-white rounded-lg p-2 text-xl">⚠️</span>
           Data Management
         </h2>
-        <p class="mb-6 text-slate-600 dark:text-slate-400">This section has been removed. Agents are auto-finalized when reviews are submitted, and can be unfirmed using Clear Finalizations.</p>
+        <p class="mb-6 text-slate-600 dark:text-slate-400">This section has been removed. Agents are auto-finalized when
+          reviews are submitted, and can be unfirmed using Clear Finalizations.</p>
       </div>
 
       <!-- Section 3: Submitted Reviews -->
@@ -6000,20 +6048,20 @@
       const currentMode = localStorage.getItem('loginTheme') || 'bubble';
       const newMode = currentMode === 'bubble' ? 'star' : 'bubble';
       localStorage.setItem('loginTheme', newMode);
-      
+
       // Update button
       const btn = document.getElementById('login-theme-toggle');
       if (btn) {
         btn.textContent = newMode === 'bubble' ? '☀️ Light' : '🌙 Dark';
       }
-      
+
       // Update HTML theme
       if (newMode === 'star') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      
+
       // Reinitialize animation
       if (typeof window.reinitLoginAnimation === 'function') {
         window.reinitLoginAnimation();
@@ -6021,7 +6069,7 @@
     }
 
     // Initialize theme toggle on load
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const theme = localStorage.getItem('loginTheme') || 'bubble';
       const btn = document.getElementById('login-theme-toggle');
       if (btn) {
@@ -6266,19 +6314,19 @@
       const entity = adminCurrentEntity || 'ALL';
       const state = getEntityWeekState(entity);
       const newWeek = parseInt(week);
-      
+
       if (newWeek >= 1 && newWeek <= 4) {
         state.currentWeek = newWeek;
         setEntityWeekState(entity, state);
-        
+
         // Update UI
         document.getElementById('admin-week-display').textContent = newWeek;
         document.getElementById('admin-week-selector').value = newWeek;
-        
+
         // Refresh the agent list and check button states
         adminLoadAgents();
         checkAndEnableWeekFinalButton();
-        
+
         // Refresh performance dashboards if they're visible
         if (!document.getElementById('view-admin-weekly').classList.contains('hidden')) {
           renderAdminWeeklyPerformance();
@@ -6289,9 +6337,9 @@
       }
     }
 
-    
 
-    
+
+
     function getEntityWeekState(entity) {
       if (!entity) entity = 'ALL';
       return JSON.parse(localStorage.getItem(`entityWeekState_${entity}`) || JSON.stringify({ currentWeek: 1, completedAgents: {} }));
@@ -7736,12 +7784,14 @@
 
     function adminLoadReviewsList() {
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      let deletedIds = JSON.parse(localStorage.getItem('deletedReviewIds') || '[]');
+      const deletedSet = new Set(deletedIds);
       const tbody = document.getElementById('admin-reviews-list');
 
       // Remove expired reviews
       const now = new Date();
-      // Keep non-expired for immediate display
-      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
+      // Keep non-expired for immediate display AND not in deleted list
+      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now && !deletedSet.has(r.id));
 
       // Delete expired review files in background to free space
       const expired = reviews.filter(r => new Date(r.expiryDate) < now);
@@ -7793,11 +7843,13 @@
 
     function reviewerLoadReviewsList() {
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
+      let deletedIds = JSON.parse(localStorage.getItem('deletedReviewIds') || '[]');
+      const deletedSet = new Set(deletedIds);
       const tbody = document.getElementById('reviewer-reviews-list');
 
-      // Remove expired reviews
+      // Remove expired reviews AND deleted reviews
       const now = new Date();
-      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now);
+      let filtered = reviews.filter(r => new Date(r.expiryDate) >= now && !deletedSet.has(r.id));
 
       // Filter by current entity
       if (adminCurrentEntity && adminCurrentEntity !== 'ALL') {
@@ -8019,23 +8071,28 @@
         const review = reviews[index];
         const agentId = review ? review.agentId : null;
 
-        // If file is stored in FileDB, remove it (non-blocking)
+        // Mark as deleted BEFORE removing from localStorage
+        let deleted = JSON.parse(localStorage.getItem('deletedReviewIds') || '[]');
+        if (!deleted.includes(reviewId)) {
+          deleted.push(reviewId);
+          localStorage.setItem('deletedReviewIds', JSON.stringify(deleted));
+        }
+
+        // If file is stored in FileDB, remove it
         if (review && review.fileStored) {
-          (async () => {
-            try {
-              if (!FileDB._db) await FileDB.init();
-              await FileDB.deleteFile(review.id);
-            } catch (e) { console.warn('[adminDeleteReview] failed to delete associated file', e); }
-          })();
+          try {
+            if (!FileDB._db) await FileDB.init();
+            await FileDB.deleteFile(review.id);
+          } catch (e) { console.warn('[adminDeleteReview] failed to delete associated file', e); }
         }
 
         reviews.splice(index, 1);
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // Supabase Deletion Sync (non-blocking)
+        // Supabase Deletion Sync - AWAIT completion
         if (review && review.id) {
           if (typeof syncReviewDeletionToSupabase === 'function') {
-            syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed', e));
+            await syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed', e));
           }
         }
 
@@ -8080,6 +8137,15 @@
         // Find reviews to remove for this entity
         const toRemove = reviews.filter(r => r.entity === adminCurrentEntity);
 
+        // Mark all as deleted BEFORE removing from localStorage
+        let deleted = JSON.parse(localStorage.getItem('deletedReviewIds') || '[]');
+        for (const review of toRemove) {
+          if (!deleted.includes(review.id)) {
+            deleted.push(review.id);
+          }
+        }
+        localStorage.setItem('deletedReviewIds', JSON.stringify(deleted));
+
         // Delete associated files from FileDB when present
         try {
           if (!FileDB._db) await FileDB.init();
@@ -8099,41 +8165,18 @@
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
-        // Sync deletions to Supabase for each deleted review
-        for (const review of toRemove) {
+        // Sync deletions to Supabase for each deleted review - AWAIT ALL
+        const deletePromises = toRemove.map(review => {
           if (review && review.id) {
             if (typeof syncReviewDeletionToSupabase === 'function') {
-              syncReviewDeletionToSupabase(review.id).catch(e => console.warn('[adminDeleteAllReviews] Supabase delete failed', review.id, e));
+              return syncReviewDeletionToSupabase(review.id).catch(e => console.warn('[adminDeleteAllReviews] Supabase delete failed', review.id, e));
             }
           }
-        }
+          return Promise.resolve();
+        });
+        await Promise.all(deletePromises);
 
-        // Attempt to remove matching docs/files from Firebase (non-blocking)
-        try {
-          (async () => {
-            try {
-              if (!isFirebaseReady) await initFirebase();
-              if (isFirebaseReady && firebaseFirestore) {
-                await Promise.all(toRemove.map(r => {
-                  try {
-                    firebaseFirestore.collection('reviews').doc(r.id).delete().catch(e => console.warn('[adminDeleteAllReviews] firebase delete failed', r.id, e));
-                  } catch (e) { console.warn('[adminDeleteAllReviews] delete doc loop', e); }
-                  if (r.fileUrl && firebaseStorage) {
-                    try {
-                      const ref = firebaseStorage.refFromURL(r.fileUrl);
-                      ref.delete().catch(e => console.warn('[adminDeleteAllReviews] firebase storage delete failed', r.id, e));
-                    } catch (e) { console.warn('[adminDeleteAllReviews] storage ref creation failed', e); }
-                  }
-                  return Promise.resolve();
-                }));
-              }
-            } catch (e) {
-              console.warn('[adminDeleteAllReviews] initFirebase or batch delete failed', e);
-            }
-          })();
-        } catch (e) {
-          console.warn('[adminDeleteAllReviews] could not trigger firebase deletes', e);
-        }
+        // Remove unused Firebase logic (Cleaned up during refresh)
 
         // For each removed agent, if they now have 0 global reviews, unmark finalization
         removedAgents.forEach(agentId => {
@@ -8152,6 +8195,11 @@
         adminLoadReviewsList();
 
         alert('All reviews for this entity have been deleted. Finalization flags were cleared where applicable.');
+
+        // Clear deleted IDs list after 10 seconds to allow time for sync to propagate
+        setTimeout(() => {
+          localStorage.removeItem('deletedReviewIds');
+        }, 10000);
       }
     }
 
@@ -8213,6 +8261,15 @@
         return true; // DELETE active reviews for this agent
       });
 
+      // Mark all as deleted BEFORE removing from localStorage
+      let deleted = JSON.parse(localStorage.getItem('deletedReviewIds') || '[]');
+      for (const review of reviewsToDelete) {
+        if (!deleted.includes(review.id)) {
+          deleted.push(review.id);
+        }
+      }
+      localStorage.setItem('deletedReviewIds', JSON.stringify(deleted));
+
       const newReviews = reviews.filter(r => {
         if (r.agentId !== adminCurrentAgent) return true; // Keep other agents
         if (new Date(r.expiryDate) < now) return true; // Keep old history
@@ -8221,29 +8278,33 @@
 
       localStorage.setItem('adminReviews', JSON.stringify(newReviews));
 
-      // Sync deletions to Supabase for each deleted review
-      for (const review of reviewsToDelete) {
+      // Sync deletions to Supabase for each deleted review - AWAIT ALL
+      const deletePromises = reviewsToDelete.map(async (review) => {
         if (review && review.id) {
           if (typeof syncReviewDeletionToSupabase === 'function') {
-            syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed for review', review.id, e));
+            await syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed for review', review.id, e));
           }
         }
         // Delete associated file if stored
         if (review && review.fileStored) {
-          (async () => {
-            try {
-              if (!FileDB._db) await FileDB.init();
-              await FileDB.deleteFile(review.id);
-            } catch (e) { console.warn('[adminDeleteAgentWeekData] failed to delete file', review.id, e); }
-          })();
+          try {
+            if (!FileDB._db) await FileDB.init();
+            await FileDB.deleteFile(review.id);
+          } catch (e) { console.warn('[adminDeleteAgentWeekData] failed to delete file', review.id, e); }
         }
-      }
+      });
+
+      await Promise.all(deletePromises);
 
       alert(`Current week data deleted for ${adminCurrentAgentName}.`);
 
-      // Refresh
+      // Refresh UI after deletion completes
       adminLoadAgents();
       if (adminCurrentAgent) adminSelectAgent(adminCurrentAgent, adminCurrentAgentName);
+      // Clear deleted IDs list after 10 seconds to allow time for sync to propagate
+      setTimeout(() => {
+        localStorage.removeItem('deletedReviewIds');
+      }, 10000);
     }
 
     function adminResetAgentMonthlyData() {
@@ -9063,26 +9124,28 @@
   </div>
 
   <!-- SOP Modal -->
-  <div id="sop-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  <div id="sop-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     onclick="if(event.target.id === 'sop-modal') closeSOPModal()">
-    <div id="sop-modal-content" class="bg-white dark:bg-slate-900 w-full max-w-6xl h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+    <div id="sop-modal-content"
+      class="bg-white dark:bg-slate-900 w-full max-w-6xl h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
       <!-- Modal Header -->
-      <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800">
+      <div
+        class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800">
         <h2 class="text-2xl font-bold">Standard Operating Procedure</h2>
         <div class="flex items-center gap-3">
           <button onclick="toggleSOPFullscreen()"
             class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">🖥️ Fullscreen</button>
-          <button onclick="closeSOPModal()"
-            class="text-slate-500 hover:text-slate-700 text-3xl font-bold">×</button>
+          <button onclick="closeSOPModal()" class="text-slate-500 hover:text-slate-700 text-3xl font-bold">×</button>
         </div>
       </div>
 
       <!-- Modal Body (Scrollable) -->
       <div class="flex-1 overflow-y-auto p-6 space-y-6">
         <!-- PDF Preview -->
-        <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
-          style="height: 500px;">
-          <iframe id="sop-modal-iframe" src="resources/SOP_BharatLoan2.pdf" class="w-full h-full" frameborder="0"></iframe>
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden" style="height: 500px;">
+          <iframe id="sop-modal-iframe" src="resources/SOP_BharatLoan2.pdf" class="w-full h-full"
+            frameborder="0"></iframe>
         </div>
 
         <!-- Extracted Graphs -->
