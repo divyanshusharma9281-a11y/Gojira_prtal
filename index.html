@@ -6206,6 +6206,7 @@
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const now = new Date();
       let deletedCount = 0;
+      const reviewsToDelete = []; // Track deleted reviews for Supabase sync
 
       // Normalize target agent ID
       const targetAgentId = String(agentId).trim().toLowerCase();
@@ -6246,6 +6247,7 @@
           const d = new Date(r.date);
           if (d >= startDate && d <= endDate) {
             deletedCount++;
+            reviewsToDelete.push(r); // Track for Supabase sync
             return false; // Remove
           }
           return true;
@@ -6301,6 +6303,7 @@
           // If no specific month targeted, delete ALL reviews for agent
           if (selYear === null) {
             deletedCount++;
+            reviewsToDelete.push(r); // Track for Supabase sync
             return false;
           }
 
@@ -6308,6 +6311,7 @@
           // Match Year and Month
           if (d.getFullYear() === selYear && (d.getMonth() + 1) === selMonth) {
             deletedCount++;
+            reviewsToDelete.push(r); // Track for Supabase sync
             return false; // Remove
           }
           return true;
@@ -6315,6 +6319,24 @@
       }
 
       localStorage.setItem('adminReviews', JSON.stringify(reviews));
+
+      // Sync deletions to Supabase for each deleted review
+      for (const review of reviewsToDelete) {
+        if (review && review.id) {
+          if (typeof syncReviewDeletionToSupabase === 'function') {
+            syncReviewDeletionToSupabase(review.id).catch(e => console.warn('[confirmResetData] Supabase delete failed', review.id, e));
+          }
+        }
+        // Delete associated file if stored
+        if (review && review.fileStored) {
+          (async () => {
+            try {
+              if (!FileDB._db) await FileDB.init();
+              await FileDB.deleteFile(review.id);
+            } catch (e) { console.warn('[confirmResetData] failed to delete file', review.id, e); }
+          })();
+        }
+      }
 
       // Update timestamps/sync if needed
       try { localStorage.setItem('adminReviewsUpdatedAt', Date.now().toString()); } catch (e) { }
@@ -7721,6 +7743,15 @@
 
         localStorage.setItem('adminReviews', JSON.stringify(reviews));
 
+        // Sync deletions to Supabase for each deleted review
+        for (const review of toRemove) {
+          if (review && review.id) {
+            if (typeof syncReviewDeletionToSupabase === 'function') {
+              syncReviewDeletionToSupabase(review.id).catch(e => console.warn('[adminDeleteAllReviews] Supabase delete failed', review.id, e));
+            }
+          }
+        }
+
         // Attempt to remove matching docs/files from Firebase (non-blocking)
         try {
           (async () => {
@@ -7810,7 +7841,7 @@
       if (toast) toast.classList.add('hidden');
     }
 
-    function adminDeleteAgentWeekData() {
+    async function adminDeleteAgentWeekData() {
       if (!adminCurrentAgent) return alert('No agent selected.');
       if (!confirm(`Are you sure you want to DELETE all reviews for ${adminCurrentAgentName} in the current week? This will also un-finalize the week for this agent.`)) return;
 
@@ -7820,6 +7851,12 @@
       let reviews = JSON.parse(localStorage.getItem('adminReviews') || '[]');
       const now = new Date();
       // Keep reviews that belong to OTHER agents OR belong to this agent but are EXPIRED (old history)
+      const reviewsToDelete = reviews.filter(r => {
+        if (r.agentId !== adminCurrentAgent) return false; // Don't delete other agents
+        if (new Date(r.expiryDate) < now) return false; // Don't delete old history
+        return true; // DELETE active reviews for this agent
+      });
+
       const newReviews = reviews.filter(r => {
         if (r.agentId !== adminCurrentAgent) return true; // Keep other agents
         if (new Date(r.expiryDate) < now) return true; // Keep old history
@@ -7828,7 +7865,23 @@
 
       localStorage.setItem('adminReviews', JSON.stringify(newReviews));
 
-      // Also trigger file cleanup for deleted reviews if needed (optional optimization)
+      // Sync deletions to Supabase for each deleted review
+      for (const review of reviewsToDelete) {
+        if (review && review.id) {
+          if (typeof syncReviewDeletionToSupabase === 'function') {
+            syncReviewDeletionToSupabase(review.id).catch(e => console.warn('Supabase delete failed for review', review.id, e));
+          }
+        }
+        // Delete associated file if stored
+        if (review && review.fileStored) {
+          (async () => {
+            try {
+              if (!FileDB._db) await FileDB.init();
+              await FileDB.deleteFile(review.id);
+            } catch (e) { console.warn('[adminDeleteAgentWeekData] failed to delete file', review.id, e); }
+          })();
+        }
+      }
 
       alert(`Current week data deleted for ${adminCurrentAgentName}.`);
 
