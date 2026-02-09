@@ -765,6 +765,12 @@
 
     <!-- Colored Login Card -->
     <div class="min-h-screen w-full flex items-center justify-center py-20 relative z-50">
+      <!-- Light/Dark Mode Toggle -->
+      <button id="login-theme-toggle" onclick="toggleLoginTheme()"
+        class="fixed top-6 right-6 z-50 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-yellow-300 px-4 py-2 rounded-full font-bold shadow-lg hover:shadow-xl transition">
+        ☀️ Light
+      </button>
+
       <div id="login-card"
         class="p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 relative z-50 login-card overflow-hidden border border-indigo-500/30 animate-zoom-in shadow-indigo-500/20"
         style="background-color: rgba(10, 14, 22, 0.97);">
@@ -777,6 +783,7 @@
             Gojira</h1>
 
         </div>
+        
 
         <form onsubmit="submitLogin(event)">
           <div class="mb-6">
@@ -860,16 +867,25 @@
       /**
        * BUBBLE NETWORK ANIMATION (Web Shooter Effect)
        */
+      // Global animation state
+      window.loginAnimState = {
+        mode: localStorage.getItem('loginTheme') || 'bubble',
+        canvas: null,
+        particles: [],
+        mouseX: -1000,
+        mouseY: -1000
+      };
+
       (function () {
         const loginScreen = document.getElementById('portal-login-screen');
         // Only run if we are inside the login screen context
         const canvas = document.getElementById('twinkle-canvas');
         if (!canvas || !loginScreen) return;
+        
+        window.loginAnimState.canvas = canvas;
 
         const ctx = canvas.getContext('2d');
         let width, height;
-        let particles = [];
-        let mouseX = -1000, mouseY = -1000;
 
         // Resize
         function resize() {
@@ -885,59 +901,303 @@
         document.addEventListener('mousemove', (e) => {
           // Adjust mouse coordinates relative to the canvas/scroll position
           const rect = canvas.getBoundingClientRect();
-          mouseX = e.clientX - rect.left;
-          mouseY = e.clientY - rect.top;
+          window.loginAnimState.mouseX = e.clientX - rect.left;
+          window.loginAnimState.mouseY = e.clientY - rect.top;
         });
 
-        // Bubble Class
-        class Bubble {
-          constructor() {
+        // Particle Class (Bubbles or Stars based on mode)
+        class Particle {
+          constructor(mode = 'bubble') {
             this.x = Math.random() * width;
             this.y = Math.random() * height;
-            // SLOWER SPEED: reduced from 1.5 to 0.4
-            this.vx = (Math.random() - 0.5) * 0.4;
-            this.vy = (Math.random() - 0.5) * 0.4;
-            this.size = Math.random() * 3 + 2;
-            const colors = ['rgba(100, 149, 237, 0.7)', 'rgba(255, 105, 180, 0.7)', 'rgba(50, 205, 50, 0.7)', 'rgba(255, 165, 0, 0.7)'];
-            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.mode = mode;
+            
+            if (mode === 'star') {
+              // Stars flow downward slowly
+              this.vx = (Math.random() - 0.5) * 0.2;
+              this.vy = Math.random() * 0.3 + 0.1; // Downward flow
+              this.size = Math.random() * 1.5 + 0.8;
+              this.color = 'rgba(255, 255, 255, 0.8)';
+              this.scatterVx = 0;
+              this.scatterVy = 0;
+              this.scattering = false;
+              this.scatterTimer = 0;
+            } else {
+              // Bubbles
+              this.vx = (Math.random() - 0.5) * 0.4;
+              this.vy = (Math.random() - 0.5) * 0.4;
+              this.size = Math.random() * 3 + 2;
+              const colors = ['rgba(100, 149, 237, 0.7)', 'rgba(255, 105, 180, 0.7)', 'rgba(50, 205, 50, 0.7)', 'rgba(255, 165, 0, 0.7)', 'rgba(0, 206, 209, 0.7)', 'rgba(138, 43, 226, 0.7)', 'rgba(255, 48, 48, 0.7)', 'rgba(255, 215, 0, 0.7)', 'rgba(64, 224, 208, 0.7)', 'rgba(220, 20, 60, 0.7)', 'rgba(173, 255, 47, 0.7)', 'rgba(30, 144, 255, 0.7)'];
+              this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
           }
 
           update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            if (this.x < 0 || this.x > width) this.vx *= -1;
-            if (this.y < 0 || this.y > height) this.vy *= -1;
+            if (this.mode === 'star') {
+              if (this.scattering) {
+                this.x += this.scatterVx;
+                this.y += this.scatterVy;
+                this.scatterVx *= 0.95;
+                this.scatterVy *= 0.95;
+                this.scatterTimer--;
+                if (this.scatterTimer <= 0) {
+                  this.scattering = false;
+                  this.vx = (Math.random() - 0.5) * 0.2;
+                  this.vy = Math.random() * 0.3 + 0.1;
+                }
+              } else {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.y > height) this.y = -10;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+              }
+            } else {
+              this.x += this.vx;
+              this.y += this.vy;
+              if (this.x < 0 || this.x > width) this.vx *= -1;
+              if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+          }
+
+          scatter(mouseX, mouseY) {
+            if (this.mode === 'star') {
+              const dx = this.x - mouseX;
+              const dy = this.y - mouseY;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 120) {
+                this.scattering = true;
+                this.scatterTimer = 30;
+                const angle = Math.atan2(dy, dx);
+                this.scatterVx = Math.cos(angle) * 3;
+                this.scatterVy = Math.sin(angle) * 3;
+              }
+            }
           }
 
           draw() {
+            if (this.mode === 'star') {
+              this.drawStar(this.x, this.y, 5, this.size, this.size * 0.5);
+            } else {
+              ctx.beginPath();
+              ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+              ctx.fillStyle = this.color;
+              ctx.fill();
+            }
+          }
+
+          drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            const step = Math.PI / spikes;
+
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+              x = cx + Math.cos(rot) * outerRadius;
+              y = cy + Math.sin(rot) * outerRadius;
+              ctx.lineTo(x, y);
+              rot += step;
+
+              x = cx + Math.cos(rot) * innerRadius;
+              y = cy + Math.sin(rot) * innerRadius;
+              ctx.lineTo(x, y);
+              rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
             ctx.fillStyle = this.color;
             ctx.fill();
           }
         }
 
+        let animationMode = localStorage.getItem('loginTheme') || 'bubble';
+        
+        window.reinitLoginAnimation = function() {
+          animationMode = localStorage.getItem('loginTheme') || 'bubble';
+          window.loginAnimState.particles = [];
+          initParts();
+        };
+
         function initParts() {
-          particles = [];
-          // HIGHER QUANTITY: Reduced divisor from 12000 to 5000 (more than double the bubbles)
-          const particleCount = Math.floor(width * height / 5000);
-          for (let i = 0; i < particleCount; i++) { particles.push(new Bubble()); }
-        } initParts(); function animate() {
-          ctx.clearRect(0, 0, width, height); particles.forEach(p => {
+          window.loginAnimState.particles = [];
+          const particleCount = Math.floor(width * height / 2500);
+          for (let i = 0; i < particleCount; i++) { window.loginAnimState.particles.push(new Particle(animationMode)); }
+        } 
+        initParts(); 
+        
+        function animate() {
+          ctx.clearRect(0, 0, width, height); 
+          window.loginAnimState.particles.forEach(p => {
             p.update();
-            p.draw();
-            const dist = Math.hypot(p.x - mouseX, p.y - mouseY);
-            if (dist < 180) {
-              ctx.beginPath(); ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 180})`;
-              ctx.lineWidth = 1.5; ctx.moveTo(p.x, p.y); ctx.lineTo(mouseX, mouseY); ctx.stroke(); p.x += (mouseX - p.x) *
-                0.02; p.y += (mouseY - p.y) * 0.02;
+            if (animationMode === 'star') {
+              p.scatter(window.loginAnimState.mouseX, window.loginAnimState.mouseY);
             }
-          }); requestAnimationFrame(animate);
-        } animate();
-      })(); </script>
+            p.draw();
+            
+            if (animationMode === 'bubble') {
+              const dist = Math.hypot(p.x - window.loginAnimState.mouseX, p.y - window.loginAnimState.mouseY);
+              if (dist < 180) {
+                ctx.beginPath(); 
+                ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 180})`;
+                ctx.lineWidth = 1.5; 
+                ctx.moveTo(p.x, p.y); 
+                ctx.lineTo(window.loginAnimState.mouseX, window.loginAnimState.mouseY); 
+                ctx.stroke(); 
+                p.x += (window.loginAnimState.mouseX - p.x) * 0.02; 
+                p.y += (window.loginAnimState.mouseY - p.y) * 0.02;
+              }
+            }
+          }); 
+          requestAnimationFrame(animate);
+        } 
+        animate();
+      })(); 
+    </script>
 
   </div>
 
+
+  <!-- PDF.js for SOP extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    // Minimal client-side extractor: renders each PDF page to canvas and exposes PNG downloads.
+    async function extractSOPGraphs() {
+      const url = 'resources/SOP_BharatLoan2.pdf';
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('fetch failed');
+        const ab = await resp.arrayBuffer();
+        await _extractFromArrayBuffer(ab);
+        return;
+      } catch (e) {
+        // fallback: prompt user to upload the PDF
+        console.warn('[extractSOPGraphs] fetch failed, requesting file from user', e);
+        document.getElementById('sop-file-input').click();
+      }
+    }
+
+    // Toggle preview + graphs; extract graphs lazily on first open
+    async function showSOPDetails() {
+      const preview = document.getElementById('sop-preview');
+      const graphs = document.getElementById('sop-graphs');
+      const container = document.getElementById('sop-graphs-container');
+      if (!preview || !graphs) return;
+      const isHidden = preview.classList.contains('hidden');
+      if (isHidden) {
+        preview.classList.remove('hidden');
+        graphs.classList.remove('hidden');
+        if (container && container.innerHTML.trim() === '') {
+          await extractSOPGraphs();
+        }
+      } else {
+        preview.classList.add('hidden');
+        graphs.classList.add('hidden');
+      }
+    }
+
+    function openSOPModal() {
+      const modal = document.getElementById('sop-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        extractSOPGraphsToModal();
+      }
+    }
+
+    function openSOPModalFullscreen() {
+      const modal = document.getElementById('sop-modal');
+      const content = document.getElementById('sop-modal-content');
+      if (modal && content) {
+        modal.classList.remove('hidden');
+        extractSOPGraphsToModal();
+        // Request fullscreen after a brief delay to ensure DOM is ready
+        setTimeout(() => {
+          if (content.requestFullscreen) {
+            content.requestFullscreen().catch(err => console.log('Fullscreen error:', err));
+          }
+        }, 100);
+      }
+    }
+
+    function closeSOPModal() {
+      const modal = document.getElementById('sop-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function toggleSOPFullscreen() {
+      const content = document.getElementById('sop-modal-content');
+      if (content) {
+        if (content.requestFullscreen) {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            content.requestFullscreen().catch(err => console.log('Fullscreen error:', err));
+          }
+        }
+      }
+    }
+
+    async function extractSOPGraphsToModal() {
+      const url = 'resources/SOP_BharatLoan2.pdf';
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('fetch failed: ' + resp.status);
+        const ab = await resp.arrayBuffer();
+        await _extractFromArrayBufferToModal(ab);
+        return;
+      } catch (e) {
+        console.warn('[extractSOPGraphsToModal] PDF fetch/extract error:', e);
+      }
+    }
+
+    async function _extractFromArrayBufferToModal(ab) {
+      try {
+        const loadingTask = pdfjsLib.getDocument({ data: ab });
+        const pdf = await loadingTask.promise;
+        const container = document.getElementById('sop-modal-graphs-container');
+        container.innerHTML = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 2 });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          const dataUrl = canvas.toDataURL('image/png');
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700';
+          wrapper.innerHTML = `
+            <div class="mb-2 font-bold">Page ${i}</div>
+            <img src="${dataUrl}" class="w-full rounded-lg mb-2" />
+            <div class="flex gap-2">
+              <a href="${dataUrl}" download="sop-page-${i}.png" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Download PNG</a>
+            </div>`;
+
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        console.error('Error extracting SOP images', err);
+        alert('Failed to extract images from the PDF. Try uploading the PDF via the file selector.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const input = document.getElementById('sop-file-input');
+      if (input) {
+        input.addEventListener('change', async function (e) {
+          const f = e.target.files && e.target.files[0];
+          if (!f) return;
+          const ab = await f.arrayBuffer();
+          await _extractFromArrayBufferToModal(ab);
+        });
+      }
+    });
+  </script>
 
   <!-- CHANGE PASSWORD MODAL -->
   <div id="change-password-modal"
@@ -1315,6 +1575,7 @@
               <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded">⚡ Quick & paperless</div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -1674,7 +1935,32 @@
           </div>
         </div>
 
+        <!-- Inserted SOP (user PDF) -->
+        <div id="sop-card"
+          class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-600 transition"
+          onclick="event.stopPropagation()">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-xl">📚</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">Standard Operating Procedure</h3>
+            </div>
+            <div class="flex-none flex items-center gap-2">
+              <a id="sop-download-abs" href="file:///C:/Users/Divyanshu704/Downloads/SOP_BharatLoan2%20(1)%20(1).pdf"
+                target="_blank" class="text-slate-500 hover:text-blue-600">Open local file ↗</a>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button onclick="event.stopPropagation(); openSOPModalFullscreen()"
+              class="font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-lg transition">🖥️ Fullscreen</button>
+          </div>
+
+          <input id="sop-file-input" type="file" accept="application/pdf" class="hidden" />
+        </div>
+
         <!-- Quality Assurance Checklist - Agent Only -->
+        
+
         <div id="qa-checklist-card-agent"
           class="hidden bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-400 transition"
           onclick="navigateTo('view-agent-qa')">
@@ -2213,10 +2499,19 @@
         <div class="mb-6">
           <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400">Choose an Agent to
             Review</label>
-          <div class="flex items-center gap-3 mb-3">
-            <div class="text-sm text-slate-700 dark:text-slate-300">Current Week: <span id="admin-week-display"
-                class="font-bold">1</span></div>
-            <div id="admin-week-progress" class="text-sm text-slate-500">(0/0 completed)</div>
+          <div class="flex items-center gap-3 mb-3 flex-wrap">
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-semibold text-slate-600 dark:text-slate-400">Select Week:</label>
+              <select id="admin-week-selector" onchange="changeAdminCurrentWeek(this.value)"
+                class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold shadow-sm">
+                <option value="1">Week 1</option>
+                <option value="2">Week 2</option>
+                <option value="3">Week 3</option>
+                <option value="4">Week 4</option>
+              </select>
+            </div>
+            <div class="text-sm text-slate-700 dark:text-slate-300">| Week <span id="admin-week-display"
+                class="font-bold">1</span> - <span id="admin-week-progress" class="text-slate-500">(0/0 completed)</span></div>
             <button id="admin-week-final-submit-btn" onclick="adminFinalizeWeek()"
               class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold opacity-50 cursor-not-allowed"
               disabled>Final Submit This Week</button>
@@ -5701,6 +5996,44 @@
       document.getElementById('empid').value = '';
     }
 
+    function toggleLoginTheme() {
+      const currentMode = localStorage.getItem('loginTheme') || 'bubble';
+      const newMode = currentMode === 'bubble' ? 'star' : 'bubble';
+      localStorage.setItem('loginTheme', newMode);
+      
+      // Update button
+      const btn = document.getElementById('login-theme-toggle');
+      if (btn) {
+        btn.textContent = newMode === 'bubble' ? '☀️ Light' : '🌙 Dark';
+      }
+      
+      // Update HTML theme
+      if (newMode === 'star') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      
+      // Reinitialize animation
+      if (typeof window.reinitLoginAnimation === 'function') {
+        window.reinitLoginAnimation();
+      }
+    }
+
+    // Initialize theme toggle on load
+    document.addEventListener('DOMContentLoaded', function() {
+      const theme = localStorage.getItem('loginTheme') || 'bubble';
+      const btn = document.getElementById('login-theme-toggle');
+      if (btn) {
+        btn.textContent = theme === 'bubble' ? '☀️ Light' : '🌙 Dark';
+      }
+      if (theme === 'star') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    });
+
     async function submitLogin(event) {
       try {
         event.preventDefault();
@@ -5929,6 +6262,36 @@
     let reviewerCurrentEntity = '';
     let agentCurrentEntity = '';
 
+    function changeAdminCurrentWeek(week) {
+      const entity = adminCurrentEntity || 'ALL';
+      const state = getEntityWeekState(entity);
+      const newWeek = parseInt(week);
+      
+      if (newWeek >= 1 && newWeek <= 4) {
+        state.currentWeek = newWeek;
+        setEntityWeekState(entity, state);
+        
+        // Update UI
+        document.getElementById('admin-week-display').textContent = newWeek;
+        document.getElementById('admin-week-selector').value = newWeek;
+        
+        // Refresh the agent list and check button states
+        adminLoadAgents();
+        checkAndEnableWeekFinalButton();
+        
+        // Refresh performance dashboards if they're visible
+        if (!document.getElementById('view-admin-weekly').classList.contains('hidden')) {
+          renderAdminWeeklyPerformance();
+        }
+        if (!document.getElementById('view-admin-monthly').classList.contains('hidden')) {
+          renderAdminMonthlyPerformance();
+        }
+      }
+    }
+
+    
+
+    
     function getEntityWeekState(entity) {
       if (!entity) entity = 'ALL';
       return JSON.parse(localStorage.getItem(`entityWeekState_${entity}`) || JSON.stringify({ currentWeek: 1, completedAgents: {} }));
@@ -6578,6 +6941,13 @@
         initWeeklyDashboardControls();
       }
 
+      // Set week selector to the admin's selected week for this entity
+      const state = getEntityWeekState(entity);
+      const currentWeek = state.currentWeek || 1;
+      if (weekSelect) {
+        weekSelect.value = currentWeek;
+      }
+
       // Determine Date Range from Selectors
       let startDate, endDate;
 
@@ -6794,6 +7164,14 @@
       if (adminEntityDisplay) {
         adminEntityDisplay.textContent = adminCurrentEntity === 'ALL' ? 'All Entities' : adminCurrentEntity;
       }
+
+      // Update week selector and display to show current week for this entity
+      const state = getEntityWeekState(adminCurrentEntity || 'ALL');
+      const currentWeek = state.currentWeek || 1;
+      const weekDisplay = document.getElementById('admin-week-display');
+      const weekSelector = document.getElementById('admin-week-selector');
+      if (weekDisplay) weekDisplay.textContent = currentWeek;
+      if (weekSelector) weekSelector.value = currentWeek;
 
       // Display current entity for reviewer dashboard
       const reviewerEntityDisplay = document.getElementById('reviewer-entity-display');
@@ -8684,6 +9062,36 @@
     </div>
   </div>
 
+  <!-- SOP Modal -->
+  <div id="sop-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    onclick="if(event.target.id === 'sop-modal') closeSOPModal()">
+    <div id="sop-modal-content" class="bg-white dark:bg-slate-900 w-full max-w-6xl h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800">
+        <h2 class="text-2xl font-bold">Standard Operating Procedure</h2>
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSOPFullscreen()"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">🖥️ Fullscreen</button>
+          <button onclick="closeSOPModal()"
+            class="text-slate-500 hover:text-slate-700 text-3xl font-bold">×</button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- PDF Preview -->
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
+          style="height: 500px;">
+          <iframe id="sop-modal-iframe" src="resources/SOP_BharatLoan2.pdf" class="w-full h-full" frameborder="0"></iframe>
+        </div>
+
+        <!-- Extracted Graphs -->
+        <div>
+          <div id="sop-modal-graphs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 
