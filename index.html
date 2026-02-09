@@ -365,6 +365,9 @@
   </style>
   <!-- Debug Console Removed -->
 
+  <!-- Load Turso client for dual-database support -->
+  <script src="turso-client.js"></script>
+
   <script type="module">
     // 1. Setup Logging
     function log(msg) {
@@ -429,6 +432,21 @@
         if (name === 'tusro' && window.supabaseTusro) return window.supabaseTusro;
         return window.supabase;
       };
+
+      // Initialize Turso (SQLite) if configured
+      if (window.TURSO_URL && window.TURSO_AUTH_TOKEN) {
+        try {
+          // Load Turso client (will be injected from turso-client.js)
+          if (typeof TursoClient !== 'undefined') {
+            window.tursoClient = new TursoClient(window.TURSO_URL, window.TURSO_AUTH_TOKEN);
+            window.tursoClient.init().then(ok => {
+              if (ok) log('Turso client initialized');
+            });
+          }
+        } catch (e) {
+          console.warn('Failed to initialize Turso client', e);
+        }
+      }
 
       log("Supabase Client Created (ESM)!");
 
@@ -521,6 +539,16 @@
 
         if (changed) {
           localStorage.setItem('reviewComments', JSON.stringify(localComments));
+          // Also push to Turso if enabled
+          const syncTarget = window.SYNC_TARGET || 'both';
+          if ((syncTarget === 'both' || syncTarget === 'tusro') && window.tursoClient) {
+            try {
+              const tursoResult = await window.tursoClient.from('comments').upsert(localComments);
+              if (tursoResult.error) console.warn('Turso comments sync failed', tursoResult.error);
+            } catch (e) {
+              console.warn('Failed to sync comments to Turso', e);
+            }
+          }
           if (document.getElementById('admin-feedback-list')) {
             if (typeof adminLoadFeedbackList === 'function') adminLoadFeedbackList();
           }
@@ -630,6 +658,25 @@
         if (error) throw error;
 
         console.log(`Successfully pushed ${uploadableReviews.length} reviews.`);
+        
+        // Also sync to Turso if configured and not already syncing to Turso only
+        const syncTarget = window.SYNC_TARGET || 'both';
+        if ((syncTarget === 'both' || syncTarget === 'tusro') && window.tursoClient) {
+          try {
+            // Prepare reviews for Turso (remove fileContent, keep fileStorageUrl)
+            const tursoReviews = uploadableReviews.map(r => ({
+              ...r,
+              fileContent: null,
+              // Turso should have matching schema
+            }));
+            const tursoResult = await window.tursoClient.from('reviews').upsert(tursoReviews);
+            if (tursoResult.error) console.warn('Turso sync failed', tursoResult.error);
+            else console.log(`Synced ${uploadableReviews.length} reviews to Turso`);
+          } catch (e) {
+            console.warn('Failed to sync to Turso', e);
+          }
+        }
+
         updateSupabaseStatus('connected');
         alert("Synced to Supabase! ☁️");
       } catch (err) {
